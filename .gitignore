@@ -1,6 +1,6 @@
 
 /core/vendor
 /core/.env
-core/.env.example
+#core/.env.example
 *.zip
 assets/storage
