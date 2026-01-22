@@ -8,14 +8,14 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Products</h4>
+                    <h4 class="page-title">Orders</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="#">Dashboard</a>
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item"><a href="#">Products</a>
+                            <li class="breadcrumb-item"><a href="#">Orders</a>
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">All Product</li>
+                            <li class="breadcrumb-item active">All Order</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -27,54 +27,49 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h4 class="card-title">Products</h4>
+                                <h4 class="card-title">Order</h4>
                             </div><!--end col-->
                             <div class="col-auto">
-                                <form class="row g-2">
-                                    <div class="col-auto">
-                                        <a class="btn bg-primary-subtle text-primary dropdown-toggle d-flex align-items-center arrow-none"
-                                            data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
-                                            aria-expanded="false" data-bs-auto-close="outside">
-                                            <i class="iconoir-filter-alt me-1"></i> Filter
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-start">
-                                            <div class="p-2">
-                                                <div class="form-check mb-2">
-                                                    <input type="checkbox" class="form-check-input" checked id="filter-all">
-                                                    <label class="form-check-label" for="filter-all">
-                                                        All
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div><!--end col-->
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="date" id="from_date" class="form-control" placeholder="From Date">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="date" id="to_date" class="form-control" placeholder="To Date">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" id="filter_btn" class="btn btn-primary">Filter</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" id="reset_btn" class="btn btn-secondary">Reset</button>
+                                    </div>
+                                </div>
 
-                                    <div class="col-auto">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addBoard"><i class="fa-solid fa-plus me-1"></i> Add
-                                            Product</button>
-                                    </div><!--end col-->
-                                </form>
                             </div><!--end col-->
                         </div><!--end row-->
                     </div><!--end card-header-->
                     <div class="card-body pt-0">
+                        <div id="loader" style="display:none; text-align:center; margin-bottom:10px;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+
                         <div class="table-responsive overflow-hidden">
                             <table class="table" id="szbd-datatable">
                                 <thead class="table-light">
                                     <tr>
                                         <th>SL</th>
-                                        <th width="20">
-                                            <input type="checkbox" id="select-all">
-                                        </th>
-                                        <th>Image</th>
-                                        <th>Name</th>
-                                        <th>Code</th>
-                                        <th>Purchase Price</th>
-                                        <th>Selling Price</th>
-                                        <th>Featured</th>
-                                        <th>New Arrival</th>
-                                        <th>Status</th>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Customer Name</th>
+                                        <th>Phone</th>
+                                        <th>Amount</th>
+                                        <th>Delivery Charge</th>
+                                        <th>Total</th>
+                                        <th>Order Status</th>
+                                        <th>Order Type</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -99,59 +94,68 @@
         (function($) {
             "use strict";
 
-            $('#szbd-datatable').DataTable({
+            var table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
-                ajax: "{{ route('admin.product.datatables') }}",
-                ordering: false,
-                columns: [
-                    {
+                ajax: {
+                    url: "{{ route('admin.order.datatables', 'all') }}",
+                    data: function(d) {
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                    },
+                    beforeSend: function() {
+                        $('#loader').show();
+                    },
+                    complete: function() {
+                        $('#loader').hide();
+                    }
+                },
+                columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: 'checkbox',
-                        orderable: false,
-                        searchable: false
+                        data: 'order_number',
+                        name: 'order_number'
                     },
                     {
-                        data: 'photo',
-                        orderable: false,
-                        searchable: false
+                        data: 'date',
+                        name: 'date'
                     },
                     {
-                        data: 'name',
-                        name: 'name'
+                        data: 'time',
+                        name: 'time'
                     },
                     {
-                        data: 'code',
-                        name: 'code'
+                        data: 'customer_name',
+                        name: 'customer_name'
                     },
                     {
-                        data: 'purchase_price',
-                        name: 'purchase_price'
+                        data: 'phone',
+                        name: 'phone'
                     },
                     {
-                        data: 'unit_price',
-                        name: 'unit_price'
+                        data: 'amount',
+                        name: 'order_amount'
                     },
                     {
-                        data: 'featured',
-                        orderable: false,
-                        searchable: false
+                        data: 'delivery_charge',
+                        name: 'shipping_cost'
                     },
                     {
-                        data: 'arrival',
-                        orderable: false,
-                        searchable: false
+                        data: 'total',
+                        name: 'total'
                     },
                     {
-                        data: 'status',
-                        orderable: false,
-                        searchable: false
+                        data: 'order_status',
+                        name: 'order_status'
+                    },
+                    {
+                        data: 'order_type',
+                        name: 'order_type'
                     },
                     {
                         data: 'action',
@@ -160,6 +164,18 @@
                     }
                 ]
             });
+            // Filter button click
+            $('#filter_btn').on('click', function() {
+                table.ajax.reload();
+            });
+
+            // Reset button click
+            $('#reset_btn').on('click', function() {
+                $('#from_date').val('');
+                $('#to_date').val('');
+                table.ajax.reload();
+            });
+
 
         })(jQuery);
     </script>

@@ -1,0 +1,186 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Http\Controllers\Controller;
+use App\Models\Color;
+use App\Models\Product;
+use App\Models\UserInfo;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+
+class UserInfoController extends Controller
+{
+    public function all(Request $request)
+    {
+        // $views = [
+        //     'pending'         => 'admin.order.pending',
+        //     'confirmed'       => 'admin.order.confirmed',
+        //     'processing'      => 'admin.order.processing',
+        //     'out_for_delivery' => 'admin.order.out_for_delivery',
+        //     'delivered'       => 'admin.order.delivered',
+        //     'returned'        => 'admin.order.returned',
+        //     'failed'          => 'admin.order.failed',
+        //     'canceled'        => 'admin.order.canceled',
+        // ];
+        // $view = $views[$request->status] ?? 'admin.order.index';
+        // return view($view);
+        return view('admin.user_infos.index');
+    }
+    public function datatables(Request $request, $status)
+    {
+        $query = UserInfo::query();
+
+        // 🔹 Date filter
+        if ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+
+        // 🔹 Status filter
+        if ($status !== 'all') {
+            $query->where('order_status', $status);
+        }
+
+        $query->latest('id');
+
+        return DataTables::of($query)
+
+            ->addIndexColumn()
+
+            ->addColumn('action', fn($row) => '
+            <button class="btn btn-sm btn-info viewBtn" data-id="' . $row->id . '">
+                <i class="tio-visible"></i>
+            </button>
+        ')
+
+            ->editColumn(
+                'created_at',
+                fn($row) =>
+                Carbon::parse($row->created_at)->format('d F Y g:i A')
+            )
+
+            // Edit Column
+            ->editColumn('status', function ($row) {
+                if ($row->status == 1) {
+                    return '
+            <span class="badge bg-success status_' . $row->id . '">Seen</span>
+            <div><small>Seen by: <br/>' . $row->seen_by . '</small></div>
+        ';
+                } else {
+                    return '<span class="badge bg-primary status_' . $row->id . '">Unseen</span>';
+                }
+            })
+            ->editColumn('product_details', function ($row) {
+
+                $productDetails = json_decode($row->product_details, true);
+
+                if (empty($productDetails)) {
+                    return 'N/A';
+                }
+
+                $html = '';
+
+                // 🔹 SINGLE PRODUCT
+                if (isset($productDetails['product_id'])) {
+
+                    $product = Product::find($productDetails['product_id']);
+
+                    $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                    if (!empty($productDetails['color'])) {
+                        $colorName = Color::where('code', $productDetails['color'])->value('name');
+                        $html .= '<strong>Color:</strong> ' . ($colorName ?? 'N/A') . '<br>';
+                    }
+                }
+
+                // 🔹 MULTIPLE PRODUCTS
+                elseif (isset($productDetails[0]) && is_array($productDetails[0])) {
+
+                    foreach ($productDetails as $item) {
+
+                        $product = Product::find($item['id'] ?? null);
+
+                        $html .= '<div class="mb-1">';
+                        $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                        if (!empty($item['color'])) {
+                            $colorName = Color::where('code', $item['color'])->value('name');
+                            $html .= '<strong>Color:</strong> ' . ($colorName ?? 'N/A') . '<br>';
+                        }
+
+                        $html .= '</div>';
+                    }
+                }
+
+                return $html;
+            })
+
+            ->editColumn('order_process', function ($row) {
+                return match ($row->order_process) {
+                    'pending'   => '<span class="badge bg-danger">Pending</span>',
+                    'completed' => '<span class="badge bg-success">Confirmed</span>',
+                    default     => '<span class="badge bg-secondary">' . ucfirst($row->order_process) . '</span>',
+                };
+            })
+
+            ->editColumn('order_status', function ($row) {
+
+                $statuses = [
+                    'pending'   => 'Pending',
+                    'confirmed' => 'Confirmed',
+                    'canceled'  => 'Canceled',
+                ];
+
+                $html = '<select
+        class="form-select form-select-sm order-status-select"
+        data-id="' . $row->id . '"
+        data-current="' . $row->order_status . '">';
+
+                foreach ($statuses as $key => $label) {
+                    $selected = $row->order_status === $key ? 'selected' : '';
+                    $html .= "<option value='{$key}' {$selected}>{$label}</option>";
+                }
+
+                return $html . '</select>';
+            })
+
+
+            ->editColumn(
+                'order_note',
+                fn($row) =>
+                $row->order_note ?? 'N/A'
+            )
+
+            ->rawColumns([
+                'product_details',
+                'status',
+                'order_process',
+                'order_status',
+                'action'
+            ])
+            ->toJson();
+    }
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'id'     => 'required|exists:user_infos,id',
+            'status' => 'required|string',
+            'note'   => 'required|string'
+        ]);
+
+        $order = UserInfo::findOrFail($request->id);
+
+        $order->order_status = $request->status;
+        $order->order_note   = $request->note;
+        $order->save();
+
+        return response()->json([
+            'message' => 'Order status updated successfully'
+        ]);
+    }
+}

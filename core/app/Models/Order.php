@@ -2,25 +2,25 @@
 
 namespace App\Models;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $casts = [
-        'order_amount' => 'float',
-        'discount_amount' => 'float',
-        'customer_id' => 'integer',
-        'shipping_address' => 'integer',
-        'shipping_cost' => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'billing_address' => 'integer',
-        'extra_discount' => 'float',
-        'delivery_man_id' => 'integer',
-        'shipping_method_id' => 'integer',
-        'seller_id' => 'integer'
-    ];
+    // protected $casts = [
+    //     'order_amount' => 'float',
+    //     'discount_amount' => 'float',
+    //     'customer_id' => 'integer',
+    //     'shipping_address' => 'integer',
+    //     'shipping_cost' => 'float',
+    //     'created_at' => 'datetime',
+    //     'updated_at' => 'datetime',
+    //     'billing_address' => 'integer',
+    //     'extra_discount' => 'float',
+    //     'delivery_man_id' => 'integer',
+    //     'shipping_method_id' => 'integer',
+    //     'seller_id' => 'integer'
+    // ];
     protected $guarded = ['id'];
 
     public function details()

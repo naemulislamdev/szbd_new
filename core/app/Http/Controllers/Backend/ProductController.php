@@ -25,7 +25,7 @@ class ProductController extends Controller
         }
 
         return DataTables::eloquent($query)
-
+            ->addIndexColumn() // SL
             ->addColumn('checkbox', function ($data) {
                 return '<input type="checkbox" class="row-checkbox" value="' . $data->id . '">';
             })
@@ -66,8 +66,10 @@ class ProductController extends Controller
 
             ->addColumn('action', function ($data) {
                 return '
-            <a href="' . route('admin.product.edit', $data->id) . '" class="btn btn-sm btn-primary">Edit</a>
-            <a id="delete" href="' . route('admin.product.delete', $data->id) . '" class="btn btn-sm btn-danger">Delete</a>';
+            <a href="' . route('admin.product.edit', $data->id) . '" class="btn btn-sm btn-primary"><i class="las la-pen text-secondary fs-18"></i></a>
+            <a href="' . route('admin.product.show', $data->id) . '" class="btn btn-sm btn-danger">View</a>
+            <a id="delete" href="' . route('admin.product.delete', $data->id) . '" class="btn btn-sm btn-danger"><i class="las la-trash-alt text-secondary fs-18"></i></a>
+            ';
             })
 
             ->rawColumns(['checkbox', 'photo', 'name', 'featured', 'arrival', 'status', 'action'])

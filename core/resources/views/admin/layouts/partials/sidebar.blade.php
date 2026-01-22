@@ -21,23 +21,47 @@
             <div class="collapse " id="sidebarEcommerce">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="ecommerce-products.html">Products</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}">All Orders</a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a class="nav-link" href="ecommerce-customers.html">Customers</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=pending">Pending
+                            <span class="badge bg-warning ms-2">{{ $orderCounts->pending ?? 0 }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=confirmed">Confirmed
+                            <span class="badge bg-primary ms-2">{{ $orderCounts->confirmed ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a class="nav-link" href="ecommerce-customer-details.html">Customer
-                            Details</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=processing">Processing
+                            <span class="badge bg-info ms-2">{{ $orderCounts->processing ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a class="nav-link" href="ecommerce-orders.html">Orders</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=out_for_delivery">Out for delivery
+                            <span class="badge bg-primary ms-2">{{ $orderCounts->out_for_delivery ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a class="nav-link" href="ecommerce-order-details.html">Order Details</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=delivered">Delivery
+                            <span class="badge bg-success ms-2">{{ $orderCounts->delivered ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a class="nav-link" href="ecommerce-refunds.html">Refunds</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=returned">Returned
+                            <span class="badge bg-secondary ms-2">{{ $orderCounts->returned ?? 0 }}</span>
+                        </a>
+                    </li><!--end nav-item-->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=failed">Failed
+                            <span class="badge bg-dark ms-2">{{ $orderCounts->failed ?? 0 }}</span>
+                        </a>
+                    </li><!--end nav-item-->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=canceled">Canceled
+                            <span class="badge bg-danger ms-2">{{ $orderCounts->canceled ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                 </ul><!--end nav-->
             </div>
@@ -56,6 +80,29 @@
                     </li><!--end nav-item-->
                     <li class="nav-item">
                         <a href="{{ route('admin.product.index')}}" class="nav-link ">All Products</a>
+                    </li><!--end nav-item-->
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#sidebarAnalytics" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                aria-controls="sidebarAnalytics">
+                <i class="iconoir-reports menu-icon"></i>
+                <span>User Info</span>
+            </a>
+            <div class="collapse " id="sidebarAnalytics">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.userinfo.all')}}" class="nav-link ">All User Info</a>
+                    </li><!--end nav-item-->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Pending</a>
+                    </li><!--end nav-item-->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Confirmed</a>
+                    </li><!--end nav-item-->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Canceled</a>
                     </li><!--end nav-item-->
                 </ul><!--end nav-->
             </div>
