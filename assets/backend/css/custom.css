@@ -1,0 +1,24 @@
+* .card {
+  box-shadow:
+    rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice {
+  background-color: #5955c6 !important;
+  color: #fff !important;
+  border: 1px solid #5955c6 !important;
+}
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice__remove {
+  color: #fff;
+  font-size: 16px;
+}
+
+* img {
+  max-width: 100%;
+  height: auto;
+}

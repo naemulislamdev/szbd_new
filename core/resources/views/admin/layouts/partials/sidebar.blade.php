@@ -12,7 +12,7 @@
                 <span class="badge text-bg-warning ms-auto">08</span>
             </a>
         </li><!--end nav-item-->
-           <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="#sidebarEcommerce" data-bs-toggle="collapse" role="button" aria-expanded="false"
                 aria-controls="sidebarEcommerce">
                 <i class="iconoir-cart-alt menu-icon"></i>
@@ -76,10 +76,10 @@
             <div class="collapse " id="sidebarAnalytics">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="analytics-customers.html" class="nav-link ">Add New Product</a>
+                        <a href="{{ route('admin.product.create') }}" class="nav-link ">Add New Product</a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">All Products</a>
+                        <a href="{{ route('admin.product.index') }}" class="nav-link ">All Products</a>
                     </li><!--end nav-item-->
                 </ul><!--end nav-->
             </div>

@@ -50,9 +50,9 @@
                                     </div><!--end col-->
 
                                     <div class="col-auto">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addBoard"><i class="fa-solid fa-plus me-1"></i> Add
-                                            Product</button>
+                                        <a href="{{ route('admin.product.create') }}" class="btn btn-primary"><i
+                                                class="fa-solid fa-plus me-1"></i> Add
+                                            Product</a>
                                     </div><!--end col-->
                                 </form>
                             </div><!--end col-->
