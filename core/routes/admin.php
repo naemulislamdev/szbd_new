@@ -15,13 +15,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::post('login/store', 'submit')->name('login.store');
         Route::get('logout', 'logout')->name('logout');
     });
-    Route::middleware('admin')->group( function () {
+    Route::middleware('admin')->group(function () {
         Route::controller(DashboardController::class)->prefix('/dashboard')->as('dashboard.')->group(function () {
             Route::get('/', 'dashboard')->name('index');
             Route::post('order-stats', 'order_stats')->name('order-stats');
             Route::post('business-overview', 'business_overview')->name('business-overview');
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
-
         });
 
         Route::controller(ProductController::class)->prefix('/product')->as('product.')->group(function () {
@@ -36,7 +35,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('product/status-update',  'statusUpdate')->name('status');
             Route::post('product/featured-update',  'updateFeatured')->name('featured.status');
             Route::post('product/arrival-update',  'updateArrival')->name('arrival.status');
-
+            Route::post('sku-combination', 'sku_combination')->name('sku-combination');
             Route::get('remove-image', 'remove_image')->name('remove-image');
             Route::post('status-update', 'status_update')->name('status-update');
             Route::get('stock-limit-list/{type}', 'stock_limit_list')->name('stock-limit-list');

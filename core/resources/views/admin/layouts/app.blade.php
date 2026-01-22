@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/backend/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/backend/img/favicon.ico') }}">
     <!-- App css -->
     @include('admin.layouts.partials.head_css')
     @stack('styles')
@@ -162,5 +162,9 @@
     @stack('scripts')
 </body>
 <!--end body-->
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
 
 </html>

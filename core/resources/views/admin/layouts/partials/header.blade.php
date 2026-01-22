@@ -8,7 +8,7 @@
                     </button>
                 </li>
                 <li class="mx-2 welcome-text">
-                    <h5 class="mb-0 fw-semibold text-truncate">Good Morning, James!</h5>
+                    <h5 class="mb-0 fw-semibold text-truncate">Good Morning, Naim! </h5>
                     <!-- <h6 class="mb-0 fw-normal text-muted text-truncate fs-14">Here's your overview this week.</h6> -->
                 </li>
             </ul>
