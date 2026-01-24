@@ -21,7 +21,9 @@
             <div class="collapse " id="sidebarEcommerce">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.order.list') }}">All Orders</a>
+                        <a class="nav-link" href="{{ route('admin.order.list') }}">All Orders
+                            <span class="badge bg-dark ms-2">{{ $orderCounts->total ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.order.list') }}?status=pending">Pending
@@ -93,16 +95,24 @@
             <div class="collapse " id="sidebarAnalytics">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.userinfo.all')}}" class="nav-link ">All User Info</a>
+                        <a href="{{ route('admin.userinfo.all')}}" class="nav-link ">All User Info
+                            <span class="badge bg-dark ms-2">{{ $userInfoCounts->total ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Pending</a>
+                        <a href="{{ route('admin.userinfo.all')}}?status=pending" class="nav-link ">Pending
+                            <span class="badge bg-warning ms-2">{{ $userInfoCounts->pending ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Confirmed</a>
+                        <a href="{{ route('admin.userinfo.all')}}?status=confirmed" class="nav-link ">Confirmed
+                            <span class="badge bg-success ms-2">{{ $userInfoCounts->confirmed ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Canceled</a>
+                        <a href="{{ route('admin.userinfo.all')}}?status=canceled" class="nav-link ">Canceled
+                            <span class="badge bg-danger ms-2">{{ $userInfoCounts->canceled ?? 0 }}</span>
+                        </a>
                     </li><!--end nav-item-->
                 </ul><!--end nav-->
             </div>

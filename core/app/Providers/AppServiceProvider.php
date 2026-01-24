@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\BusinessSetting;
 use App\Models\Order;
+use App\Models\UserInfo;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
@@ -40,6 +41,15 @@ class AppServiceProvider extends ServiceProvider
 
             $language = BusinessSetting::where('type', 'language')->first();
 
+            $userInfoCounts = UserInfo::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN order_status = 'pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN order_status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
+            SUM(CASE WHEN order_status = 'canceled' THEN 1 ELSE 0 END) as canceled
+        ")->first();
+            $todayUserinfos = UserInfo::whereDate('created_at', now())
+                ->where('order_status', 'pending')
+                ->count();
             $orderCounts = Order::selectRaw("
             COUNT(*) as total,
             SUM(CASE WHEN order_status = 'pending' THEN 1 ELSE 0 END) as pending,
@@ -51,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
             SUM(CASE WHEN order_status = 'failed' THEN 1 ELSE 0 END) as failed,
             SUM(CASE WHEN order_status = 'canceled' THEN 1 ELSE 0 END) as canceled
         ")->first();
+
 
             $todayOrders = Order::whereDate('created_at', now())
                 ->where('order_status', 'pending')
@@ -65,6 +76,8 @@ class AppServiceProvider extends ServiceProvider
             'language'    => $language,
             'orderCounts' => $orderCounts,
             'todayOrders' => $todayOrders,
+            'userInfoCounts' => $userInfoCounts,
+            'todayUserinfos' => $todayUserinfos,
         ]);
     }
 }

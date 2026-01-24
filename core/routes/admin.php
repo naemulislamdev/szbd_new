@@ -84,6 +84,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(UserInfoController::class)->prefix('/userinfo')->as('userinfo.')->group(function () {
             Route::get('all', 'all')->name('all');
             Route::get('datatables/{slug}', 'datatables')->name('datatables');
+            Route::post('show', 'show')->name('show');
+            Route::get('delete/{userinfo}', 'delete')->name('delete');
             Route::post('/status-update', 'updateStatus')->name('status.update');
         });
         Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
