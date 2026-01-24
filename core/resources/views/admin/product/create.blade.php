@@ -384,7 +384,7 @@
                     </div>
                     <div class="card h-100 mb-0">
                         <div class="card-header">
-                            <h4>Seo section</h4>
+                            <h4>SEO section</h4>
                         </div>
                         <div class="card-body pt-0">
                             <div class="row">
@@ -427,15 +427,17 @@
                                     </div><!--end card-->
                                 </div>
                             </div>
+
+
+                        </div>
+                    </div>
+                    <div class="card h-100 mb-0 mt-3">
+                        <div class="card-header">
+                            <h4>Product Images & Videos</h4>
+                        </div>
+                        <div class="card-body pt-0">
                             <div class="row">
-                                <div class="col-md-8 mb-4">
-                                    <label class="control-label">ALT Text</label>
-                                    <input type="text" name="alt_text" placeholder="Product ALT Text"
-                                        class="form-control">
-                                    @error('alt_text')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+
                                 <div class="col-md-8 mb-4">
                                     <label class="control-label">Youtube video link</label>
                                     <small class="badge badge-soft-danger"> (
@@ -515,10 +517,7 @@
                                         </div><!--end card-body-->
                                     </div><!--end card-->
                                 </div>
-
-
                             </div>
-
                         </div>
                     </div>
                     <div class="position-sticky card py-3 rounded-t-none rounded-b"
