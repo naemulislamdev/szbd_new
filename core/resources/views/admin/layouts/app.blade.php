@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Dashboard</title>
+    <title>@yield('title') - Dashboard Shopping Zobe BD</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="Shopping Zobe BD" name="description" />
     <meta content="" name="author" />

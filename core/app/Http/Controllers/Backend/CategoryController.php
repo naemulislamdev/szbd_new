@@ -3,83 +3,152 @@
 namespace App\Http\Controllers\Backend;
 
 use App\CPU\Helpers;
+use App\CPU\ImageManager;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Brian2694\Toastr\Facades\Toastr;
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query_param = [];
-        $search = $request['search'];
-        if($request->has('search'))
-        {
-            $key = explode(' ', $request['search']);
-            $categories = Category::orderBy('order_number','asc')->where(function ($q) use ($key) {
-                foreach ($key as $value) {
-                    $q->orWhere('name', 'like', "%{$value}%");
-                }
-            });
-            $query_param = ['search' => $request['search']];
-        }else{
-            $categories = Category::orderBy('order_number','asc');
-        }
+        return view('admin.category.index');
+    }
 
-        $categories = $categories->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
-        return view('admin-views.category.view', compact('categories','search'));
+    public function datatables()
+    {
+        $query = Category::query();
+        $query->latest('id');
+
+        return DataTables::of($query)
+
+            ->addIndexColumn()
+            ->editColumn('icon', function ($row) {
+
+                return '<img src="' . asset($row->icon) . '"
+                 alt="icon"
+                 width="40"
+                 height="40">';
+            })
+
+
+            ->addColumn('action', function ($row) {
+
+                return '
+                <button class="btn btn-primary btn-sm edit"
+                    data-id="' . $row->id . '"
+                    data-name="' . $row->name . '"
+                    data-order="' . $row->order_number . '"
+                    data-icon="' . asset($row->icon) . '"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal">
+                    <i class="la la-edit"></i>
+                </button>
+
+                <button class="btn btn-danger btn-sm delete"
+                        style="cursor: pointer;"
+                        title="Delete"
+                        data-id="' . $row->id . '">
+                    <i class="la la-trash"></i>
+                </button>
+            ';
+            })
+
+            // Edit Column
+            ->editColumn('home_status', function ($row) {
+
+                $checked = $row->home_status == 1 ? 'checked' : '';
+
+                return '
+                        <div class="form-check form-switch">
+                            <input class="form-check-input status"
+                                type="checkbox"
+                                name="colors_active"
+                                data-id="' . $row->id . '"
+                                value="1"
+                                ' . $checked . '
+                                id="flexSwitch' . $row->id . '">
+                            <label class="form-check-label" for="flexSwitch' . $row->id . '"></label>
+                        </div>
+    ';
+            })
+            ->rawColumns([
+                'action',
+                'icon',
+                'home_status',
+            ])
+            ->toJson();
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validinfo =  $request->validate([
             'name' => 'required',
-            'image' => 'required',
-            'order_number'=>'required'
+            'icon' => 'required',
+            'order_number' => 'required'
         ], [
             'name.required' => 'Category name is required!',
-            'image.required' => 'Category image is required!',
+            'icon.required' => 'Category icon is required!',
             'order_number.required' => 'Category order number is required!',
         ]);
 
         $category = new Category;
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
-        $category->icon = ImageManager::upload('category/', 'png', $request->file('image'));
+        // $category->icon = ImageManager::upload('category/', 'png', $request->file('icon'));
         $category->order_number = $request->order_number;
-        $category->save();
 
-        Toastr::success('Category added successfully!');
-        return back();
+        if ($category->save()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Category created successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => $validinfo
+            ], 500);
+        }
     }
-
-    public function edit(Request $request, $id)
+    public function update(Request $request)
     {
-        $category = category::withoutGlobalScopes()->find($id);
-        return view('admin-views.category.category-edit', compact('category'));
-    }
+        $validinfo = $request->validate([
+            'id' => 'required|numeric',
+            'name' => 'required',
+            'order_number' => 'required'
+        ], [
+            'id.required' => 'Invalid category!',
+            'id.numeric' => 'Invalid category!',
+            'name.required' => 'Category name is required!',
+            'order_number.required' => 'Category order number is required!',
+        ]);
 
-    public function update(Request $request, $id)
-    {
-        $category = Category::find($id);
+        $category = Category::find($request->id);
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
-        if ($request->image) {
-            $category->icon = ImageManager::update('category/', $category->icon, 'png', $request->file('image'));
-        }
+        // if ($request->image) {
+        //     $category->icon = ImageManager::update('category/', $category->icon, 'png', $request->file('image'));
+        // }
         $category->order_number = $request->order_number;
-        $category->save();
-
-        Toastr::success('Category updated successfully!');
-        return back();
+        if ($category->save()) {
+            return response()->json([
+                'success' => 1,
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => 0,
+                'message' => $validinfo
+            ], 500);
+        }
     }
 
     public function delete(Request $request)
     {
         $category = Category::find($request->id);
-        if(file_exists(public_path('storage/app/public/category/'.$category->icon))){
+        if (file_exists(public_path('storage/app/public/category/' . $category->icon))) {
             ImageManager::delete('category/' . $category->icon);
         }
         $category->delete();
@@ -87,21 +156,11 @@ class CategoryController extends Controller
         return response()->json();
     }
 
-    public function fetch(Request $request)
-    {
-        if ($request->ajax()) {
-            $data = Category::orderBy('id', 'desc')->get();
-            return response()->json($data);
-        }
-    }
-
     public function status(Request $request)
     {
         $category = Category::find($request->id);
         $category->home_status = $request->home_status;
         $category->save();
-        // Toastr::success('Service status updated!');
-        // return back();
         return response()->json([
             'success' => 1,
         ], 200);

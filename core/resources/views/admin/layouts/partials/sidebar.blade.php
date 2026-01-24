@@ -39,7 +39,8 @@
                         </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=out_for_delivery">Out for delivery
+                        <a class="nav-link" href="{{ route('admin.order.list') }}?status=out_for_delivery">Out for
+                            delivery
                             <span class="badge bg-primary ms-2">{{ $orderCounts->out_for_delivery ?? 0 }}</span>
                         </a>
                     </li><!--end nav-item-->
@@ -68,12 +69,12 @@
         </li><!--end nav-item-->
 
         <li class="nav-item">
-            <a class="nav-link" href="#sidebarAnalytics" data-bs-toggle="collapse" role="button" aria-expanded="false"
-                aria-controls="sidebarAnalytics">
+            <a class="nav-link" href="#productsDropDown" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                aria-controls="productsDropDown">
                 <i class="iconoir-reports menu-icon"></i>
                 <span>Products</span>
             </a>
-            <div class="collapse " id="sidebarAnalytics">
+            <div class="collapse " id="productsDropDown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a href="{{ route('admin.product.create') }}" class="nav-link ">Add New Product</a>
@@ -85,25 +86,63 @@
             </div>
         </li><!--end nav-item-->
         <li class="nav-item">
-            <a class="nav-link" href="#sidebarAnalytics" data-bs-toggle="collapse" role="button" aria-expanded="false"
-                aria-controls="sidebarAnalytics">
-                <i class="iconoir-reports menu-icon"></i>
+            <a class="nav-link" href="#userInfoDropDown" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                aria-controls="userInfoDropDown">
+                <i class="iconoir-community menu-icon"></i>
                 <span>User Info</span>
             </a>
-            <div class="collapse " id="sidebarAnalytics">
+            <div class="collapse " id="userInfoDropDown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.userinfo.all')}}" class="nav-link ">All User Info</a>
+                        <a href="{{ route('admin.userinfo.all') }}" class="nav-link ">All User Info</a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Pending</a>
+                        <a href="{{ route('admin.product.index') }}" class="nav-link ">Pending</a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Confirmed</a>
+                        <a href="{{ route('admin.product.index') }}" class="nav-link ">Confirmed</a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.product.index')}}" class="nav-link ">Canceled</a>
+                        <a href="{{ route('admin.product.index') }}" class="nav-link ">Canceled</a>
                     </li><!--end nav-item-->
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#productsSettingDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="productsSettingDropdown">
+                <i class="las la-cog menu-icon"></i>
+                <span>Product Settings</span>
+            </a>
+            <div class="collapse " id="productsSettingDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.category.view') }}" class="nav-link ">Category</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.sub-category.view') }}" class="nav-link ">Sub Category</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.child-category.view') }}" class="nav-link ">Child Category</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#landingPageDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="landingPageDropdown">
+                <i class="la la-bolt menu-icon"></i>
+                <span>Landing Pages</span>
+            </a>
+            <div class="collapse " id="landingPageDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link ">Single Product</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link ">Multiple Product</a>
+                    </li>
+
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->

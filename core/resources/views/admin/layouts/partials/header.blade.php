@@ -8,7 +8,7 @@
                     </button>
                 </li>
                 <li class="mx-2 welcome-text">
-                    <h5 class="mb-0 fw-semibold text-truncate">Good Morning, Naim! </h5>
+                    <h5 class="mb-0 fw-semibold text-truncate">Welcome Our Dashboard, Naim! </h5>
                     <!-- <h6 class="mb-0 fw-normal text-muted text-truncate fs-14">Here's your overview this week.</h6> -->
                 </li>
             </ul>
@@ -29,7 +29,7 @@
                         <a class="dropdown-item" href="#"><img src="assets/images/flags/us_flag.jpg"
                                 alt="" height="15" class="me-2">English</a>
                         <a class="dropdown-item" href="#"><img src="assets/images/flags/spain_flag.jpg"
-                                alt="" height="15" class="me-2">Spanish</a>
+                                alt="" height="15" class="me-2">Bangla</a>
                         <a class="dropdown-item" href="#"><img src="assets/images/flags/germany_flag.jpg"
                                 alt="" height="15" class="me-2">German</a>
                         <a class="dropdown-item" href="#"><img src="assets/images/flags/french_flag.jpg"

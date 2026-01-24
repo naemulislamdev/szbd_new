@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LandingPagesController;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\DashboardController;
@@ -86,7 +87,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('datatables/{slug}', 'datatables')->name('datatables');
             Route::post('/status-update', 'updateStatus')->name('status.update');
         });
-        Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
+        Route::controller(EmployeeControlle::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
             Route::get('add-new', 'add_new')->name('add-new');
             Route::post('add-new', 'store');
             Route::get('list', 'list')->name('list');
@@ -95,34 +96,57 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('status/{id}/{status}', 'status')->name('status');
         });
 
-        Route::controller(CategoryController::class)->as('category.')->middleware('module:product_management')->group(function () {
+        Route::controller(CategoryController::class)->as('category.')->group(function () {
             Route::get('/category/view', 'index')->name('view');
             Route::get('/category/fetch', 'fetch')->name('fetch');
             Route::post('/category/store', 'store')->name('store');
-            Route::get('/category/edit/{id}', 'edit')->name('edit');
-            Route::post('/category/update/{id}', 'update')->name('update');
+            Route::post('/category/update', 'update')->name('update');
             Route::post('/category/delete', 'delete')->name('delete');
             Route::post('/category/status', 'status')->name('status');
+            Route::get('/category/datatables', 'datatables')->name('datatables');
         });
 
-        Route::controller(SubCategoryController::class)->as('sub-category.')->middleware('module:product_management')->group(function () {
+        Route::controller(SubCategoryController::class)->as('sub-category.')->group(function () {
             Route::get('/sub-category/view', 'index')->name('view');
-            Route::get('/sub-category/fetch', 'fetch')->name('fetch');
             Route::post('/sub-category/store', 'store')->name('store');
-            Route::post('/sub-category/edit', 'edit')->name('edit');
-            Route::post('/sub-category/update/{id}', 'update')->name('update');
+            Route::post('/sub-category/update', 'update')->name('update');
             Route::post('/sub-category/delete', 'delete')->name('delete');
+            Route::get('/sub-category/datatables', 'datatables')->name('datatables');
+            Route::post('/sub-category/status', 'status')->name('status');
         });
 
-        Route::controller(SubSubCategoryController::class)->prefix('/child-category')->as('child-category.')->middleware('module:product_management')->group(function () {
+        Route::controller(SubSubCategoryController::class)->prefix('/child-category')->as('child-category.')->group(function () {
             Route::get('view', 'index')->name('view');
-            Route::get('fetch', 'fetch')->name('fetch');
             Route::post('store', 'store')->name('store');
-            Route::post('edit', 'edit')->name('edit');
-            Route::post('update/{id}', 'update')->name('update');
+            Route::post('update', 'update')->name('update');
             Route::post('delete', 'delete')->name('delete');
             Route::post('get-sub-category', 'getSubCategory')->name('getSubCategory');
             Route::post('get-category-id', 'getCategoryId')->name('getCategoryId');
+            Route::post('/child-category/status', 'status')->name('status');
+            Route::get('/child-category/datatables', 'datatables')->name('datatables');
+        });
+        Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->middleware('module:marketing_section')->group(function () {
+            Route::get('single-product/landing', 'landing_index')->name('single.landing');
+            Route::post('single-product/landing', 'landing_submit');
+            Route::get('single-product/remove-banner', 'remove_image')->name('single.remove-image');
+            Route::post('single-product/status-update', 'status_update')->name('single.status-update');
+            Route::get('single-product/update/{id}', 'edit')->name('single.update');
+            Route::post('single-product/landing_pages_update/{id}', 'update')->name('single.landing_pages_update');
+            Route::get('single-product/add-product/{landing_id}', 'add_product')->name('single.add-product');
+            Route::post('single-product/add-product/{landing_id}', 'add_product_submit');
+            Route::post('single-product/delete-product', 'delete_product')->name('single.delete-product');
+
+            // Route::get('/index', 'index')->name('index');
+            // Route::get('/create', 'create')->name('create');
+            // Route::post('/store', 'store')->name('store');
+            // Route::get('/edit{id}', 'SingleProductEdit')->name('edit');
+            // Route::post('/product-landing-page/update/{id}', 'SingleProductUpdate')->name('single.update');
+            // Route::post('status', 'LandingPageStatus')->name('status');
+            // Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
+            // Route::get('remove/slider', 'removeImage')->name('remove_image');
+            // Route::get('remove/feature-list', 'removeFeatureList')->name('remove_feature_list');
+            // Route::get('remove/landing-page/section', 'removePageSection')->name('remove_page_section');
+            // Route::get('remove/landing-page/{id}', 'removeLandingPage')->name('remove_landing_page');
         });
     });
 });
