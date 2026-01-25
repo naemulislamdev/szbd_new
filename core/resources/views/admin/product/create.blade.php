@@ -22,7 +22,7 @@
         <div class="row">
             <div class="col-12">
                 <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data"
-                    class="position-relative" id="product_form">
+                    class="position-relative product_form" id="szbd_request_form">
                     @csrf
                     <div class="card">
                         <div class="card-body pt-0">
@@ -64,7 +64,6 @@
                                     <label for="name">Category <span class="text-danger">*</span></label>
                                     <select class="form-control form-control-lg" name="category_id" id="category_id">
                                         <option selected disabled>---Select---</option>
-
                                         @foreach ($categories as $c)
                                             <option value="{{ $c['id'] }}"
                                                 {{ old('category_id') == $c['id'] ? 'selected' : '' }}>
@@ -80,18 +79,12 @@
                                     <label for="name">Sub Category</label>
                                     <select class="form-control form-control-lg" name="sub_category_id"
                                         id="sub_category_select">
-                                        <option value="sub-category-1">sub-category 1</option>
-                                        <option value="sub-category-2">sub-category 2</option>
-                                        <option value="sub-category-3">sub-category 3</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="name">Child Category</label>
                                     <select class="form-control form-control-lg" name="child_category_id"
                                         id="child_category_select">
-                                        <option value="child-category-1">child-category 1</option>
-                                        <option value="child-category-2">child-category 2</option>
-                                        <option value="child-category-3">child-category 3</option>
                                     </select>
                                 </div>
                             </div>
@@ -133,10 +126,9 @@
                                     <select class="form-control form-control-lg" name="brand_id">
                                         <option value="{{ null }}" selected disabled>
                                             ---Select---</option>
-                                        <option value="brand-1">Brand 1</option>
-                                        {{-- @foreach ($br as $b)
+                                        @foreach ($brands as $b)
                                                 <option value="{{ $b['id'] }}">{{ $b['name'] }}</option>
-                                            @endforeach --}}
+                                            @endforeach
                                     </select>
                                     @error('brand_id')
                                         <span class="text-danger">{{ $message }}</span>
@@ -180,7 +172,7 @@
                                     </label> --}}
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" value="{{ old('colors_active') }}"
-                                                name="colors_active" type="checkbox" id="flexSwitchCheckDefault">
+                                                name="colors_active" type="checkbox" id="flexSwitchCheckDefault" value="1">
                                             <label class="form-check-label" for="flexSwitchCheckDefault">
                                             </label>
                                         </div>
@@ -193,15 +185,11 @@
 
                                     <select class="form-select form-select-lg" name="colors[]" multiple
                                         id="colors-selector" disabled="true">
-                                        <option value="red">red</option>
-                                        <option value="green">green</option>
-                                        <option value="blue">blue</option>
-
-                                        {{-- @foreach (\App\Model\Color::orderBy('name', 'asc')->get() as $key => $color)
+                                        @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
                                             <option value="{{ $color->code }}">
                                                 {{ $color['name'] }}
                                             </option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 pt-3">
@@ -211,11 +199,11 @@
                                     <select class="form-select form-select-lg" name="choice_attributes[]"
                                         id="choice_attributes" multiple>
                                         <option value="size">Size</option>
-                                        {{-- @foreach (\App\Model\Attribute::orderBy('name', 'asc')->get() as $key => $a)
-                                                <option value="{{ $a['id'] }}">
-                                                    {{ $a['name'] }}
-                                                </option>
-                                            @endforeach --}}
+                                        @foreach (\App\Models\Attribute::orderBy('name', 'asc')->get() as $key => $a)
+                                            <option value="{{ $a['id'] }}">
+                                                {{ $a['name'] }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -296,6 +284,7 @@
 
                                     <select style="width: 100%" class="form-control form-control-lg"
                                         name="discount_type">
+                                        <option selected disabled>Select</option>
                                         <option value="flat">Flat</option>
                                         <option value="percent">Percent</option>
                                     </select>
@@ -456,7 +445,7 @@
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input form-check-input" type="checkbox"
-                                            id="flexSwitchCheckDefault">
+                                            id="flexSwitchCheckDefault" name="video_shopping" value="1">
                                         <label class="form-check-label" for="flexSwitchCheckDefault">
                                         </label>
                                     </div>
@@ -523,7 +512,7 @@
                     <div class="position-sticky card py-3 rounded-t-none rounded-b"
                         style="left: 10%; bottom: 0; width: 100%;">
                         <div class="d-flex justify-content-center">
-                            <button class="btn btn-lg btn-success w-50 ">Submit
+                            <button class="btn btn-lg btn-success w-50 " type="submit">Submit
                                 Product</button>
                         </div>
                     </div>
@@ -679,10 +668,8 @@
             });
         });
         $('#colors-selector').on('change', function() {
-            console.log("hi");
-
             update_sku();
-            // update_sku_color();
+            update_sku_color();
         });
 
         $('input[name="unit_price"]').on('keyup', function() {
@@ -699,7 +686,7 @@
             $.ajax({
                 type: "POST",
                 url: '{{ route('admin.product.sku-combination') }}',
-                data: $('#product_form').serialize(),
+                data: $('.product_form').serialize(),
                 success: function(data) {
                     $('#sku_combination').html(data.view);
                     if (data.length > 1) {
@@ -710,5 +697,76 @@
                 }
             });
         }
+
+        function update_sku_color() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '{{ route('admin.product.color-combination') }}',
+                data: $('.product_form').serialize(),
+                success: function(data) {
+                    console.log(data);
+
+                    $('#color_combination').html(data.view);
+
+                }
+            });
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            // When Category changes
+            $('#category_id').on('change', function() {
+                let category_id = $(this).val();
+
+                $('#sub_category_select').html('<option selected disabled>Loading...</option>');
+                $('#child_category_select').html('<option selected disabled>---Select---</option>');
+
+                if (category_id) {
+                    $.ajax({
+                        //user route
+                        url: "{{ route('admin.product.get-subcategories', ':id') }}/".replace(':id', category_id),
+                        type: "GET",
+                        success: function(data) {
+                            let html = '<option selected disabled>---Select---</option>';
+                            $.each(data, function(key, value) {
+                                html +=
+                                    `<option value="${value.id}">${value.name}</option>`;
+                            });
+                            $('#sub_category_select').html(html);
+                        }
+                    });
+                }
+            });
+
+            // When Sub Category changes
+            $('#sub_category_select').on('change', function() {
+                let sub_category_id = $(this).val();
+
+                $('#child_category_select').html('<option selected disabled>Loading...</option>');
+
+                if (sub_category_id) {
+                    $.ajax({
+                        url: "{{ route('admin.product.get-child-categories', ':id') }}/" .replace(':id', sub_category_id) ,
+                        type: "GET",
+                        success: function(data) {
+                            let html = '<option selected disabled>---Select---</option>';
+                            $.each(data, function(key, value) {
+                                html +=
+                                    `<option value="${value.id}">${value.name}</option>`;
+                            });
+                            $('#child_category_select').html(html);
+                        }
+                    });
+                }
+            });
+
+        });
     </script>
 @endpush

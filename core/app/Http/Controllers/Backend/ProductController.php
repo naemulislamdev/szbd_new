@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Models\Branch;
+use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\ChildCategory;
 use App\Models\Product;
 use App\Models\SubCategory;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,16 +19,15 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        // $branches = Branch::all();
-        // $brands = Brand::all();
-        return view('admin.product.create', compact('categories'));
+        $brands = Brand::all();
+        return view('admin.product.create', compact('categories', 'brands'));
     }
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        dd($request->all());
-        $request->validate([
-            'name' => 'required',
-            'description' => 'required'
+        $product = ProductService::store($request);
+        return response()->json([
+            'success' => true,
+            'message' => 'Product added successfully'
         ]);
     }
     public function index()
@@ -91,6 +92,23 @@ class ProductController extends Controller
             ->rawColumns(['checkbox', 'photo', 'name', 'featured', 'arrival', 'status', 'action'])
             ->make(true);
     }
+    public function color_combination(Request $request)
+    {
+        $options = [];
+        if ($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0) {
+            $colors_active = 1;
+            array_push($options, $request->colors);
+        } else {
+            $colors_active = 0;
+        }
+
+        $product_name = $request->name;
+
+        $combinations = Helpers::combinations($options);
+        return response()->json([
+            'view' => view('admin.product.partials._color_combinations', compact('combinations', 'colors_active', 'product_name'))->render(),
+        ]);
+    }
     public function sku_combination(Request $request)
     {
         $options = [];
@@ -112,9 +130,9 @@ class ProductController extends Controller
             }
         }
 
-        // $combinations = Helpers::combinations($options);
+        $combinations = Helpers::combinations($options);
         return response()->json([
-            'view' => view('admin-views.product.partials._sku_combinations', compact('combinations', 'unit_price', 'colors_active', 'product_name'))->render(),
+            'view' => view('admin.product.partials._sku_combinations', compact('combinations', 'unit_price', 'colors_active', 'product_name'))->render(),
         ]);
     }
     public function delete(Product $product)

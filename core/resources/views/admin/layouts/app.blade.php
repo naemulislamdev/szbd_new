@@ -128,6 +128,64 @@
     <!-- Javascript  -->
     <!-- vendor js -->
     @include('admin.layouts.partials.foot_js')
+    <script>
+        $(document).on('submit', '#szbd_request_form', function(e) {
+            e.preventDefault();
+
+            let form = this;
+            let formData = new FormData(form);
+            let url = $(form).attr('action');
+            let method = $(form).attr('method');
+
+            // Remove old errors
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log(response);
+                    if (response.success === true) {
+                        toastr.success(response.message);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 800);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let firstInput = null;
+
+                        $.each(errors, function(key, value) {
+                            let input = $('[name="' + key + '"]');
+
+                            input.addClass('is-invalid');
+                            input.after('<div class="invalid-feedback">' + value[0] + '</div>');
+
+                            if (!firstInput) {
+                                firstInput = input;
+                            }
+                        });
+
+                        // Smooth scroll & focus
+                        if (firstInput) {
+                            $('html, body').animate({
+                                scrollTop: firstInput.offset().top - 120
+                            }, 500);
+
+                            firstInput.focus();
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
     @if (Session::has('success'))
         <script>
             toastr.success("{{ Session::get('success') }}")
