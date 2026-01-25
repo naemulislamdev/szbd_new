@@ -14,19 +14,13 @@ class UserInfoController extends Controller
 {
     public function all(Request $request)
     {
-        // $views = [
-        //     'pending'         => 'admin.order.pending',
-        //     'confirmed'       => 'admin.order.confirmed',
-        //     'processing'      => 'admin.order.processing',
-        //     'out_for_delivery' => 'admin.order.out_for_delivery',
-        //     'delivered'       => 'admin.order.delivered',
-        //     'returned'        => 'admin.order.returned',
-        //     'failed'          => 'admin.order.failed',
-        //     'canceled'        => 'admin.order.canceled',
-        // ];
-        // $view = $views[$request->status] ?? 'admin.order.index';
-        // return view($view);
-        return view('admin.user_infos.index');
+        $views = [
+            'pending'         => 'admin.user_infos.pending',
+            'confirmed'       => 'admin.user_infos.confirmed',
+            'canceled'        => 'admin.user_infos.canceled',
+        ];
+        $view = $views[$request->status] ?? 'admin.user_infos.index';
+        return view($view);
     }
     public function datatables(Request $request, $status)
     {
@@ -54,8 +48,12 @@ class UserInfoController extends Controller
 
             ->addColumn('action', fn($row) => '
             <button class="btn btn-sm btn-info viewBtn" data-id="' . $row->id . '">
-                <i class="tio-visible"></i>
+                <i class="las la-eye"></i>
             </button>
+            <a id="delete" href="' . route('admin.userinfo.delete', $row->id) . '"
+                   class="btn btn-sm btn-danger">
+                    <i class="las la-trash-alt"></i>
+                </a>
         ')
 
             ->editColumn(
@@ -181,6 +179,29 @@ class UserInfoController extends Controller
 
         return response()->json([
             'message' => 'Order status updated successfully'
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+        $item = UserInfo::findOrFail($request->id);
+
+        // status update
+        if ($item->status === 0) {
+            $item->update([
+                'status'  => 1,
+                'seen_by' => auth('admin')->user()->name,
+            ]);
+        }
+
+
+        // return view content for modal
+        $html = view('admin.user_infos.show', compact('item'))->render();
+
+        return response()->json([
+            'status' => $item->status,
+            'html' => $html,
+            'seen_by' => $item->seen_by,
         ]);
     }
 }

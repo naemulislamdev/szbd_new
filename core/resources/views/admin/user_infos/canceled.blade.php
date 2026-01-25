@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'User Infos')
+@section('title', 'Canceled User Infos')
 
 @push('styles')
 @endpush
@@ -8,12 +8,14 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">User Infos</h4>
+                    <h4 class="page-title">Canceled User Infos <span class="badge bg-danger ms-2">Total: {{ $userInfoCounts->canceled ?? 0 }}</span></h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
+                            <li class="breadcrumb-item"><a href="#">Dashboard</a>
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">All user info</li>
+                            <li class="breadcrumb-item"><a href="#">user info</a>
+                            </li><!--end nav-item-->
+                            <li class="breadcrumb-item active">Canceled user info</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -97,7 +99,7 @@
                 scrollX: true,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.userinfo.datatables', 'all') }}",
+                    url: "{{ route('admin.userinfo.datatables', 'canceled') }}",
                     data: function(d) {
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
@@ -221,45 +223,6 @@
                         Swal.fire('Error!', 'Something went wrong', 'error');
                         select.val(oldValue);
                     });
-            });
-        });
-    </script>
-    <script>
-        $(document).on('click', '.viewBtn', function() {
-            let id = $(this).data('id');
-            console.log(id);
-
-            $.ajax({
-                url: "{{ route('admin.userinfo.show') }}", // POST route
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    id: id
-                },
-                success: function(response) {
-                    // Table–এ status update
-                    if (response.status == 1 && response.seen_by != "") {
-                        $(`.status_${id}`).replaceWith(
-                            `
-                            <span class="badge badge-success status_${id}">Seen</span>
-                            <div><small>Seen by: <br/> ${response.seen_by}</small></div>
-                            `
-                        );
-
-                    }
-
-                    Swal.fire({
-                        title: 'User Info',
-                        html: response.html,
-                        width: '800px',
-                        showCloseButton: true,
-                        showConfirmButton: false,
-                    });
-
-                },
-                error: function() {
-                    toastr.error('Something went wrong!');
-                }
             });
         });
     </script>
