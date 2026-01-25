@@ -19,6 +19,3 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
-
-php_value max_input_vars 2000
-php_value max_multipart_body_parts 2048
