@@ -11,11 +11,10 @@
                     <h4 class="page-title">All Child-Categories</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="#">Dashboard</a>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item"><a href="#">Child-category</a>
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">All Child-category</li>
+                            <li class="breadcrumb-item active">All Child-categories</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -24,7 +23,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header pb-0">
                         <div class="row align-items-center">
                             <div class="col">
                                 <h4 class="card-title">All child categories</h4>
@@ -176,7 +175,7 @@
                             Close
                         </button>
                         <button type="submit" class="btn btn-primary">
-                            Save changes
+                            Save
                         </button>
                     </div>
                 </form>

@@ -9,7 +9,7 @@
                     <h4 class="page-title">Add New Product</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="#">Dashboard</a>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
                             <li class="breadcrumb-item"><a href="{{ route('admin.product.index') }}">Products</a>
                             </li><!--end nav-item-->

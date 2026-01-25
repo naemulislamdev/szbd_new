@@ -1,85 +1,154 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+
+namespace App\Http\Controllers\Backend;
 
 use App\CPU\ImageManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\LandingPages;
+use App\Models\LandingPages;
+use App\Models\landing_pages_product;
 use App\Model\Product;
-use App\ProductLandingPage;
-use App\ProductLandingPageSection;
+use App\Models\ProductLandingPage;
+// use App\ProductLandingPage;
+use App\Models\ProductLandingPageSection;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
+use Yajra\DataTables\Facades\DataTables;
 
 
 class LandingPagesController extends Controller
 {
 
-
-    public function landing_index(Request $request)
+    public function multiIndex()
     {
-        $landing_page = DB::table('landing_pages')->latest()->get();
-        return view('admin-views.landingpages.landing-index', compact('landing_page'));
+        return view('admin.landingPages.multiple_product');
     }
 
-
-
-    public function landing_submit(Request $request)
+    public function multipleProductdatatables()
     {
-        $this->validate($request, [
+        $query = DB::table('landing_pages')->latest('id');
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+
+            ->addColumn('action', function ($row) {
+                return '
+                <button class="btn btn-primary btn-sm edit"
+                    data-id="' . $row->id . '"
+                    data-title="' . $row->title . '"
+                    data-product_id="' . $row->product_id . '"
+                    data-images="' . $row->main_banner . '"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal">
+                    <i class="la la-edit"></i>
+                </button>
+
+                <button class="btn btn-danger btn-sm delete"
+                    style="cursor: pointer;"
+                    title="Delete"
+                    data-id="' . $row->id . '">
+                    <i class="la la-trash"></i>
+                </button>
+            ';
+            })
+            ->addColumn('product_add', function ($row) {
+                return '
+                <button class="btn btn-primary btn-sm "
+                    style="cursor: pointer;"
+                    title="Add Products"
+                    data-id="' . $row->id . '">
+                      <i class="la la-plus-circle"></i> Add Products
+                </button>
+            ';
+            })
+            ->editColumn('status', function ($row) {
+                $checked = $row->status == 1 ? 'checked' : '';
+
+                return '
+                <div class="form-check form-switch">
+                    <input class="form-check-input status"
+                        type="checkbox"
+                        data-id="' . $row->id . '"
+                        value="1"
+                        ' . $checked . '
+                        id="flexSwitch' . $row->id . '">
+                </div>
+            ';
+            })
+            ->editColumn('with_slide', function ($row) {
+                $checked = $row->with_slide == 1 ? 'checked' : '';
+
+                return '
+                <div class="form-check form-switch">
+                    <input class="form-check-input with_slide"
+                        type="checkbox"
+                        data-id="' . $row->id . '"
+                        value="1"
+                        ' . $checked . '
+                        >
+                </div>
+            ';
+            })
+            ->editColumn('slug', function ($row) {
+                if ($row->status == 1) {
+                    $url = route('collections', $row->slug);
+
+                    return "<a href='{$url}' target='_blank'>{$row->slug}</a>";
+                }
+
+                // status = 0 → disabled
+                return "<span class='text-muted'>Link is Deactived</span>";
+            })
+
+            ->rawColumns(['action', 'product_add', 'status', 'with_slide', 'slug'])
+            ->toJson();
+    }
+    public function removeMultiplePage(Request $request)
+    {
+        $page = LandingPages::find($request->id);
+        $page->delete();
+        return response()->json();
+    }
+
+    public function multipleStore(Request $request)
+    {
+        $validinfo = $request->validate([
             'title' => 'required|string',
-            'images' => 'nullable',
-            'mid_banner' => 'nullable',
-            'left_side_banner' => 'nullable',
-            'right_side_banner' => 'nullable',
+            'product_id' => 'required',
         ]);
 
-        $images = null;
-        if ($request->file('images')) {
-            foreach ($request->file('images') as $img) {
-                $main_banner_images[] = Helpers::uploadWithCompress('main-banner/', 300, $img);
-            }
-            $images = json_encode($main_banner_images);
+        $landing_page = new LandingPages();
+        $landing_page->title = $request->title;
+        $landing_page->product_id = $request->product_id;
+        $landing_page->slug = Str::slug($request->title);
+
+        if ($landing_page->save()) {
+            return response()->json([
+                'success' => 1,
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => 0,
+                'message' => $validinfo
+            ], 500);
         }
-
-        $flash_deal_id = DB::table('landing_pages')->insertGetId([
-            'title' => $request['title'],
-            'product_id' => $request['product_id'],
-            'main_banner' => $images,
-            'mid_banner' => Helpers::uploadWithCompress('deal/', 300, $request->file('mid_banner')),
-            // 'left_side_banner' =>  Helpers::uploadWithCompress('deal/', 300, $request->file('left_side_banner')),
-            // 'right_side_banner' => Helpers::uploadWithCompress('deal/', 300, $request->file('right_side_banner')),
-            // 'meta_title' => $request['title'],
-            // 'meta_description' => $request['meta_description'],
-            'slug' => Str::slug($request['title']),
-            'product_id' => $request->product_id,
-            'status' => 0,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        Toastr::success('Land-Pages added successfully!');
-        return back();
     }
-
-
 
     public function status_update(Request $request)
     {
-        DB::table('landing_pages')
-            ->where('id', $request->id)
-            ->update(['status' => 1]);
+        $update_info = LandingPages::where('id', $request->id)
+            ->update([
+                'status' => $request->status,
+            ]);
 
-        DB::table('landing_pages')
-            ->where('id', '!=', $request->id)
-            ->update(['status' => 0]);
         return response()->json([
             'success' => 1,
-        ], 200);
+            'update_status' => $update_info,
+
+        ]);
     }
 
     public function edit($landing_id)
@@ -104,41 +173,27 @@ class LandingPagesController extends Controller
         return back();
     }
 
-    public function update(Request $request, $deal_id)
+    public function update(Request $request)
     {
-        $deal = DB::table('landing_pages')->find($deal_id);
 
-        $images = json_decode($deal->main_banner, true) ?? []; // Decode existing images or start with an empty array
-
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $img) {
-                $uploaded_image = Helpers::uploadWithCompress('deal/main-banner/', 300, $img);
-                $images[] = $uploaded_image;
-            }
-        }
-        $finalImage = json_encode($images);
-
-        if ($request->mid_banner) {
-            $deal->mid_banner = Helpers::updateWithCompress('deal/', $deal->mid_banner, $request->file('mid_banner'));
-        }
-        // if ($request->left_side_banner) {
-        //     $deal->left_side_banner = Helpers::updateWithCompress('deal/', $deal->left_side_banner, $request->file('left_side_banner'));
-        // }
-        // if ($request->right_side_banner) {
-        //     $deal->right_side_banner = Helpers::updateWithCompress('deal/', $deal->right_side_banner, $request->file('right_side_banner'));
-        // }
-
-        DB::table('landing_pages')->where(['id' => $deal_id])->update([
-            'title' => $request['title'],
-            'main_banner' => $finalImage,
-            'mid_banner' => $deal->mid_banner,
-            'slug' => Str::slug($request['title']),
-            'product_id' => $request->product_id,
-            'status' => $deal->status,
-            'updated_at' => now(),
+        $validinfo = $request->validate([
+            'title' => "required"
         ]);
-        Toastr::success('Landing pages  updated successfully!');
-        return back();
+        $page = LandingPages::find($request->id);
+        $page->title = $request->title;
+        $page->slug = Str::slug($request->title);
+        $page->product_id = $request->product_id;
+
+        if ($page->save()) {
+            return response()->json([
+                'success' => 1,
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => 0,
+                'message' => $validinfo
+            ], 500);
+        }
     }
 
     public function add_product($deal_id)
@@ -185,15 +240,99 @@ class LandingPagesController extends Controller
         return response()->json();
     }
 
-    public function index()
-    {
-        $productLandingpage =  ProductLandingPage::latest('created_at')->get();
 
-        return view('admin-views.landingpages.sign_product.index', compact('productLandingpage'));
+    /* ============================================================================
+                Start Single-product landing page methods
+===============================================================================
+*/
+
+    public function singleIndex()
+    {
+        return view('admin.landingPages.single_page.single_product');
+    }
+    public function singleProductdatatables()
+    {
+        $query = ProductLandingPage::latest('id');
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+
+            ->addColumn('action', function ($row) {
+                return '
+                <button class="btn btn-primary btn-sm edit"
+                    data-id="' . $row->id . '"
+                    data-title="' . $row->title . '"
+                    data-product_id="' . $row->product_id . '"
+
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal">
+                    <i class="la la-edit"></i>
+                </button>
+
+                <button class="btn btn-danger btn-sm delete"
+                    style="cursor: pointer;"
+                    title="Delete"
+                    data-id="' . $row->id . '">
+                    <i class="la la-trash"></i>
+                </button>
+            ';
+            })
+
+            ->editColumn('status', function ($row) {
+                $checked = $row->status == 1 ? 'checked' : '';
+
+                return '
+                <div class="form-check form-switch">
+                    <input class="form-check-input status"
+                        type="checkbox"
+                        data-id="' . $row->id . '"
+                        value="1"
+                        ' . $checked . '
+                        id="flexSwitch' . $row->id . '">
+                </div>
+            ';
+            })
+            ->editColumn('product_id', function ($row) {
+                return Str::limit($row->product->name, 50);
+            })
+
+            ->editColumn('slug', function ($row) {
+                if ($row->status == 1) {
+                    $url = route('collections', $row->slug);
+
+                    return "<a href='{$url}' target='_blank'>{$row->slug}</a>";
+                }
+
+                // status = 0 → disabled
+                return "<span class='text-muted'>Link is Deactived</span>";
+            })
+
+            ->rawColumns(['action',  'status', 'product_id', 'slug'])
+            ->toJson();
+    }
+    public function LandingPageStatus(Request $request)
+    {
+        $update_info = ProductLandingPage::where('id', $request->id)
+            ->update([
+                'status' => $request->status,
+            ]);
+
+        return response()->json([
+            'success' => 1,
+            'update_status' => $update_info,
+
+        ]);
+    }
+
+    public function removeSinglePage(Request $request)
+    {
+        $page = ProductLandingPage::find($request->id);
+        $page->delete();
+        return response()->json();
     }
     public function create()
     {
-        return view('admin-views.landingpages.sign_product.create');
+        return view('admin.landingPages.single_page.create_single');
     }
     public function store(Request $request)
     {
@@ -256,17 +395,11 @@ class LandingPagesController extends Controller
         Toastr::success('Landing pages  created is successfully!');
         return back();
     }
-    public function LandingPageStatus(Request $request)
-    {
-        ProductLandingPage::where(['id' => $request['id']])->update([
-            'status' => $request['status'],
-        ]);
-        return response()->json([
-            'success' => 1,
-        ], 200);
-    }
+
+
     public function LandingPageWithSlide(Request $request)
     {
+
         DB::table("landing_pages")->where('id', $request['id'])->update([
             'with_slide' => $request['with_slide'],
         ]);
@@ -302,8 +435,6 @@ class LandingPagesController extends Controller
         Toastr::success('Slider image removed successfully!');
         return back();
     }
-
-
     public function removeFeatureList(Request $request)
     {
         $landingPage = App\Http\Controllers\Admin\ProductLandingPage::find($request['id']);

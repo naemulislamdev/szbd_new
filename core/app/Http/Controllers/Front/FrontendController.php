@@ -11,4 +11,8 @@ class FrontendController extends Controller
     {
         return view('web.home');
     }
+    public function multiCollection()
+    {
+        //
+    }
 }

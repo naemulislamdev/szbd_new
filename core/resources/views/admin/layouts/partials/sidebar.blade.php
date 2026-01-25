@@ -147,10 +147,11 @@
             <div class="collapse " id="landingPageDropdown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="#" class="nav-link ">Single Product</a>
+                        <a href="{{ route('admin.landingpages.single.index') }}" class="nav-link ">Single Product</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link ">Multiple Product</a>
+                        <a href="{{ route('admin.landingpages.multiple.index') }}" class="nav-link ">Multiple
+                            Product</a>
                     </li>
 
                 </ul><!--end nav-->
