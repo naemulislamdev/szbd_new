@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\LandingPagesController;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\LandingPagesController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\ProductController;
@@ -125,28 +125,35 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/child-category/status', 'status')->name('status');
             Route::get('/child-category/datatables', 'datatables')->name('datatables');
         });
-        Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->middleware('module:marketing_section')->group(function () {
-            Route::get('single-product/landing', 'landing_index')->name('single.landing');
-            Route::post('single-product/landing', 'landing_submit');
-            Route::get('single-product/remove-banner', 'remove_image')->name('single.remove-image');
-            Route::post('single-product/status-update', 'status_update')->name('single.status-update');
-            Route::get('single-product/update/{id}', 'edit')->name('single.update');
-            Route::post('single-product/landing_pages_update/{id}', 'update')->name('single.landing_pages_update');
-            Route::get('single-product/add-product/{landing_id}', 'add_product')->name('single.add-product');
-            Route::post('single-product/add-product/{landing_id}', 'add_product_submit');
-            Route::post('single-product/delete-product', 'delete_product')->name('single.delete-product');
+        Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->group(function () {
+            Route::get('multiple-product/landing', 'multiIndex')->name('multiple.index');
+            Route::post('multiple-product/store', 'multipleStore')->name('multiple.store');
+            Route::get('multiple-product/remove-banner', 'remove_image')->name('multiple.remove-image');
+            Route::post('multiple-product/status-update', 'status_update')->name('multiple.status-update');
+            Route::post('multiple-product/landing_pages_update', 'update')->name('multiple.landing_pages_update');
+            Route::get('multiple-product/add-product/{landing_id}', 'add_product')->name('multiple.add-product');
+            Route::post('multiple-product/add-product/{landing_id}', 'add_product_submit');
+            Route::post('multiple-product/delete-product', 'delete_product')->name('multiple.delete-product');
+            Route::get('/multiple-product/datatables', 'multipleProductdatatables')->name('multiple.datatables');
+            Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
+            Route::post('multiple-product/remove', 'removeMultiplePage')->name('remove_multiple_page');
 
-            // Route::get('/index', 'index')->name('index');
-            // Route::get('/create', 'create')->name('create');
+            // Single Product Landing page routes
+
+            Route::get('/single-product/view', 'singleIndex')->name('single.index');
+            Route::get('/single-product/datatables', 'singleProductdatatables')->name('single.datatables');
+            Route::post('/single-product/status', 'LandingPageStatus')->name('single.status');
+            Route::post('/single-product/remove', 'removeSinglePage')->name('remove_single_page');
+            Route::get('/single-product/create', 'create')->name('single.create');
+
+
+
             // Route::post('/store', 'store')->name('store');
             // Route::get('/edit{id}', 'SingleProductEdit')->name('edit');
             // Route::post('/product-landing-page/update/{id}', 'SingleProductUpdate')->name('single.update');
-            // Route::post('status', 'LandingPageStatus')->name('status');
-            // Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
             // Route::get('remove/slider', 'removeImage')->name('remove_image');
             // Route::get('remove/feature-list', 'removeFeatureList')->name('remove_feature_list');
-            // Route::get('remove/landing-page/section', 'removePageSection')->name('remove_page_section');
-            // Route::get('remove/landing-page/{id}', 'removeLandingPage')->name('remove_landing_page');
+
         });
     });
 });

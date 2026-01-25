@@ -20,6 +20,8 @@ Route::middleware(['web'])->controller(FrontendController::class)->group(functio
     Route::get('/careers', 'careers')->name('careers');
     Route::get('/offers/{slug}', 'discountOffers')->name('discount.offers');
     Route::get('/sitemap.xml', 'siteMaps')->name('sitemap');
+    Route::get('/collections/{slug}', 'multiCollection')->name('collections');
 });
+//  collections routes
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
