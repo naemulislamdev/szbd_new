@@ -148,10 +148,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/single-product/status', 'LandingPageStatus')->name('single.status');
             Route::post('/single-product/remove', 'removeSinglePage')->name('remove_single_page');
             Route::get('/single-product/create', 'create')->name('single.create');
-
-
-
-            // Route::post('/store', 'store')->name('store');
+            Route::post('/single-product/store', 'storeSingleProduct')->name('single.store');
             // Route::get('/edit{id}', 'SingleProductEdit')->name('edit');
             // Route::post('/product-landing-page/update/{id}', 'SingleProductUpdate')->name('single.update');
             // Route::get('remove/slider', 'removeImage')->name('remove_image');

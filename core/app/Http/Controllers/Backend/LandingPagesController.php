@@ -225,11 +225,11 @@ class LandingPagesController extends Controller
             }
 
             DB::table('landing_pages_products')->insert($campaing_detalie);
-            Toastr::success('Product added successfully!');
-            return back();
+            // Toastr::success('Product added successfully!');
+            return redirect()->back()->with('success', 'Product added successfully!');
         } else {
-            Toastr::info('Product already added!');
-            return back();
+            // Toastr::info('Product already added!');
+            return redirect()->back()->with('error', 'Product added Unsuccessfully!');
         }
     }
 
@@ -334,7 +334,7 @@ class LandingPagesController extends Controller
     {
         return view('admin.landingPages.single_page.create_single');
     }
-    public function store(Request $request)
+    public function storeSingleProduct(Request $request)
     {
         $request->validate([
             'title' => 'required|string',
@@ -347,12 +347,12 @@ class LandingPagesController extends Controller
         ]);
 
         $images = null;
-        if ($request->file('images')) {
-            foreach ($request->file('images') as $img) {
-                $main_slider_images[] = Helpers::uploadWithCompress('landingpage/slider/', 300, $img);
-            }
-            $images = json_encode($main_slider_images);
-        }
+        // if ($request->file('images')) {
+        //     foreach ($request->file('images') as $img) {
+        //         $main_slider_images[] = Helpers::uploadWithCompress('landingpage/slider/', 300, $img);
+        //     }
+        //     $images = json_encode($main_slider_images);
+        // }
         $featureList = null;
         if ($request->feature_title) {
             foreach ($request->feature_title as $title) {
@@ -367,7 +367,7 @@ class LandingPagesController extends Controller
             'product_id' => $request->product_id,
             'description' => $request->description,
             'feature_list' => $featureList,
-            'feature_img' => Helpers::uploadWithCompress('landingpage/', 300, $request->file('feature_image')),
+            // 'feature_img' => Helpers::uploadWithCompress('landingpage/', 300, $request->file('feature_image')),
             'video_url' => $request->video_url,
             'status' => 0,
             'created_at' => now(),
@@ -379,21 +379,21 @@ class LandingPagesController extends Controller
             foreach ($sectionTitles as $key => $val) {
 
                 $requestImg = $request->section_img[$key];
-                $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
+                // $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
                 $sectionDirection = $request->section_direction[$key];
                 $orderButton = $request->order_button[$key];
-                App\Http\Controllers\Admin\ProductLandingPageSection::create([
+                ProductLandingPageSection::create([
                     'product_landing_page_id' => $productLandingpage->id,
                     'section_title' => $val,
                     'section_description' => $request->section_description[$key],
-                    'section_img' => $sectionImg,
+                    // 'section_img' => $sectionImg,
                     'section_direction' => $sectionDirection,
                     'order_button' => $orderButton,
                 ]);
             }
         }
-        Toastr::success('Landing pages  created is successfully!');
-        return back();
+
+        return redirect()->back()->with('success', 'Landing pages  created is successfully!');
     }
 
 
