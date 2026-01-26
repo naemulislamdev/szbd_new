@@ -3,7 +3,6 @@
 namespace App\CPU;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Encoders\WebpEncoder;
@@ -17,9 +16,18 @@ class FileManager
         $image = null,
         $alt_text = null
     ) {
-        if (!$image) return null;
+        if (!$image instanceof \Illuminate\Http\UploadedFile) {
+            return null;
+        }
 
-        $fullPath = public_path($dir);
+        if (!$image->isValid()) {
+            return null;
+        }
+        if (!str_starts_with($image->getMimeType(), 'image/')) {
+            return null;
+        }
+
+        $fullPath = $dir;
 
         if (!is_dir($fullPath)) {
             mkdir($fullPath, 0777, true);
@@ -33,32 +41,33 @@ class FileManager
             new \Intervention\Image\Drivers\Gd\Driver()
         );
 
-        $img = $manager->read($image->getRealPath());
+        $img = $manager->read($image->getPathname());
+
 
         $quality = 80;
         $temp = tempnam(sys_get_temp_dir(), 'img_');
 
+
         do {
             $encoded = $img->encode(new WebpEncoder(quality: $quality));
-            file_put_contents($temp, (string)$encoded);
+            file_put_contents($temp, (string) $encoded);
             $size = filesize($temp);
             $quality -= 5;
         } while ($size > ($targetSizeKB * 1024) && $quality > 20);
 
-        // Save directly to assets/storage
         file_put_contents($fullPath . $imageName, file_get_contents($temp));
-
         @unlink($temp);
 
         return $imageName;
     }
-    public static function updateWithCompress(
+
+    public static function updateFile(
         string $dir,
         $old_image,
         $image = null,
         $alt_text = null
     ) {
-        $fullPath = public_path($dir);
+        $fullPath = $dir;
 
         if ($old_image && file_exists($fullPath . $old_image)) {
             @unlink($fullPath . $old_image);
@@ -69,10 +78,9 @@ class FileManager
 
     public static function delete($full_path)
     {
-        if (Storage::disk('public')->exists($full_path)) {
-            Storage::disk('public')->delete($full_path);
+        if (file_exists($full_path)) {
+            @unlink($full_path);
         }
-
         return [
             'success' => 1,
             'message' => 'Removed successfully !'

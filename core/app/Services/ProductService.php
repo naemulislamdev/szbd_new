@@ -119,27 +119,35 @@ class ProductService
         $stock_count = 0;
         if (count($combinations[0]) > 0) {
             foreach ($combinations as $key => $combination) {
+
                 $str = '';
-                foreach ($combination as $k => $item) {
-                    if ($k > 0) {
-                        $str .= '-' . str_replace(' ', '', $item);
-                    } else {
-                        if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
-                            $color_name = Color::where('code', $item)->first()->name;
-                            //$str .= $color_name;
-                        } else {
-                            $str .= str_replace(' ', '', $item);
+                $i = 0;
+
+                foreach ($combination as $item) {
+
+                    if ($i == 0 && $r->has('colors_active') && $r->has('colors')) {
+                        // color code → color name
+                        $color = Color::where('code', $item)->first();
+                        if ($color) {
+                            $str .= str_replace(' ', '', $color->name);
                         }
+                    } else {
+                        $str .= '-' . str_replace(' ', '', $item);
                     }
+
+                    $i++;
                 }
-                $item = [];
-                $item['type'] = $str;
-                $item['price'] = abs($r['price_' . str_replace('.', '_', $str)]);
-                $item['sku'] = $r['sku_' . str_replace('.', '_', $str)];
-                $item['qty'] = abs($r['qty_' . str_replace('.', '_', $str)]);
-                array_push($variations, $item);
-                $stock_count += $item['qty'];
+
+                $itemArr = [];
+                $itemArr['type']  = $str;
+                $itemArr['price'] = abs($r['price_' . $str] ?? 0);
+                $itemArr['sku']   = $r['sku_' . $str] ?? '';
+                $itemArr['qty']   = abs($r['qty_' . $str] ?? 0);
+
+                $variations[] = $itemArr;
+                $stock_count += $itemArr['qty'];
             }
+
             if ($r->colors) {
                 foreach ($r->colors as $key => $color) {
                     $colorName = Color::where('code', $color)->first();
@@ -155,7 +163,6 @@ class ProductService
         } else {
             $stock_count = (int)$r['current_stock'];
         }
-        dd($stock_count);
 
         $p->color_variant = json_encode($colorVariations);
         $p->variation = json_encode($variations);
@@ -167,16 +174,45 @@ class ProductService
     private static function mediaInfo($p, $r)
     {
         $path = 'assets/storage/';
-        if ($r->file('images')) {
+        $images = [];
+
+        // ✅ multiple images
+        if ($r->hasFile('images')) {
             foreach ($r->file('images') as $img) {
-                $images[] = FileManager::uploadFile($path . 'product/', 300, $img);
+                if ($img && $img->isValid()) {
+                    $name = FileManager::uploadFile(
+                        $path . 'product/',
+                        300,
+                        $img
+                    );
+                    if ($name) {
+                        $images[] = $name;
+                    }
+                }
             }
             $p->images = json_encode($images);
         }
 
-        $p->thumbnail = FileManager::uploadFile($path . 'product/thumbnail/', 300, $r->image, $r->alt_text);
-        $p->size_chart = FileManager::uploadFile($path . 'product/thumbnail/', 300, $r->size_chart);
+        // ✅ thumbnail
+        if ($r->hasFile('image')) {
+            $p->thumbnail = FileManager::uploadFile(
+                $path . 'product/thumbnail/',
+                300,
+                $r->file('image'),
+                $r->alt_text
+            );
+        }
+
+        // ✅ size chart
+        if ($r->hasFile('size_chart')) {
+            $p->size_chart = FileManager::uploadFile(
+                $path . 'product/thumbnail/',
+                300,
+                $r->file('size_chart')
+            );
+        }
     }
+
 
     private static function seoInfo($p, $r)
     {
