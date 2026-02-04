@@ -10,7 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
+    protected $guarded = ['id'];
+
     protected $casts = [
+        'colors' => 'array',
+        'color_variant' => 'array',
+        'attributes' => 'array',
         'user_id' => 'integer',
         'brand_id' => 'integer',
         'min_qty' => 'integer',

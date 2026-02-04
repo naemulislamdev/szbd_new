@@ -22,7 +22,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         $discount_type = 'nullable';
-        if(request()->discount > 0){
+        if (request()->discount > 0) {
             $discount_type = 'required|in:flat,percent';
         }
         $images = 'nullable|max:3072';
@@ -34,7 +34,9 @@ class ProductRequest extends FormRequest
             $pId = request()->route()->id;
             $code = 'required|min:3|max:30|unique:products,code,' . $pId;
         }
+
         return [
+            'added_by' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'short_description' => 'nullable|string',

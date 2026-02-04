@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\CPU\BackEndHelper;
 use App\CPU\FileManager;
 use App\CPU\Helpers;
 use App\Models\Color;
@@ -26,6 +25,21 @@ class ProductService
 
         return $product;
     }
+    public static function update($request, $id)
+    {
+        $product = Product::findOrFail($id);
+        self::basicInfo($product, $request);
+        self::categoryInfo($product, $request);
+        self::priceInfo($product, $request);
+        self::variationInfo($product, $request);
+        self::mediaInfoUpdate($product, $request);
+        self::seoInfoUpdate($product, $request);
+
+        $product->save();
+
+        return $product;
+    }
+
 
     private static function basicInfo($p, $r)
     {
@@ -83,7 +97,8 @@ class ProductService
         if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
             $p->colors = json_encode($r->colors);
         } else {
-            $p->colors = null;
+            $colors = [];
+            $p->colors = json_encode($colors);
         }
 
         $choice_options = [];
@@ -166,7 +181,7 @@ class ProductService
 
         $p->color_variant = json_encode($colorVariations);
         $p->variation = json_encode($variations);
-        $p->attributes = json_encode($r->choice_attributes);
+        $p->attributes = json_encode($r->choice_attributes ?? []);
         $p->current_stock = abs($stock_count);
         $p->minimum_order_qty = $r->minimum_order_qty;
     }
@@ -212,7 +227,51 @@ class ProductService
             );
         }
     }
+    private static function mediaInfoUpdate($p, $r)
+    {
+        $path = 'assets/storage/';
 
+        // 🔁 old images
+        $oldImages = json_decode($p->images, true) ?? [];
+        $images = $oldImages;
+
+        // ✅ new images add
+        if ($r->hasFile('images')) {
+            foreach ($r->file('images') as $img) {
+                if ($img && $img->isValid()) {
+                    $name = FileManager::uploadFile(
+                        $path . 'product/',
+                        300,
+                        $img
+                    );
+                    if ($name) {
+                        $images[] = $name;
+                    }
+                }
+            }
+        }
+
+        $p->images = json_encode($images);
+
+        // ✅ thumbnail replace
+        if ($r->hasFile('image')) {
+            $p->thumbnail = FileManager::updateFile(
+                $path . 'product/thumbnail/',
+                $p->thumbnail,
+                $r->file('image'),
+                $r->alt_text
+            );
+        }
+
+        // ✅ size chart replace
+        if ($r->hasFile('size_chart')) {
+            $p->size_chart = FileManager::updateFile(
+                $path . 'product/thumbnail/',
+                $p->size_chart,
+                $r->file('size_chart')
+            );
+        }
+    }
 
     private static function seoInfo($p, $r)
     {
@@ -221,6 +280,22 @@ class ProductService
         $p->meta_description = $r->meta_description;
         $p->meta_image = FileManager::uploadFile($path . 'product/meta/', 300, $r->meta_image);
     }
+    private static function seoInfoUpdate($p, $r)
+    {
+        $path = 'assets/storage/';
+
+        $p->meta_title = $r->meta_title;
+        $p->meta_description = $r->meta_description;
+
+        if ($r->hasFile('meta_image')) {
+            $p->meta_image = FileManager::updateFile(
+                $path . 'product/meta/',
+                $p->meta_image,
+                $r->meta_image
+            );
+        }
+    }
+
     // private static function campainProduct($p, $r)
     // {
     //     if ($r->start_day) {

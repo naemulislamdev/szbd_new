@@ -1,0 +1,33 @@
+<section class="header-slider-section ">
+    @php($main_banner = \App\Models\Banner::where('banner_type', 'Main Banner')->where('published', 1)->orderBy('id', 'desc')->get())
+    <div id="carouselExampleIndicators" class="carousel slide position-relative container " data-ride="carousel"
+        data-interval="3000">
+        <ol class="carousel-indicators">
+            @foreach ($main_banner as $key => $banner)
+                <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
+                    class="{{ $key == 0 ? 'active' : '' }}"></li>
+            @endforeach
+        </ol>
+        <div class="carousel-inner">
+            @foreach ($main_banner as $key => $banner)
+                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                    <div class="main-slider">
+                        <a href="{{ $banner['url'] }}">
+                            <img class="d-block w-100 rounded-0 rounded-lg"
+                                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}" alt="">
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</section>
