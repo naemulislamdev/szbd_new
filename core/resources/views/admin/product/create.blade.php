@@ -1,6 +1,78 @@
 @extends('admin.layouts.app')
 @section('title', 'Product Add - Admin Dashboard')
 
+@push('styles')
+<style>
+        .upload-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .custom-file-input {
+            display: none;
+            /* Hide the actual file input */
+        }
+
+        .custom-file-label {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-file-label:hover {
+            background-color: #0056b3;
+        }
+
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .preview-item {
+            position: relative;
+            margin: 10px;
+            width: 120px;
+            height: 120px;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            line-height: 22px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .remove-icon:hover {
+            background: rgba(255, 0, 0, 1);
+        }
+    </style>
+@endpush
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -90,21 +162,7 @@
                             </div>
                             <div class="row mt-3">
                                 <div class="col-md-4">
-                                    {{-- <div>
-                                        <label class="input-label" for="exampleFormControlInput1">Product Code SKU
-                                            <span class="text-danger">*</span>
-                                            <a class="style-one-pro" style="cursor:pointer"
-                                                onclick="document.getElementById('generate_number').value = getRndInteger()">
-                                                Generate Code
-                                            </a>
 
-                                            <input type="text" minlength="4" id="generate_number" name="code"
-                                                class="form-control form-control-lg @error('code') is-invalid @enderror"
-                                                value="{{ old('code') }}" placeholder="Code">
-                                            @error('code')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                    </div> --}}
                                     <div>
                                         <label class="input-label" for="exampleFormControlInput1">product_code_sku
                                             <span class="text-danger">*</span>
@@ -165,11 +223,6 @@
                                         <label for="colors">
                                             Colors:
                                         </label>
-                                        {{-- <label class="switch">
-                                        <input type="checkbox" class="status" value="{{ old('colors_active') }}"
-                                            name="colors_active">
-                                        <span class="slider round"></span>
-                                    </label> --}}
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" value="{{ old('colors_active') }}"
                                                 name="colors_active" type="checkbox" id="flexSwitchCheckDefault"
@@ -199,7 +252,6 @@
                                     </label>
                                     <select class="form-select form-select-lg" name="choice_attributes[]"
                                         id="choice_attributes" multiple>
-                                        <option value="size">Size</option>
                                         @foreach (\App\Models\Attribute::orderBy('name', 'asc')->get() as $key => $a)
                                             <option value="{{ $a['id'] }}">
                                                 {{ $a['name'] }}
@@ -207,19 +259,8 @@
                                         @endforeach
                                     </select>
                                 </div>
-
-
                             </div>
                             <div class="row mt-3">
-                                {{-- <div class="col-lg-3">
-                                    <input class="form-control form-control-lg" readonly type="text" name=""
-                                        id="" value="Size">
-                                </div>
-                                <div class="col-lg-9">
-                                    <input class="form-control form-control-lg" type="text" name=""
-                                        id="">
-                                </div> --}}
-
                                 <div class="col-md-12 mt-2 mb-2">
                                     <div class="customer_choice_options" id="customer_choice_options"></div>
                                 </div>
@@ -464,7 +505,7 @@
                                                     click "Upload
                                                     Image" Button.</p>
                                                 <div
-                                                    class="thumbnail_preview-box d-block justify-content-center rounded  border-dashed border-theme-color overflow-hidden p-3">
+                                                    class="thumbnail_preview_box d-block justify-content-center rounded  border-dashed border-theme-color overflow-hidden p-3">
                                                 </div>
                                                 <input type="file" id="thubnail" name="image" accept="image/*"
                                                     onchange={handleThumbnailChange()} hidden />
@@ -476,14 +517,15 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Upload product images</label><small style="color: red">* 'ratio 1:1 </small>
+                                        <label>Upload product images</label><small
+                                            style="color: red">* ( ratio')</small>
                                     </div>
-                                    <div class="card p-0 mt-2">
-                                        <div class="card-body p-0">
-                                            <div id="product_img"></div>
-                                        </div><!--end card-body-->
-                                    </div><!--end card-->
-
+                                    <div class="upload-container">
+                                        <input type="file" id="image-upload" name="images[]" multiple
+                                            accept="image/*" class="custom-file-input">
+                                        <label for="image-upload" class="custom-file-label">Select Product Images</label>
+                                        <div id="image-preview" class="image-preview-container"></div>
+                                    </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -573,6 +615,51 @@
 @endsection
 @push('scripts')
     <script>
+        $(document).ready(function() {
+            const previewContainer = $("#image-preview");
+            $("#image-upload").on("change", function(event) {
+                previewContainer.empty(); // Clear existing previews
+                const files = event.target.files;
+
+                if (files) {
+                    $.each(files, function(index, file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
+                                 <div class="preview-item">
+                                     <img src="${e.target.result}" class="preview-image">
+                                     <button type="button" class="remove-icon" data-index="${index}">&#10005;</button>
+                                 </div>
+                             `);
+                            previewContainer.append(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+
+            // Handle image removal
+            previewContainer.on("click", ".remove-icon", function() {
+                const indexToRemove = $(this).data("index");
+                $(this).parent().remove();
+                // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
+                const input = document.getElementById("image-upload");
+                const dataTransfer = new DataTransfer();
+                const files = input.files;
+
+                // Add all files except the one to be removed
+                for (let i = 0; i < files.length; i++) {
+                    if (i !== indexToRemove) {
+                        dataTransfer.items.add(files[i]);
+                    }
+                }
+
+                // Update the input files
+                input.files = dataTransfer.files;
+            });
+        });
+    </script>
+    <script>
         function add_fields() {
             document.getElementById("myTable").insertRow(-1).innerHTML =
                 '<tr><td><input type="date"  placeholder="start day" name="start_day[]" value="" class="form-control form-control-lg"></td><td><input type="date"  placeholder="end day" name="end_day[]" value="" class="form-control form-control-lg"></td><td><input type="number" placeholder="Discount" name="discountCam[]" value="" class="form-control form-control-lg"> </td> </tr>';
@@ -598,37 +685,49 @@
         });
 
         function add_more_customer_choice_option(i, name) {
-            let n = name.replace(/\s+/g, '');
+            let n = name.split(' ').join('');
+            $('#customer_choice_options').append(
+                '<div class="row"><div class="col-md-3"><input type="hidden" name="choice_no[]" value="' + i +
+                '"><input type="text" class="form-control" name="choice[]" value="' + n +
+                '" placeholder="Choice Title" readonly></div><div class="col-lg-9"><input type="text" class="form-control" name="choice_options_' +
+                i +
+                '[]" placeholder="Enter choice values" data-role="tagsinput" onchange="update_sku()"></div></div>'
+            );
 
-            $('#customer_choice_options').append(`
-        <div class="row mt-2">
-            <div class="col-md-3">
-                <input type="hidden" name="choice_no[]" value="${i}">
-                <input type="text" class="form-control form-control-lg" value="${n}" readonly>
-            </div>
-
-            <div class="col-lg-9">
-                <select
-                    class="form-control form-control-lg choice-options"
-                    name="choice_options_${i}[]"
-                    multiple="multiple"
-                    data-placeholder="S, M, L, XL">
-                </select>
-            </div>
-        </div>
-    `);
-
-            // init select2 only new element
-            $('.choice-options').last().select2({
-                    tags: true,
-                    tokenSeparators: [','],
-                    width: '100%',
-                    placeholder: 'Enter sizes (comma separated)'
-                })
-                .on('select2:select select2:unselect', function() {
-                    update_sku();
-                });
+            $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput();
         }
+
+        //     function add_more_customer_choice_option(i, name) {
+        //         let n = name.replace(/\s+/g, '');
+
+        //         $('#customer_choice_options').append(`
+    //     <div class="row mt-2">
+    //         <div class="col-md-3">
+    //             <input type="hidden" name="choice_no[]" value="${i}">
+    //             <input type="text" class="form-control form-control-lg" value="${n}" readonly>
+    //         </div>
+
+    //         <div class="col-lg-9">
+    //             <select
+    //                 class="form-control form-control-lg choice-options"
+    //                 name="choice_options_${i}[]"
+    //                 multiple="multiple"
+    //                 data-placeholder="S, M, L, XL">
+    //             </select>
+    //         </div>
+    //     </div>
+    // `);
+
+        //         $('.choice-options').last().select2({
+        //                 tags: true,
+        //                 tokenSeparators: [','],
+        //                 width: '100%',
+        //                 placeholder: 'Enter sizes (comma separated)'
+        //             })
+        //             .on('select2:select select2:unselect', function() {
+        //                 update_sku();
+        //             });
+        //     }
     </script>
 
     <script>

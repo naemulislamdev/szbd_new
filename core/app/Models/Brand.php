@@ -35,7 +35,7 @@ class Brand extends Model
 
     public function translations()
     {
-        return $this->morphMany('App\Model\Translation', 'translationable');
+        return $this->morphMany('App\Models\Translation', 'translationable');
     }
 
     public function getNameAttribute($name)

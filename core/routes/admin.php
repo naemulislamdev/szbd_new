@@ -33,7 +33,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('list', 'index')->name('index');
             Route::get('show/{product}', 'show')->name('show');
             Route::get('edit/{product}', 'edit')->name('edit');
-            Route::post('update/{product}', 'update')->name('update');
+            Route::post('update/{id}', 'update')->name('update');
             Route::get('delete/{product}', 'delete')->name('delete');
             Route::post('product/status-update',  'statusUpdate')->name('status');
             Route::post('product/featured-update',  'updateFeatured')->name('featured.status');
@@ -61,24 +61,28 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
             Route::post("multiple-note", 'multipleNote')->name("multiple_note");
             Route::get('details/{id}', 'details')->name('details');
-            Route::get('edit/{id}', 'edit')->name('edit');
-            Route::post('update/{id}', 'orderUpdate')->name('update');
-            Route::get('show/{id}', 'show')->name('show');
             Route::get('delete/{id}', 'delete')->name('delete');
-            Route::post('ordersPrice/{id}', 'ordersPrice')->name('ordersPrice');
 
-            Route::get('Individual/{status}', 'Individual')->name('Individual');
-            Route::get('products/search/', 'productSearch')->name('products.search');
+            Route::get('product-search', 'productSearch')->name('product_search');
+            Route::post('add-product', 'addProduct')->name('add_product');
+            Route::post('remove-product', 'removeProduct')->name('remove_product');
+            Route::get('recalculate/{order}', 'recalculate')->name('recalculate');
+            Route::get('product-variation/{id}', 'productVariation')->name('product_variation');
+
+
+
+            // Route::get('Individual/{status}', 'Individual')->name('Individual');
+            // Route::get('products/search/', 'productSearch')->name('products.search');
             Route::post('status', 'status')->name('status');
             Route::post('payment-status', 'payment_status')->name('payment-status');
             Route::post('advance-payment/{id}', 'advance_payment')->name('advance-payment');
-            Route::post('productStatus', 'productStatus')->name('productStatus');
-            Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice')->withoutMiddleware(['module:order_management']);
-            Route::get('exchange-generate-invoice/{id}', 'exchange_generate_invoice')->name('exchange-generate-invoice')->withoutMiddleware(['module:order_management']);
-            Route::get('inhouse-order-filter', 'inhouse_order_filter')->name('inhouse-order-filter');
+            // Route::post('productStatus', 'productStatus')->name('productStatus');
+            Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
+            // Route::get('exchange-generate-invoice/{id}', 'exchange_generate_invoice')->name('exchange-generate-invoice');
+            // Route::get('inhouse-order-filter', 'inhouse_order_filter')->name('inhouse-order-filter');
 
-            Route::post('update-deliver-info', 'update_deliver_info')->name('update-deliver-info');
-            Route::get('add-delivery-man/{order_id}/{d_man_id}', 'add_delivery_man')->name('add-delivery-man');
+            // Route::post('update-deliver-info', 'update_deliver_info')->name('update-deliver-info');
+            // Route::get('add-delivery-man/{order_id}/{d_man_id}', 'add_delivery_man')->name('add-delivery-man');
 
             Route::get('export-order-data/{status}', 'bulk_export_data')->name('order-bulk-export');
         });

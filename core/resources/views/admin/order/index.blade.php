@@ -1,8 +1,6 @@
 @extends('admin.layouts.app')
 @section('title', 'Admin Dashboard')
 
-@push('styles')
-@endpush
 @section('content')
     <div class="container-fluid">
         <div class="row">

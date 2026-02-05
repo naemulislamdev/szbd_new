@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Model\Order;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
@@ -24,8 +24,7 @@ class OrderDetail extends Model
 
     public function product()
     {
-        // return $this->belongsTo(Product::class)->where('status', 1);
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->where('status', 1);
     }
 
     public function active_product()
@@ -36,11 +35,6 @@ class OrderDetail extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id');
-    }
-
-    public function seller()
-    {
-        return $this->belongsTo(Seller::class, 'seller_id');
     }
 
     public function address()

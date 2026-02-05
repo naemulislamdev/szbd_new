@@ -2,6 +2,9 @@
 
 namespace App\CPU;
 
+use App\Models\BusinessSetting;
+use App\Models\Review;
+
 class Helpers
 {
     public static function combinations($arrays)
@@ -17,5 +20,103 @@ class Helpers
             $result = $tmp;
         }
         return $result;
+    }
+    public static function rating_count($product_id, $rating)
+    {
+        return Review::where(['product_id' => $product_id, 'rating' => $rating])->count();
+    }
+    public static function pagination_limit()
+    {
+        $pagination_limit = BusinessSetting::where('type', 'pagination_limit')->first();
+        if ($pagination_limit != null) {
+            return $pagination_limit->value;
+        } else {
+            return 25;
+        }
+    }
+    public static function get_settings($object, $type)
+    {
+        $config = null;
+        foreach ($object as $setting) {
+            if ($setting['type'] == $type) {
+                $config = $setting;
+            }
+        }
+        return $config;
+    }
+    public static function get_business_settings($name)
+    {
+        $config = null;
+        $check = ['currency_model', 'currency_symbol_position', 'system_default_currency', 'language', 'company_name', 'decimal_point_settings'];
+
+        if (in_array($name, $check) == true && session()->has($name)) {
+            $config = session($name);
+        } else {
+            $data = BusinessSetting::where(['type' => $name])->first();
+            if (isset($data)) {
+                $config = json_decode($data['value'], true);
+                if (is_null($config)) {
+                    $config = $data['value'];
+                }
+            }
+
+            if (in_array($name, $check) == true) {
+                session()->put($name, $config);
+            }
+        }
+
+        return $config;
+    }
+    public static function get_product_discount($product, $price)
+    {
+        $discount = 0;
+        if ($product->discount_type == 'percent') {
+            $discount = ($price * $product->discount) / 100;
+        } elseif ($product->discount_type == 'flat') {
+            $discount = $product->discount;
+        }
+
+        return floatval($discount);
+    }
+    public static function get_rating($reviews)
+    {
+        $rating5 = 0;
+        $rating4 = 0;
+        $rating3 = 0;
+        $rating2 = 0;
+        $rating1 = 0;
+        foreach ($reviews as $key => $review) {
+            if ($review->rating == 5) {
+                $rating5 += 1;
+            }
+            if ($review->rating == 4) {
+                $rating4 += 1;
+            }
+            if ($review->rating == 3) {
+                $rating3 += 1;
+            }
+            if ($review->rating == 2) {
+                $rating2 += 1;
+            }
+            if ($review->rating == 1) {
+                $rating1 += 1;
+            }
+        }
+        return [$rating5, $rating4, $rating3, $rating2, $rating1];
+    }
+    public static function get_overall_rating($reviews)
+    {
+        $totalRating = count($reviews);
+        $rating = 0;
+        foreach ($reviews as $key => $review) {
+            $rating += $review->rating;
+        }
+        if ($totalRating == 0) {
+            $overallRating = 0;
+        } else {
+            $overallRating = number_format($rating / $totalRating, 2);
+        }
+
+        return [$overallRating, $totalRating];
     }
 }

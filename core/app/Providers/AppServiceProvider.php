@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\CPU\Helpers;
 use App\Models\BusinessSetting;
 use App\Models\Order;
 use App\Models\UserInfo;
@@ -30,14 +31,22 @@ class AppServiceProvider extends ServiceProvider
         try {
             $web = BusinessSetting::all();
 
-            // $settings = Helpers::get_settings($web, 'colors');
-            // $data = json_decode($settings['value'] ?? '{}', true);
+            $settings = Helpers::get_settings($web, 'colors');
+            $data = json_decode($settings['value'] ?? '{}', true);
 
-            // $web_config = [
-            //     'primary_color' => $data['primary'] ?? '#0d6efd',
-            //     'secondary_color' => $data['secondary'] ?? '#6c757d',
-            //     'name' => Helpers::get_settings($web, 'company_name'),
-            // ];
+            $web_config = [
+                'primary_color' => $data['primary'] ?? '#0d6efd',
+                'secondary_color' => $data['secondary'] ?? '#6c757d',
+                'name' => Helpers::get_settings($web, 'company_name'),
+                'phone' => Helpers::get_settings($web, 'company_phone'),
+                'web_logo' => Helpers::get_settings($web, 'company_web_logo'),
+                'mob_logo' => Helpers::get_settings($web, 'company_mobile_logo'),
+                'fav_icon' => Helpers::get_settings($web, 'company_fav_icon'),
+                'email' => Helpers::get_settings($web, 'company_email'),
+                'about' => Helpers::get_settings($web, 'about_us'),
+                'footer_logo' => Helpers::get_settings($web, 'company_footer_logo'),
+                'copyright_text' => Helpers::get_settings($web, 'company_copyright_text'),
+            ];
 
             $language = BusinessSetting::where('type', 'language')->first();
 
@@ -66,18 +75,20 @@ class AppServiceProvider extends ServiceProvider
             $todayOrders = Order::whereDate('created_at', now())
                 ->where('order_status', 'pending')
                 ->count();
+        $file_path = "assets/storage/";
         } catch (\Throwable $e) {
             logger()->error('AppServiceProvider error: ' . $e->getMessage());
         }
 
         // ✅ ALWAYS shared — no undefined variable
         View::share([
-            // 'web_config'  => $web_config,
+            'web_config'  => $web_config,
             'language'    => $language,
             'orderCounts' => $orderCounts,
             'todayOrders' => $todayOrders,
             'userInfoCounts' => $userInfoCounts,
             'todayUserinfos' => $todayUserinfos,
+            'base_path' => $file_path,
         ]);
     }
 }

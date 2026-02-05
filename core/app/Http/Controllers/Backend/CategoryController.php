@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\CPU\Helpers;
-use App\CPU\ImageManager;
+use App\CPU\FileManager;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Brian2694\Toastr\Facades\Toastr;
 use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
@@ -28,7 +26,7 @@ class CategoryController extends Controller
             ->addIndexColumn()
             ->editColumn('icon', function ($row) {
 
-                return '<img src="' . asset($row->icon) . '"
+                return '<img src="' . asset("assets/storage/category/".$row->icon) . '"
                  alt="icon"
                  width="40"
                  height="40">';
@@ -98,7 +96,7 @@ class CategoryController extends Controller
         $category = new Category;
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
-        // $category->icon = ImageManager::upload('category/', 'png', $request->file('icon'));
+        $category->icon = FileManager::uploadFile('assets/storage/category/', 300, $request->file('icon'));
         $category->order_number = $request->order_number;
 
         if ($category->save()) {
@@ -129,9 +127,9 @@ class CategoryController extends Controller
         $category = Category::find($request->id);
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
-        // if ($request->image) {
-        //     $category->icon = ImageManager::update('category/', $category->icon, 'png', $request->file('image'));
-        // }
+        if ($request->image) {
+            $category->icon = FileManager::updateFile('assets/storage/category/', $category->icon, 300, $request->file('image'));
+        }
         $category->order_number = $request->order_number;
         if ($category->save()) {
             return response()->json([
@@ -148,8 +146,8 @@ class CategoryController extends Controller
     public function delete(Request $request)
     {
         $category = Category::find($request->id);
-        if (file_exists(public_path('storage/app/public/category/' . $category->icon))) {
-            ImageManager::delete('category/' . $category->icon);
+        if (file_exists(public_path('assets/storage/category/' . $category->icon))) {
+            FileManager::delete('assets/storage/category/' . $category->icon);
         }
         $category->delete();
 

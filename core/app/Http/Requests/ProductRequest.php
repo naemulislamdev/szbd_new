@@ -22,7 +22,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         $discount_type = 'nullable';
-        if(request()->discount > 0){
+        if (request()->discount > 0) {
             $discount_type = 'required|in:flat,percent';
         }
         $images = 'nullable|max:3072';
@@ -34,18 +34,20 @@ class ProductRequest extends FormRequest
             $pId = request()->route()->id;
             $code = 'required|min:3|max:30|unique:products,code,' . $pId;
         }
+
         return [
+            'added_by' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'short_description' => 'required|string',
+            'short_description' => 'nullable|string',
             'category_id' => 'required',
             'sub_category_id' => 'nullable',
             'child_category_id' => 'nullable',
             'code' => $code,
             'brand_id' => 'required',
             'unit' => 'required',
-            // 'images' => $images,
-            // 'image' => $image,
+            'images' => $images,
+            'image' => $image,
             'tax' => 'required|min:0',
             'unit_price' => 'required|numeric|min:1',
             'purchase_price' => 'required|numeric|min:1',
@@ -60,7 +62,7 @@ class ProductRequest extends FormRequest
     public function messages()
     {
         return [
-            // 'images.required' => 'Product images is required!',
+            'images.required' => 'Product images is required!',
             'image.required' => 'Product thumbnail is required!',
             'category_id.required' => 'category  is required!',
             'brand_id.required' => 'brand  is required!',

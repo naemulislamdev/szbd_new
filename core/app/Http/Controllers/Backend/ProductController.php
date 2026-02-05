@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\CPU\FileManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
@@ -9,6 +10,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\ChildCategory;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\SubCategory;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
@@ -22,6 +24,7 @@ class ProductController extends Controller
         $brands = Brand::all();
         return view('admin.product.create', compact('categories', 'brands'));
     }
+    // Store New Product
     public function store(ProductRequest $request)
     {
         $product = ProductService::store($request);
@@ -30,10 +33,35 @@ class ProductController extends Controller
             'message' => 'Product added successfully'
         ]);
     }
+    // Edit Product
+    public function edit(Product $product)
+    {
+        $categories = Category::where('home_status', 1)->get();
+        $subCategories = SubCategory::where('status', 1)->get();
+        $childCategories = ChildCategory::where('status', 1)->get();
+        $brands = Brand::all();
+        return view('admin.product.edit', compact('product', 'categories', 'subCategories', 'childCategories', 'brands'));
+    }
+    // Update Product
+    public function update(ProductRequest $request, $id)
+    {
+        //dd($id);
+        $product = ProductService::update($request, $id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Product updated successfully'
+        ]);
+    }
+    public function show(Product $product)
+    {
+        $reviews = Review::where(['product_id' => $product->id])->paginate(Helpers::pagination_limit());
+        return view('admin.product.show', compact('product', 'reviews'));
+    }
     public function index()
     {
         return view('admin.product.index');
     }
+    // Product DataTable
     public function datatables(Request $request)
     {
         $query = Product::latest('id');
@@ -84,13 +112,31 @@ class ProductController extends Controller
             ->addColumn('action', function ($data) {
                 return '
             <a href="' . route('admin.product.edit', $data->id) . '" class="btn btn-sm btn-primary"><i class="la la-edit fs-18"></i></a>
-            <a href="' . route('admin.product.show', $data->id) . '" class="btn btn-sm btn-danger">View</a>
+            <a href="' . route('admin.product.show', $data->id) . '" class="btn btn-sm btn-danger"><i class="las la-eye"></i></a>
             <a id="delete" href="' . route('admin.product.delete', $data->id) . '" class="btn btn-sm btn-danger"><i class="la la-trash-alt text-secondary fs-18"></i></a>
             ';
             })
 
             ->rawColumns(['checkbox', 'photo', 'name', 'featured', 'arrival', 'status', 'action'])
             ->make(true);
+    }
+    public function remove_image(Request $request)
+    {
+        FileManager::delete('/asset/storage/product/' . $request['name']);
+        $product = Product::find($request['id']);
+        $array = [];
+        if (count(json_decode($product['images'])) <= 1) {
+            return back()->with('warning', 'You cannot delete all images!');
+        }
+        foreach (json_decode($product['images']) as $image) {
+            if ($image != $request['name']) {
+                array_push($array, $image);
+            }
+        }
+        Product::where('id', $request['id'])->update([
+            'images' => json_encode($array),
+        ]);
+        return back()->with('success', 'Product image removed successfully!');
     }
     public function color_combination(Request $request)
     {

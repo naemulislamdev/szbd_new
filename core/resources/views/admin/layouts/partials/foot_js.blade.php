@@ -20,6 +20,7 @@
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 <script src="{{ asset('assets/default/file_upload/uppy.legacy.min.js') }}"></script>
 <script src="{{ asset('assets/default/file_upload/file-upload.init.js') }}"></script>
+<script src="{{ asset('assets/backend/js/tags-input.min.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- include summernote css/js -->
