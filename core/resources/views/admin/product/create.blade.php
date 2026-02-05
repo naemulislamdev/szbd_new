@@ -127,8 +127,8 @@
                                         <option value="{{ null }}" selected disabled>
                                             ---Select---</option>
                                         @foreach ($brands as $b)
-                                                <option value="{{ $b['id'] }}">{{ $b['name'] }}</option>
-                                            @endforeach
+                                            <option value="{{ $b['id'] }}">{{ $b['name'] }}</option>
+                                        @endforeach
                                     </select>
                                     @error('brand_id')
                                         <span class="text-danger">{{ $message }}</span>
@@ -172,7 +172,8 @@
                                     </label> --}}
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" value="{{ old('colors_active') }}"
-                                                name="colors_active" type="checkbox" id="flexSwitchCheckDefault" value="1">
+                                                name="colors_active" type="checkbox" id="flexSwitchCheckDefault"
+                                                value="1">
                                             <label class="form-check-label" for="flexSwitchCheckDefault">
                                             </label>
                                         </div>
@@ -528,7 +529,6 @@
         <div class="modal-dialog modal-dialog-centered">
             <form action="" method="POST">
                 @csrf
-
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Add New Color</h5>
@@ -731,7 +731,8 @@
                 if (category_id) {
                     $.ajax({
                         //user route
-                        url: "{{ route('admin.product.get-subcategories', ':id') }}/".replace(':id', category_id),
+                        url: "{{ route('admin.product.get-subcategories', ':id') }}/".replace(
+                            ':id', category_id),
                         type: "GET",
                         success: function(data) {
                             let html = '<option selected disabled>---Select---</option>';
@@ -753,7 +754,8 @@
 
                 if (sub_category_id) {
                     $.ajax({
-                        url: "{{ route('admin.product.get-child-categories', ':id') }}/" .replace(':id', sub_category_id) ,
+                        url: "{{ route('admin.product.get-child-categories', ':id') }}/".replace(
+                            ':id', sub_category_id),
                         type: "GET",
                         success: function(data) {
                             let html = '<option selected disabled>---Select---</option>';

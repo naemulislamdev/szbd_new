@@ -131,15 +131,20 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->group(function () {
             Route::get('multiple-product/landing', 'multiIndex')->name('multiple.index');
             Route::post('multiple-product/store', 'multipleStore')->name('multiple.store');
-            Route::get('multiple-product/remove-banner', 'remove_image')->name('multiple.remove-image');
+            // Route::get('multiple-product/remove-banner', 'remove_image')->name('multiple.remove-image');
             Route::post('multiple-product/status-update', 'status_update')->name('multiple.status-update');
             Route::post('multiple-product/landing_pages_update', 'update')->name('multiple.landing_pages_update');
             Route::get('multiple-product/add-product/{landing_id}', 'add_product')->name('multiple.add-product');
-            Route::post('multiple-product/add-product/{landing_id}', 'add_product_submit');
+            Route::post('multiple-product/store-product/{landing_id}', 'add_product_submit');
             Route::post('multiple-product/delete-product', 'delete_product')->name('multiple.delete-product');
             Route::get('/multiple-product/datatables', 'multipleProductdatatables')->name('multiple.datatables');
             Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
             Route::post('multiple-product/remove', 'removeMultiplePage')->name('remove_multiple_page');
+            // multiple product added routes
+            Route::get("multiple-prouct-create/{id}", 'multipleProductCreate')->name("createMultipleProduct");
+            Route::get("multiple-prouct-added-datatable/{id}", 'addedProductsDatatable')->name("addedProductDatatable");
+            Route::post('multiple-product/delete-added-product', 'delete_added_product')->name('multiple.delete-added-product');
+            Route::post('multiple-product/store-multiple-product', 'multipleProductsAddedStore')->name('multiple.products.store');
 
             // Single Product Landing page routes
 
