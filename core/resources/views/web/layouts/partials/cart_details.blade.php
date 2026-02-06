@@ -21,17 +21,17 @@
                             @endphp
                             @if (session()->has('cart') && count(session()->get('cart')) > 0)
                                 @foreach (session()->get('cart') as $key => $cartItem)
-                                @php
-                                    $gTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
-                                @endphp
+                                    @php
+                                        $gTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
+                                    @endphp
                                     <tr>
                                         <td class="product-col">
                                             <div class="checkout-product">
                                                 <a href="{{ route('product', $cartItem['slug']) }}">
-                                                   @if ($cartItem['color_image'])
+                                                    @if ($cartItem['color_image'])
                                                         <img src="{{ $cartItem['color_image'] }}" alt="Product image">
                                                     @else
-                                                        <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $cartItem['thumbnail'] }}"
+                                                        <img src="{{ asset('assets/storage/product/thumbnail') }}/{{ $cartItem['thumbnail'] }}"
                                                             alt="Product image">
                                                     @endif
                                                 </a>
@@ -41,7 +41,7 @@
                                                 href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a>
                                         </td>
                                         <td class="price-col">
-                                            {{ \App\CPU\Helpers::currency_converter($cartItem['price'] - $cartItem['discount']) }}
+                                            {{ $cartItem['price'] - $cartItem['discount'] }}
                                         </td>
                                         <td class="quantity-col">
                                             <div class="product-quantity d-flex align-items-center">
@@ -59,11 +59,11 @@
                                             </div>
                                         </td>
                                         <td class="total-col">
-                                            {{ \App\CPU\Helpers::currency_converter(($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity']) }}
+                                            {{ ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'] }}
                                         </td>
                                         <td class="remove-col"><a href="javascript:voide(0);"
-                                                onclick="removeFromCart({{ $key }})"
-                                                class="btn-remove"><i class="fa fa-trash-o"></i></a></td>
+                                                onclick="removeFromCart({{ $key }})" class="btn-remove"><i
+                                                    class="fa fa-trash-o"></i></a></td>
                                     </tr>
                                 @endforeach
                             @else
@@ -81,18 +81,18 @@
                         <h2 class="address-title">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-<form action="{{ route('customer.product.checkout.order') }}" method="POST" id="userInfoForm">
+                        <form action="{{ route('customer.product.checkout') }}" method="POST" id="userInfoForm">
                             @csrf
-                            
+
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
                             <div class="row">
                                 <div class="col-md-12">
                                     <label class="d-block mb-2">আপনার এরিয়া সিলেক্ট করুন</label>
                                     <div class="row">
-                                        @foreach (\App\Model\ShippingMethod::where(['status' => 1])->get() as $shipping)
+                                        @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
                                             <div class="col-md-6">
                                                 <label class="shipping-box">
-                                                    <input type="radio" name="shipping_method_id"
+                                                    <input type="radio" name="shipping_area"
                                                         value="{{ $shipping['id'] }}"
                                                         onchange="set_shipping_id(this.value)"
                                                         {{ session()->has('shipping_method_id') && session('shipping_method_id') == $shipping['id'] ? 'checked' : '' }}>
@@ -100,7 +100,7 @@
                                                         {{ $shipping['title'] }}
                                                     </span>
                                                     <span class="shipping-cost">
-                                                        {{ \App\CPU\Helpers::currency_converter($shipping['cost']) }}
+                                                        {{ $shipping['cost'] }}
                                                     </span>
                                                 </label>
                                             </div>
@@ -119,38 +119,71 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label>নাম <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control auto-save" placeholder="আপনার নাম লিখুন"
-                                            name="name" value="{{ old('name') }}">
-                                        @error('name')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control auto-save" id="phone" name="phone"
-                                            placeholder="ফোন নম্বর লিখুন" required value="{{ old('phone') }}">
-                                        <span id="phoneFeedback" class="small text-danger"></span>
-                                        @error('phone')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    @if ($customer && $shippingAddresses->count() > 0)
+                                        @foreach ($shippingAddresses as $key => $address)
+                                            <div class="address-box {{ $key == 0 ? 'active' : '' }}">
+                                                <input type="radio" id="address_{{ $address->id }}"
+                                                    name="address_type" value="{{ $address->id }}"
+                                                    {{ $key == 0 ? 'checked' : '' }} onclick="selectAddress(false,this)">
+                                                <label for="address_{{ $address->id }}">
+                                                    <strong>{{ $address->contact_person_name }}</strong><br>
+                                                    📞 {{ $address->phone }}<br>
+                                                    🏠 {{ $address->address }}
+                                                </label>
+                                                <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
+                                                    onclick="openEditModal({{ $address }})">✏️</button>
+                                            </div>
+                                        @endforeach
+
+                                        <label class="address-box">
+                                            <input type="radio" name="address_type" value="new"
+                                                onclick="selectAddress(true,this)">
+                                            ➕ নতুন ঠিকানা যোগ করুন
+                                        </label>
+                                    @endif
                                 </div>
                             </div>
+                            <div id="newAddressForm" style="{{ $customer ? 'display:none;' : '' }}" class="mb-4">
+                                @if (!$customer)
+                                    <input type="hidden" name="address_type" value="new">
+                                @endif
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label>নাম <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control auto-save"
+                                                placeholder="আপনার নাম লিখুন" name="name"
+                                                value="{{ old('name') }}">
+                                            @error('name')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control auto-save" id="phone"
+                                                name="phone" placeholder="ফোন নম্বর লিখুন"
+                                                value="{{ old('phone') }}">
+                                            <span id="phoneFeedback" class="small text-danger"></span>
+                                            @error('phone')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <div class="form-group">
-                                        <label>আপনার ঠিকানা <span class="text-danger">*</span></label>
-                                        <textarea class="form-control auto-save" placeholder="আপনার শিপিং ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
-                                        @error('address')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-group">
+                                            <label>আপনার ঠিকানা <span class="text-danger">*</span></label>
+                                            <textarea class="form-control auto-save" placeholder="আপনার শিপিং ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
+                                            @error('address')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -162,7 +195,7 @@
             </div><!-- End .col-lg-9 -->
             <aside class="col-lg-4">
                 <div class="summary summary-cart">
-                    @include('web-views.partials._order-summary')
+                    @include('web.layouts.partials.cart_order_summary')
                 </div>
             </aside><!-- End .col-lg-3 -->
         </div><!-- End .row -->
@@ -171,25 +204,24 @@
 
 
 <script>
-
     function set_shipping_id(id) {
-        @foreach(session()->get('cart') as $key => $item)
-        let key = '{{$key}}';
-        @break
+        @foreach (session()->get('cart') as $key => $item)
+            let key = '{{ $key }}';
+            @break
         @endforeach
         $.get({
-            url: '{{url('/')}}/customer/set-shipping-method',
+            url: '{{ url('/') }}/customer/set-shipping-method',
             dataType: 'json',
             data: {
                 id: id,
                 key: key
             },
-            beforeSend: function () {
+            beforeSend: function() {
                 $('#loading').show();
             },
-            success: function (data) {
+            success: function(data) {
                 if (data.status == 1) {
-                    toastr.success('Shipping method selected', {
+                    toastr.success('Shipping area is selected', {
                         CloseButton: true,
                         ProgressBar: true
                     });
@@ -198,13 +230,13 @@
                     //     location.reload();
                     // }, 2000);
                 } else {
-                    toastr.error('Choose proper shipping method.', {
+                    toastr.error('Choose proper shipping area.', {
                         CloseButton: true,
                         ProgressBar: true
                     });
                 }
             },
-            complete: function () {
+            complete: function() {
                 $('#loading').hide();
             },
         });
@@ -212,28 +244,31 @@
 </script>
 
 @if (session()->has('cart') && count(session()->get('cart')) > 0)
-<script>
-    window.dataLayer = window.dataLayer || [];
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-    dataLayer.push({
-        event: "begin_checkout",
-        ecommerce: {
-            currency: "BDT",
-            value: {{ \App\CPU\Helpers::currency_converter($gTotal) }},
-            items: [
-                @foreach (session('cart') as $item)
-                {
-                    item_id: "{{ $item['id'] }}",
-                    item_name: "{{ $item['name'] }}",
-                    item_brand: "{{ $item['brand'] ?? '' }}",
-                    item_category: "{{ $item['category'] ?? '' }}",
-                    item_variant: "{{ $item['variant'] ?? '' }}",
-                    price: {{ \App\CPU\Helpers::currency_converter($item['price'] - $item['discount']) }},
-                    quantity: {{ $item['quantity'] }}
-                }@if(!$loop->last),@endif
-                @endforeach
-            ]
-        }
-    });
-</script>
+        dataLayer.push({
+            event: "begin_checkout",
+            ecommerce: {
+                currency: "BDT",
+                value: {{ $gTotal }},
+                items: [
+                    @foreach (session('cart') as $item)
+                        {
+                            item_id: "{{ $item['id'] }}",
+                            item_name: "{{ $item['name'] }}",
+                            item_brand: "{{ $item['brand'] ?? '' }}",
+                            item_category: "{{ $item['category'] ?? '' }}",
+                            item_variant: "{{ $item['variant'] ?? '' }}",
+                            price: {{ $item['price'] - $item['discount'] }},
+                            quantity: {{ $item['quantity'] }}
+                        }
+                        @if (!$loop->last)
+                            ,
+                        @endif
+                    @endforeach
+                ]
+            }
+        });
+    </script>
 @endif

@@ -22,7 +22,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/product-details', 'productDeails')->name('product.details');
         Route::get('/shop', 'shop')->name('shop');
         Route::get('/outlets', 'outlets')->name('outlets');
-        Route::get('/checkout', 'shop_cart')->name('shop-cart');
+        Route::get('/checkout', 'checkout')->name('checkout');
         Route::get('/special-offers', 'specialProducts')->name('offers.product');
         Route::post('/client-review', 'clientReview')->name('client_review');
         Route::get('/leads', 'leads')->name('leads');

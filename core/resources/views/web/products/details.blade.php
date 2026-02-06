@@ -354,6 +354,9 @@
                                     $colorVariants = is_array($product->color_variant)
                                         ? $product->color_variant
                                         : json_decode($product->color_variant ?? '[]', true);
+                                    $choiceOptions = is_array($product->choice_options)
+                                        ? $product->choice_options
+                                        : json_decode($product->choice_options ?? '[]', true);
                                 @endphp
 
                                 <form id="form-{{ $product->id }}" class="mb-2">
@@ -411,21 +414,21 @@
                                             }
                                         }
                                     @endphp
-                                    @foreach (json_decode($product->choice_options) as $key => $choice)
+                                    @foreach ($choiceOptions as $key => $choice)
                                         <div class="row">
                                             <div class="col-12 mb-3 mt-3">
-                                                <h4 style="font-size: 18px; margin:0;">{{ $choice->title }}</h4>
+                                                <h4 style="font-size: 18px; margin:0;">{{ $choice['title'] }}</h4>
                                             </div>
                                             <div class="col-12 ">
                                                 <div class="d-flex">
-                                                    @foreach ($choice->options as $key => $option)
+                                                    @foreach ($choice['options'] as $key => $option)
                                                         <div class="v-size-box">
                                                             <input type="radio"
-                                                                id="{{ $choice->name }}-{{ $option }}"
-                                                                name="{{ $choice->name }}" value="{{ $option }}"
+                                                                id="{{ $choice['name'] }}-{{ $option }}"
+                                                                name="{{ $choice['name'] }}" value="{{ $option }}"
                                                                 @if ($key == 0) checked @endif>
                                                             <label style="height: 35px !important; "
-                                                                for="{{ $choice->name }}-{{ $option }}"
+                                                                for="{{ $choice['name'] }}-{{ $option }}"
                                                                 class="size-label">{{ $option }}</label>
                                                         </div>
                                                     @endforeach

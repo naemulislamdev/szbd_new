@@ -50,10 +50,11 @@ Route::prefix('/customer')->as('customer.')->group(function () {
         Route::get('set-payment-method/{name}', [SystemController::class, 'set_payment_method'])->name('set-payment-method');
         Route::get('set-shipping-method', [SystemController::class, 'set_shipping_method'])->name('set-shipping-method');
         Route::get('set-pos-shipping-method', [SystemController::class, 'set_pos_shipping_method'])->name('set-pos-shipping-method');
-        Route::post('checkout-complete', [SystemController::class, 'productCheckoutOrder'])->name('product.checkout.order');
+        Route::post('checkout-complete', [SystemController::class, 'productCheckout'])->name('product.checkout');
         Route::post('checkout/complete', [SystemController::class, 'singlepCheckout'])->name('sproduct.checkout');
         Route::get('checkout-complete/{id}', [SystemController::class, 'checkoutComplete'])->name('checkout-complete');
         Route::post('choose-billing-address', [SystemController::class, 'choose_billing_address'])->name('choose-billing-address');
+        Route::post('customer-address-update', [SystemController::class, 'customerAddressUpdate'])->name('address.update');
 
         Route::prefix('/reward-points')->as('reward-points.')->middleware('auth:customer')->group(function () {
             Route::get('convert', [RewardPointController::class, 'convert'])->name('convert');

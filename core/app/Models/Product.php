@@ -15,6 +15,7 @@ class Product extends Model
     protected $casts = [
         'colors' => 'array',
         'color_variant' => 'array',
+        'choice_options' => 'array',
         'attributes' => 'array',
         'user_id' => 'integer',
         'brand_id' => 'integer',

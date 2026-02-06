@@ -10,9 +10,11 @@
             }
 
         }
-        .card{
+
+        .card {
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         }
+
         .register-password-show {
             position: relative;
         }
@@ -24,56 +26,48 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
-        .btn-primary{
+
+        .btn-primary {
             position: relative !important;
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="container py-4 py-lg-5 my-4"
-         style="text-align: left;">
+    <div class="container py-4 py-lg-5 my-4" style="text-align: left;">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card border-0 box-shadow">
                     <div class="card-body">
                         <h2 class="h4 mb-1">Create Your New Account</h2>
-                        <form class="needs-validation_" action="{{route('customer.auth.sign-up')}}"
-                              method="post" id="sign-up-form">
+                        <form class="needs-validation_" action="{{ route('customer.auth.sign-up') }}" method="post"
+                            id="sign-up-form">
                             @csrf
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label for="reg-fn">First name</label>
-                                        <input class="form-control" value="{{old('f_name')}}" type="text" name="f_name"
-                                               style="text-align: left;"
-                                               required>
-                                        <div class="invalid-feedback">Please enter your first name!</div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="reg-ln">Last name</label>
-                                        <input class="form-control" type="text" value="{{old('l_name')}}" name="l_name"
-                                               style="text-align: left;">
-                                        <div class="invalid-feedback">Please enter your last name!</div>
+                                        <label for="reg-fn">Name <span class="text-danger">*</span></label>
+                                        <input class="form-control" value="{{ old('name') }}" type="text"
+                                            name="name" style="text-align: left;" required>
+                                        @error('name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="reg-email">Email address</label>
-                                        <input class="form-control" type="email" value="{{old('email')}}"  name="email"
-                                               style="text-align: left;" required>
+                                        <input class="form-control" type="email" value="{{ old('email') }}"
+                                            name="email" style="text-align: left;" required>
                                         <div class="invalid-feedback">Please enter valid email address!</div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="reg-phone">Phone number</label>
-                                        <input class="form-control" type="number"  value="{{old('phone')}}" id="phone"  name="phone"
-                                               style="text-align:left;"
-                                               required>
-                                       <span id="phoneFeedback" class="small text-danger"></span>
+                                        <input class="form-control" type="number" value="{{ old('phone') }}"
+                                            id="phone" name="phone" style="text-align:left;" required>
+                                        <span id="phoneFeedback" class="small text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -81,11 +75,8 @@
                                         <label for="si-password">password'</label>
                                         <div class="register-password-show">
                                             <input class="form-control" name="password" type="password"
-                                                   style="text-align:left;"
-                                                   placeholder="minimum 8 characters long"
-                                                   required>
-                                                   <i class="fa fa-eye toggle-password"
-                                                   onclick="togglePassword('password')"></i>
+                                                style="text-align:left;" placeholder="minimum 8 characters long" required>
+                                            <i class="fa fa-eye toggle-password" onclick="togglePassword('password')"></i>
                                         </div>
                                     </div>
 
@@ -95,11 +86,9 @@
                                         <label for="si-password">Confirm password</label>
                                         <div class="register-password-show">
                                             <input class="form-control" name="con_password" type="password"
-                                                   style="text-align: left;"
-                                                   placeholder="minimum 8 characters long"
-                                                   required>
-                                                   <i class="fa fa-eye toggle-password"
-                                                   onclick="togglePassword('con_password')"></i>
+                                                style="text-align: left;" placeholder="minimum 8 characters long" required>
+                                            <i class="fa fa-eye toggle-password"
+                                                onclick="togglePassword('con_password')"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -108,11 +97,10 @@
 
                                 <div class="form-group mb-1">
                                     <strong>
-                                        <input type="checkbox" class="mr-1"
-                                               name="remember" id="inputCheckd">
+                                        <input type="checkbox" class="mr-1" name="remember" id="inputCheckd">
                                     </strong>
-                                    <label class="" for="remember">i agree to Your terms<a
-                                            class="font-size-sm" target="_blank" href="{{route('terms')}}">
+                                    <label class="" for="remember">i agree to Your terms<a class="font-size-sm"
+                                            target="_blank" href="{{ route('terms') }}">
                                             terms and condition
                                         </a></label>
                                 </div>
@@ -128,7 +116,7 @@
                                     </div>
                                 </div>
                                 <div class="mx-1">
-                                    <a class="btn btn-outline-primary" href="{{route('customer.auth.login')}}">
+                                    <a class="btn btn-outline-primary" href="{{ route('customer.auth.login') }}">
                                         <i class="fa fa-sign-in"></i> sign_in
                                     </a>
                                 </div>
@@ -137,13 +125,13 @@
                                 <div class="col-12 mt-3">
                                     <div class="row">
                                         @foreach (\App\CPU\Helpers::get_business_settings('social_login') as $socialLoginService)
-                                            @if (isset($socialLoginService) && $socialLoginService['status']==true)
+                                            @if (isset($socialLoginService) && $socialLoginService['status'] == true)
                                                 <div class="col-sm-6 text-center mt-1 mx-auto">
                                                     <a class="btn btn-outline-primary"
-                                                       href="{{route('customer.auth.service-login', $socialLoginService['login_medium'])}}"
-                                                       style="width: 100%">
+                                                        href="{{ route('customer.auth.service-login', $socialLoginService['login_medium']) }}"
+                                                        style="width: 100%">
                                                         <i class="czi-{{ $socialLoginService['login_medium'] }}"></i>
-                                                       sing up with {{ $socialLoginService['login_medium']}}
+                                                        sing up with {{ $socialLoginService['login_medium'] }}
                                                     </a>
                                                 </div>
                                             @endif
@@ -161,7 +149,7 @@
 
 @push('scripts')
     <script>
-        $('#inputCheckd').change(function () {
+        $('#inputCheckd').change(function() {
             // console.log('jell');
             if ($(this).is(':checked')) {
                 $('#sign-up').removeAttr('disabled');
@@ -170,9 +158,8 @@
             }
 
         });
-
     </script>
-     <script>
+    <script>
         function togglePassword(fieldId) {
             const field = document.querySelector(`input[name="${fieldId}"]`);
             const icon = field.nextElementSibling;

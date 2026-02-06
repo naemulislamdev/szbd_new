@@ -7,7 +7,7 @@
                 @if ($cartItem['color_image'])
                     <img src="{{ $cartItem['color_image'] }}" alt="Product image">
                 @else
-                    <img src="{{ asset('assets/storage/product/thumbnail')}}/{{ $cartItem['thumbnail'] }}"
+                    <img src="{{ asset('assets/storage/product/thumbnail') }}/{{ $cartItem['thumbnail'] }}"
                         alt="">
                 @endif
             </div>
@@ -20,7 +20,7 @@
                         <span>{{ $key }} : {{ $variation }}</span>
                     @endforeach
                 @endif
-                <p>{{ \App\CPU\Helpers::currency_converter(($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity']) }}
+                <p>{{ ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'] }}
                 </p>
                 <a href="#" onclick="removeFromCart({{ $keyId }})"><i class="fa fa-trash"></i></a>
             </div>
@@ -33,11 +33,11 @@
             <div class="col-md-12">
                 <div class="cart-header-subtotal d-flex justify-content-between">
                     <h4>Subtotal</h4>
-                    <h4>{{ \App\CPU\Helpers::currency_converter($sub_total) }}</h4>
+                    <h4>{{ $sub_total }}</h4>
                 </div>
                 <div class="button-section d-flex">
                     <a href="#">View Cart</a>
-                    <a href="{{ route('shop-cart') }}">Check Out</a>
+                    <a href="{{ route('checkout') }}">Check Out</a>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 
-@section('title', \App\CPU\translate('Order Complete'))
+@section('title', 'Order Complete')
 
 @push('css_or_js')
     <style>
@@ -33,8 +33,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h5 style="font-size: 20px; font-weight: 900; text-align:center;">
-                                        {{ \App\CPU\translate('your_order_has_been_placed_successfully!') }}
-                                        !</h5>
+                                        Your order has been placed successfully!</h5>
                                 </div>
                             </div>
 
@@ -46,11 +45,10 @@
                                 </div>
                             </div>
 
-                            <span class="font-weight-bold d-block mt-4"
-                                style="font-size: 17px;text-align:center;">{{ \App\CPU\translate('Hello') }},
+                            <span class="font-weight-bold d-block mt-4" style="font-size: 17px;text-align:center;">Hello,
                                 {{ auth('customer')->user()->f_name }}</span>
-                            <span
-                                style="text-align:center; display: block; margin-bottom: 8px;">{{ \App\CPU\translate('You order has been confirmed and will be shipped according to the method you selected!') }}</span>
+                            <span style="text-align:center; display: block; margin-bottom: 8px;">You order has been
+                                confirmed and will be shipped according to the method you selected!</span>
                             @php($summary = \App\CPU\OrderManager::order_summary($order))
                             @php($extra_discount = 0)
                             <?php
@@ -77,7 +75,7 @@
                                                             @else
                                                                 <img class="d-block mr-2"
                                                                     onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
-                                                                    src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
+                                                                    src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product['thumbnail'] }}"
                                                                     alt="VR Collection" width="60">
                                                             @endif
                                                         </div>
@@ -87,7 +85,7 @@
                                                                 {{ isset($product['name']) ? Str::limit($product['name'], 40) : '' }}
                                                             </a><br>
                                                             @if ($detail->variant)
-                                                                <span>{{ \App\CPU\translate('variant') }} : </span>
+                                                                <span>variant: </span>
                                                                 {{ $detail->variant }}
                                                             @endif
                                                         </div>
@@ -106,8 +104,7 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span
-                                                            class="product-qty ">{{ \App\CPU\translate('Order Id') }}</span>
+                                                        <span class="product-qty ">Order Id</span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -121,7 +118,7 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">{{ \App\CPU\translate('Item') }}</span>
+                                                        <span class="product-qty ">Item</span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -136,14 +133,13 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span
-                                                            class="product-qty ">{{ \App\CPU\translate('Subtotal') }}</span>
+                                                        <span class="product-qty ">Subtotal</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                        <span>{{ \App\CPU\Helpers::currency_converter($summary['subtotal']) }}</span>
+                                                        <span>{{ $summary['subtotal'] }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -152,14 +148,13 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span
-                                                            class="product-qty ">{{ \App\CPU\translate('text_fee') }}</span>
+                                                        <span class="product-qty ">text_fee</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                        <span>{{ \App\CPU\Helpers::currency_converter($summary['total_tax']) }}</span>
+                                                        <span>{{ $summary['total_tax'] }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -168,14 +163,14 @@
                                                     <td>
                                                         <div
                                                             class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                            <span class="product-qty ">{{ \App\CPU\translate('Shipping') }}
-                                                                {{ \App\CPU\translate('Fee') }}</span>
+                                                            <span class="product-qty ">Shipping
+                                                                Fee</span>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div
                                                             class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                            <span>{{ \App\CPU\Helpers::currency_converter($summary['total_shipping_cost']) }}</span>
+                                                            <span>{{ $summary['total_shipping_cost'] }}</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -185,15 +180,14 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">{{ \App\CPU\translate('Discount') }}
-                                                            {{ \App\CPU\translate('on_product') }}</span>
+                                                        <span class="product-qty "> Discount on product</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
                                                         <span>-
-                                                            {{ \App\CPU\Helpers::currency_converter($summary['total_discount_on_product']) }}</span>
+                                                            {{ $summary['total_discount_on_product'] }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -202,15 +196,15 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">{{ \App\CPU\translate('Coupon') }}
-                                                            {{ \App\CPU\translate('Discount') }}</span>
+                                                        <span class="product-qty ">Coupon
+                                                            Discount</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
                                                         <span>-
-                                                            {{ \App\CPU\Helpers::currency_converter($order->discount_amount) }}</span>
+                                                            {{ $order->discount_amount }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -220,8 +214,8 @@
                                                     <td>
                                                         <div
                                                             class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                            <span class="product-qty ">{{ \App\CPU\translate('extra') }}
-                                                                {{ \App\CPU\translate('Discount') }}</span>
+                                                            <span class="product-qty ">extra
+                                                                Discount</span>
                                                         </div>
                                                     </td>
 
@@ -229,7 +223,7 @@
                                                         <div
                                                             class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
                                                             <span>-
-                                                                {{ \App\CPU\Helpers::currency_converter($extra_discount) }}</span>
+                                                                {{ $extra_discount }}</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -239,15 +233,14 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span
-                                                            class="font-weight-bold">{{ \App\CPU\translate('Total') }}</span>
+                                                        <span class="font-weight-bold">Total</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
                                                         <span
-                                                            class="font-weight-bold amount ">{{ \App\CPU\Helpers::currency_converter($order->order_amount + $summary['total_shipping_cost']) }}</span>
+                                                            class="font-weight-bold amount ">{{ $order->order_amount + $summary['total_shipping_cost'] }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -259,12 +252,12 @@
                             <div class="row mt-4">
                                 <div class="col-6">
                                     <a href="{{ route('home') }}" class="btn btn-primary w-100">
-                                        {{ \App\CPU\translate('go_to_shopping') }}
+                                        Go to shopping
                                     </a>
                                 </div>
                                 <div class="col-6">
                                     <a href="{{ route('account-oder') }}" class="btn btn-secondary pull-right w-100">
-                                        {{ \App\CPU\translate('check_orders') }}
+                                        Check orders
                                     </a>
                                 </div>
                             </div>
@@ -283,9 +276,9 @@
             ecommerce: {
                 transaction_id: "{{ $order->order_id }}",
                 affiliation: "My eCommerce Store",
-                value: {{ \App\CPU\Helpers::currency_converter($order->order_amount) ?? 0 }},
+                value: {{ $order->order_amount ?? 0 }},
                 tax: 0.00,
-                shipping: {{ \App\CPU\Helpers::currency_converter($order->shipping_cost) ?? 0 }},
+                shipping: {{ $order->shipping_cost ?? 0 }},
                 currency: "BDT",
                 coupon: "",
                 items: [
@@ -295,7 +288,7 @@
                             item_name: "{{ $detail->product->name ?? '' }}",
                             item_brand: "Shopping Zone BD",
                             item_category: "General",
-                            price: {{ \App\CPU\Helpers::currency_converter($detail->price) ?? 0 }},
+                            price: {{ $detail->price ?? 0 }},
                             quantity: {{ $detail->qty }}
                         }
                         @if (!$loop->last)
@@ -313,12 +306,12 @@
                     {
                         id: '{{ $detail->product_id }}',
                         quantity: {{ $detail->qty }},
-                        item_price: {{ \App\CPU\Helpers::currency_converter($detail->price) ?? 0 }}
+                        item_price: {{ $detail->price ?? 0 }}
                     },
                 @endforeach
             ],
             content_type: 'product',
-            value: {{ \App\CPU\Helpers::currency_converter($order->order_amount) ?? 0 }},
+            value: {{ $order->order_amount ?? 0 }},
             currency: 'BDT'
         });
     </script>

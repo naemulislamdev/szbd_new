@@ -18,6 +18,7 @@ use App\Models\LandingPages;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\ShippingAddress;
 use App\Models\SubCategory;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -192,7 +193,7 @@ class FrontendController extends Controller
     public function careers()
     {
         $careers = Career::where('status', 1)->latest()->get();
-        return view("web.careers",compact('careers'));
+        return view("web.careers", compact('careers'));
     }
 
     //shop function
@@ -308,10 +309,15 @@ class FrontendController extends Controller
         return view('web-views.brands', compact('brands'));
     }
 
-    public function shop_cart()
+    public function checkout()
     {
         if (session()->has('cart') && count(session('cart')) > 0) {
-            return view('web-views.shop-cart');
+            $customer = auth('customer')->user();
+            $shippingAddresses = [];
+            if ($customer) {
+                $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
+            }
+            return view('web.checkout', compact('customer','shippingAddresses'));
         }
         return redirect('/')->with('error', 'No items in your basket!');
     }
@@ -486,27 +492,48 @@ class FrontendController extends Controller
     // DB Modify Funciton for some time
     public function currency_convert()
     {
-        // $products = Product::where('code', 'T2200BS')->first();
         $products = Product::all();
-        foreach ($products as $product) {
 
-            $usd = 0.011904761904762;
-            $my_currency = 1.0;
-            //1.0
-            $rate = $my_currency / $usd;
-            $discount = null;
-            if ($product->discount_type != null && $product->discount_type == 'flat') {
-                if ($product->discount > 0) {
-                    $discount = $product->discount * $rate;
+        $usd = 0.011904761904762;
+        $my_currency = 1.0;
+        //1.0
+        $rate = $my_currency / $usd;
+
+
+        foreach ($products as $product) {
+            /* ===============================
+         | 1️⃣ Convert Variation Price
+         =============================== */
+            $variations = [];
+
+            if (!empty($product->variation)) {
+                $decodedVariation = json_decode($product->variation, true);
+
+                if (is_array($decodedVariation)) {
+                    foreach ($decodedVariation as $variation) {
+
+                        if (isset($variation['price'])) {
+                            $variation['price'] = $variation['price'] * $rate;
+                        }
+
+                        $variations[] = $variation;
+                    }
                 }
+            }
+
+
+            $discount = 0;
+            if ($product->discount_type === 'flat' && $product->discount > 0) {
+                $discount = $product->discount * $rate;
             }
             $bdtUnitPrice = $product->unit_price * $rate;
             $bdtPurchasePrice = $product->purchase_price * $rate;
 
             $product->update([
-                'discount' => $discount ?? 0,
-                'unit_price' => $bdtUnitPrice,
-                'purchase_price' => $bdtPurchasePrice
+                'unit_price'     => round($bdtUnitPrice, 2),
+                'purchase_price' => round($bdtPurchasePrice, 2),
+                'discount'       => round($discount, 2),
+                'variation'      => json_encode($variations),
             ]);
         }
         return "Product Price Updated Successfully!";

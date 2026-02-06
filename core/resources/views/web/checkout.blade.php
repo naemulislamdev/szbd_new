@@ -1,21 +1,21 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 
-@section('title',\App\CPU\translate('My Shopping Cart'))
+@section('title', 'My Shopping Cart')
 
 @push('css_or_js')
-    <meta property="og:image" content="{{asset('storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="og:title" content="{{$web_config['name']->value}} "/>
-    <meta property="og:url" content="{{env('APP_URL')}}">
+    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+    <meta property="og:title" content="{{ $web_config['name']->value }} " />
+    <meta property="og:url" content="{{ env('APP_URL') }}">
     <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
-    <meta property="twitter:card" content="{{asset('storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="twitter:title" content="{{$web_config['name']->value}}"/>
-    <meta property="twitter:url" content="{{env('APP_URL')}}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value),0,100) !!}">
+    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+    <meta property="twitter:title" content="{{ $web_config['name']->value }}" />
+    <meta property="twitter:url" content="{{ env('APP_URL') }}">
+    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('assets/front-end')}}/css/shop-cart.css"/>
+    <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/shop-cart.css" />
     <style>
-         p,
+        p,
         span,
         h1,
         h2,
@@ -29,9 +29,11 @@
             font-weight: 400;
             font-size: 18px;
         }
-        .address-title{
-            font-size:22px;
+
+        .address-title {
+            font-size: 22px;
         }
+
         .card-header {
             padding: 6px 0px;
             margin-bottom: 0;
@@ -64,6 +66,7 @@
         .header-icon>a>.fa {
             color: #464545;
         }
+
         .shipping-box {
             display: flex;
             align-items: center;
@@ -90,6 +93,35 @@
             font-weight: bold;
             color: #f26d21;
         }
+
+        .address-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 7px 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .address-box.active {
+            border-color: #0d6efd;
+            background: #f5f9ff;
+        }
+
+        .address-box input {
+            display: none;
+        }
+
+        .address-box>h4 {
+            font-size: 14px;
+            margin: 0px;
+        }
+
+        .edit-btn {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+        }
     </style>
 @endpush
 
@@ -97,6 +129,34 @@
     <div class="container pb-5 mb-2 mt-3" id="cart-summary">
         @include('web.layouts.partials.cart_details')
     </div>
+    <!-- Button trigger modal -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form method="POST" action="{{ route('customer.address.update') }}">
+                @csrf
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Address</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" name="name" id="edit_name" class="form-control mb-2">
+                        <input type="number" name="phone" id="edit_phone" class="form-control mb-2">
+                        <textarea name="address" id="edit_address" class="form-control"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -141,11 +201,11 @@
             let doneTypingInterval = 1000; // Time in milliseconds (1 second)
 
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             $(".auto-save").on("input", function() {
                 clearTimeout(typingTimer);
@@ -173,5 +233,32 @@
                 });
             }
         });
+    </script>
+    <script>
+        function selectAddress(showNew, el) {
+            const form = document.getElementById('newAddressForm');
+            if (showNew) {
+                form.style.display = 'block';
+                form.querySelectorAll('input,textarea').forEach(i => i.disabled = false);
+            } else {
+                form.style.display = 'none';
+                form.querySelectorAll('input,textarea').forEach(i => i.disabled = true);
+            }
+
+            document.querySelectorAll('.address-box').forEach(b => b.classList.remove('active'));
+            el.closest('.address-box').classList.add('active');
+        }
+    </script>
+    <script>
+        function openEditModal(address) {
+            event.stopPropagation();
+
+            document.getElementById('edit_id').value = address.id;
+            document.getElementById('edit_name').value = address.contact_person_name;
+            document.getElementById('edit_phone').value = address.phone;
+            document.getElementById('edit_address').value = address.address;
+
+            $('#editAddressModal').modal('show');
+        }
     </script>
 @endpush

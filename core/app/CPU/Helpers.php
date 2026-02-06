@@ -4,6 +4,7 @@ namespace App\CPU;
 
 use App\Models\BusinessSetting;
 use App\Models\Review;
+use App\Models\User;
 
 class Helpers
 {
@@ -118,5 +119,61 @@ class Helpers
         }
 
         return [$overallRating, $totalRating];
+    }
+    public static function get_customer_check($request = null)
+    {
+        // 1️⃣ Already logged in (session + remember me)
+        if (auth('customer')->check()) {
+            return auth('customer')->user();
+        }
+
+        // 2️⃣ API authenticated user
+        if ($request && $request->user()) {
+            return $request->user();
+        }
+
+        // 3️⃣ Phone না থাকলে → offline
+        if (!$request || !$request->phone) {
+            return 'offline';
+        }
+
+        $remember = true; // 🔑 always remember customer
+
+        // 4️⃣ Find customer by phone
+        $user = User::where('phone', $request->phone)->first();
+
+        // 5️⃣ If not found, try email
+        if (!$user && $request->email) {
+            $user = User::where('email', $request->email)->first();
+        }
+
+        // 6️⃣ If still not found → create customer
+        if (!$user) {
+            $user = User::create([
+                'f_name'  => $request->name ?? 'Guest',
+                'l_name'  => 'bd' . rand(1000, 9999),
+                'email'   => $request->email ?? ($request->phone . '_bd@gmail.com'),
+                'phone'   => $request->phone,
+                'password' => bcrypt($request->phone),
+            ]);
+        }
+
+        // 7️⃣ Login customer (remember forever)
+        auth()->guard('customer')->login($user, $remember);
+
+        return $user;
+    }
+    public static function cart_grand_total($cart) // needed
+    {
+        $total = 0;
+        if (!empty($cart)) {
+            foreach ($cart as $item) {
+                $product_subtotal = ($item['price'] * $item['quantity'])
+                    + ($item['tax'] * $item['quantity'])
+                    - $item['discount'] * $item['quantity'];
+                $total += $product_subtotal;
+            }
+        }
+        return $total;
     }
 }

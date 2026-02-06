@@ -601,18 +601,15 @@
                     <div class="topbar-left">
                         <div class="topbar-box mt-2">
                             <ul>
-                                <li class="nav-item"><a class="btn btn-sm btn-warning text-white"
-                                        href="#">
+                                <li class="nav-item"><a class="btn btn-sm btn-warning text-white" href="#">
                                         Complain</a></li>
                                 <li class="nav-item"><a href="{{ route('track-order.index') }}">
                                         Order Track</a></li>
                                 @if (auth('customer')->check())
-                                    <li class="nav-item"><a
-                                            href="{{ route('user-account') }}">Profile</a>
+                                    <li class="nav-item"><a href="{{ route('user-account') }}">Profile</a>
                                     </li>
                                 @else
-                                    <li class="nav-item"><a
-                                            href="{{ route('customer.auth.login') }}">Login</a>
+                                    <li class="nav-item"><a href="{{ route('customer.auth.login') }}">Login</a>
                                     </li>
                                 @endif
 
@@ -729,369 +726,15 @@
     @endif
 
     <!-- multi social toggle and drag and drop-->
+    <script src="{{ asset('assets/frontend') }}/js/custome.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const wrapper = document.getElementById('chat-wrapper');
-            const toggleBtn = document.getElementById('chatToggle');
-            const icon = toggleBtn.querySelector('i');
+        var mainurl = "{{ url('/') }}";
+        //console.log(mainurl);
 
-            // Toggle chat box
-            toggleBtn.addEventListener('click', (e) => {
-                wrapper.classList.toggle('active');
-                if (wrapper.classList.contains('active')) {
-                    icon.classList.remove('bi-chat-right-text');
-                    icon.classList.add('bi-x-circle');
-                } else {
-                    icon.classList.remove('bi-x-circle');
-                    icon.classList.add('bi-chat-right-text');
-                }
-            });
-
-            // Interact.js draggable
-            interact('.draggable')
-                .draggable({
-                    // enable inertial throwing
-                    inertia: true,
-                    // keep the element within the area of it's parent
-                    modifiers: [
-                        interact.modifiers.restrictRect({
-                            restriction: 'parent',
-                            endOnly: true
-                        })
-                    ],
-                    // enable autoScroll
-                    autoScroll: true,
-
-                    listeners: {
-                        // call this function on every dragmove event
-                        move: dragMoveListener,
-
-                        // call this function on every dragend event
-                        end(event) {
-                            var textEl = event.target.querySelector('p')
-
-                            textEl && (textEl.textContent =
-                                'moved a distance of ' +
-                                (Math.sqrt(Math.pow(event.pageX - event.x0, 2) +
-                                    Math.pow(event.pageY - event.y0, 2) | 0))
-                                .toFixed(2) + 'px')
-                        }
-                    }
-                })
-        });
-
-        function dragMoveListener(event) {
-            var target = event.target
-            // keep the dragged position in the data-x/data-y attributes
-            var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-            var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
-
-            // translate the element
-            target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
-
-            // update the posiion attributes
-            target.setAttribute('data-x', x)
-            target.setAttribute('data-y', y)
-        }
-
-        // this function is used later in the resizing and gesture demos
-        window.dragMoveListener = dragMoveListener
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.new-arrivals-section .owl-carousel').each(function() {
-
-                $(this).owlCarousel({
-                    loop: true,
-                    margin: 10,
-                    autoplay: false,
-                    autoplayTimeout: 3000,
-                    autoplayHoverPause: true,
-                    smartSpeed: 500,
-                    nav: true,
-                    navText: [
-                        '<i class="fa fa-chevron-left text-white"></i>',
-                        '<i class="fa fa-chevron-right text-white"></i>'
-                    ],
-                    responsive: {
-                        0: {
-                            items: 2
-                        },
-                        768: {
-                            items: 3
-                        },
-                        992: {
-                            items: 6
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.owl-carousel.trending-carousel').each(function() {
-
-                $(this).owlCarousel({
-                    loop: true,
-                    margin: 10,
-                    autoplay: true,
-                    autoplayTimeout: 2000,
-                    smartSpeed: 500,
-                    nav: true,
-                    dots: false,
-                    autoplayHoverPause: true,
-                    responsiveRefreshRate: 0,
-                    navText: [
-                        '<i title="Prev" class="fa fa-chevron-left"></i>',
-                        '<i title="Next" class="fa fa-chevron-right "></i>'
-                    ],
-                    responsive: {
-                        0: {
-                            margin: 10,
-                            items: 2
-                        },
-                        768: {
-                            items: 2
-                        },
-                        992: {
-                            items: 4
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.owl-carousel.category-carosel').each(function() {
-
-                $(this).owlCarousel({
-                    loop: true,
-                    margin: 20,
-                    autoplay: true,
-                    autoplayTimeout: 3000,
-                    autoplayHoverPause: true,
-                    smartSpeed: 500,
-                    nav: true,
-                    dots: false,
-                    responsiveRefreshRate: 0,
-                    navText: [
-                        '<i title="Prev" class="fa fa-chevron-left text-white"></i>',
-                        '<i title="Next" class="fa fa-chevron-right text-white"></i>'
-                    ],
-                    responsive: {
-                        0: {
-                            margin: 10,
-                            items: 3
-                        },
-                        768: {
-                            items: 3
-                        },
-                        992: {
-                            items: 6
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            /*mobile menu*/
-            $('.menu-icon').on('click', function() {
-                $('.mobile-menu').toggleClass('mobile-menu-active');
-            });
-            $('.mm-ci').on('click', function() {
-                $('.mobile-menu').toggleClass('mobile-menu-active');
-            });
-
-
-        });
-    </script>
-    <script>
-        // Store the original title
-        let originalTitle = document.title;
-        let scrollTitle = "We miss you! Please come back soon.";
-        let timeout;
-        let scrollTimeout;
-        let position = 0;
-
-        // Function to scroll the title
-        function scrollText() {
-            document.title = scrollTitle.substring(position) + " " + scrollTitle.substring(0, position);
-            position++;
-            if (position > scrollTitle.length) {
-                position = 0;
-            }
-            scrollTimeout = setTimeout(scrollText, 200); // Adjust the speed by changing the timeout
-        }
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                // When the user leaves the tab, wait for 10 seconds before changing the title
-                timeout = setTimeout(function() {
-                    scrollText(); // Start scrolling the text
-                }, 2000); // 10-second delay
-            } else {
-                // When the user comes back, clear the timeouts and revert to the original title
-                clearTimeout(timeout);
-                clearTimeout(scrollTimeout);
-                document.title = originalTitle;
-                position = 0;
-            }
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            // Add minus icon for collapse element which is open by default
-            $(".collapse.show").each(function() {
-                $(this).prev(".menu-link").find(".fa-minus").addClass("fa-minus").removeClass("fa-plus");
-            });
-
-            // Toggle plus minus icon on show hide of collapse element
-            $(".collapse").on('show.bs.collapse', function() {
-                $(this).prev(".menu-link").find(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
-            }).on('hide.bs.collapse', function() {
-                $(this).prev(".menu-link").find(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
-            });
-            /*mobile-menu-click*/
-            $('.mmenu-btn').click(function() {
-                $(this).toggleClass("menu-link-active");
-
-            });
-        });
-    </script>
-    <script>
-        // Product price filter input in min and max
-        const rangeInput = document.querySelectorAll(".range-input input"),
-            priceInput = document.querySelectorAll(".price-input input"),
-            range = document.querySelector(".slider .progress");
-        let priceGap = 1000;
-
-        priceInput.forEach((input) => {
-            input.addEventListener("input", (e) => {
-                let minPrice = parseInt(priceInput[0].value),
-                    maxPrice = parseInt(priceInput[1].value);
-
-                if (maxPrice - minPrice >= priceGap && maxPrice <= rangeInput[1].max) {
-                    if (e.target.className === "input-min") {
-                        rangeInput[0].value = minPrice;
-                        range.style.left = (minPrice / rangeInput[0].max) * 100 + "%";
-                    } else {
-                        rangeInput[1].value = maxPrice;
-                        range.style.right = 100 - (maxPrice / rangeInput[1].max) * 100 + "%";
-                    }
-                }
-            });
-        });
-
-        rangeInput.forEach((input) => {
-            input.addEventListener("input", (e) => {
-                let minVal = parseInt(rangeInput[0].value),
-                    maxVal = parseInt(rangeInput[1].value);
-
-                if (maxVal - minVal < priceGap) {
-                    if (e.target.className === "range-min") {
-                        rangeInput[0].value = maxVal - priceGap;
-                    } else {
-                        rangeInput[1].value = minVal + priceGap;
-                    }
-                } else {
-                    priceInput[0].value = minVal;
-                    priceInput[1].value = maxVal;
-                    range.style.left = (minVal / rangeInput[0].max) * 100 + "%";
-                    range.style.right = 100 - (maxVal / rangeInput[1].max) * 100 + "%";
-                }
-            });
-        });
-    </script>
-    <script>
         new WOW().init();
     </script>
-    <script>
-        //Grid view system on product
-        $(document).ready(function() {
-            $('.grid-btn').on('click', function() {
-                var columns = $(this).data('columns');
-                var category = $(this).data('category');
-                // console.log(columns);
-                $('.product-column[data-category="' + category + '"]')
-                    .removeClass('col-md-2 col-md-3 col-md-4 col-md-5 col-md-6')
-                    .addClass('col-md-' + columns);
 
-                $('.grid-btn[data-category="' + category + '"]').removeClass('active');
-                $(this).addClass('active');
-                // Apply fixed dimensions to images
-                $('.product-box[data-category="' + category + '"]')
-                    .removeClass('product-box-col-2 product-box-col-3 product-box-col-4 product-box-col-6')
-                    .addClass('product-box-col-' + columns);
-                $('.product-image2[data-category="' + category + '"]')
-                    .removeClass(
-                        'product-image2-col-2 product-image2-col-3 product-image2-col-4 product-image2-col-6'
-                    )
-                    .addClass('product-image2-col-' + columns);
-            });
-        });
-    </script>
-    <script>
-        //Grid view system on product in mobile responsive
-        $(document).ready(function() {
-            $('.grid-btn-mobile').on('click', function() {
-                var columns = $(this).data('columns');
-                var category = $(this).data('category');
-                // console.log(columns);
-                $('.product-column[data-category="' + category + '"]')
-                    .removeClass('col-md-2 col-md-3 col-md-4 col-md-5 col-md-6 col-sm-12 col-sm-6')
-                    .addClass('col-sm-' + columns);
-
-                $('.grid-btn-mobile[data-category="' + category + '"]').removeClass('active');
-                $(this).addClass('active');
-                // Apply fixed dimensions to images
-                $('.product-box[data-category="' + category + '"]')
-                    .removeClass(
-                        'product-box-col-2 product-box-col-3 product-box-col-4 product-box-col-6 product-box-col-sm-12 product-box-col-sm-6'
-                    )
-                    .addClass('product-box-col-sm-' + columns);
-
-                $('.product-image2[data-category="' + category + '"]')
-                    .removeClass(
-                        'product-image2-col-2 product-image2-col-3 product-image2-col-4 product-image2-col-6 product-image2-col-sm-12 product-image2-col-sm-6'
-                    )
-                    .addClass('product-image2-col-sm-' + columns);
-            });
-        });
-    </script>
-    <script>
-        //When scroll on window
-        window.addEventListener('scroll', function() {
-            const header = document.getElementById('header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-    </script>
-    <script>
-        //category filter category show and hide
-        $(document).ready(function() {
-            $('.category-header').on('click', function() {
-                var toggleId = $(this).find('.toggle-icon').data('toggle');
-                $('#' + toggleId).slideToggle();
-                var icon = $(this).find('.toggle-icon');
-                icon.text(icon.text() === '+' ? '-' : '+');
-            });
-
-            $('.sub-category-header').on('click', function() {
-                var toggleId = $(this).find('.toggle-icon').data('toggle');
-                if (toggleId) {
-                    $('#' + toggleId).slideToggle();
-                    var icon = $(this).find('.toggle-icon');
-                    icon.text(icon.text() === '+' ? '-' : '+');
-                }
-            });
-        });
-    </script>
     <script src="https://ai.szbdfinancing.com/static/js/product-sdk.js"></script>
     <script>
         function addWishlist(product_id) {
@@ -1182,102 +825,90 @@
         }
 
         function addToCart(form_id, redirect_to_checkout = false) {
-            if (form_id) {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                    }
-                });
 
-                $.post({
-                    url: '{{ route('cart.add') }}',
-                    data: $('#' + form_id).serializeArray(),
-                    beforeSend: function() {
-                        $('#loading').show();
-                    },
-                    success: function(data) {
-
-                        if (data.data == 1) {
-                            $('#loading').hide(); // 🔥
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Cart',
-                                text: "Product already added in cart"
-                            }).then(() => {
-                                window.location.href = "{{ route('shop-cart') }}";
-                            });
-                            return false;
-                        } else if (data.data == 0) {
-                            $('#loading').hide(); // 🔥
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Cart',
-                                text: 'Sorry, product out of stock.'
-                            });
-                            return false;
-                        }
-                        $('#loading').hide(); // 🔥
-
-                        toastr.success('Item has been added in your cart!', {
-                            CloseButton: true,
-                            ProgressBar: true
-                        });
-
-
-                        $('.total_cart_count').text(data.count);
-                        updateNavCart();
-                        if (redirect_to_checkout) {
-                            location.href = "{{ route('shop-cart') }}";
-                        }
-                        if (data.product) {
-                            window.dataLayer = window.dataLayer || [];
-
-                            dataLayer.push({
-                                event: "add_to_cart",
-                                ecommerce: {
-                                    currency: "BDT",
-                                    value: (data.product.price * data.product.quantity).toFixed(2),
-                                    items: [{
-                                        item_id: data.product.id,
-                                        item_name: data.product.name,
-                                        item_brand: data.product.brand ?? "",
-                                        item_category: data.product.category ?? "",
-                                        item_variant: data.product.variant ?? "",
-                                        price: parseFloat(data.product.price),
-                                        quantity: parseInt(data.product.quantity)
-                                    }]
-                                }
-                            });
-                        }
-                        // END DATALAYER PUSH
-                        // Product AI API integration
-                        const productAPI = new ProductAPI("https://ai.szbdfinancing.com");
-
-                        async function loadProduct() {
-                            const product = await productAPI.analyzeProduct(data.data.id, "view");
-                            console.log(product);
-                        }
-
-                        loadProduct();
-                        //End
-                    },
-                    complete: function() {
-                        $('#loading').hide();
-                    }
-                });
-            } else {
-                Swal.fire({
-                    type: 'info',
-                    title: 'Cart',
-                    text: 'Something want wrong!'
-                });
+            if (!form_id) {
+                Swal.fire('Error', 'Something went wrong!', 'error');
+                return;
             }
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('cart.add') }}",
+                method: "POST",
+                data: $('#' + form_id).serialize(),
+                beforeSend: function() {
+                    $('#loading').show();
+                },
+                success: function(response) {
+
+                    $('#loading').hide();
+
+                    // ❌ Out of stock
+                    if (response.data === 0) {
+                        Swal.fire('Stock Out', 'Sorry, product out of stock!', 'error');
+                        return;
+                    }
+
+                    // ⚠ Already in cart
+                    if (response.data === 1) {
+                        Swal.fire('Info', 'Product already added in cart!', 'info')
+                            .then(() => {
+                                window.location.href = "{{ route('checkout') }}";
+                            });
+                        return;
+                    }
+
+                    // ✅ Success
+                    toastr.success('Item has been added to your cart');
+
+                    $('.total_cart_count').text(response.count);
+                    updateNavCart();
+
+                    // 🔥 GA4 DATALAYER
+                    if (response.product) {
+                        window.dataLayer = window.dataLayer || [];
+                        dataLayer.push({
+                            ecommerce: null
+                        }); // clear previous
+
+                        dataLayer.push({
+                            event: "add_to_cart",
+                            ecommerce: {
+                                currency: "BDT",
+                                value: (response.product.price * response.product.quantity).toFixed(2),
+                                items: [{
+                                    item_id: response.product.id,
+                                    item_name: response.product.name,
+                                    item_brand: response.product.brand || "",
+                                    item_category: response.product.category || "",
+                                    item_variant: response.product.variant || "",
+                                    price: parseFloat(response.product.price),
+                                    quantity: parseInt(response.product.quantity)
+                                }]
+                            }
+                        });
+                    }
+
+                    if (redirect_to_checkout) {
+                        window.location.href = "{{ route('checkout') }}";
+                    }
+                },
+                error: function() {
+                    $('#loading').hide();
+                    Swal.fire('Error', 'Something went wrong!', 'error');
+                }
+            });
         }
 
         function buy_now(form_id) {
-            console.log(form_id);
             addToCart(form_id, true);
         }
+
         $('.new-av-product').on('click', function() {
             var product_id = $(this).data('pid');
             console.log(product_id);
@@ -1408,7 +1039,8 @@
                 });
             }
         }
-
+    </script>
+    <script>
         @if (Request::is('/') && \Illuminate\Support\Facades\Cookie::has('popup_banner') == false)
             $(document).ready(function() {
                 $('#popup-modal').appendTo("body").modal('show');

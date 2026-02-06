@@ -13,6 +13,7 @@ use App\Models\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,21 +28,20 @@ class RegisterController extends Controller
     public function submit(Request $request)
     {
         $request->validate([
-            'f_name' => 'required',
+            'name' => 'required',
             'email' => 'required|email|unique:users',
             'phone' => ['required|regex:/^(01[3-9]\d{8})$/', 'unique:users'],
             'password' => 'required|min:8|same:con_password'
         ], [
-            'f_name.required' => 'First name is required',
+            'name.required' => 'First name is required',
         ]);
 
         $user = User::create([
-            'f_name' => $request['f_name'],
-            'l_name' => $request['l_name'],
+            'f_name' => $request['name'],
             'email' => $request['email'],
             'phone' => $request['phone'],
             'is_active' => 1,
-            'password' => bcrypt($request['password'])
+            'password' => Hash::make($request['password'])
         ]);
 
         $phone_verification = Helpers::get_business_settings('phone_verification');
@@ -52,9 +52,7 @@ class RegisterController extends Controller
         if ($email_verification && !$user->is_email_verified) {
             return redirect(route('customer.auth.check', [$user->id]));
         }
-
-        Toastr::success(translate('registration_success_login_now'));
-        return redirect(route('customer.auth.login'));
+        return to_route('customer.auth.login')->with('success', 'Registration Successfully!');
     }
 
     public static function check($id)
