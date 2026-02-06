@@ -27,7 +27,7 @@ class FileManager
             return null;
         }
 
-        $fullPath = $dir;
+        $fullPath = 'assets/storage/' . $dir;
 
         if (!is_dir($fullPath)) {
             mkdir($fullPath, 0777, true);
@@ -67,7 +67,7 @@ class FileManager
         $image = null,
         $alt_text = null
     ) {
-        $fullPath = $dir;
+        $fullPath = 'assets/storage/' . $dir;
 
         if ($old_image && file_exists($fullPath . $old_image)) {
             @unlink($fullPath . $old_image);
@@ -76,10 +76,12 @@ class FileManager
         return self::uploadFile($dir, 300, $image, $alt_text);
     }
 
-    public static function delete($full_path)
+    public static function delete($full_path,)
     {
-        if (file_exists($full_path)) {
-            @unlink($full_path);
+        $delete_path = 'assets/storage/' . $full_path;
+
+        if (file_exists($delete_path)) {
+            @unlink($delete_path);
         }
         return [
             'success' => 1,

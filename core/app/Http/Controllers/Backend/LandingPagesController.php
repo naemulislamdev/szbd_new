@@ -8,7 +8,8 @@ use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\LandingPages;
 use App\Models\landing_pages_product;
-use App\Model\Product;
+use App\Models\Product;
+use App\Models\Product as ModelsProduct;
 use App\Models\ProductLandingPage;
 // use App\ProductLandingPage;
 use App\Models\ProductLandingPageSection;
@@ -55,15 +56,18 @@ class LandingPagesController extends Controller
             ';
             })
             ->addColumn('product_add', function ($row) {
+                $url = route('admin.landingpages.createMultipleProduct', $row->id);
                 return '
-                <button class="btn btn-primary btn-sm "
+                    <a href="' . $url . '"
+                    class="btn btn-primary btn-sm"
                     style="cursor: pointer;"
                     title="Add Products"
                     data-id="' . $row->id . '">
-                      <i class="la la-plus-circle"></i> Add Products
-                </button>
-            ';
+                    <i class="la la-plus-circle"></i> Add Products
+                    </a>
+                ';
             })
+
             ->editColumn('status', function ($row) {
                 $checked = $row->status == 1 ? 'checked' : '';
 
@@ -236,10 +240,109 @@ class LandingPagesController extends Controller
     public function delete_product(Request $request)
     {
         DB::table('landing_pages_products')->where('product_id', $request->id)->delete();
-
         return response()->json();
     }
 
+    // added multiple product methods => landing pages/multiple Landing Pages/Add New Products
+    public function multipleProductCreate($id)
+    {
+        $flash_deal_products = DB::table('landing_pages_products')->where('landing_id', $id)->pluck('product_id');
+        $deal = DB::table('landing_pages')->where('id', $id)->first();
+        return view("admin.landingpages.addMulti_product", compact("deal", "flash_deal_products"));
+    }
+    public function addedProductsDatatable($id)
+    {
+        $flash_deal_products = DB::table('landing_pages_products')->where('landing_id', $id)->pluck('product_id');
+
+        $query = Product::whereIn('id', $flash_deal_products)->latest();
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+
+            ->addColumn('action', function ($row) {
+                return '
+                <button class="btn btn-danger btn-sm delete"
+                    style="cursor: pointer;"
+                    title="Delete"
+                    data-id="' . $row->id . '">
+                    <i class="la la-trash"></i>
+                </button>
+            ';
+            })
+            ->addColumn('single_page_status', function ($row) {
+
+                $single_product = ProductLandingPage::where('product_id', $row->id)->first();
+
+                if ($single_product) {
+                    return '<span class="badge bg-success">Already Added</span>';
+                } else {
+                    return '<span class="badge bg-danger">Not Added</span>';
+                }
+            })
+
+
+            ->editColumn('status', function ($row) {
+                $checked = $row->status == 1 ? 'checked' : '';
+
+                return '
+                <div class="form-check form-switch">
+                    <input class="form-check-input status"
+                        type="checkbox"
+                        data-id="' . $row->id . '"
+                        value="1"
+                        ' . $checked . '
+                        id="flexSwitch' . $row->id . '">
+                </div>
+            ';
+            })
+            ->editColumn('with_slide', function ($row) {
+                $checked = $row->with_slide == 1 ? 'checked' : '';
+
+                return '
+                <div class="form-check form-switch">
+                    <input class="form-check-input with_slide"
+                        type="checkbox"
+                        data-id="' . $row->id . '"
+                        value="1"
+                        ' . $checked . '
+                        >
+                </div>
+            ';
+            })
+
+
+            ->rawColumns(['action', 'single_page_status', 'status', 'with_slide', 'slug'])
+            ->toJson();
+    }
+    public function delete_added_product(Request $request)
+    {
+        DB::table('landing_pages_products')->where('product_id', $request->id)->delete();
+        return response()->json();
+    }
+    public function multipleProductsAddedStore(Request $request)
+    {
+        $flash_deal_products = DB::table('landing_pages_products')->where('landing_id', $request->id)->where('product_id', $request['product_id'])->first();
+
+
+        if (!isset($flash_deal_products)) {
+            $campaing_detalie = [];
+            for ($i = 0; $i < count($request->product_id); $i++) {
+                $campaing_detalie[] = [
+                    'product_id' => $request['product_id'][$i],
+                    'landing_id' => $request->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            DB::table('landing_pages_products')->insert($campaing_detalie);
+
+            return redirect()->back()->with('success', 'Landing pages  created is successfully!');
+        } else {
+
+            return redirect()->back()->with('error', 'Landing pages  created is Unsuccesful!');
+        }
+    }
 
     /* ============================================================================
                 Start Single-product landing page methods

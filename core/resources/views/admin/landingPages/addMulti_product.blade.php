@@ -11,6 +11,10 @@
         .card-body {
             overflow: visible;
         }
+
+        .select2-container {
+            z-index: 1056 !important;
+        }
     </style>
 @endpush
 @section('content')
@@ -18,14 +22,16 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center pb-2">
-                    <h4 class="page-title">Multiple Product Landing Pages</h4>
+                    <h4 class="page-title">Add Products for {{ $deal->title }}</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
                             <li class="breadcrumb-item">Landing Pages
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">Multiple Product Pages</li>
+                            <li class="breadcrumb-item active"><a
+                                    href="{{ route('admin.landingpages.multiple.index') }}">Multiple Product Pages</a></li>
+                            <li class="breadcrumb-item active">Add Multiple Product</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -37,14 +43,14 @@
                     <div class="card-header pb-0">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h4 class="card-title">All Pages</h4>
+                                <h4 class="card-title">Added Products</h4>
                             </div><!--end col-->
                             <div class="col-auto">
                                 <div class="row mb-3">
                                     <div class="col-lg-12">
                                         <button class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#categoryModal"><i class="la la-plus-circle"></i> Add New
-                                            Page</button>
+                                            Products</button>
                                     </div>
 
                                 </div>
@@ -63,12 +69,10 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>SL</th>
-                                        <th>Title</th>
-                                        <th>Slug</th>
-                                        <th>With Slide</th>
-                                        <th>Product Add</th>
-                                        <th>Status</th>
-
+                                        <th>Name</th>
+                                        <th>Code</th>
+                                        <th>Single Page Status</th>
+                                        <th>Price</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -81,7 +85,7 @@
     </div><!-- container -->
 
     <!--Category Edit Modal -->
-    <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    {{-- <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <form id="editForm" enctype="multipart/form-data">
@@ -139,7 +143,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Category Add Modal -->
     <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"
@@ -149,49 +153,25 @@
                 <form id="categoryForm" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="categoryModalLabel">Add New Page</h5>
+                        <h5 class="modal-title" id="categoryModalLabel">Add New Products</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <div class="modal-body">
+                        <input type="hidden" name="id" value="{{ $deal->id }}">
                         <div class="row">
+                            <div class="col-md-12">
+                                <label for="name">Add new product</label>
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Page Title</label>
-                                <input required type="text" name="title" class="form-control"
-                                    placeholder="Enter Page title" required>
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Add First Display Product</label>
-                                <select class="form-select" style="overflow: hidden" name="product_id" id="">
-                                    <option style="max-width: 100%; height: auto;" selected disabled>Select a product
-                                    </option>
-                                    @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
-                                        <option style="max-width: 100%; height: auto;" value="{{ $product->id }}">
+                                <select required class="js-example-responsive form-control" name="product_id[]" multiple>
+                                    @foreach (\App\Models\Product::whereNotIn('id', $flash_deal_products)->active()->orderBy('id', 'DESC')->get() as $key => $product)
+                                        <option value="{{ $product->id }}">
                                             {{ $product['name'] }} || {{ $product['code'] }}
                                         </option>
                                     @endforeach
                                 </select>
+
                             </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">
-                                    Select Banner Slider Images
-                                    <small class="text-danger">ratio 1:1</small>
-                                </label>
-                                <input id="customFileEg1" type="file" name="images[]" multiple class="form-control"
-                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*">
-                            </div>
-
-                            <div class="col-12">
-                                <hr>
-                                <div id="imagePreviewContainer" class="d-flex flex-wrap justify-content-center gap-1">
-                                    <!-- Preview images will appear here -->
-                                </div>
-                            </div>
-
-
                         </div>
                     </div>
 
@@ -200,7 +180,7 @@
                             Close
                         </button>
                         <button type="submit" class="btn btn-primary">
-                            Save
+                            Submit
                         </button>
                     </div>
                 </form>
@@ -211,6 +191,16 @@
 
 @endsection
 @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.js-example-responsive').select2({
+                placeholder: "Select Products",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+
     <script>
         $.ajaxSetup({
             headers: {
@@ -229,8 +219,7 @@
                 scrollX: false,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.landingpages.multiple.datatables') }}",
-
+                    url: "{{ route('admin.landingpages.addedProductDatatable', $deal->id) }}",
                 },
 
                 columns: [{
@@ -240,19 +229,16 @@
                         className: 'text-center p-1'
                     },
                     {
-                        data: 'title'
+                        data: 'name'
                     },
                     {
-                        data: 'slug'
+                        data: 'code'
                     },
                     {
-                        data: 'with_slide'
+                        data: 'single_page_status'
                     },
                     {
-                        data: 'product_add'
-                    },
-                    {
-                        data: 'status'
+                        data: 'unit_price'
                     },
                     {
                         data: 'action',
@@ -296,14 +282,14 @@
                             }
                         });
                         $.ajax({
-                            url: "{{ route('admin.landingpages.remove_multiple_page') }}",
+                            url: "{{ route('admin.landingpages.multiple.delete-added-product') }}",
                             method: 'POST',
                             data: {
                                 id: id
                             },
                             success: function() {
                                 toastr.success(
-                                    'Page Deleted Successfully.'
+                                    'Product Deleted Successfully.'
                                 );
                                 table.ajax.reload();
 
@@ -322,7 +308,7 @@
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ route('admin.landingpages.multiple.store') }}",
+                    url: "{{ route('admin.landingpages.multiple.products.store') }}",
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -334,11 +320,14 @@
 
                         // form reset
                         $('#categoryForm')[0].reset();
+                        $('.js-example-responsive').val(null).trigger('change');
+
+
 
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Page added successfully');
+                        toastr.success(res.message ?? 'Product added successfully');
                     },
                     error: function(err) {
 
