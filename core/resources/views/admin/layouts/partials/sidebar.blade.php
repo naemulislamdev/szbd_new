@@ -96,22 +96,22 @@
             <div class="collapse " id="userInfoDropDown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.userinfo.all')}}" class="nav-link ">All User Info
+                        <a href="{{ route('admin.userinfo.all') }}" class="nav-link ">All User Info
                             <span class="badge bg-dark ms-2">{{ $userInfoCounts->total ?? 0 }}</span>
                         </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.userinfo.all')}}?status=pending" class="nav-link ">Pending
+                        <a href="{{ route('admin.userinfo.all') }}?status=pending" class="nav-link ">Pending
                             <span class="badge bg-warning ms-2">{{ $userInfoCounts->pending ?? 0 }}</span>
                         </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.userinfo.all')}}?status=confirmed" class="nav-link ">Confirmed
+                        <a href="{{ route('admin.userinfo.all') }}?status=confirmed" class="nav-link ">Confirmed
                             <span class="badge bg-success ms-2">{{ $userInfoCounts->confirmed ?? 0 }}</span>
                         </a>
                     </li><!--end nav-item-->
                     <li class="nav-item">
-                        <a href="{{ route('admin.userinfo.all')}}?status=canceled" class="nav-link ">Canceled
+                        <a href="{{ route('admin.userinfo.all') }}?status=canceled" class="nav-link ">Canceled
                             <span class="badge bg-danger ms-2">{{ $userInfoCounts->canceled ?? 0 }}</span>
                         </a>
                     </li><!--end nav-item-->
@@ -157,6 +157,48 @@
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#bannerDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="bannerDropdown">
+                <i class="la la-desktop menu-icon"></i>
+                <span>Banners</span>
+            </a>
+            <div class="collapse " id="bannerDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.banner.list') }}" class="nav-link ">Banner List</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#customersDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="customersDropdown">
+                <i class="iconoir-community  menu-icon"></i>
+                <span>Customers</span>
+            </a>
+            <div class="collapse " id="customersDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.customer.list') }}" class="nav-link ">Customers List</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#investorDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="investorDropdown">
+                <i class="las la-hand-holding-usd menu-icon"></i>
+                <span>Investors</span>
+            </a>
+            <div class="collapse " id="investorDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.investors.list') }}" class="nav-link ">Investors List</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
 
         <li class="nav-item">
             <a class="nav-link" href="apps-chat.html">
@@ -166,7 +208,7 @@
         </li><!--end nav-item-->
         <li class="nav-item">
             <a class="nav-link" href="apps-contact-list.html">
-                <i class="iconoir-community menu-icon"></i>
+                <i class="las la-phone menu-icon"></i>
                 <span>Contact List</span>
             </a>
         </li><!--end nav-item-->

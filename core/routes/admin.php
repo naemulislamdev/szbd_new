@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Backend\CustomerController;
+use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\LandingPagesController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\SubCategoryController;
 use App\Http\Controllers\Backend\SubSubCategoryController;
 use App\Http\Controllers\Backend\UserInfoController;
+use App\Http\Controllers\Backend\InvestorController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -94,7 +97,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('delete/{userinfo}', 'delete')->name('delete');
             Route::post('/status-update', 'updateStatus')->name('status.update');
         });
-        Route::controller(EmployeeControlle::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
+        Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
             Route::get('add-new', 'add_new')->name('add-new');
             Route::post('add-new', 'store');
             Route::get('list', 'list')->name('list');
@@ -135,7 +138,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->group(function () {
             Route::get('multiple-product/landing', 'multiIndex')->name('multiple.index');
             Route::post('multiple-product/store', 'multipleStore')->name('multiple.store');
-            // Route::get('multiple-product/remove-banner', 'remove_image')->name('multiple.remove-image');
             Route::post('multiple-product/status-update', 'status_update')->name('multiple.status-update');
             Route::post('multiple-product/landing_pages_update', 'update')->name('multiple.landing_pages_update');
             Route::get('multiple-product/add-product/{landing_id}', 'add_product')->name('multiple.add-product');
@@ -144,25 +146,52 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/multiple-product/datatables', 'multipleProductdatatables')->name('multiple.datatables');
             Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
             Route::post('multiple-product/remove', 'removeMultiplePage')->name('remove_multiple_page');
+
             // multiple product added routes
             Route::get("multiple-prouct-create/{id}", 'multipleProductCreate')->name("createMultipleProduct");
             Route::get("multiple-prouct-added-datatable/{id}", 'addedProductsDatatable')->name("addedProductDatatable");
             Route::post('multiple-product/delete-added-product', 'delete_added_product')->name('multiple.delete-added-product');
             Route::post('multiple-product/store-multiple-product', 'multipleProductsAddedStore')->name('multiple.products.store');
 
-            // Single Product Landing page routes
 
+            // Single Product Landing page routes
             Route::get('/single-product/view', 'singleIndex')->name('single.index');
             Route::get('/single-product/datatables', 'singleProductdatatables')->name('single.datatables');
             Route::post('/single-product/status', 'LandingPageStatus')->name('single.status');
             Route::post('/single-product/remove', 'removeSinglePage')->name('remove_single_page');
             Route::get('/single-product/create', 'create')->name('single.create');
             Route::post('/single-product/store', 'storeSingleProduct')->name('single.store');
-            // Route::get('/edit{id}', 'SingleProductEdit')->name('edit');
-            // Route::post('/product-landing-page/update/{id}', 'SingleProductUpdate')->name('single.update');
-            // Route::get('remove/slider', 'removeImage')->name('remove_image');
-            // Route::get('remove/feature-list', 'removeFeatureList')->name('remove_feature_list');
+        });
+        Route::controller(BannerController::class)->prefix('/banner')->as('banner.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('update', 'update')->name('update');
+        });
 
+        // Customers Routes
+        Route::controller(CustomerController::class)->prefix('/customer')->as('customer.')->group(function () {
+            Route::get('list', 'customer_list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+
+            // Customer Details route
+            Route::get('view/{id}', 'view')->name('view');
+            Route::get('customer-datatables/{customer_id}', 'customerDatatables')->name('customerDatatables');
+        });
+        // Investors Routes
+        Route::controller(InvestorController::class)->prefix('/investors')->as('investors.')->group(function () {
+            Route::get('list', 'investorsList')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+            // Route::post('view', 'investorsViewStatus')->name('view');
+            // Route::post('delete', 'investorsDestroy')->name('delete');
+            // Route::post('update/remark', 'updateInvestorRemark')->name('update_remark');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
     });
 });
