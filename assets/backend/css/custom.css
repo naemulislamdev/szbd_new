@@ -22,3 +22,6 @@
   max-width: 100%;
   height: auto;
 }
+.modal-dialog {
+  display: block !important;
+}

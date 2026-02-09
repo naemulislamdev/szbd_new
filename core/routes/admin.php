@@ -6,12 +6,17 @@ use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\LandingPagesController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\EmplyeeController;
+use App\Http\Controllers\Backend\FranchiseController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\SubCategoryController;
 use App\Http\Controllers\Backend\SubSubCategoryController;
 use App\Http\Controllers\Backend\UserInfoController;
 use App\Http\Controllers\Backend\InvestorController;
+use App\Http\Controllers\Backend\PermissionModuleController;
+use App\Http\Controllers\Backend\RolePermissionController;
+use App\Http\Controllers\Backend\WholesaleController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -97,14 +102,14 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('delete/{userinfo}', 'delete')->name('delete');
             Route::post('/status-update', 'updateStatus')->name('status.update');
         });
-        Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
-            Route::get('add-new', 'add_new')->name('add-new');
-            Route::post('add-new', 'store');
-            Route::get('list', 'list')->name('list');
-            Route::get('update/{id}', 'edit')->name('update');
-            Route::post('update/{id}', 'update');
-            Route::get('status/{id}/{status}', 'status')->name('status');
-        });
+        // Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
+        //     Route::get('add-new', 'add_new')->name('add-new');
+        //     Route::post('add-new', 'store');
+        //     Route::get('list', 'list')->name('list');
+        //     Route::get('update/{id}', 'edit')->name('update');
+        //     Route::post('update/{id}', 'update');
+        //     Route::get('status/{id}/{status}', 'status')->name('status');
+        // });
 
         Route::controller(CategoryController::class)->as('category.')->group(function () {
             Route::get('/category/view', 'index')->name('view');
@@ -188,9 +193,56 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('datatables', 'datatables')->name('datatables');
             Route::post('delete', 'delete')->name('delete');
             Route::post('status', 'status')->name('status');
-            // Route::post('view', 'investorsViewStatus')->name('view');
-            // Route::post('delete', 'investorsDestroy')->name('delete');
-            // Route::post('update/remark', 'updateInvestorRemark')->name('update_remark');
+            Route::post('remark', 'remarkStore')->name('remark.store');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Franchise Routes
+        Route::controller(FranchiseController::class)->prefix('/franchise')->as('franchise.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::post('remark', 'updateLeadRemark')->name('remark.store');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Wholesale Routes
+        Route::controller(WholesaleController::class)->prefix('/wholesale')->as('wholesale.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            // Route::post('remark', 'updateLeadRemark')->name('remark.store');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Employee Routes
+        Route::controller(EmplyeeController::class)->prefix('/employee')->as('employee.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Admin Roles Routes
+        Route::controller(RolePermissionController::class)->prefix('/role-permission')->as('role_permission.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Admin Roles Modules Routes
+        Route::controller(PermissionModuleController::class)->prefix('/permission-module')->as('permission_module.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            // Route::post('status', 'status')->name('status');
             // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
     });

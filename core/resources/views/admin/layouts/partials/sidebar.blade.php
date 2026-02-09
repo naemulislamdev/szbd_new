@@ -199,6 +199,34 @@
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#franchiseDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="franchiseDropdown">
+                <i class="las la-handshake menu-icon"></i>
+                <span>Franchise</span>
+            </a>
+            <div class="collapse " id="franchiseDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.franchise.list') }}" class="nav-link ">Franchise List</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#wholesaleDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="wholesaleDropdown">
+                <i class="las la-truck-moving menu-icon"></i>
+                <span>Wholesale</span>
+            </a>
+            <div class="collapse " id="wholesaleDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.wholesale.list') }}" class="nav-link ">Wholesale List</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
 
         <li class="nav-item">
             <a class="nav-link" href="apps-chat.html">
@@ -223,6 +251,22 @@
                 <i class="iconoir-paste-clipboard menu-icon"></i>
                 <span>Invoice</span>
             </a>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="rolePermissionDropdown">
+                <i class="las la-user-tag menu-icon"></i>
+                <span>Role & Permission</span>
+            </a>
+            <div class="collapse " id="rolePermissionDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.role_permission.list') }}" class="nav-link ">Roles List</a>
+                        <a href="{{ route('admin.employee.list') }}" class="nav-link ">Users</a>
+                        <a href="{{ route('admin.permission_module.list') }}" class="nav-link ">Modules</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
         </li><!--end nav-item-->
     </ul><!--end navbar-nav--->
 </div>
