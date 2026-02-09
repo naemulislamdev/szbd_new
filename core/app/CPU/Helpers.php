@@ -122,43 +122,39 @@ class Helpers
     }
     public static function get_customer_check($request = null)
     {
-        // 1️⃣ Already logged in (session + remember me)
+        // Already logged in (session + remember me)
         if (auth('customer')->check()) {
             return auth('customer')->user();
         }
 
-        // 2️⃣ API authenticated user
+        $phoneNumber = session()->has('otp_phone') ? session('otp_phone') : $request->phone;
+
+        // API authenticated user
         if ($request && $request->user()) {
             return $request->user();
         }
 
-        // 3️⃣ Phone না থাকলে → offline
-        if (!$request || !$request->phone) {
-            return 'offline';
-        }
+        $remember = true; // always remember customer
 
-        $remember = true; // 🔑 always remember customer
+        //  Find customer by phone
+        $user = User::where('phone', $phoneNumber)->first();
 
-        // 4️⃣ Find customer by phone
-        $user = User::where('phone', $request->phone)->first();
-
-        // 5️⃣ If not found, try email
+        // If not found, try email
         if (!$user && $request->email) {
             $user = User::where('email', $request->email)->first();
         }
 
-        // 6️⃣ If still not found → create customer
+        // If still not found → create customer
         if (!$user) {
             $user = User::create([
-                'f_name'  => $request->name ?? 'Guest',
-                'l_name'  => 'bd' . rand(1000, 9999),
-                'email'   => $request->email ?? ($request->phone . '_bd@gmail.com'),
-                'phone'   => $request->phone,
-                'password' => bcrypt($request->phone),
+                'name'  => $request->name ?? 'Guest',
+                'email'   => $request->email ?? ($phoneNumber . '_bd@gmail.com'),
+                'phone'   => $phoneNumber,
+                'password' => bcrypt($phoneNumber),
             ]);
         }
 
-        // 7️⃣ Login customer (remember forever)
+        // Login customer (remember forever)
         auth()->guard('customer')->login($user, $remember);
 
         return $user;

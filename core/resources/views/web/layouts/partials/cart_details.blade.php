@@ -81,7 +81,33 @@
                         <h2 class="address-title">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('customer.product.checkout') }}" method="POST" id="userInfoForm">
+                        @if (!$customer && !session('otp_verified'))
+                            <div id="otpSection">
+                                <div class="row">
+                                    <div class="col-md-6 mx-auto">
+                                        <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control auto-save" id="otp_phone">
+                                            <button type="button" id="send_otp" class="btn btn-info btn-sm">
+                                                ওটিপি পাঠান
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row {{ session()->has('otp') ? '':'d-none'}}" id="otpInputRow">
+                                    <div class="col-md-6 mx-auto">
+                                        <label>ওটিপি দিন</label>
+                                        <input type="text" class="form-control" id="otp">
+                                        <button class="btn btn-success btn-sm mt-2" id="verify_otp">
+                                            Verify OTP
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('product.checkout') }}" method="POST" id="userInfoForm" class="checkoutForm {{ (!$customer && !session('otp_verified')) ? 'd-none' : '' }}">
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
@@ -126,11 +152,13 @@
                                             <div class="address-box {{ $key == 0 ? 'active' : '' }}">
                                                 <input type="radio" id="address_{{ $address->id }}"
                                                     name="address_type" value="{{ $address->id }}"
-                                                    {{ $key == 0 ? 'checked' : '' }} onclick="selectAddress(false,this)">
+                                                    {{ $key == 0 ? 'checked' : '' }}
+                                                    onclick="selectAddress(false,this)">
                                                 <label for="address_{{ $address->id }}">
-                                                    <strong>{{ $address->contact_person_name }}</strong><br>
-                                                    📞 {{ $address->phone }}<br>
-                                                    🏠 {{ $address->address }}
+                                                    <strong>Name: {{ $address->contact_person_name }}</strong>
+                                                    <br>
+                                                    📞 Phone: {{ $address->phone }}<br>
+                                                    🏠 Address: {{ $address->address }}
                                                 </label>
                                                 <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
                                                     onclick="openEditModal({{ $address }})">✏️</button>
@@ -161,7 +189,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mb-3 {{ session()->has('otp_phone') ? 'd-none':''}}">
                                         <div class="form-group">
                                             <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
                                             <input type="number" class="form-control auto-save" id="phone"
@@ -186,6 +214,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <button type="submit" class="btn btn-primary float-right">অর্ডার করুন</button>
                         </form>
@@ -210,7 +239,7 @@
             @break
         @endforeach
         $.get({
-            url: '{{ url('/') }}/customer/set-shipping-method',
+            url: '{{ url('/') }}/set-shipping-method',
             dataType: 'json',
             data: {
                 id: id,

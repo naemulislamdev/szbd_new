@@ -17,9 +17,11 @@ use App\Models\HelpTopic;
 use App\Models\LandingPages;
 use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\ProductLandingPage;
 use App\Models\Review;
 use App\Models\ShippingAddress;
 use App\Models\SubCategory;
+use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -300,7 +302,7 @@ class FrontendController extends Controller
     public function all_categories()
     {
         $categories = Category::all();
-        return view('web-views.categories', compact('categories'));
+        return view('web.categories', compact('categories'));
     }
 
     public function all_brands()
@@ -316,6 +318,7 @@ class FrontendController extends Controller
             $shippingAddresses = [];
             if ($customer) {
                 $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
+                $otpExists = User::whereNotNull('otp')->exists();
             }
             return view('web.checkout', compact('customer','shippingAddresses'));
         }
@@ -487,6 +490,26 @@ class FrontendController extends Controller
     {
         $privacy_policy = BusinessSetting::where('type', 'privacy_policy')->first();
         return view('web.privacy-policy', compact('privacy_policy'));
+    }
+
+    public function landingPage($landing_slug)
+    {
+        $landing_page = DB::table('landing_pages')->where(['slug' => $landing_slug])->where('status', 1)->first();
+        if ($landing_page == null) {
+            return view('errors.page_error');
+        }
+        $landing_page_pro = DB::table('landing_pages_products')->where('landing_id', $landing_page->id)->pluck('product_id')->toArray();
+        $landing_products = Product::with(['rating'])->whereIn('id', $landing_page_pro)->orderBy('id', 'DESC')->active()->get();
+        return view('web.landing-page.pages', compact('landing_products', 'landing_page'));
+    }
+    public function signleProductLandingPage($slug)
+    {
+        $productLandingPage = ProductLandingPage::where('slug', $slug)->where('status', true)->first();
+        if ($productLandingPage) {
+            return view('web.landing-page.signle_product', compact('productLandingPage'));
+        } else {
+            return redirect()->route('home')->with('warning', 'Landing page is not available!');
+        }
     }
 
     // DB Modify Funciton for some time

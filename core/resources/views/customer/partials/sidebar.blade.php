@@ -62,48 +62,18 @@
             <!-- Filter by price-->
             <div class="sidebarL">
                 <h3 class="widget-title btnF" style="font-weight: 700;">
-                    <a class="{{Request::is('account-oder*') || Request::is('account-order-details*') ? 'active-menu' :''}}" href="{{route('account-oder') }} ">{{\App\CPU\translate('my_order')}}</a>
+                    <a class="{{Request::is('account-oder*') || Request::is('account-order-details*') ? 'active-menu' :''}}" href="{{route('account-oder') }} ">My order</a>
                 </h3>
                 <div class="divider-role"
                      style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
                 </div>
             </div>
         </div>
-        @php
-            $wallet_status = App\CPU\Helpers::get_business_settings('wallet_status');
-            $loyalty_point_status = App\CPU\Helpers::get_business_settings('loyalty_point_status');
-        @endphp
-        @if ($wallet_status == 1)
-            <div class="pb-0">
-                <!-- Filter by price-->
-                <div class="sidebarL">
-                    <h3 class="widget-title btnF" style="font-weight: 700;">
-                        <a class="{{Request::is('wallet')?'active-menu':''}}" href="{{route('wallet') }} ">{{\App\CPU\translate('my_wallet')}} </a>
-                    </h3>
-                    <div class="divider-role"
-                        style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
-                    </div>
-                </div>
-            </div>
-        @endif
-        @if ($loyalty_point_status == 1)
-            <div class="pb-0">
-                <!-- Filter by price-->
-                <div class="sidebarL">
-                    <h3 class="widget-title btnF" style="font-weight: 700;">
-                        <a class="{{Request::is('loyalty')?'active-menu':''}}" href="{{route('loyalty') }} ">{{\App\CPU\translate('my_loyalty_point')}}</a>
-                    </h3>
-                    <div class="divider-role"
-                        style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
-                    </div>
-                </div>
-            </div>
-        @endif
         <div class="pb-0">
             <!-- Filter by price-->
             <div class="sidebarL">
                 <h3 class="widget-title btnF" style="font-weight: 700;">
-                    <a class="{{Request::is('track-order*')?'active-menu':''}}" href="{{route('track-order.index') }} ">{{\App\CPU\translate('track_your_order')}}</a>
+                    <a class="{{Request::is('track-order*')?'active-menu':''}}" href="{{route('track-order.index') }} ">Track your order</a>
                 </h3>
                 <div class="divider-role"
                      style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
@@ -114,35 +84,19 @@
             <!-- Filter by price-->
             <div class="sidebarL">
                 <h3 class="widget-title btnF " style="font-weight: 700;">
-                    <a class="{{Request::is('wishlists*')?'active-menu':''}}" href="{{route('wishlists')}}"> {{\App\CPU\translate('wish_list')}}  </a></h3>
+                    <a class="{{Request::is('account-wishlist*')?'active-menu':''}}" href="{{route('account-wishlist')}}"> Wish list </a></h3>
                 <div class="divider-role"
                      style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
                 </div>
             </div>
         </div>
 
-        {{--to do--}}
-        @php($business_mode=\App\CPU\Helpers::get_business_settings('business_mode'))
-        @if ($business_mode == 'multi')
-            <div class="pb-0">
-                <!-- Filter by price-->
-                <div class="sidebarL">
-                    <h3 class="widget-title btnF" style="font-weight: 700;">
-                        <a class="{{Request::is('chat*')?'active-menu':''}}" href="{{route('chat-with-seller')}}">{{\App\CPU\translate('chat_with_seller')}}</a>
-                    </h3>
-                    <div class="divider-role"
-                        style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
-                    </div>
-                </div>
-            </div>
-        @endif
-
         <div class="pb-0">
             <!-- Filter by price-->
             <div class=" sidebarL">
                 <h3 class="widget-title btnF" style="font-weight: 700;">
                     <a class="{{Request::is('user-account*')?'active-menu':''}}" href="{{route('user-account')}}">
-                        {{\App\CPU\translate('profile_info')}}
+                        Profile info
                     </a>
                 </h3>
                 <div class="divider-role"
@@ -155,7 +109,7 @@
             <div class=" sidebarL">
                 <h3 class="widget-title btnF" style="font-weight: 700;">
                     <a class="{{Request::is('account-address*')?'active-menu':''}}"
-                       href="{{ route('account-address') }}">{{\App\CPU\translate('address')}} </a>
+                       href="{{ route('account-address') }}">Address </a>
                 </h3>
                 <div class="divider-role"
                      style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
@@ -167,7 +121,7 @@
             <div class=" sidebarL">
                 <h3 class="widget-title btnF" style="font-weight: 700;">
                     <a class="{{(Request::is('account-ticket*') || Request::is('support-ticket*'))?'active-menu':''}}"
-                       href="{{ route('account-tickets') }}">{{\App\CPU\translate('support_ticket')}}</a></h3>
+                       href="{{ route('account-tickets') }}">Support ticket</a></h3>
                 <div class="divider-role"
                      style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
                 </div>
@@ -178,7 +132,7 @@
             <div class=" sidebarL">
                 <h3 class="widget-title btnF" style="font-weight: 700;">
                     <a class=""
-                       href="{{ route('account-logout') }}">{{\App\CPU\translate('Logout')}}</a></h3>
+                       href="{{ route('account-logout') }}">Logout</a></h3>
                 <div class="divider-role"
                      style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: -6px;">
                 </div>

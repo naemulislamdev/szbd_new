@@ -136,17 +136,10 @@
         .btn-primary {
             background-color: #303030;
             border: none;
-            margin-top: 10px;
             font-size: 17px;
             font-weight: 600;
-            bottom: 0px;
-            position: absolute;
-            left: 0px;
-            right: 0px;
-            width: 100%;
+
         }
-
-
         .product-box {
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }

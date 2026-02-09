@@ -126,6 +126,7 @@
 @endpush
 
 @section('content')
+{{-- @dd(session('otp')) --}}
     <div class="container pb-5 mb-2 mt-3" id="cart-summary">
         @include('web.layouts.partials.cart_details')
     </div>
@@ -134,7 +135,7 @@
     <!-- Modal -->
     <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <form method="POST" action="{{ route('customer.address.update') }}">
+            <form method="POST" action="{{ route('address.update') }}">
                 @csrf
                 <input type="hidden" name="id" id="edit_id">
                 <div class="modal-content">
@@ -260,5 +261,34 @@
 
             $('#editAddressModal').modal('show');
         }
+    </script>
+    <script>
+        // Send OTP
+        $('#send_otp').on('click', function() {
+            let phone = $('#otp_phone').val();
+
+            $.post("{{ route('send.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: phone
+            }, function(res) {
+                if (res.status === 'success') {
+                    $('#otpInputRow').removeClass('d-none');
+                }
+            });
+        });
+
+        // Verify OTP
+        $('#verify_otp').on('click', function() {
+            $.post("{{ route('verify.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: $('#otp_phone').val(),
+                otp: $('#otp').val()
+            }, function(res) {
+                if (res.status === 'success') {
+                    $('#otpSection').hide();
+                    $('.checkoutForm').removeClass('d-none');
+                }
+            });
+        });
     </script>
 @endpush

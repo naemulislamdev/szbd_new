@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\ChattingController;
+use App\Http\Controllers\Front\CheckoutControl;
 use App\Http\Controllers\Front\ComplainController;
 use App\Http\Controllers\Front\CouponController;
 use App\Http\Controllers\Front\FeedController;
@@ -9,7 +10,7 @@ use App\Http\Controllers\Front\FrontendController;
 use App\Http\Controllers\Front\InvestorController;
 use App\Http\Controllers\Front\ReviewController;
 use App\Http\Controllers\Front\UserLoyaltyController;
-use App\Http\Controllers\Front\UserProfileController;
+use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Front\UserWalletController;
 use App\Http\Controllers\Front\WholesaleController;
 use App\Http\Controllers\ProfileController;
@@ -81,6 +82,18 @@ Route::middleware(['web'])->group(function () {
         //End
     });
 
+    // Checkout routes
+    Route::controller(CheckoutControl::class)->group(function () {
+        Route::post('/send-otp', 'sendOtp')->name('send.otp');
+        Route::post('/verify-otp', 'verifyOtp')->name('verify.otp');
+        // checkout route
+        Route::get('set-shipping-method','set_shipping_method')->name('set-shipping-method');
+        Route::post('checkout-complete',  'productCheckout')->name('product.checkout');
+        Route::post('checkout/complete', 'singlepCheckout')->name('sproduct.checkout');
+        Route::get('checkout-complete/{id}', 'checkoutComplete')->name('checkout-complete');
+        Route::post('customer-address-update', 'customerAddressUpdate')->name('address.update');
+    });
+
     // Investor routes
     Route::controller(InvestorController::class)->group(function () {
         Route::get('/investor', 'create')->name('investor.crate');
@@ -92,31 +105,7 @@ Route::middleware(['web'])->group(function () {
         Route::post('/wholesale/store', 'store')->name('wholesale.store');
     });
 
-    //profile Route
-    Route::controller(UserProfileController::class)->group(function () {
-        Route::get('user-account', 'user_account')->name('user-account');
-        Route::post('user-account-update', 'user_update')->name('user-update');
-        Route::post('user-account-picture', 'user_picture')->name('user-picture');
-        Route::get('account-address', 'account_address')->name('account-address');
-        Route::post('account-address-store', 'address_store')->name('address-store');
-        Route::get('account-address-delete', 'address_delete')->name('address-delete');
-        ROute::get('account-address-edit/{id}', 'address_edit')->name('address-edit');
-        Route::post('account-address-update', 'address_update')->name('address-update');
-        Route::get('account-payment', 'account_payment')->name('account-payment');
-        Route::get('account-oder', 'account_oder')->name('account-oder');
-        Route::get('account-order-details', 'account_order_details')->name('account-order-details')->middleware('customer');
-        Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
-        Route::get('account-wishlist', 'account_wishlist')->name('account-wishlist'); //add to card not work
-        Route::get('refund-request/{id}', 'refund_request')->name('refund-request');
-        Route::get('refund-details/{id}', 'refund_details')->name('refund-details');
-        Route::get('submit-review/{id}', 'submit_review')->name('submit-review');
-        Route::post('refund-store', 'store_refund')->name('refund-store');
-        Route::get('account-tickets', 'account_tickets')->name('account-tickets');
-        Route::get('order-cancel/{id}', 'order_cancel')->name('order-cancel');
-        Route::post('ticket-submit', 'ticket_submit')->name('ticket-submit');
-        Route::get('account-delete/{id}', 'account_delete')->name('account-delete');
-        Route::get('account-logout', 'accountLogout')->name('account-logout');
-    });
+
     //Support Ticket
     Route::controller(UserProfileController::class)->prefix('/support-ticket')->as('support-ticket.')->group(function () {
         Route::get('{id}', 'single_ticket')->name('index');
@@ -177,6 +166,6 @@ Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->gr
 //check done
 
 Route::get('/page/{slug}', [FrontendController::class, 'signleProductLandingPage'])->name('signle.landing_page');
-Route::get('/{slug}', [FrontendController::class, 'landingPage'])->name('landing_page');
+// Route::get('/{slug}', [FrontendController::class, 'landingPage'])->name('landing_page');
 
 require __DIR__ . '/auth.php';

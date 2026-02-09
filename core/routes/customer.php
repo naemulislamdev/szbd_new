@@ -5,15 +5,13 @@ use App\Http\Controllers\Customer\Auth\LoginController;
 use App\Http\Controllers\Customer\Auth\RegisterController;
 use App\Http\Controllers\Customer\Auth\SocialAuthController;
 use App\Http\Controllers\Customer\PaymentController;
-use App\Http\Controllers\Customer\RewardPointController;
-use App\Http\Controllers\Customer\SystemController;
+use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Front\ComplainController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/customer')->as('customer.')->group(function () {
 
     Route::prefix('/auth')->as('auth.')->group(function () {
-        Route::get('/code/captcha/{tmp}', [LoginController::class, 'captcha'])->name('default-captcha');
         Route::get('login', [LoginController::class, 'login'])->name('login');
         Route::post('login', [LoginController::class, 'submit']);
         Route::get('logout', [LoginController::class, 'logout'])->name('logout');
@@ -45,19 +43,26 @@ Route::prefix('/customer')->as('customer.')->group(function () {
     Route::prefix('/payment-mobile')->group(function () {
         Route::get('/', [PaymentController::class, 'payment'])->name('payment-mobile');
     });
-
-    Route::group([], function () {
-        Route::get('set-payment-method/{name}', [SystemController::class, 'set_payment_method'])->name('set-payment-method');
-        Route::get('set-shipping-method', [SystemController::class, 'set_shipping_method'])->name('set-shipping-method');
-        Route::get('set-pos-shipping-method', [SystemController::class, 'set_pos_shipping_method'])->name('set-pos-shipping-method');
-        Route::post('checkout-complete', [SystemController::class, 'productCheckout'])->name('product.checkout');
-        Route::post('checkout/complete', [SystemController::class, 'singlepCheckout'])->name('sproduct.checkout');
-        Route::get('checkout-complete/{id}', [SystemController::class, 'checkoutComplete'])->name('checkout-complete');
-        Route::post('choose-billing-address', [SystemController::class, 'choose_billing_address'])->name('choose-billing-address');
-        Route::post('customer-address-update', [SystemController::class, 'customerAddressUpdate'])->name('address.update');
-
-        Route::prefix('/reward-points')->as('reward-points.')->middleware('auth:customer')->group(function () {
-            Route::get('convert', [RewardPointController::class, 'convert'])->name('convert');
-        });
-    });
+});
+//profile Route
+Route::controller(UserProfileController::class)->middleware('customer')->group(function () {
+    Route::get('user-account', 'user_account')->name('user-account'); // user profile
+    Route::post('user-account-update', 'user_update')->name('user-update'); // user profile update
+    Route::get('account-address', 'account_address')->name('account-address'); // user address
+    Route::post('account-address-store', 'address_store')->name('address-store'); // user address store
+    ROute::get('account-address-edit/{id}', 'address_edit')->name('address-edit');
+    Route::post('account-address-update', 'address_update')->name('address-update');
+    Route::post('address-delete', 'address_delete')->name('address-delete');
+    Route::get('account-oder', 'account_oder')->name('account-oder'); // user orders
+    Route::get('account-order-details', 'account_order_details')->name('account-order-details');
+    Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
+    Route::get('account-wishlist', 'account_wishlist')->name('account-wishlist'); // user wishlist
+    Route::get('refund-request/{id}', 'refund_request')->name('refund-request');
+    Route::get('refund-details/{id}', 'refund_details')->name('refund-details');
+    Route::get('submit-review/{id}', 'submit_review')->name('submit-review');
+    Route::post('refund-store', 'store_refund')->name('refund-store');
+    Route::get('account-tickets', 'account_tickets')->name('account-tickets'); // user support tickets
+    Route::post('ticket-submit', 'ticket_submit')->name('ticket-submit'); // user support tickets submit
+    Route::get('order-cancel/{id}', 'order_cancel')->name('order-cancel');
+    Route::get('account-logout', 'accountLogout')->name('account-logout'); // user logout
 });

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupportTicket extends Model
 {
+    protected $guarded = ['id'];
     protected $casts = [
         'customer_id' => 'integer',
         'status' => 'string',
