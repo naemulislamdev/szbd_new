@@ -325,7 +325,7 @@
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Sub-category added successfully');
+                        toastr.success(res.message ?? 'Sub-category Updated successfully');
                     },
                     error: function(err) {
                         toastr.error(err.responseJSON.message);

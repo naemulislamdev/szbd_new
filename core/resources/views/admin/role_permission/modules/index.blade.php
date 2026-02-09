@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Investors Management')
+@section('title', 'User Management')
 
 @push('styles')
 @endpush
@@ -8,14 +8,14 @@
         <div class="row align-items-center">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Investors Information</h4>
+                    <h4 class="page-title">Roles Modules</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
 
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">Investors</li>
+                            <li class="breadcrumb-item active">Modules</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -29,11 +29,15 @@
                     <div class="card-header pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4 class="card-title">Investors List</h4>
+                                <h4 class="card-title">Module List</h4>
                             </div><!--end col-->
-                            <div class="col-sm-6 text-end mb-2">
-                                <button class="btn btn-sm btn-primary"><i class="las la-file-excel"></i> Export</button>
+                            <div class="col-6 text-end pb-2">
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#addUserModal">
+                                    <i class="la la-plus-circle"></i> Add New Module
+                                </button>
                             </div>
+
                         </div><!--end row-->
                     </div><!--end card-header-->
                     <div class="card-body pt-0">
@@ -48,14 +52,9 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>SL#</th>
-                                        <th>Date</th>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Address</th>
-                                        <th>Invest Amount</th>
-                                        <th>Home Status</th>
-                                        <th>Comment</th>
-                                        <th class="text-end">Action</th>
+                                        <th>Title</th>
+                                        <th>Module Items</th>
+                                        <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -66,135 +65,93 @@
         </div> <!-- end row -->
     </div><!-- container -->
 
-
-    <div class="modal fade" id="remarkAddModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
-        data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <form id="remarkForm">
-                @csrf
-                <input type="hidden" id="investId" name="id" value="">
-
-                <div class="modal-content">
+    {{-- Add User Modal --}}
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <form id="addForm" enctype="multipart/form-data">
+                    @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Add Remark</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title">Add New Module</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Remark <span class="text-danger">*</span></label>
-                            <textarea name="remark" class="form-control" required></textarea>
-                            <small class="text-danger error_remark"></small>
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label">Title</label>
+                                <input type="text" name="title" class="form-control" placeholder="Enter Module Title"
+                                    required>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <h5>Module Items</h6>
+                                    <div class="d-flex align-items-center">
+                                        <input type="checkbox" name="actions[]" id="action1" value="view">
+                                        <label class="ms-1" for="action1">View</label>
+                                        <input class="ms-1" type="checkbox" name="actions[]" id="action2"
+                                            value="create">
+                                        <label class="ms-1" for="action2">Create</label>
+                                        <input class="ms-1" type="checkbox" name="actions[]" id="action3"
+                                            value="edit">
+                                        <label class="ms-1" for="action3">Edit</label>
+                                        <input class="ms-1" type="checkbox" name="actions[]" id="action4"
+                                            value="delete">
+                                        <label class="ms-1" for="action4">Delete</label>
+                                    </div>
+                            </div>
                         </div>
                     </div>
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
+    {{-- Edit User Modal --}}
     <div class="modal fade" id="viewInvestorModal" tabindex="-1" aria-labelledby="viewInvestorModalLabel"
         aria-hidden="true">
 
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
 
-                <!-- Header -->
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewInvestorModalLabel">
-                        Investor Info
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <!-- Body -->
-                <div class="modal-body">
-                    <div class="row">
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Date</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewDate"></strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Investor Name</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewName"></strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Phone</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewPhone"></strong>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Occupation</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewOccupation"></strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Investment Amount</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewInvestmentAmount"></strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Remark Note</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewRemark"></strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Status</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewStatus"></strong>
-                                </div>
-                            </div>
-                        </div>
-
+                <form id="editForm" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="id" id="moduleId">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Module</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                </div>
-
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label">Title</label>
+                                <input type="text" name="title" id="title" class="form-control"
+                                    placeholder="Enter Module Title" required>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <h5>Module Items</h6>
+                                    <div class="d-flex align-items-center">
+                                        <input type="checkbox" name="actions[]" id="action1.1" value="view">
+                                        <label class="ms-1" for="action1.1">View</label>
+                                        <input class="ms-1" type="checkbox" name="actions[]" id="action1.2"
+                                            value="create">
+                                        <label class="ms-1" for="action1.2">Create</label>
+                                        <input class="ms-1" type="checkbox" name="actions[]" id="action1.3"
+                                            value="edit">
+                                        <label class="ms-1" for="action1.3">Edit</label>
+                                        <input class="ms-1" type="checkbox" name="actions[]" id="action1.4"
+                                            value="delete">
+                                        <label class="ms-1" for="action1.4">Delete</label>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -221,44 +178,29 @@
                 scrollX: false,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.investors.datatables', 'all') }}",
-
+                    url: "{{ route('admin.permission_module.datatables') }}",
                 },
+
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
                         searchable: false,
                         className: 'text-center p-1'
                     },
+                    {
+                        data: 'title'
+                    },
 
                     {
-                        data: 'created_at'
-                    },
-                    {
-                        data: 'name'
-                    },
-                    {
-                        data: 'mobile_number'
-                    },
-                    {
-                        data: 'address'
-                    },
-                    {
-                        data: 'investment_amount'
-                    },
-                    {
-                        data: 'status'
-                    },
-                    {
-                        data: 'remark'
+                        data: 'actions',
+
                     },
                     {
                         data: 'action',
+                        searchable: false,
                         orderable: false,
-                        searchable: false
                     }
                 ],
-
                 order: [
                     [1, 'desc']
                 ]
@@ -272,8 +214,36 @@
                     $('#loader').fadeOut(100);
                 }
             });
+            // Update form
+            $('#editForm').on('submit', function(e) {
+                e.preventDefault();
 
+                let formData = new FormData(this);
 
+                $.ajax({
+                    url: "{{ route('admin.permission_module.update') }}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+
+                        // modal close
+                        $('#viewInvestorModal').modal('hide');
+
+                        // form reset
+                        $('#editForm')[0].reset();
+
+                        // datatable reload (🔥 main part)
+                        table.ajax.reload(null, false);
+
+                        toastr.success(res.message ?? 'Module updated successfully');
+                    },
+                    error: function(err) {
+                        toastr.error('Something went wrong!');
+                    }
+                });
+            });
             // category delete
             $(document).on('click', '.delete', function() {
                 var id = $(this).attr("data-id");
@@ -294,14 +264,14 @@
                             }
                         });
                         $.ajax({
-                            url: "{{ route('admin.investors.delete') }}",
+                            url: "{{ route('admin.permission_module.delete') }}",
                             method: 'POST',
                             data: {
                                 id: id
                             },
                             success: function() {
                                 toastr.success(
-                                    'Investor Deleted Successfully.'
+                                    'Module Deleted Successfully.'
                                 );
                                 table.ajax.reload();
 
@@ -311,8 +281,8 @@
                 })
             });
 
-            // Update form
-            $('#remarkForm').on('submit', function(e) {
+            // add form
+            $('#addForm').on('submit', function(e) {
                 e.preventDefault();
 
                 let formData = new FormData(this);
@@ -320,7 +290,7 @@
 
 
                 $.ajax({
-                    url: "{{ route('admin.investors.remark.store') }}",
+                    url: "{{ route('admin.permission_module.store') }}",
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -328,15 +298,15 @@
                     success: function(res) {
 
                         // modal close
-                        $('#remarkAddModal').modal('hide');
+                        $('#addUserModal').modal('hide');
 
                         // form reset
-                        $('#remarkForm')[0].reset();
+                        $('#addForm')[0].reset();
 
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Remark added successfully');
+                        toastr.success(res.message ?? 'Module added successfully');
                     },
                     error: function(err) {
                         toastr.error('Something went wrong!');
@@ -371,15 +341,15 @@
                 }
             });
             $.ajax({
-                url: "{{ route('admin.category.status') }}",
+                url: "{{ route('admin.employee.status') }}",
                 method: 'POST',
                 data: {
                     id: id,
-                    home_status: status
+                    status: status
                 },
                 success: function(data) {
                     if (data.success == true) {
-                        toastr.success('Status updated successfully');
+                        toastr.success('Status Changed successfully');
                     }
                 },
                 error: function(err) {
@@ -396,14 +366,21 @@
         });
         $(document).on('click', '.viewBtn', function() {
             let button = $(this);
-            $('#viewName').text(button.data('name'));
-            $('#viewPhone').text(button.data('mobile'));
-            $('#viewAddress').text(button.data('address'));
-            $('#viewOccupation').text(button.data('occupation'));
-            $('#viewInvestmentAmount').text(button.data('investment-amount'));
-            $('#viewRemark').text(button.data('remark'));
-            $('#viewDate').text(button.data('date'));
-            $('#viewStatus').text(button.data('status'));
+            $('#moduleId').val(button.data('id'));
+            $('#title').val(button.data('title'));
+
+            // parse JSON string to array
+            let actions = JSON.parse(button.attr('data-actions'));
+
+            // reset all checkboxes
+            $('input[name="actions[]"]').prop('checked', false);
+
+            // check only matched checkboxes
+            actions.forEach(function(action) {
+                $('input[name="actions[]"][value="' + action + '"]').prop('checked', true);
+            });
+
+
         });
     </script>
 @endpush

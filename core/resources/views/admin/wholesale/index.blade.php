@@ -1,21 +1,26 @@
 @extends('admin.layouts.app')
-@section('title', 'Investors Management')
+@section('title', 'Wholesale Management')
 
 @push('styles')
+    <style>
+        .extra-width {
+            width: 100px;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="container-fluid">
         <div class="row align-items-center">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Investors Information</h4>
+                    <h4 class="page-title">Wholesale Information</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
 
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">Investors</li>
+                            <li class="breadcrumb-item active">Wholesales</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -28,8 +33,8 @@
                 <div class="card">
                     <div class="card-header pb-0">
                         <div class="row align-items-center">
-                            <div class="col-6">
-                                <h4 class="card-title">Investors List</h4>
+                            <div class="col-md-6">
+                                <h4 class="card-title">Wholesales List</h4>
                             </div><!--end col-->
                             <div class="col-sm-6 text-end mb-2">
                                 <button class="btn btn-sm btn-primary"><i class="las la-file-excel"></i> Export</button>
@@ -52,9 +57,9 @@
                                         <th>Name</th>
                                         <th>Phone</th>
                                         <th>Address</th>
-                                        <th>Invest Amount</th>
-                                        <th>Home Status</th>
-                                        <th>Comment</th>
+                                        <th>Quantity</th>
+                                        <th>Status Note</th>
+                                        <th>Change Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -126,7 +131,7 @@
                         </div>
                         <div class="col-12 mb-3">
                             <div class="row">
-                                <div class="col-3">Investor Name</div>
+                                <div class="col-3">Name</div>
                                 <div class="col-2">:</div>
                                 <div class="col-7">
                                     <strong id="viewName"></strong>
@@ -147,6 +152,16 @@
 
                         <div class="col-12 mb-3">
                             <div class="row">
+                                <div class="col-3">Address</div>
+                                <div class="col-2">:</div>
+                                <div class="col-7">
+                                    <strong id="viewAddress"></strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <div class="row">
                                 <div class="col-3">Occupation</div>
                                 <div class="col-2">:</div>
                                 <div class="col-7">
@@ -154,23 +169,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-12 mb-3">
                             <div class="row">
-                                <div class="col-3">Investment Amount</div>
+                                <div class="col-3">Product Quantity</div>
                                 <div class="col-2">:</div>
                                 <div class="col-7">
-                                    <strong id="viewInvestmentAmount"></strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <div class="row">
-                                <div class="col-3">Remark Note</div>
-                                <div class="col-2">:</div>
-                                <div class="col-7">
-                                    <strong id="viewRemark"></strong>
+                                    <strong id="viewProductQuantity"></strong>
                                 </div>
                             </div>
                         </div>
@@ -181,6 +185,16 @@
                                 <div class="col-2">:</div>
                                 <div class="col-7">
                                     <strong id="viewStatus"></strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <div class="row">
+                                <div class="col-3">Status Note</div>
+                                <div class="col-2">:</div>
+                                <div class="col-7">
+                                    <strong id="viewStatusNote"></strong>
                                 </div>
                             </div>
                         </div>
@@ -221,7 +235,7 @@
                 scrollX: false,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.investors.datatables', 'all') }}",
+                    url: "{{ route('admin.wholesale.datatables') }}",
 
                 },
                 columns: [{
@@ -238,19 +252,20 @@
                         data: 'name'
                     },
                     {
-                        data: 'mobile_number'
+                        data: 'phone'
                     },
                     {
                         data: 'address'
                     },
                     {
-                        data: 'investment_amount'
+                        data: 'product_quantity'
                     },
                     {
-                        data: 'status'
+                        data: 'wholesale_note'
                     },
                     {
-                        data: 'remark'
+                        data: 'change_status',
+                        className: 'extra-width',
                     },
                     {
                         data: 'action',
@@ -294,56 +309,155 @@
                             }
                         });
                         $.ajax({
-                            url: "{{ route('admin.investors.delete') }}",
+                            url: "{{ route('admin.wholesale.delete') }}",
                             method: 'POST',
                             data: {
                                 id: id
                             },
                             success: function() {
                                 toastr.success(
-                                    'Investor Deleted Successfully.'
+                                    ' Franchise Deleted Successfully.'
                                 );
                                 table.ajax.reload();
-
                             }
                         });
                     }
                 })
             });
+            $(document).on('change', '.changeStatus', function() {
+                var status = $(this).val();
+                var id = $(this).attr("data-id");
+                if (status === 'confirmed') {
+                    Swal.fire({
+                        title: 'Are you sure Change this?',
+                        text: "Think before you completed.",
+                        html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.wholesale.status') }}" method="post">
+                            <input type="hidden" name="wholesale_status" value="${status}">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="wholesale_note"
+                                id="note"
+                                placeholder="For ${status} note">
+                        </form>
+                    `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#377dff',
+                        cancelButtonColor: 'secondary',
+                        confirmButtonText: 'Yes, Change it'
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                                }
+                            });
+                            $.ajax({
+                                url: "{{ route('admin.wholesale.status') }}",
+                                method: 'POST',
+                                data: $("form").serialize(),
+                                success: function(data) {
+                                    toastr.success('Status Change successfully');
+                                    table.ajax.reload();
 
-            // Update form
-            $('#remarkForm').on('submit', function(e) {
-                e.preventDefault();
 
-                let formData = new FormData(this);
-                console.log(formData);
+                                },
+                                error: function(data) {
+                                    toastr.warning('Something went wrong !');
+                                }
+                            });
+                        }
+                    });
+                } else if (status === 'canceled') {
+                    Swal.fire({
+                        title: 'Are you sure Change this?',
+                        text: "You won't be able to revert this!",
+                        html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.wholesale.status') }}" method="post">
+                            <input type="hidden" name="wholesale_status" value="canceled">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="wholesale_note" id="note" placeholder="For ${status} note">
+                        </form>
+                    `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#377dff',
+                        cancelButtonColor: 'secondary',
+                        confirmButtonText: 'Yes, Change it!',
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                                }
+                            });
+                            $.ajax({
+                                url: "{{ route('admin.wholesale.status') }}",
+                                method: 'POST',
+                                data: $("form").serialize(),
+                                success: function(data) {
 
+                                    toastr.success('Status Change successfully');
+                                    table.ajax.reload();
+                                },
+                                error: function(data) {
+                                    toastr.warning('Something went wrong !');
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Are you sure Change this?',
+                        text: "You won't be able to revert this!",
+                        html: `
+                            <br />
+                            <form class="form-horizontal" action="{{ route('admin.wholesale.status') }}" method="post">
+                                <input type="hidden" name="wholesale_status" value="${status}">
+                                <input type="hidden" name="id" value="${id}">
+                                <input
+                                    required
+                                    class="form-control wedding-input-text wizard-input-pad"
+                                    type="text"
+                                    name="wholesale_note"
+                                    id="note"
+                                    placeholder="For ${status} note"
+                                >
+                            </form>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#377dff',
+                        cancelButtonColor: 'secondary',
+                        confirmButtonText: 'Yes, Change it!'
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                                }
+                            });
+                            $.ajax({
+                                url: "{{ route('admin.wholesale.status') }}",
+                                method: 'POST',
+                                data: $("form").serialize(),
+                                success: function(data) {
 
-                $.ajax({
-                    url: "{{ route('admin.investors.remark.store') }}",
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
+                                    toastr.success('Status Change successfully');
+                                    table.ajax.reload();
 
-                        // modal close
-                        $('#remarkAddModal').modal('hide');
+                                },
+                                error: function(data) {
+                                    toastr.warning('Something went wrong !');
+                                }
+                            });
+                        }
+                    });
+                }
 
-                        // form reset
-                        $('#remarkForm')[0].reset();
-
-                        // datatable reload (🔥 main part)
-                        table.ajax.reload(null, false);
-
-                        toastr.success(res.message ?? 'Remark added successfully');
-                    },
-                    error: function(err) {
-                        toastr.error('Something went wrong!');
-                    }
-                });
             });
-
 
         })(jQuery);
     </script>
@@ -400,10 +514,10 @@
             $('#viewPhone').text(button.data('mobile'));
             $('#viewAddress').text(button.data('address'));
             $('#viewOccupation').text(button.data('occupation'));
-            $('#viewInvestmentAmount').text(button.data('investment-amount'));
-            $('#viewRemark').text(button.data('remark'));
+            $('#viewProductQuantity').text(button.data('productquantity'));
             $('#viewDate').text(button.data('date'));
             $('#viewStatus').text(button.data('status'));
+            $('#viewStatusNote').text(button.data('statusnote'));
         });
     </script>
 @endpush

@@ -48,7 +48,7 @@
     <div class="startbar d-print-none">
         <!--start brand-->
         <div class="brand">
-            <a href="index.html" class="logo">
+            <a href="{{ route('home') }}" class="logo">
                 <span>
                     <img src="assets/images/logo-sm.png" alt="logo-small" class="logo-sm">
                 </span>

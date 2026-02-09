@@ -3,37 +3,69 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Investor;
+use App\Models\Wholesale;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-
-class InvestorController extends Controller
+class WholeSaleController extends Controller
 {
-    //--- Investment Management ---//
-    public function investorsList()
+    public function create()
     {
-        return view('admin.investors.index');
+        return view("web-views.wholesale.wholesale");
+    }
+    public function list()
+    {
+        return view('admin.wholesale.index');
     }
     public function datatables()
     {
-        $query = Investor::query();
+        $query = Wholesale::query();
         $query->latest('id');
         return DataTables::of($query)
             ->addIndexColumn()
+            ->addColumn('change_status', function ($row) {
+
+                $status = $row->wholesale_status;
+                $id = $row->id;
+
+                return '
+                    <div class="dropdown">
+                        <select name="wholesale_status"
+                            onchange="lead_status(this.value, ' . $id . ')"
+                            class="form-control changeStatus status_select_' . $id . '"
+                            data-id="' . $id . '">
+
+                            <option value="pending" ' . ($status == 'pending' ? 'selected' : '') . '>
+                                Pending
+                            </option>
+
+                            <option value="confirmed" ' . ($status == 'confirmed' ? 'selected' : '') . '>
+                                Confirmed
+                            </option>
+
+                            <option value="canceled" ' . ($status == 'canceled' ? 'selected' : '') . '>
+                                Canceled
+                            </option>
+
+                        </select>
+                    </div>
+                ';
+            })
+
 
             ->addColumn('action', function ($row) {
                 return '
         <button
         data-id="' . $row->id . '"
         data-name="' . $row->name . '"
-        data-mobile="' . $row->mobile_number . '"
+        data-mobile="' . $row->phone . '"
         data-address="' . $row->address . '"
         data-occupation="' . $row->occupation . '"
-        data-investment-amount="' . $row->investment_amount . '"
+        data-productQuantity="' . round($row->product_quantity) . '"
         data-remark="' . $row->remark . '"
         data-date="' . $row->created_at->format('d M Y h:i A') . '"
-        data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
+        data-status="' . ($row->wholesale_status) . '"
+        data-statusNote="' . ($row->wholesale_note ? $row->wholesale_note : 'N/A') . '"
             data-bs-toggle="modal"
                data-bs-target="#viewInvestorModal"
          class="btn btn-primary btn-sm viewBtn" title="View" style="cursor: pointer;">
@@ -50,6 +82,9 @@ class InvestorController extends Controller
             })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y h:i A');
+            })
+            ->editColumn('status_note', function ($row) {
+                return $row->status_note ? $row->status_note : 'N/A';
             })
             ->editColumn('remark', function ($row) {
 
@@ -75,78 +110,35 @@ class InvestorController extends Controller
                             <button  class="btn btn-sm btn-primary ">' . $status . '</button>
                         </div>';
             })
-
-
             ->rawColumns([
                 'status',
-                'remark',
+                'change_status',
                 'created_at',
                 'action',
             ])
             ->toJson();
     }
-
-    public function investorsViewStatus(Request $request)
+    public function destroy(Request $request)
     {
-        $item = Investor::findOrFail($request->id);
-
-        // status update
-        if ($item->status !== 1) {
-            $item->status = 1;
-            $item->save();
-        }
-
-        return response()->json([
-            'status' => $item->status,
-        ]);
-    }
-
-    public function delete(Request $request)
-    {
-        $investor = Investor::findOrFail($request->id);
-        if ($investor->delete()) {
-            return response()->json([
-                'success' => 1,
-            ], 200);
-        }
-        return response()->json([
-            'error' => 0,
-        ], 500);
-    }
-    public function bulk_export_investors()
-    {
-        $investors = Investor::latest()->get();
-        $data = [];
-        foreach ($investors as $item) {
-            $data[] = [
-                'Date' => Carbon::parse($item->created_at)->format('d M Y'),
-                'name' => $item->name,
-                'phone' => $item->mobile_number,
-                'address' => $item->address,
-                'occupation' => $item->occupation,
-                'investment_amount' => $item->investment_amount,
-            ];
-        }
-        $headings = ['Date', 'Name', 'Phone', 'Address', 'Occupation', 'Investment Amount'];
-
-        return Excel::download(new DynamicExport($headings, $data), 'investors_info.xlsx');
-    }
-    public function remarkStore(Request $request)
-    {
-
-        $request->validate([
-            'id' => 'required|exists:investors,id',
-            'remark' => 'required|string'
-        ]);
-
-        $investor = Investor::find($request->id);
-        $investor->remark = $request->remark;
-        $investor->save();
+        $wlist = Wholesale::find($request->id);
+        $wlist->delete();
 
         return response()->json([
             'status' => true,
-            'id' => $investor->id,
-            'remark' => $investor->remark
+            'message' => 'Wholesale deleted successfully.'
+        ]);
+    }
+    public function status(Request $request)
+    {
+        $wSale = Wholesale::find($request->id);
+        $wSale->wholesale_status = $request->wholesale_status;
+        $wSale->wholesale_note = $request->wholesale_note;
+        $wSale->save();
+
+        return response()->json([
+            'status' => true,
+            'id' => $wSale->id,
+            'note' => $wSale->wholesale_note
         ]);
     }
 }

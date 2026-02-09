@@ -11,7 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         return view('admin.category.index');
     }
@@ -26,7 +26,7 @@ class CategoryController extends Controller
             ->addIndexColumn()
             ->editColumn('icon', function ($row) {
 
-                return '<img src="' . asset("assets/storage/category/".$row->icon) . '"
+                return '<img src="' . asset("assets/storage/category/" . $row->icon) . '"
                  alt="icon"
                  width="40"
                  height="40">';
@@ -96,7 +96,7 @@ class CategoryController extends Controller
         $category = new Category;
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
-        $category->icon = FileManager::uploadFile('assets/storage/category/', 300, $request->file('icon'));
+        $category->icon = FileManager::uploadFile('category/', 300, $request->file('icon'));
         $category->order_number = $request->order_number;
 
         if ($category->save()) {
@@ -128,7 +128,7 @@ class CategoryController extends Controller
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
         if ($request->image) {
-            $category->icon = FileManager::updateFile('assets/storage/category/', $category->icon, 300, $request->file('image'));
+            $category->icon = FileManager::updateFile('category/', $category->icon, 300, $request->file('image'));
         }
         $category->order_number = $request->order_number;
         if ($category->save()) {
@@ -147,7 +147,7 @@ class CategoryController extends Controller
     {
         $category = Category::find($request->id);
         if (file_exists(public_path('assets/storage/category/' . $category->icon))) {
-            FileManager::delete('assets/storage/category/' . $category->icon);
+            FileManager::delete('category/' . $category->icon);
         }
         $category->delete();
 
