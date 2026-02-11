@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\BusinessSetting;
@@ -25,6 +26,8 @@ use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class FrontendController extends Controller
 {
@@ -320,7 +323,7 @@ class FrontendController extends Controller
                 $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
                 $otpExists = User::whereNotNull('otp')->exists();
             }
-            return view('web.checkout', compact('customer','shippingAddresses'));
+            return view('web.checkout', compact('customer', 'shippingAddresses'));
         }
         return redirect('/')->with('error', 'No items in your basket!');
     }
@@ -562,4 +565,23 @@ class FrontendController extends Controller
         return "Product Price Updated Successfully!";
     }
     //end
+    public function create_role()
+    {
+        $admin = Admin::find(1); // je admin ke super-admin banate chao
+        app(PermissionRegistrar::class)
+            ->setPermissionsTeamId($admin->branch_id);
+        $admin->assignRole('super-admin');
+
+        // $roles = ['super-admin', 'admin', 'hr', 'moderator'];
+
+        // foreach ($roles as $role) {
+        //     Role::firstOrCreate([
+        //         'name' => $role,
+        //         'guard_name' => 'admin'
+        //     ]);
+        // }
+
+
+        return back()->with('success', 'successfully!');
+    }
 }

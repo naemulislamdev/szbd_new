@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
     public function dashboard()
     {
+        $user= auth('admin')->user();
+        // $role = Role::where('id', $user->admin_role_id)->first();
+        // dd($user->getRoleNames());
+        // dd($role->guard_name);
         return view('admin.dashboard');
     }
 

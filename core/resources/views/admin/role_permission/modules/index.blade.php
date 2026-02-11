@@ -155,9 +155,6 @@
             </div>
         </div>
     </div>
-
-
-
 @endsection
 @push('scripts')
     <script>
@@ -316,71 +313,5 @@
 
 
         })(jQuery);
-    </script>
-
-    <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute('content')
-            }
-        });
-    </script>
-    <script>
-        $(document).on('change', '.status', function() {
-            var id = $(this).attr("data-id");
-            if ($(this).prop("checked") == true) {
-                var status = 1;
-            } else if ($(this).prop("checked") == false) {
-                var status = 0;
-            }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: "{{ route('admin.employee.status') }}",
-                method: 'POST',
-                data: {
-                    id: id,
-                    status: status
-                },
-                success: function(data) {
-                    if (data.success == true) {
-                        toastr.success('Status Changed successfully');
-                    }
-                },
-                error: function(err) {
-                    toastr.error(err.responseJSON.message ?? 'Something went wrong!');
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).on('click', '.addRemarkBtn', function() {
-            let button = $(this);
-            $('#investId').val(button.data('id'));
-        });
-        $(document).on('click', '.viewBtn', function() {
-            let button = $(this);
-            $('#moduleId').val(button.data('id'));
-            $('#title').val(button.data('title'));
-
-            // parse JSON string to array
-            let actions = JSON.parse(button.attr('data-actions'));
-
-            // reset all checkboxes
-            $('input[name="actions[]"]').prop('checked', false);
-
-            // check only matched checkboxes
-            actions.forEach(function(action) {
-                $('input[name="actions[]"][value="' + action + '"]').prop('checked', true);
-            });
-
-
-        });
     </script>
 @endpush

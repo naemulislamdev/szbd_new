@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermissionModule;
+use App\Models\AdminModule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Nette\Utils\Json;
 use Yajra\DataTables\Facades\DataTables;
 
 class PermissionModuleController extends Controller
@@ -17,7 +16,7 @@ class PermissionModuleController extends Controller
     }
     public function datatables()
     {
-        $query = PermissionModule::query();
+        $query = AdminModule::query();
         $query->latest('id');
         return DataTables::of($query)
             ->addIndexColumn()
@@ -68,9 +67,10 @@ class PermissionModuleController extends Controller
             'actions' => 'required|array|min:1',
         ]);
 
-        $storeInfo = PermissionModule::create([
-            'title' => $validinfo['title'],
-            'actions' => json_encode($validinfo['actions']),
+        $storeInfo = AdminModule::create([
+            'title' => $request['title'],
+            'slug' => Str::slug($request['title']),
+            'actions' => json_encode($request['actions']),
         ]);
         return response()->json([
             'status' => 'success',
@@ -84,7 +84,7 @@ class PermissionModuleController extends Controller
             'title' => 'required|string',
             'actions' => 'required|array',
         ]);
-        $module = PermissionModule::find($request->id);
+        $module = AdminModule::find($request->id);
         $module->title = $request->title;
         $module->slug = Str::slug($request->title);
         $module->actions = json_encode($request['actions']);
@@ -103,7 +103,7 @@ class PermissionModuleController extends Controller
     }
     public function destroy(Request $request)
     {
-        $module = PermissionModule::find($request->id);
+        $module = AdminModule::find($request->id);
         $module->delete();
 
         return response()->json([

@@ -228,11 +228,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(RolePermissionController::class)->prefix('/role-permission')->as('role_permission.')->group(function () {
             Route::get('list', 'list')->name('list');
             Route::get('datatables', 'datatables')->name('datatables');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
             Route::post('delete', 'destroy')->name('delete');
             Route::post('status', 'status')->name('status');
             Route::get('create', 'create')->name('create');
             Route::post('store', 'store')->name('store');
-            Route::post('update', 'update')->name('update');
             // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
         // Admin Roles Modules Routes

@@ -7,11 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations. php artisan migrate --path=database/migrations/2026_02_09_100702_create_permission_modules_table.php
+     * Run the migrations.
+     * php artisan migrate --path=database/migrations/2026_02_09_131656_create_permission_tables.php
      */
     public function up(): void
     {
-        Schema::create('permission_modules', function (Blueprint $table) {
+        Schema::create('admin_modules', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->string('slug')->nullable();
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permission_modules');
+        Schema::dropIfExists('admin_modules');
     }
 };

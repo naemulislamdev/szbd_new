@@ -14,7 +14,7 @@
         <div class="row align-items-center">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Role Create</h4>
+                    <h4 class="page-title">Role Edit</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
@@ -23,7 +23,7 @@
                             </li><!--end nav-item-->
 
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">Role Create</li>
+                            <li class="breadcrumb-item active">Role Edit</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -36,17 +36,17 @@
                 <div class="card">
                     <div class="card-header pb-0">
                         <div class="row ">
-                            <h4 class="card-title">Role Create Form</h4>
-                            <form action="{{ route('admin.role_permission.store') }}" method="POST">
+                            <h4 class="card-title">Role Edit Form</h4>
+                            <form action="{{ route('admin.role_permission.update', $role->id) }}" method="POST">
                                 @csrf
                                 <div class="mt-3">
                                     <label for="name" class="form-label">Role Name <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ $role->name}}"
                                         placeholder="Ex: Admin" required>
                                 </div>
                                 <div class="mt-3">
-                                    <h5 class="fw-bold">Add Permissions</h5>
+                                    <h5 class="fw-bold">Update Permissions</h5>
 
                                     <div>
                                         @foreach ($modules as $module)
@@ -65,12 +65,13 @@
                                                             <div class="d-flex ms-5">
                                                                 @php
                                                                     $permissions = json_decode($module->actions, true);
+                                                                    $moduleAccess = json_decode($role->module_access, true);
                                                                 @endphp
                                                                 @foreach ($permissions as $permission)
                                                                     <div class="form-check me-2">
                                                                         <input class="form-check-input permission-checkbox"
                                                                             type="checkbox" value="{{ $module->slug}}_{{ $permission }}"
-                                                                            id="{{ $module->slug}}_{{ $permission }}" name="module_access[]">
+                                                                            id="{{ $module->slug}}_{{ $permission }}" name="module_access[]" {{ in_array($module->slug . '_' . $permission, $moduleAccess) ? 'checked' : '' }}>
                                                                         <label for="{{ $module->slug}}_{{ $permission }}" class="form-check-label">
                                                                             {{ ucfirst(str_replace('_', ' ', $permission)) }}
                                                                         </label>
@@ -85,7 +86,7 @@
                                             </div>
                                         @endforeach
                                         <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary">Create Role</button>
+                                            <button type="submit" class="btn btn-primary">Update Role</button>
                                         </div>
                                     </div>
                                 </div>
@@ -98,16 +99,11 @@
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div> <!-- end col -->
         </div> <!-- end row -->
     </div><!-- container -->
-
-
-
 
 @endsection
 @push('scripts')

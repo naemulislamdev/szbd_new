@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Backend;
 use App\CPU\FileManager;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Models\AdminRole;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 
 class EmplyeeController extends Controller
@@ -17,61 +18,61 @@ class EmplyeeController extends Controller
     function list()
     {
         $branches = Branch::where('status', 1)->get();
-        $roles = AdminRole::where("status", 1)->get();
+        $roles = Role::where('name', '!=', 'super-admin')
+            ->where('guard_name', 'admin')
+            ->get();
+
         return view('admin.role_permission.users', compact('branches', 'roles'));
     }
 
     public function store(Request $request)
     {
-        $validinfo =  $request->validate([
-            'name' => 'required',
-            'role_id' => 'required',
-            'image' => 'required',
-            'email' => 'required|email|unique:admins',
-            'password' => 'required',
-            'phone' => 'required'
-
-        ], [
-            'name.required' => 'Role name is required!',
-            'role_name.required' => 'Role id is Required',
-            'email.required' => 'Email id is Required',
-            'image.required' => 'Image is Required',
-
+        $request->validate([
+            'name'     => 'required',
+            'role_id'  => 'required|exists:roles,id',
+            'image'    => 'required',
+            'email'    => 'required|email|unique:admins',
+            'password' => 'required|min:6',
+            'phone'    => 'required',
         ]);
 
-        if ($request->role_id == 1) {
-            return response()->json([
-                'error' => 0,
-                'message' => 'Access Denied!'
-            ], 500);
+        if ($request->role_id == 2) {
+            return back()->with('warning', 'Access Denied!');
         }
 
-        $storeInfo = DB::table('admins')->insert([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'admin_role_id' => $request->role_id,
-            'branch_id' => $request->branch_id,
-            'password' => bcrypt($request->password),
-            'status' => 1,
-            'image' => FileManager::uploadFile('admin/', 300, $request->file('image')),
-            'created_at' => now(),
-            'updated_at' => now(),
+
+        // 1️⃣ Create Admin
+        $admin = Admin::create([
+            'name'          => $request->name,
+            'phone'         => $request->phone,
+            'email'         => $request->email,
+            'admin_role_id' => $request->role_id, // UI purpose only
+            'branch_id'     => $request->branch_id,
+            'password'      => bcrypt($request->password),
+            'status'        => 1,
+            'image'         => FileManager::uploadFile('admin/', 300, $request->file('image')),
         ]);
-        if ($storeInfo) {
-            return response()->json([
-                'success' => 1,
-            ], 200);
-        } else {
-            return response()->json([
-                'error' => 0,
-                'message' => $validinfo
-            ], 500);
-        }
+
+        // 2️⃣ Get Role name from roles table
+        $role = Role::find($request->role_id);
+
+        app(PermissionRegistrar::class)
+            ->setPermissionsTeamId($admin->branch_id);
+
+        // dd($role);
+        $admin->assignRole($role);
+        $permissions = $role->permissions;
+        $admin->givePermissionTo($permissions);
+
+        return redirect()->route('admin.employee.list')->with('success', 'Employee added successfully!');
     }
     public function datatables()
     {
-        $query = Admin::query();
+        //VERY IMPORTANT
+        app(PermissionRegistrar::class)
+            ->setPermissionsTeamId(auth('admin')->user()->branch_id);
+
+        $query = Admin::query()->with('branch');
         $query->latest('id');
         return DataTables::of($query)
             ->addIndexColumn()
@@ -79,12 +80,13 @@ class EmplyeeController extends Controller
             ->addColumn('action', function ($row) {
                 return '
         <button
-        data-id="' . $row->id . '"
+
         data-name="' . $row->name . '"
         data-mobile="' . $row->phone . '"
         data-email="' . $row->email . '"
         data-branch="' . $row->branch->id . '"
-        data-role="' . $row->role->id . '"
+        data-id="' . $row->id . '"
+
         data-date="' . $row->created_at->format('d M Y h:i A') . '"
         data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
             data-bs-toggle="modal"
@@ -112,9 +114,15 @@ class EmplyeeController extends Controller
                 return $status;
             })
             ->editColumn('role', function ($row) {
-                $status = $row->role->name ?? 'N/A';
-                return $status;
+                if ($row->getRoleNames()->isEmpty()) {
+                    return 'N/A';
+                }
+
+                return $row->getRoleNames()
+                    ->map(fn($role) => '<span class="badge bg-primary me-1">' . $role . '</span>')
+                    ->implode('');
             })
+
             ->editColumn('status', function ($row) {
 
                 $checked = $row->status == 1 ? 'checked' : '';
@@ -137,6 +145,7 @@ class EmplyeeController extends Controller
                 'status',
                 'remark',
                 'created_at',
+                'role',
                 'action',
             ])
             ->toJson();
@@ -169,52 +178,74 @@ class EmplyeeController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'role_id' => 'required',
-            'email' => 'required|email|unique:admins,email,' . $request->id,
-        ], [
-            'name.required' => 'Role name is required!',
+            'id'      => 'required|exists:admins,id',
+            'name'    => 'required',
+            'role_id' => 'required|exists:roles,id',
+            'email'   => 'required|email|unique:admins,email,' . $request->id,
         ]);
 
         if ($request->role_id == 1) {
             return response()->json([
-                'error' => 0,
+                'error' => 1,
                 'message' => 'Access Denied!'
+            ], 403);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $admin = Admin::findOrFail($request->id);
+
+            // 🔐 Password handling
+            if ($request->filled('password')) {
+                if (strlen($request->password) < 8) {
+                    return response()->json([
+                        'error' => 1,
+                        'message' => 'Password length must be at least 8 characters.'
+                    ], 422);
+                }
+                $admin->password = bcrypt($request->password);
+            }
+
+            if ($request->hasFile('image')) {
+                $admin->image = FileManager::updateFile(
+                    'admin/',
+                    $admin->image,
+                    $request->file('image')
+                );
+            }
+
+            $admin->update([
+                'name'          => $request->name,
+                'phone'         => $request->phone,
+                'email'         => $request->email,
+                'admin_role_id' => $request->role_id,
+                'branch_id'     => $request->branch_id,
+            ]);
+
+            $role = Role::where('id', $request->role_id)
+                ->where('guard_name', 'admin')
+                ->first();
+
+            $admin->assignRole($role);
+            $permissions = $role->permissions;
+            $admin->givePermissionTo($permissions);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => 1,
+                'message' => 'Employee updated successfully'
+            ], 200);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'error' => 1,
+                'message' => 'Something went wrong'
             ], 500);
         }
-
-        $e = Admin::find($request->id);
-        if ($request['password'] == null) {
-            $pass = $e['password'];
-        } else {
-            if (strlen($request['password']) < 8) {
-                return response()->json([
-                    'error' => 0,
-                    'message' => 'Password length must be 8 character.'
-                ], 500);
-            }
-            $pass = bcrypt($request['password']);
-        }
-
-        if ($request->has('image')) {
-            $e['image'] = FileManager::updateFile('admin/', $e['image'], 300, $request->file('image'));
-        }
-
-        DB::table('admins')->where(['id' => $request->id])->update([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'admin_role_id' => $request->role_id,
-            'branch_id' => $request->branch_id,
-            'password' => $pass,
-            'image' => $e['image'],
-            'updated_at' => now(),
-        ]);
-
-        return response()->json([
-            'success' => 1,
-            'message' => 'Employee updated successfully'
-        ], 200);
     }
 
     public function status(Request $request)

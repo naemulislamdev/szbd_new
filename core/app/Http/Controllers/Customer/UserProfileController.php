@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\CPU\CustomerManager;
 use App\CPU\FileManager;
-use App\CPU\Helpers;
-use App\CPU\ImageManager;
 use App\CPU\OrderManager;
 use App\Http\Controllers\Controller;
 use App\Models\Order;

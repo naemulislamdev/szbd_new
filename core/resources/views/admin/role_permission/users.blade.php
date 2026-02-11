@@ -75,7 +75,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
 
-                <form id="addForm" enctype="multipart/form-data">
+                <form id="addFor" action="{{ route('admin.employee.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Add User</h5>
@@ -107,7 +107,7 @@
                                     <option disabled selected>----Select Role----</option>
 
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
                                     @endforeach
 
 
@@ -200,10 +200,8 @@
                                 <label for="name">Role</label>
                                 <select style="width: 100%" class=" form-select" id="role" name="role_id" required>
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
                                     @endforeach
-
-
                                 </select>
                             </div>
                             <div class="col-md-6 form-group">
@@ -248,22 +246,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </form>
-
-                <!-- Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                </div>
 
             </div>
         </div>
     </div>
-
-
 
 @endsection
 @push('scripts')
