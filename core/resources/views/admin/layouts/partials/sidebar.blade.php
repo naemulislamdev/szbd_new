@@ -227,7 +227,35 @@
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
-
+        {{-- <li class="nav-item">
+            <a class="nav-link" href="">
+                <i class="las la-globe menu-icon"></i>
+                <span>Website Configuration</span>
+            </a>
+        </li> --}}
+        <li class="nav-item">
+            <a class="nav-link" href="#discountDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="discountDropdown">
+                <i class="las la-tags menu-icon"></i>
+                <span>Discount Management</span>
+            </a>
+            <div class="collapse " id="discountDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.discount.flat') }}" class="nav-link ">Flat Discount</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.discount.batch') }}" class="nav-link ">Batch Discount</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.discount.offers') }}" class="nav-link ">Discount Offers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.discount.eid.offers') }}" class="nav-link ">Eid Offers ✨🌙</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
         <li class="nav-item">
             <a class="nav-link" href="apps-chat.html">
                 <i class="iconoir-chat-bubble menu-icon"></i>

@@ -214,7 +214,6 @@
                                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                     @endforeach
 
-
                                 </select>
                             </div>
 

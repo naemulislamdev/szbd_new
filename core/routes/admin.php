@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BusinessSettingsController;
 use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Backend\InvestorController;
 use App\Http\Controllers\Backend\PermissionModuleController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
+use App\Http\Controllers\Backend\DiscountManageController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -242,6 +244,65 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('delete', 'destroy')->name('delete');
             Route::post('store', 'store')->name('store');
             Route::post('update', 'update')->name('update');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Discount Management Routes
+        Route::controller(DiscountManageController::class)->prefix('/discount')->as('discount.')->group(function () {
+
+            // Flat Discount Routes
+            Route::get('flat', 'discountFlat')->name('flat');
+            Route::get('flat-datatables', 'flatDatatables')->name('flat.datatables');
+            Route::post('flat-delete', 'flatDelete')->name('flat.delete');
+            Route::post('flat-store', 'flatStore')->name('flat.store');
+            Route::post('flat-update', 'flatUpdate')->name('flat.update');
+            Route::post('flat-status', 'flatStatus')->name('flat.status');
+            // Batch Discount Routes
+            Route::get('batch', 'discountBatch')->name('batch');
+            Route::get('batch-datatables', 'batchDatatables')->name('batch.datatables');
+            Route::get('batch-create', 'createBatch')->name('batch.create');
+            Route::post('batch-delete', 'batchDelete')->name('batch.delete');
+            Route::post('batch-store', 'batchStore')->name('batch.store');
+            Route::get('batch-edit/{id}', 'editBatch')->name('batch.edit');
+            Route::post('batch-update/{id}', 'batchUpdate')->name('batch.update');
+            Route::post('batch-status', 'batchStatus')->name('batch.status');
+            Route::get('batch/product/{id}', 'discountBatchProduct')->name('batch.product');
+            Route::get('batch-products-datatables/{productIds}', 'batchProductsDatatables')->name('batch.products.datatables');
+            Route::post('batch/remove-product', 'discountBatchRemoveProduct')->name('batch.remove.product');
+
+
+            // Offers discount Routes
+            Route::get('discount-offers', 'discountOffers')->name('offers');
+            Route::get('discount-offers-datatables', 'discountOffersDatatables')->name('offers.datatables');
+            Route::get('discount-offers/create', 'discountOffersCreate')->name('discount-offers.create');
+            Route::post('discount-offers/store', 'discountOffersStore')->name('discount-offers.store');
+            Route::get('discount-offers/edit/{id}', 'discountOffersEdit')->name('discount-offers.edit');
+            Route::post('discount-offers/update/{id}', 'discountOffersUpdate')->name('discount-offers.update');
+            Route::post('discount-offers/delete', 'offersDelete')->name('offers.delete');
+            Route::post('discount-offers/status/', 'discountOffersStatus')->name('discount-offers.status');
+            Route::get('discount-offers/product/{id}', 'discountOffersProduct')->name('discount-offers.product');
+            Route::get('discount-offers-products-datatables/{productIds}', 'offersProductsDatatables')->name('offers.products.datatables');
+            Route::post('discount-offers/remove-product', 'discountOffersRemoveProduct')->name('discount-offers.remove.product');
+
+            // Eid Offer Routes
+            Route::get('eid-offers', 'eidOffers')->name('eid.offers');
+            Route::get('eid-offers-datatables', 'eidOffersDatatables')->name('eid.offers.datatables');
+            Route::get('eid-offers/create', 'eidOffersCreate')->name('eid-offers.create');
+            Route::post('eid-offers/store', 'eidOffersStore')->name('eid-offers.store');
+            Route::get('eid-offers/edit/{id}', 'eidOffersEdit')->name('eid-offers.edit');
+            Route::post('eid-offers/update/{id}', 'eidOffersUpdate')->name('eid-offers.update');
+            Route::post('eid-offers/delete', 'eidOffersDelete')->name('eid-offers.delete');
+            Route::post('eid-offers/status/', 'eidOffersStatus')->name('eid-offers.status');
+            Route::get('eid-offers/product/{id}', 'eidOffersProduct')->name('eid-offers.product');
+            Route::get('eid-offers-products-datatables/{productIds}', 'eidOffersProductsDatatables')->name('eid-offers.products.datatables');
+            Route::post('eid-offers/remove-product', 'eidOffersRemoveProduct')->name('eid-offers.remove.product');
+        });
+        // Website Configuration Routes
+        Route::controller(BusinessSettingsController::class)->prefix('/web-config')->as('web_config.')->group(function () {
+            Route::get('view', 'index')->name('view');
+            // Route::get('datatables', 'datatables')->name('datatables');
+            // Route::post('delete', 'destroy')->name('delete');
+            // Route::post('store', 'store')->name('store');
+            // Route::post('update', 'update')->name('update');
             // Route::post('status', 'status')->name('status');
             // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
