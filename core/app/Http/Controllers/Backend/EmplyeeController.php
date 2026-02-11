@@ -80,13 +80,11 @@ class EmplyeeController extends Controller
             ->addColumn('action', function ($row) {
                 return '
         <button
-
+        data-id="' . ($row->id ?? '') . '"
         data-name="' . $row->name . '"
         data-mobile="' . $row->phone . '"
         data-email="' . $row->email . '"
-        data-branch="' . $row->branch->id . '"
-        data-id="' . $row->id . '"
-
+        data-branch="' . ($row->branch ? $row->branch->id : '') . '"
         data-date="' . $row->created_at->format('d M Y h:i A') . '"
         data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
             data-bs-toggle="modal"
