@@ -278,12 +278,7 @@
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
-        {{-- <li class="nav-item">
-            <a class="nav-link" href="">
-                <i class="las la-globe menu-icon"></i>
-                <span>Website Configuration</span>
-            </a>
-        </li> --}}
+
         <li class="nav-item">
             <a class="nav-link" href="#discountDropdown" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="discountDropdown">
@@ -307,6 +302,12 @@
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.web_config.view') }}">
+                <i class="las la-globe menu-icon"></i>
+                <span>Website Configuration</span>
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="apps-chat.html">
                 <i class="iconoir-chat-bubble menu-icon"></i>

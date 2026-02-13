@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Backend;
 
-use App\CPU\ImageManager;
+
+// use App\CPU\ImageManager;
+
+use App\CPU\FileManager;
 use App\Http\Controllers\Controller;
-use App\Model\BusinessSetting;
+use App\Models\BusinessSetting;
 use App\Model\SocialMedia;
 use App\facebook_post;
 use App\metaAdd;
@@ -16,8 +19,15 @@ class BusinessSettingsController extends Controller
 {
     public function index()
     {
-        return view('admin-views.business-settings.general-settings');
+        $google_store = BusinessSetting::where('type', 'download_app_google_store')->first();
+        $apple_store = BusinessSetting::where('type', 'download_app_apple_store')->first();
+        $admin_shop_banner = BusinessSetting::where('type', 'company_web_logo')->first();
+        return view('admin.web_config.index', compact('google_store', 'apple_store', 'admin_shop_banner'));
     }
+    // public function index()
+    // {
+    //     return view('admin-views.business-settings.general-settings');
+    // }
 
     public function about_us()
     {
@@ -25,7 +35,6 @@ class BusinessSettingsController extends Controller
         return view('admin-views.business-settings.about-us', [
             'about_us' => $about_us,
         ]);
-
     }
 
     public function about_usUpdate(Request $data)
@@ -75,7 +84,7 @@ class BusinessSettingsController extends Controller
                 'updated_at' => now(),
             ]);
         }
-        return response()->json(['message' => 'Business Mode is changed to ' . $mode. ' vendor']);
+        return response()->json(['message' => 'Business Mode is changed to ' . $mode . ' vendor']);
     }
     // Social Media
     public function social_media()
@@ -213,6 +222,7 @@ class BusinessSettingsController extends Controller
 
     public function updateInfo(Request $request)
     {
+
         if ($request['email_verification'] == 1) {
             $request['phone_verification'] = 0;
         } elseif ($request['phone_verification'] == 1) {
@@ -220,9 +230,12 @@ class BusinessSettingsController extends Controller
         }
 
         //comapy shop banner
-        $imgBanner = BusinessSetting::where(['type' => 'shop_banner'])->first();
+        $imgBanner = BusinessSetting::where(['type' => 'shop_banner'])->first()['value'];
+        $imgBanner = isset($imgBanner) ? 'assets/storage/' . $imgBanner : null;
         if ($request->has('shop_banner')) {
-            $imgBanner = ImageManager::update('shop/', $imgBanner, 'png', $request->file('shop_banner'));
+
+            $imgBanner = FileManager::updateFile('shop/', $imgBanner, $request->file('shop_banner'));
+
             DB::table('business_settings')->updateOrInsert(['type' => 'shop_banner'], [
                 'value' => $imgBanner
             ]);
@@ -284,18 +297,19 @@ class BusinessSettingsController extends Controller
 
 
         //web logo
-        $webLogo = BusinessSetting::where(['type' => 'company_web_logo'])->first();
+        $webLogo = BusinessSetting::where(['type' => 'company_web_logo'])->first()['value'];
         if ($request->has('company_web_logo')) {
-            $webLogo = ImageManager::update('company/', $webLogo, 'png', $request->file('company_web_logo'));
+            $webLogo = FileManager::updateFile('company/', 'assets/storage/' . $webLogo, $request->file('company_web_logo'));
             BusinessSetting::where(['type' => 'company_web_logo'])->update([
                 'value' => $webLogo,
             ]);
         }
 
         //mobile logo
-        $mobileLogo = BusinessSetting::where(['type' => 'company_mobile_logo'])->first();
+        $mobileLogo = BusinessSetting::where(['type' => 'company_mobile_logo'])->first()['value'];
         if ($request->has('company_mobile_logo')) {
-            $mobileLogo = ImageManager::update('company/', $mobileLogo, 'png', $request->file('company_mobile_logo'));
+
+            $mobileLogo = FileManager::updateFile('company/', 'assets/storage/' . $mobileLogo, $request->file('company_mobile_logo'));
             BusinessSetting::where(['type' => 'company_mobile_logo'])->update([
                 'value' => $mobileLogo,
             ]);
@@ -303,15 +317,16 @@ class BusinessSettingsController extends Controller
         //web footer logo
         $webFooterLogo = BusinessSetting::where(['type' => 'company_footer_logo'])->first();
         if ($request->has('company_footer_logo')) {
-            $webFooterLogo = ImageManager::update('company/', $webFooterLogo, 'png', $request->file('company_footer_logo'));
+            // $webFooterLogo = ImageManager::update('company/', $webFooterLogo, 'png', $request->file('company_footer_logo'));
+            $webFooterLogo = FileManager::updateFile('company/', 'assets/storage/' . $webFooterLogo['value'], $request->file('company_footer_logo'));
             BusinessSetting::where(['type' => 'company_footer_logo'])->update([
                 'value' => $webFooterLogo,
             ]);
         }
         //fav icon
-        $favIcon = BusinessSetting::where(['type' => 'company_fav_icon'])->first();
+        $favIcon = BusinessSetting::where(['type' => 'company_fav_icon'])->first()['value'];
         if ($request->has('company_fav_icon')) {
-            $favIcon = ImageManager::update('company/', $favIcon, 'png', $request->file('company_fav_icon'));
+            $favIcon = FileManager::updateFile('company/', 'assets/storage/' . $favIcon, $request->file('company_fav_icon'));
             BusinessSetting::where(['type' => 'company_fav_icon'])->update([
                 'value' => $favIcon,
             ]);
@@ -320,7 +335,8 @@ class BusinessSettingsController extends Controller
         //loader gif
         $loader_gif = BusinessSetting::where(['type' => 'loader_gif'])->first();
         if ($request->has('loader_gif')) {
-            $loader_gif = ImageManager::update('company/', $loader_gif, 'png', $request->file('loader_gif'));
+
+            $loader_gif = FileManager::updateFile('company/', 'assets/storage/' . $loader_gif['value'], $request->file('loader_gif'));
             BusinessSetting::updateOrInsert(['type' => 'loader_gif'], [
                 'value' => $loader_gif,
             ]);
@@ -333,7 +349,8 @@ class BusinessSettingsController extends Controller
                     [
                         'primary' => $request['primary'],
                         'secondary' => $request['secondary'],
-                    ]),
+                    ]
+                ),
             ]);
         } else {
             DB::table('business_settings')->insert([
@@ -342,23 +359,28 @@ class BusinessSettingsController extends Controller
                     [
                         'primary' => $request['primary'],
                         'secondary' => $request['secondary'],
-                    ]),
+                    ]
+                ),
             ]);
         }
         DB::table('business_settings')->updateOrInsert(['type' => 'announcement'], [
             'value' => json_encode(
-                [   'status' => $request['announcement_status'],
+                [
+                    'status' => $request['announcement_status'],
                     'color' => $request['announcement_color'],
                     'text_color' => $request['text_color'],
                     'announcement' => $request['announcement'],
-                ]),
+                ]
+            ),
         ]);
 
         DB::table('business_settings')->updateOrInsert(['type' => 'default_location'], [
             'value' => json_encode(
-                [   'lat' => $request['latitude'],
+                [
+                    'lat' => $request['latitude'],
                     'lng' => $request['longitude'],
-                ]),
+                ]
+            ),
         ]);
 
         //pagination
@@ -369,8 +391,8 @@ class BusinessSettingsController extends Controller
             'value' => $request['pagination_limit'],
         ]);
 
-        Toastr::success('Updated successfully');
-        return back();
+
+        return redirect()->back()->with('success', 'Company info updated successfully!');
     }
 
     public function updateCompany(Request $data)
@@ -424,11 +446,11 @@ class BusinessSettingsController extends Controller
     public function update(Request $request, $name)
     {
 
-        if ($name == 'download_app_apple_stroe') {
-            $download_app_store = BusinessSetting::where('type', 'download_app_apple_stroe')->first();
+        if ($name == 'download_app_apple_store') {
+            $download_app_store = BusinessSetting::where('type', 'download_app_apple_store')->first();
             if (isset($download_app_store) == false) {
                 DB::table('business_settings')->insert([
-                    'type' => 'download_app_apple_stroe',
+                    'type' => 'download_app_apple_store',
                     'value' => json_encode([
                         'status' => 1,
                         'link' => '',
@@ -438,8 +460,8 @@ class BusinessSettingsController extends Controller
                     'updated_at' => now(),
                 ]);
             } else {
-                DB::table('business_settings')->where(['type' => 'download_app_apple_stroe'])->update([
-                    'type' => 'download_app_apple_stroe',
+                DB::table('business_settings')->where(['type' => 'download_app_apple_store'])->update([
+                    'type' => 'download_app_apple_store',
                     'value' => json_encode([
                         'status' => $request['status'],
                         'link' => $request['link'],
@@ -448,11 +470,11 @@ class BusinessSettingsController extends Controller
                     'updated_at' => now(),
                 ]);
             }
-        } elseif ($name == 'download_app_google_stroe') {
-            $download_app_store = BusinessSetting::where('type', 'download_app_google_stroe')->first();
+        } elseif ($name == 'download_app_google_store') {
+            $download_app_store = BusinessSetting::where('type', 'download_app_google_store')->first();
             if (isset($download_app_store) == false) {
                 DB::table('business_settings')->insert([
-                    'type' => 'download_app_google_stroe',
+                    'type' => 'download_app_google_store',
                     'value' => json_encode([
                         'status' => 1,
                         'link' => '',
@@ -462,8 +484,8 @@ class BusinessSettingsController extends Controller
                     'updated_at' => now(),
                 ]);
             } else {
-                DB::table('business_settings')->where(['type' => 'download_app_google_stroe'])->update([
-                    'type' => 'download_app_google_stroe',
+                DB::table('business_settings')->where(['type' => 'download_app_google_store'])->update([
+                    'type' => 'download_app_google_store',
                     'value' => json_encode([
                         'status' => $request['status'],
                         'link' => $request['link'],
@@ -473,9 +495,9 @@ class BusinessSettingsController extends Controller
                 ]);
             }
         }
-        Toastr::success('App Store Updated successfully');
 
-        return back();
+
+        return redirect()->back()->with('success', 'App Store updated successfully!');
     }
 
     public function updateCompanyPhone(Request $data)
@@ -513,7 +535,6 @@ class BusinessSettingsController extends Controller
         ]);
         Toastr::success('Footer Logo updated successfully!');
         return back();
-
     }
 
     public function uploadFavIcon(Request $data)
@@ -529,7 +550,6 @@ class BusinessSettingsController extends Controller
         ]);
         Toastr::success('Fav Icon updated successfully!');
         return back();
-
     }
 
     public function uploadMobileLogo(Request $data)
@@ -553,7 +573,8 @@ class BusinessSettingsController extends Controller
                     [
                         'primary' => $request['primary'],
                         'secondary' => $request['secondary'],
-                    ]),
+                    ]
+                ),
             ]);
         } else {
             DB::table('business_settings')->insert([
@@ -562,7 +583,8 @@ class BusinessSettingsController extends Controller
                     [
                         'primary' => $request['primary'],
                         'secondary' => $request['secondary'],
-                    ]),
+                    ]
+                ),
             ]);
         }
         Toastr::success('Color  updated!');
@@ -734,10 +756,10 @@ class BusinessSettingsController extends Controller
     {
 
         DB::table('business_settings')->updateOrInsert(['type' => 'new_product_approval'], [
-            'value' => $request->new_product_approval == 'on'?1:0
+            'value' => $request->new_product_approval == 'on' ? 1 : 0
         ]);
         DB::table('business_settings')->updateOrInsert(['type' => 'product_wise_shipping_cost_approval'], [
-            'value' => $request->product_wise_shipping_cost_approval == 'on'?1:0
+            'value' => $request->product_wise_shipping_cost_approval == 'on' ? 1 : 0
         ]);
         Toastr::success(\App\CPU\translate('admin_approval_for_products_updated_successfully!'));
         return redirect()->back();
@@ -885,7 +907,7 @@ class BusinessSettingsController extends Controller
         ], 200);
     }
 
-     public function facebook_media_delete(Request $request)
+    public function facebook_media_delete(Request $request)
     {
         $br = facebook_post::find($request->id);
         $br->delete();
@@ -895,13 +917,13 @@ class BusinessSettingsController extends Controller
     // Meta
 
 
-     public function meta_post()
+    public function meta_post()
     {
         // $about_us = BusinessSetting::where('type', 'about_us')->first();
         return view('admin-views.business-settings.meta');
     }
 
-     public function meta(Request $request)
+    public function meta(Request $request)
     {
         if ($request->ajax()) {
             $data = metaAdd::all();
@@ -915,13 +937,13 @@ class BusinessSettingsController extends Controller
         return response()->json($data);
     }
 
-     public function meta_post_update(Request $request)
+    public function meta_post_update(Request $request)
     {
         $social_media = metaAdd::find($request->id);
         $social_media->title = $request->title;
         $social_media->description = $request->description;
         $social_media->save();
-         return response()->json([
+        return response()->json([
             'success' => 1,
         ]);
     }

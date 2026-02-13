@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\BusinessSettingsController;
+use App\Http\Controllers\Backend\BusinessSettingsController;
 use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
@@ -19,10 +19,12 @@ use App\Http\Controllers\Backend\PermissionModuleController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
+use App\Http\Controllers\Backend\SystemController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
 
+    Route::get('maintenance-mode', [SystemController::class, 'maintenance_mode'])->name('maintenance-mode');
     Route::controller(LoginController::class)->prefix('/auth')->as('auth.')->group(function () {
         Route::get('login', 'login')->name('login');
         Route::post('login/store', 'submit')->name('login.store');
@@ -300,9 +302,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         // Website Configuration Routes
         Route::controller(BusinessSettingsController::class)->prefix('/web-config')->as('web_config.')->group(function () {
             Route::get('view', 'index')->name('view');
+            Route::post('app-store/{name}', 'update')->name('app-store-update');
             // Route::get('datatables', 'datatables')->name('datatables');
             // Route::post('delete', 'destroy')->name('delete');
-            // Route::post('store', 'store')->name('store');
+            Route::post('store', 'updateInfo')->name('updateInfo');
             // Route::post('update', 'update')->name('update');
             // Route::post('status', 'status')->name('status');
             // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
