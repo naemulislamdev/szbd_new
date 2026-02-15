@@ -83,6 +83,11 @@
                                     required>
                             </div>
                             <div class="col-md-6 mb-2">
+                                <label class="form-label">Serial Number</label>
+                                <input type="number" name="serial_number" class="form-control"
+                                    placeholder="Enter serial number" required>
+                            </div>
+                            <div class="col-md-6 mb-2">
                                 <h5>Module Items</h6>
                                     <div class="d-flex align-items-center">
                                         <input type="checkbox" name="actions[]" id="action1" value="view">
@@ -128,6 +133,11 @@
                                 <label class="form-label">Title</label>
                                 <input type="text" name="title" id="title" class="form-control"
                                     placeholder="Enter Module Title" required>
+                            </div>
+                             <div class="col-md-6 mb-2">
+                                <label class="form-label">Serial Number</label>
+                                <input type="number" name="serial_number" class="form-control"
+                                    placeholder="Enter serial number" required>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <h5>Module Items</h6>
@@ -190,6 +200,10 @@
 
                     {
                         data: 'actions',
+
+                    },
+                    {
+                        data: 'serial_number'
 
                     },
                     {

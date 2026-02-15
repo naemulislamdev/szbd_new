@@ -9,7 +9,7 @@
             <a class="nav-link" href="{{ route('admin.dashboard.index') }}">
                 <i class="iconoir-report-columns menu-icon"></i>
                 <span>Dashboard</span>
-                <span class="badge text-bg-warning ms-auto">08</span>
+                <span class="badge text-bg-warning ms-auto"></span>
             </a>
         </li><!--end nav-item-->
         @canAny(['order_all', 'order_pending', 'order_confirmed', 'order_processing', 'order_out_for_delivery',
@@ -184,7 +184,7 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
-        @canAny(['landing-page_signle', 'landing-page_multiple'])
+        @canAny(['signle_page_view', 'multiple_page_view'])
             <li class="nav-item">
                 <a class="nav-link" href="#landingPageDropdown" data-bs-toggle="collapse" role="button"
                     aria-expanded="false" aria-controls="landingPageDropdown">
@@ -193,12 +193,12 @@
                 </a>
                 <div class="collapse " id="landingPageDropdown">
                     <ul class="nav flex-column">
-                        @can('landing-page_signle')
+                        @can('signle_page_view')
                             <li class="nav-item">
                                 <a href="{{ route('admin.landingpages.single.index') }}" class="nav-link ">Single Product</a>
                             </li>
                         @endcan
-                        @can('landing-page_multiple')
+                        @can('multiple_page_view')
                             <li class="nav-item">
                                 <a href="{{ route('admin.landingpages.multiple.index') }}" class="nav-link ">Multiple
                                     Product</a>
@@ -208,105 +208,125 @@
                 </div>
             </li>
         @endcanAny
-        <li class="nav-item">
-            <a class="nav-link" href="#bannerDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="bannerDropdown">
-                <i class="la la-desktop menu-icon"></i>
-                <span>Banners</span>
-            </a>
-            <div class="collapse " id="bannerDropdown">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.banner.list') }}" class="nav-link ">Banner List</a>
-                    </li>
-                </ul><!--end nav-->
-            </div>
-        </li><!--end nav-item-->
-        <li class="nav-item">
-            <a class="nav-link" href="#customersDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="customersDropdown">
-                <i class="iconoir-community  menu-icon"></i>
-                <span>Customers</span>
-            </a>
-            <div class="collapse " id="customersDropdown">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.customer.list') }}" class="nav-link ">Customers List</a>
-                    </li>
-                </ul><!--end nav-->
-            </div>
-        </li><!--end nav-item-->
-        <li class="nav-item">
-            <a class="nav-link" href="#investorDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="investorDropdown">
-                <i class="las la-hand-holding-usd menu-icon"></i>
-                <span>Investors</span>
-            </a>
-            <div class="collapse " id="investorDropdown">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.investors.list') }}" class="nav-link ">Investors List</a>
-                    </li>
-                </ul><!--end nav-->
-            </div>
-        </li><!--end nav-item-->
-        <li class="nav-item">
-            <a class="nav-link" href="#franchiseDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="franchiseDropdown">
-                <i class="las la-handshake menu-icon"></i>
-                <span>Franchise</span>
-            </a>
-            <div class="collapse " id="franchiseDropdown">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.franchise.list') }}" class="nav-link ">Franchise List</a>
-                    </li>
-                </ul><!--end nav-->
-            </div>
-        </li><!--end nav-item-->
-        <li class="nav-item">
-            <a class="nav-link" href="#wholesaleDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="wholesaleDropdown">
-                <i class="las la-truck-moving menu-icon"></i>
-                <span>Wholesale</span>
-            </a>
-            <div class="collapse " id="wholesaleDropdown">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.wholesale.list') }}" class="nav-link ">Wholesale List</a>
-                    </li>
-                </ul><!--end nav-->
-            </div>
-        </li><!--end nav-item-->
+        @canAny(['banner_view'])
+            <li class="nav-item">
+                <a class="nav-link" href="#bannerDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="bannerDropdown">
+                    <i class="la la-desktop menu-icon"></i>
+                    <span>Banners</span>
+                </a>
+                <div class="collapse " id="bannerDropdown">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.banner.list') }}" class="nav-link ">Banner List</a>
+                        </li>
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
+        @canAny(['customer_view'])
+            <li class="nav-item">
+                <a class="nav-link" href="#customersDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="customersDropdown">
+                    <i class="iconoir-community  menu-icon"></i>
+                    <span>Customers</span>
+                </a>
+                <div class="collapse " id="customersDropdown">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.customer.list') }}" class="nav-link ">Customers List</a>
+                        </li>
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
+        @canAny(['investor_view'])
+            <li class="nav-item">
+                <a class="nav-link" href="#investorDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="investorDropdown">
+                    <i class="las la-hand-holding-usd menu-icon"></i>
+                    <span>Investors</span>
+                </a>
+                <div class="collapse " id="investorDropdown">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.investors.list') }}" class="nav-link ">Investors List</a>
+                        </li>
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
+        @canAny(['franchise_view'])
+            <li class="nav-item">
+                <a class="nav-link" href="#franchiseDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="franchiseDropdown">
+                    <i class="las la-handshake menu-icon"></i>
+                    <span>Franchise</span>
+                </a>
+                <div class="collapse " id="franchiseDropdown">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.franchise.list') }}" class="nav-link ">Franchise List</a>
+                        </li>
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
+        @canAny(['wholesale_view'])
+            <li class="nav-item">
+                <a class="nav-link" href="#wholesaleDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="wholesaleDropdown">
+                    <i class="las la-truck-moving menu-icon"></i>
+                    <span>Wholesale</span>
+                </a>
+                <div class="collapse " id="wholesaleDropdown">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.wholesale.list') }}" class="nav-link ">Wholesale List</a>
+                        </li>
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
         {{-- <li class="nav-item">
             <a class="nav-link" href="">
                 <i class="las la-globe menu-icon"></i>
                 <span>Website Configuration</span>
             </a>
         </li> --}}
-        <li class="nav-item">
-            <a class="nav-link" href="#discountDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="discountDropdown">
-                <i class="las la-tags menu-icon"></i>
-                <span>Discount Management</span>
-            </a>
-            <div class="collapse " id="discountDropdown">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.discount.flat') }}" class="nav-link ">Flat Discount</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.discount.batch') }}" class="nav-link ">Batch Discount</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.discount.offers') }}" class="nav-link ">Discount Offers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.discount.eid.offers') }}" class="nav-link ">Eid Offers ✨🌙</a>
-                    </li>
-                </ul><!--end nav-->
-            </div>
-        </li><!--end nav-item-->
+        @canAny(['discount_flat', 'discount_batch', 'discount_offers', 'discount_eid_offers'])
+            <li class="nav-item">
+                <a class="nav-link" href="#discountDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="discountDropdown">
+                    <i class="las la-tags menu-icon"></i>
+                    <span>Discount Management</span>
+                </a>
+                <div class="collapse " id="discountDropdown">
+                    <ul class="nav flex-column">
+                        @can('discount_flat')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.discount.flat') }}" class="nav-link ">Flat Discount</a>
+                            </li>
+                        @endcan
+                        @can('discount_batch')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.discount.batch') }}" class="nav-link ">Batch Discount</a>
+                            </li>
+                        @endcan
+                        @can('discount_offers')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.discount.offers') }}" class="nav-link ">Discount Offers</a>
+                            </li>
+                        @endcan
+                        @can('discount_eid_offers')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.discount.eid.offers') }}" class="nav-link ">Eid Offers ✨🌙</a>
+                            </li>
+                        @endcan
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
         <li class="nav-item">
             <a class="nav-link" href="apps-chat.html">
                 <i class="iconoir-chat-bubble menu-icon"></i>
@@ -319,33 +339,48 @@
                 <span>Contact List</span>
             </a>
         </li><!--end nav-item-->
-        <li class="nav-item">
-            <a class="nav-link" href="apps-calendar.html">
-                <i class="iconoir-calendar menu-icon"></i>
-                <span>Calendar</span>
-            </a>
-        </li><!--end nav-item-->
-        <li class="nav-item">
-            <a class="nav-link" href="apps-invoice.html">
-                <i class="iconoir-paste-clipboard menu-icon"></i>
-                <span>Invoice</span>
-            </a>
-        </li><!--end nav-item-->
+
         <li class="nav-item">
             <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="rolePermissionDropdown">
                 <i class="las la-user-tag menu-icon"></i>
-                <span>Role & Permission</span>
+                <span>Reports</span>
             </a>
             <div class="collapse " id="rolePermissionDropdown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.role_permission.list') }}" class="nav-link ">Roles List</a>
-                        <a href="{{ route('admin.employee.list') }}" class="nav-link ">Users</a>
-                        <a href="{{ route('admin.permission_module.list') }}" class="nav-link ">Modules</a>
+                        <a href="#" class="nav-link ">Order Reports</a>
                     </li>
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        @canAny(['role_view', 'module_view', 'employee_view'])
+            <li class="nav-item">
+                <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="rolePermissionDropdown">
+                    <i class="las la-user-tag menu-icon"></i>
+                    <span>Role & Permission</span>
+                </a>
+                <div class="collapse" id="rolePermissionDropdown">
+                    <ul class="nav flex-column">
+                        @can('role_view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.role_permission.list') }}" class="nav-link ">Roles List</a>
+                            </li>
+                        @endcan
+                        @can('employee_view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.employee.list') }}" class="nav-link ">Employees</a>
+                            </li>
+                        @endcan
+                        @can('module_view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.permission_module.list') }}" class="nav-link ">Modules</a>
+                            </li>
+                        @endcan
+                    </ul><!--end nav-->
+                </div>
+            </li><!--end nav-item-->
+        @endcanAny
     </ul><!--end navbar-nav--->
 </div>

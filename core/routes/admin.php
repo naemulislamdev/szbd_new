@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BusinessSettingsController;
+use App\Http\Controllers\Backend\AdminProfileController;
 use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
@@ -34,6 +35,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('order-stats', 'order_stats')->name('order-stats');
             Route::post('business-overview', 'business_overview')->name('business-overview');
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+            Route::get('/dashboard/monthly-income',  'monthlyIncome')->name('monthly.income');
+        });
+        Route::controller(AdminProfileController::class)->prefix('/profile')->group(function () {
+            Route::get('/', 'profile')->name('profile');
+            Route::post('update/profile', 'updateProfile')->name('profile.update');
+            Route::post('update/password', 'updatePassword')->name('profile.password');
         });
 
         Route::controller(ProductController::class)->prefix('/product')->as('product.')->group(function () {

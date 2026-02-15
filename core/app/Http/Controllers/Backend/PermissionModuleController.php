@@ -17,7 +17,7 @@ class PermissionModuleController extends Controller
     public function datatables()
     {
         $query = AdminModule::query();
-        $query->latest('id');
+        $query->orderBy('serial_number', 'asc');
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
@@ -64,6 +64,7 @@ class PermissionModuleController extends Controller
     {
         $validinfo = $request->validate([
             'title' => 'required|string|max:255',
+            'serial_number' => 'required',
             'actions' => 'required|array|min:1',
         ]);
 
@@ -71,6 +72,7 @@ class PermissionModuleController extends Controller
             'title' => $request['title'],
             'slug' => Str::slug($request['title']),
             'actions' => json_encode($request['actions']),
+            'serial_number' => $request['serial_number'],
         ]);
         return response()->json([
             'status' => 'success',
@@ -82,12 +84,14 @@ class PermissionModuleController extends Controller
     {
         $request->validate([
             'title' => 'required|string',
+            'serial_number' => 'required',
             'actions' => 'required|array',
         ]);
         $module = AdminModule::find($request->id);
         $module->title = $request->title;
         $module->slug = Str::slug($request->title);
         $module->actions = json_encode($request['actions']);
+        $module->serial_number = $request->serial_number;
 
         if ($module->save()) {
             return response()->json([

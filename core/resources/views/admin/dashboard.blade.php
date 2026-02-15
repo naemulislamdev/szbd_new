@@ -27,13 +27,17 @@
                             </div>
                             <div class="flex-grow-1 ms-2 text-truncate">
                                 <p class="text-dark mb-0 fw-semibold fs-14">Total Revenue</p>
-                                <p class="mb-0 text-truncate text-muted"><span class="text-success">8.5%</span>
-                                    Increase from last month</p>
+                                <p class="mb-0 text-muted">
+                                    <span class="{{ $revenueGrowth >= 0 ? 'text-success' : 'text-danger' }}">
+                                        {{ number_format(abs($revenueGrowth), 1) }}%
+                                    </span>
+                                    {{ $revenueGrowth >= 0 ? 'Increase' : 'Decrease' }} from last month
+                                </p>
                             </div><!--end media-body-->
                         </div><!--end media-->
                         <div class="row d-flex justify-content-center">
                             <div class="col">
-                                <h3 class="mt-2 mb-0 fw-bold">$8365.00</h3>
+                                <h3 class="mt-2 mb-0 fw-bold">৳{{ number_format($currentRevenue, 2) }}</h3>
                             </div>
                             <!--end col-->
                             <div class="col align-self-center">
@@ -57,13 +61,17 @@
                             </div>
                             <div class="flex-grow-1 ms-2 text-truncate">
                                 <p class="text-dark mb-0 fw-semibold fs-14">New Order</p>
-                                <p class="mb-0 text-truncate text-muted"><span class="text-success">1.7%</span>
-                                    Increase from last month</p>
+                                <p class="mb-0 text-muted">
+                                    <span class="{{ $orderGrowth >= 0 ? 'text-success' : 'text-danger' }}">
+                                        {{ number_format(abs($orderGrowth), 1) }}%
+                                    </span>
+                                    {{ $orderGrowth >= 0 ? 'Increase' : 'Decrease' }} from last month
+                                </p>
                             </div><!--end media-body-->
                         </div><!--end media-->
                         <div class="row d-flex justify-content-center">
                             <div class="col">
-                                <h3 class="mt-2 mb-0 fw-bold">865</h3>
+                                <h3 class="mt-2 mb-0 fw-bold"> {{ $currentOrders }}</h3>
                             </div>
                             <!--end col-->
                             <div class="col align-self-center">
@@ -86,14 +94,18 @@
                                 <i class="iconoir-percentage-circle fs-4"></i>
                             </div>
                             <div class="flex-grow-1 ms-2 text-truncate">
-                                <p class="text-dark mb-0 fw-semibold fs-14">Sessions</p>
-                                <p class="mb-0 text-truncate text-muted"><span class="text-danger">0.7%</span>
-                                    Decrease from last month</p>
+                                <p class="text-dark mb-0 fw-semibold fs-14">Canceled</p>
+                                <p class="mb-0 text-muted">
+                                    <span class="{{ $cancelGrowth >= 0 ? 'text-success' : 'text-danger' }}">
+                                        {{ number_format(abs($cancelGrowth), 1) }}%
+                                    </span>
+                                    {{ $cancelGrowth >= 0 ? 'Increase' : 'Decrease' }} from last month
+                                </p>
                             </div><!--end media-body-->
                         </div><!--end media-->
                         <div class="row d-flex justify-content-center">
                             <div class="col">
-                                <h3 class="mt-2 mb-0 fw-bold">155</h3>
+                                <h3 class="mt-2 mb-0 fw-bold">{{ $currentCanceled }}</h3>
                             </div>
                             <!--end col-->
                             <div class="col align-self-center">
@@ -117,13 +129,17 @@
                             </div>
                             <div class="flex-grow-1 ms-2 text-truncate">
                                 <p class="text-dark mb-0 fw-semibold fs-14">Avg. Order value</p>
-                                <p class="mb-0 text-truncate text-muted"><span class="text-success">2.7%</span>
-                                    Increase from last month</p>
+                                <p class="mb-0 text-muted">
+                                    <span class="{{ $avgGrowth >= 0 ? 'text-success' : 'text-danger' }}">
+                                        {{ number_format(abs($avgGrowth), 1) }}%
+                                    </span>
+                                    {{ $avgGrowth >= 0 ? 'Increase' : 'Decrease' }} from last month
+                                </p>
                             </div><!--end media-body-->
                         </div><!--end media-->
                         <div class="row d-flex justify-content-center">
                             <div class="col">
-                                <h3 class="mt-2 mb-0 fw-bold">$12550.00</h3>
+                                <h3 class="mt-2 mb-0 fw-bold">৳{{ number_format($currentAvg, 2) }}</h3>
                             </div>
                             <!--end col-->
                             <div class="col align-self-center">
@@ -156,11 +172,13 @@
                                             class="las la-angle-down ms-1"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="#">Today</a>
-                                        <a class="dropdown-item" href="#">Last Week</a>
-                                        <a class="dropdown-item" href="#">Last Month</a>
-                                        <a class="dropdown-item" href="#">This Year</a>
+                                        <a class="dropdown-item income-filter" data-filter="today">Today</a>
+                                        <a class="dropdown-item income-filter" data-filter="last_week">Last Week</a>
+                                        <a class="dropdown-item income-filter" data-filter="last_month">Last Month</a>
+                                        <a class="dropdown-item income-filter" data-filter="this_year">This Year</a>
+                                        <a class="dropdown-item income-filter" data-filter="this_month">This Month</a>
                                     </div>
+
                                 </div>
                             </div><!--end col-->
                         </div> <!--end row-->
@@ -537,3 +555,55 @@
         </div><!--end row-->
     </div>
 @endsection
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            var options = {
+                chart: {
+                    type: 'area',
+                    height: 350
+                },
+                series: [{
+                    name: 'Income',
+                    data: []
+                }],
+                xaxis: {
+                    categories: []
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#monthly_income"), options);
+            chart.render();
+
+            function loadChart(filter = 'this_month') {
+                fetch("{{ route('admin.dashboard.monthly.income') }}?filter=" + filter)
+                    .then(response => response.json())
+                    .then(data => {
+                        chart.updateOptions({
+                            xaxis: {
+                                categories: data.months
+                            }
+                        });
+
+                        chart.updateSeries([{
+                            name: 'Income',
+                            data: data.totals
+                        }]);
+                    });
+            }
+
+            loadChart(); // default load
+
+            document.querySelectorAll('.income-filter').forEach(item => {
+                item.addEventListener('click', function() {
+                    let filter = this.getAttribute('data-filter');
+                    loadChart(filter);
+                });
+            });
+
+        });
+    </script>
+@endpush

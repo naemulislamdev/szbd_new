@@ -62,14 +62,14 @@
                                                                     Access All
                                                                 </label>
                                                             </div>
-                                                            <div class="d-flex ms-5">
+                                                            <div class="ms-5">
                                                                 @php
                                                                     $permissions = json_decode($module->actions, true);
                                                                 @endphp
                                                                 @foreach ($permissions as $permission)
                                                                     <div class="form-check me-2">
                                                                         <input class="form-check-input permission-checkbox"
-                                                                            type="checkbox" value="{{ $module->slug}}_{{ $permission }}"
+                                                                            type="checkbox" value="{{ $permission }}"
                                                                             id="{{ $module->slug}}_{{ $permission }}" name="module_access[]">
                                                                         <label for="{{ $module->slug}}_{{ $permission }}" class="form-check-label">
                                                                             {{ ucfirst(str_replace('_', ' ', $permission)) }}
@@ -79,9 +79,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
-
                                             </div>
                                         @endforeach
                                         <div class="mt-4">

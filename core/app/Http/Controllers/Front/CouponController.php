@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\CPU\CartManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\Coupon;
-use App\Model\Order;
-use Carbon\Carbon;
+use App\Models\Coupon;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
@@ -25,14 +23,15 @@ class CouponController extends Controller
 
         if ($coupon) {
             $total = 0;
-            $carts = session()->has('cart') ? session()->get('cart'):0;
+            $carts = session()->has('cart') ? session()->get('cart') : 0;
             foreach ($carts as $cart) {
                 $product_subtotal = $cart['price'] * $cart['quantity'];
                 $total += $product_subtotal;
             }
             if ($total >= $coupon['min_purchase']) {
                 if ($coupon['discount_type'] == 'percentage') {
-                    $discount = (($total / 100) * $coupon['discount']) > $coupon['max_discount'] ? $coupon['max_discount'] : (($total / 100) * $coupon['discount']);
+                    $discount = (($total / 100) * $coupon['discount']);
+                    // $discount = (($total / 100) * $coupon['discount']) > $coupon['max_discount'] ? $coupon['max_discount'] : (($total / 100) * $coupon['discount']);
                 } else {
                     $discount = $coupon['discount'];
                 }
@@ -42,9 +41,14 @@ class CouponController extends Controller
 
                 return response()->json([
                     'status' => 1,
-                    'discount' => Helpers::currency_converter($discount),
-                    'total' => Helpers::currency_converter($total - $discount),
+                    'discount' => $discount,
+                    'total' => $total - $discount,
                     'messages' => ['0' => 'Coupon Applied Successfully!']
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 0,
+                    'messages' => ['0' => 'Minimum purchase amount is ' . $coupon['min_purchase']]
                 ]);
             }
         }
