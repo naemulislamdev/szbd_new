@@ -14,7 +14,7 @@
                     </div>
                     <img class="footer-logo"
                         src="{{ asset('assets/storage/logo/') }}/{{ $web_config['footer_logo']->value }}"
-                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         alt="{{ $web_config['name']->value }}">
                     <ul>
                         @php
