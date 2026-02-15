@@ -31,7 +31,7 @@
         </div>
         <div class="product-content">
             <h3 class="title"><a
-                    href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
+                    href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 40) }}</a>
             </h3>
             <div class="price d-flex justify-content-center align-content-center">
                 @if ($product->discount > 0)

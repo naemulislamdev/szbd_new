@@ -188,7 +188,7 @@ class ProductService
 
     private static function mediaInfo($p, $r)
     {
-        $path = 'assets/storage/';
+
         $images = [];
 
         // ✅ multiple images
@@ -196,7 +196,7 @@ class ProductService
             foreach ($r->file('images') as $img) {
                 if ($img && $img->isValid()) {
                     $name = FileManager::uploadFile(
-                        $path . 'product/',
+                        'product/',
                         300,
                         $img
                     );
@@ -211,7 +211,7 @@ class ProductService
         // ✅ thumbnail
         if ($r->hasFile('image')) {
             $p->thumbnail = FileManager::uploadFile(
-                $path . 'product/thumbnail/',
+                'product/thumbnail/',
                 300,
                 $r->file('image'),
                 $r->alt_text
@@ -221,7 +221,7 @@ class ProductService
         // ✅ size chart
         if ($r->hasFile('size_chart')) {
             $p->size_chart = FileManager::uploadFile(
-                $path . 'product/thumbnail/',
+                'product/thumbnail/',
                 300,
                 $r->file('size_chart')
             );
@@ -229,7 +229,7 @@ class ProductService
     }
     private static function mediaInfoUpdate($p, $r)
     {
-        $path = 'assets/storage/';
+
 
         // 🔁 old images
         $oldImages = json_decode($p->images, true) ?? [];
@@ -240,7 +240,7 @@ class ProductService
             foreach ($r->file('images') as $img) {
                 if ($img && $img->isValid()) {
                     $name = FileManager::uploadFile(
-                        $path . 'product/',
+                        'product/',
                         300,
                         $img
                     );
@@ -256,7 +256,7 @@ class ProductService
         // ✅ thumbnail replace
         if ($r->hasFile('image')) {
             $p->thumbnail = FileManager::updateFile(
-                $path . 'product/thumbnail/',
+                'product/thumbnail/',
                 $p->thumbnail,
                 $r->file('image'),
                 $r->alt_text
@@ -266,7 +266,7 @@ class ProductService
         // ✅ size chart replace
         if ($r->hasFile('size_chart')) {
             $p->size_chart = FileManager::updateFile(
-                $path . 'product/thumbnail/',
+                'product/thumbnail/',
                 $p->size_chart,
                 $r->file('size_chart')
             );
@@ -275,21 +275,19 @@ class ProductService
 
     private static function seoInfo($p, $r)
     {
-        $path = 'assets/storage/';
+
         $p->meta_title = $r->meta_title;
         $p->meta_description = $r->meta_description;
-        $p->meta_image = FileManager::uploadFile($path . 'product/meta/', 300, $r->meta_image);
+        $p->meta_image = FileManager::uploadFile('product/meta/', 300, $r->meta_image);
     }
     private static function seoInfoUpdate($p, $r)
     {
-        $path = 'assets/storage/';
-
         $p->meta_title = $r->meta_title;
         $p->meta_description = $r->meta_description;
 
         if ($r->hasFile('meta_image')) {
             $p->meta_image = FileManager::updateFile(
-                $path . 'product/meta/',
+                'product/meta/',
                 $p->meta_image,
                 $r->meta_image
             );

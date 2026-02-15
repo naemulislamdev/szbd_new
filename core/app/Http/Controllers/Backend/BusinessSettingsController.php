@@ -300,7 +300,7 @@ class BusinessSettingsController extends Controller
         //web logo
         $webLogo = BusinessSetting::where(['type' => 'company_web_logo'])->first()['value'];
         if ($request->has('web_logo')) {
-            $webLogo = FileManager::updateFile('logo/', 'assets/storage/' . $webLogo, $request->file('web_logo'));
+            $webLogo = FileManager::updateFile('logo/', 'assets/storage/logo/' . $webLogo, $request->file('web_logo'));
             BusinessSetting::where(['type' => 'company_web_logo'])->update([
                 'value' => $webLogo,
             ]);
@@ -310,16 +310,17 @@ class BusinessSettingsController extends Controller
         $mobileLogo = BusinessSetting::where(['type' => 'company_mobile_logo'])->first()['value'];
         if ($request->has('mobile_logo')) {
 
-            $mobileLogo = FileManager::updateFile('logo/', 'assets/storage/' . $mobileLogo, $request->file('mobile_logo'));
+            $mobileLogo = FileManager::updateFile('logo/', 'assets/storage/logo/' . $mobileLogo, $request->file('mobile_logo'));
             BusinessSetting::where(['type' => 'company_mobile_logo'])->update([
                 'value' => $mobileLogo,
             ]);
         }
         //web footer logo
-        $webFooterLogo = BusinessSetting::where(['type' => 'web_footer_logo'])->first();
-        if ($request->has('company_footer_logo')) {
+        $webFooterLogo = BusinessSetting::where(['type' => 'company_footer_logo'])->first();
+
+        if ($request->has('web_footer_logo')) {
             // $webFooterLogo = ImageManager::update('company/', $webFooterLogo, 'png', $request->file('company_footer_logo'));
-            $webFooterLogo = FileManager::updateFile('company/', 'assets/storage/' . $webFooterLogo['value'], $request->file('company_footer_logo'));
+            $webFooterLogo = FileManager::updateFile('logo/', 'assets/storage/logo/' . $webFooterLogo['value'], $request->file('web_footer_logo'));
             BusinessSetting::where(['type' => 'company_footer_logo'])->update([
                 'value' => $webFooterLogo,
             ]);
@@ -337,7 +338,7 @@ class BusinessSettingsController extends Controller
         $loader_gif = BusinessSetting::where(['type' => 'loader_gif'])->first();
         if ($request->has('loader_gif')) {
 
-            $loader_gif = FileManager::updateFile('company/', 'assets/storage/' . $loader_gif['value'], $request->file('loader_gif'));
+            $loader_gif = FileManager::updateFile('company/', 'assets/storage/company' . $loader_gif['value'], $request->file('loader_gif'));
             BusinessSetting::updateOrInsert(['type' => 'loader_gif'], [
                 'value' => $loader_gif,
             ]);
@@ -447,11 +448,11 @@ class BusinessSettingsController extends Controller
     public function update(Request $request, $name)
     {
 
-        if ($name == 'download_app_apple_store') {
-            $download_app_store = BusinessSetting::where('type', 'download_app_apple_store')->first();
+        if ($name == 'download_app_apple_stroe') {
+            $download_app_store = BusinessSetting::where('type', 'download_app_apple_stroe')->first();
             if (isset($download_app_store) == false) {
                 DB::table('business_settings')->insert([
-                    'type' => 'download_app_apple_store',
+                    'type' => 'download_app_apple_stroe',
                     'value' => json_encode([
                         'status' => 1,
                         'link' => '',
@@ -461,8 +462,8 @@ class BusinessSettingsController extends Controller
                     'updated_at' => now(),
                 ]);
             } else {
-                DB::table('business_settings')->where(['type' => 'download_app_apple_store'])->update([
-                    'type' => 'download_app_apple_store',
+                DB::table('business_settings')->where(['type' => 'download_app_apple_stroe'])->update([
+                    'type' => 'download_app_apple_stroe',
                     'value' => json_encode([
                         'status' => $request['status'],
                         'link' => $request['link'],
@@ -471,11 +472,11 @@ class BusinessSettingsController extends Controller
                     'updated_at' => now(),
                 ]);
             }
-        } elseif ($name == 'download_app_google_store') {
-            $download_app_store = BusinessSetting::where('type', 'download_app_google_store')->first();
+        } elseif ($name == 'download_app_google_stroe') {
+            $download_app_store = BusinessSetting::where('type', 'download_app_google_stroe')->first();
             if (isset($download_app_store) == false) {
                 DB::table('business_settings')->insert([
-                    'type' => 'download_app_google_store',
+                    'type' => 'download_app_google_stroe',
                     'value' => json_encode([
                         'status' => 1,
                         'link' => '',
@@ -485,8 +486,8 @@ class BusinessSettingsController extends Controller
                     'updated_at' => now(),
                 ]);
             } else {
-                DB::table('business_settings')->where(['type' => 'download_app_google_store'])->update([
-                    'type' => 'download_app_google_store',
+                DB::table('business_settings')->where(['type' => 'download_app_google_stroe'])->update([
+                    'type' => 'download_app_google_stroe',
                     'value' => json_encode([
                         'status' => $request['status'],
                         'link' => $request['link'],

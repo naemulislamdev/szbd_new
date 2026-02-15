@@ -6,7 +6,7 @@
             <div class="row mb-4">
                 <div class="col">
                     <div class="outlets-heading">
-                        <h2>Get In <span style="color: #fb9b00;">Touch</span></h2>
+                        <h2>Our<span style="color: #fb9b00;">Outlets</span></h2>
                         <p>We’d love to hear from you. Drop us a line or visit us at our office.</p>
                     </div>
                 </div>

@@ -279,19 +279,15 @@
     ?>
 
     {{-- Category Section Start --}}
-    <section class="category my-5 d-none d-lg-block">
+    <section class="category d-none d-lg-block">
         <div class="container px-0">
-            <div class="row mb-5">
-                <div class="col text-center">
-                    <div class="section-heading-title position-relative z-30">
-                            <div>
-                                <h3>Categories</h3>
-                            </div>
-                        <div class="heading-border"></div>
-                    </div>
+            <div class="section-heading-title position-relative z-30 text-center">
+                <div>
+                    <h3>Categories</h3>
                 </div>
+                <div class="heading-border"></div>
             </div>
-            <div class="owl-carousel category-carosel mt-4 mt-lg-4 ">
+            <div class="owl-carousel category-carosel ">
                 @foreach ($categories as $category)
                     <div style="background: #f26d21" class="category-item card">
                         <a href="{{ route('category.products', $category->slug) }}" class="">
@@ -308,61 +304,13 @@
         </div>
     </section>
     {{-- mobile category --}}
-    <section class="mobile-category mt-4 d-block d-lg-none">
+    <section class="mobile-category d-block d-lg-none">
         <div class="container">
             <div>
                 <div class=" text-center">
                     <div class="section-heading-title position-relative z-30 ">
-                        <div class="row align-items-center">
-                            <div style="box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;"
-                                class="col-4 d-flex justify-content-between align-items-center bg-white py-2 px-0 rounded">
-                                <div style="background: #fff;;">
-                                    <a href="{{ route('home') }}">
-                                        <img style="max-width: 40px; height: auto;"
-                                            src="{{ asset("assets/storage/company/$company_mobile_logo") }}"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="bg-white rounded">
-                                    <a class="store-btn appstore" target="_blank"
-                                        href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android">
-                                        <img src="{{ asset('assets/front-end') }}/images/logo/google-play.jpg"
-                                            alt="Google Play Store" style="width: 30px; height: auto;">
-                                    </a>
-                                </div>
-                                <div class="bg-white rounded">
-                                    <a class="store-btn appstore" href="#">
-                                        <img src="{{ asset('assets/front-end') }}/images/logo/apple_single.png"
-                                            alt="apple Store" style="width: 30px; height: auto;">
-                                    </a>
-                                </div>
-                            </div>
-                            <h3 class="col-4 small-title">Categories</h3>
-                            <div style="box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;"
-                                class="col-4 d-flex justify-content-between align-items-center bg-white py-2 px-0 rounded">
-                                <div style="background: #fff; ">
-                                    <a href="https://asmishop.com/">
-                                        <img style="max-width: 40px; height: auto;"
-                                            src="{{ asset('assets/front-end') }}/images/logo/asmi.png"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="bg-white rounded">
-                                    <a class="store-btn appstore" target="_blank"
-                                        href="https://play.google.com/store/apps/details?id=com.asmishop.android">
-                                        <img src="{{ asset('assets/front-end') }}/images/logo/google-play.jpg"
-                                            alt="Google Play Store" style="width: 30px; height: auto;">
-                                    </a>
-                                </div>
-                                <div class="bg-dark rounded">
-                                    <a class="store-btn appstore" href="#">
-                                        <img src="{{ asset('assets/front-end') }}/images/logo/apple_single.png"
-                                            alt="apple Store" style="width: 30px; height: auto;">
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="text-center">
+                            <h3>Categories</h3>
                         </div>
                         <div class="heading-border"></div>
                     </div>
@@ -370,20 +318,16 @@
             </div>
             <div class="row gap-0">
                 @foreach ($categories as $category)
-                    <div class="col-4 px-2 pb-3">
-                        <div style="background: #f26d21" class="category-item card">
-                            <a href="{{ route('category.products', $category->slug) }}" class="stretched-link">
-                                <div class="image-box">
-                                    <img src="{{ asset("assets/storage/category/$category->icon") }}"
-                                        alt="{{ $category->name }}">
-                                </div>
-                                <div class="card-body text-center p-1">
-                                    <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
-                                    {{-- <p class="card-text text-white p-0 m-0 text-dark">{{ $category->Products->count() }}
-                                        Products</p> --}}
-                                </div>
-                            </a>
-                        </div>
+                    <div class="col-4 px-1 mb-4">
+                        <a href="{{ route('category.products', $category->slug) }}" class="mcat-link">
+                            <div class="mcat-box">
+                                <img src="{{ asset("assets/storage/category/$category->icon") }}"
+                                    alt="{{ $category->name }}" class="mcat-img">
+                            </div>
+                            <div class="mcat-title">
+                                {{ $category->name }}
+                            </div>
+                        </a>
                     </div>
                 @endforeach
 

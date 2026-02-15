@@ -259,7 +259,8 @@
                         data: 'banner_type'
                     },
                     {
-                        data: 'order_number'
+                        data: 'order_number',
+
                     },
                     {
                         data: 'published'

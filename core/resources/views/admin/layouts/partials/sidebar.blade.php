@@ -327,11 +327,11 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
-      
+
         <li class="nav-item">
             <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="rolePermissionDropdown">
-                <i class="las la-user-tag menu-icon"></i>
+                <i class="la la-gear menu-icon"></i>
                 <span>Settings</span>
             </a>
             <div class="collapse " id="rolePermissionDropdown">
@@ -356,12 +356,12 @@
         </li><!--end nav-item-->
 
         <li class="nav-item">
-            <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="rolePermissionDropdown">
+            <a class="nav-link" href="#reportsDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="reportsDropdown">
                 <i class="las la-user-tag menu-icon"></i>
                 <span>Reports</span>
             </a>
-            <div class="collapse " id="rolePermissionDropdown">
+            <div class="collapse " id="reportsDropdown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a href="#" class="nav-link ">Order Reports</a>

@@ -1,4 +1,4 @@
-@extends('layouts.front-end.app')
+@extends('layouts.frontend.app')
 
 @section('title', 'Track Order')
 <?php
@@ -330,23 +330,23 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
                             <div>
                                 @if ($status == 'placed')
                                     <img style="width: 100px; height: auto;"
-                                        src="{{ asset('assets/front-end/img/track-result/placed.gif') }}"
+                                        src="{{ asset('assets/frontend/img/track-result/placed.gif') }}"
                                         alt="Order placed">
                                 @elseif ($status == 'confirmed')
                                     <img style="width: 100px; height: auto;"
-                                        src="{{ asset('assets/front-end/img/track-result/confirmed.gif') }}"
+                                        src="{{ asset('assets/frontend/img/track-result/confirmed.gif') }}"
                                         alt="Order placed">
                                 @elseif ($status == 'processing')
                                     <img style="width: 50px; height: auto;"
-                                        src="{{ asset('assets/front-end/img/track-result/process.gif') }}"
+                                        src="{{ asset('assets/frontend/img/track-result/process.gif') }}"
                                         alt="Order placed">
                                 @elseif ($status == 'shipped')
                                     <img style="width: 100px; height: auto;"
-                                        src="{{ asset('assets/front-end/img/track-result/shipped.gif') }}"
+                                        src="{{ asset('assets/frontend/img/track-result/shipped.gif') }}"
                                         alt="Order placed">
                                 @else
                                     <img style="width: 100px; height: auto;"
-                                        src="{{ asset('assets/front-end/img/track-result/delivery.gif') }}"
+                                        src="{{ asset('assets/frontend/img/track-result/delivery.gif') }}"
                                         alt="Order placed">
                                 @endif
                             </div>

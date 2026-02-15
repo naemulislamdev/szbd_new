@@ -245,7 +245,7 @@ class UserProfileController extends Controller
 
     public function track_order_result(Request $request)
     {
-        dd('here');
+
         $user =  auth('customer')->user();
         if (!isset($user)) {
             $user_id = User::where('phone', $request->phone_number)->first()->id;

@@ -126,7 +126,7 @@
 @endpush
 
 @section('content')
-{{-- @dd(session('otp')) --}}
+    {{-- @dd(session('otp')) --}}
     <div class="container pb-5 mb-2 mt-3" id="cart-summary">
         @include('web.layouts.partials.cart_details')
     </div>
