@@ -327,6 +327,21 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
+      
+        <li class="nav-item">
+            <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="rolePermissionDropdown">
+                <i class="las la-user-tag menu-icon"></i>
+                <span>Settings</span>
+            </a>
+            <div class="collapse " id="rolePermissionDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.web_config.view') }}" class="nav-link ">Website Configuration</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
         <li class="nav-item">
             <a class="nav-link" href="apps-chat.html">
                 <i class="iconoir-chat-bubble menu-icon"></i>
