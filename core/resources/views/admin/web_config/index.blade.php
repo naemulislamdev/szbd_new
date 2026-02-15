@@ -1587,12 +1587,12 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
-                                                    <img id="viewer"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('web_logo') ? \App\CPU\Helpers::get_business_settings('web_logo') : '' }}"
+                                                    <img id="preview"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_web_logo') ? \App\CPU\Helpers::get_business_settings('logo') : '' }}"
                                                         alt="Web Logo" class="img-fluid mb-3" style="max-height: 200px;">
-                                                    <label for="customFileUpload" class="btn btn-primary">Choose
+                                                    <label for="webLogoUpload" class="btn btn-primary">Choose
                                                         File</label>
-                                                    <input type="file" id="customFileUpload" name="web_logo"
+                                                    <input type="file" id="webLogoUpload" name="web_logo"
                                                         class="d-none"
                                                         accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                                 </div>
@@ -1609,7 +1609,7 @@
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer2"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('mobile_logo') ? \App\CPU\Helpers::get_business_settings('mobile_logo') : '' }}"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_mobile_logo') ? \App\CPU\Helpers::get_business_settings('logo') : '' }}"
                                                         alt="Mobile Logo" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload2" class="btn btn-primary">Choose
@@ -1780,7 +1780,7 @@
                 var reader = new FileReader();
 
                 reader.onload = function(e) {
-                    $('#viewer').attr('src', e.target.result);
+                    $('#preview').attr('src', e.target.result);
                 }
 
                 reader.readAsDataURL(input.files[0]);
@@ -1835,7 +1835,7 @@
             }
         }
 
-        function readURL1(input) {
+        function readURL6(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
@@ -1846,7 +1846,8 @@
             }
         }
 
-        $("#customFileUpload").change(function() {
+
+        $("#webLogoUpload").change(function() {
             readURL1(this);
         });
         $("#customFileUpload2").change(function() {
@@ -1864,7 +1865,7 @@
         });
 
         $("#customFileUpload1").change(function() {
-            readURL1(this);
+            readURL6(this);
         });
     </script>
 @endpush

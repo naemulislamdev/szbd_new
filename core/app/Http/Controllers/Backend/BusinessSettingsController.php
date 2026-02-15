@@ -223,6 +223,7 @@ class BusinessSettingsController extends Controller
     public function updateInfo(Request $request)
     {
 
+
         if ($request['email_verification'] == 1) {
             $request['phone_verification'] = 0;
         } elseif ($request['phone_verification'] == 1) {
@@ -232,9 +233,9 @@ class BusinessSettingsController extends Controller
         //comapy shop banner
         $imgBanner = BusinessSetting::where(['type' => 'shop_banner'])->first()['value'];
         $imgBanner = isset($imgBanner) ? 'assets/storage/' . $imgBanner : null;
-        if ($request->has('shop_banner')) {
+        if ($request->has('admin_shop_banner')) {
 
-            $imgBanner = FileManager::updateFile('shop/', $imgBanner, $request->file('shop_banner'));
+            $imgBanner = FileManager::updateFile('shop/', $imgBanner, $request->file('admin_shop_banner'));
 
             DB::table('business_settings')->updateOrInsert(['type' => 'shop_banner'], [
                 'value' => $imgBanner
@@ -298,8 +299,8 @@ class BusinessSettingsController extends Controller
 
         //web logo
         $webLogo = BusinessSetting::where(['type' => 'company_web_logo'])->first()['value'];
-        if ($request->has('company_web_logo')) {
-            $webLogo = FileManager::updateFile('company/', 'assets/storage/' . $webLogo, $request->file('company_web_logo'));
+        if ($request->has('web_logo')) {
+            $webLogo = FileManager::updateFile('logo/', 'assets/storage/' . $webLogo, $request->file('web_logo'));
             BusinessSetting::where(['type' => 'company_web_logo'])->update([
                 'value' => $webLogo,
             ]);
@@ -307,15 +308,15 @@ class BusinessSettingsController extends Controller
 
         //mobile logo
         $mobileLogo = BusinessSetting::where(['type' => 'company_mobile_logo'])->first()['value'];
-        if ($request->has('company_mobile_logo')) {
+        if ($request->has('mobile_logo')) {
 
-            $mobileLogo = FileManager::updateFile('company/', 'assets/storage/' . $mobileLogo, $request->file('company_mobile_logo'));
+            $mobileLogo = FileManager::updateFile('logo/', 'assets/storage/' . $mobileLogo, $request->file('mobile_logo'));
             BusinessSetting::where(['type' => 'company_mobile_logo'])->update([
                 'value' => $mobileLogo,
             ]);
         }
         //web footer logo
-        $webFooterLogo = BusinessSetting::where(['type' => 'company_footer_logo'])->first();
+        $webFooterLogo = BusinessSetting::where(['type' => 'web_footer_logo'])->first();
         if ($request->has('company_footer_logo')) {
             // $webFooterLogo = ImageManager::update('company/', $webFooterLogo, 'png', $request->file('company_footer_logo'));
             $webFooterLogo = FileManager::updateFile('company/', 'assets/storage/' . $webFooterLogo['value'], $request->file('company_footer_logo'));
@@ -325,8 +326,8 @@ class BusinessSettingsController extends Controller
         }
         //fav icon
         $favIcon = BusinessSetting::where(['type' => 'company_fav_icon'])->first()['value'];
-        if ($request->has('company_fav_icon')) {
-            $favIcon = FileManager::updateFile('company/', 'assets/storage/' . $favIcon, $request->file('company_fav_icon'));
+        if ($request->has('web_favicon')) {
+            $favIcon = FileManager::updateFile('company/', 'assets/storage/' . $favIcon, $request->file('web_favicon'));
             BusinessSetting::where(['type' => 'company_fav_icon'])->update([
                 'value' => $favIcon,
             ]);
