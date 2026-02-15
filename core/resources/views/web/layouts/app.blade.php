@@ -140,6 +140,7 @@
             font-weight: 600;
 
         }
+
         .product-box {
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
@@ -980,33 +981,52 @@
             });
         }
 
-        function updateCartQuantity(key) {
-            var quantity = $("#cartQuantity" + key).children("option:selected").val();
-            $.post('<?php echo e(route('cart.updateQuantity')); ?>', {
-                _token: '<?php echo e(csrf_token()); ?>',
+        function changeQty(key, change) {
+
+            let input = $("#cartQuantity" + key);
+            let currentQty = parseInt(input.val());
+
+            let newQty = currentQty + change;
+
+            if (newQty < 1) {
+                return;
+            }
+
+            updateCartQuantity(key, newQty);
+        }
+
+        function updateCartQuantity(key, quantity) {
+
+            $.post("{{ route('cart.updateQuantity') }}", {
+                _token: "{{ csrf_token() }}",
                 key: key,
                 quantity: quantity
             }, function(data) {
-                // console.log(data);
+
                 if (data['data'] == 0) {
+
                     toastr.error('Sorry, stock limit exceeded.', {
                         CloseButton: true,
                         ProgressBar: true
                     });
+
                     $("#cartQuantity" + key).val(data['qty']);
+
                 } else {
+
                     toastr.info('Quantity updated!', {
                         CloseButton: true,
                         ProgressBar: true
                     });
+
                     updateNavCart();
 
-                    $('#cart-summary').empty().html(data);
+                    $('#cart-summary').html(data);
                 }
-
 
             });
         }
+
 
         $('#add-to-cart-form input').on('change', function() {
             getVariantPrice();

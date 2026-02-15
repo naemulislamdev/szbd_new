@@ -102,8 +102,7 @@
             <div class="row">
                 <div class="col-lg-9">
                     <img class=" rounded img-thumbnail details-img" src="{{ asset('storage/blogs') }}/{{ $blog->image }}"
-                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
-                        alt="{{ $blog->title }}">
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="{{ $blog->title }}">
                     <div class="blog-content-body mt-4 border-right">
                         <h3 class="text-orange h3">{{ $blog->title }}</h3>
                         <div class="upload-info my-4">

@@ -86,7 +86,7 @@
                         <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                             <div class="main-banner">
                                 <img class="d-block w-100"
-                                    onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     src="{{ asset('storage/deal/main-banner') }}/{{ $banner }}" alt="">
                             </div>
                         </div>

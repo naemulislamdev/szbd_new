@@ -9,7 +9,7 @@ use App\Models\Product;
 use App\Models\ShippingAddress;
 use App\Models\ShippingMethod;
 use App\Models\UserInfo;
-use Apps\Models\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -117,8 +117,9 @@ class CheckoutControl extends Controller
         if (!$authUser || $authUser === 'offline') {
             return back()->with('error', 'Customer authentication failed');
         }
+        $userFind = User::find($authUser->id);
 
-        if ($authUser->is_active == 0) {
+        if ($userFind->is_active == 0) {
             return back()->with('error', 'Your account is inactive.');
         }
 
@@ -139,7 +140,7 @@ class CheckoutControl extends Controller
             } else {
                 $shippingAddress = ShippingAddress::findOrFail($addressType);
             }
-            
+
             // ================= ORDER CREATE =================
             $discount = session('coupon_discount', 0);
             $coupon_code = session('coupon_code');
@@ -196,6 +197,8 @@ class CheckoutControl extends Controller
                 ->where('order_process', 'pending')
                 ->delete();
 
+            session(['otp_verified' => false]);
+
             session()->forget([
                 'cart',
                 'coupon_code',
@@ -203,6 +206,8 @@ class CheckoutControl extends Controller
                 'payment_method',
                 'customer_info',
                 'shipping_method_id',
+                'otp',
+                'otp_phone',
             ]);
 
             DB::commit();

@@ -44,7 +44,7 @@
                                 class="">
                                 <div class="brand_div d-flex align-items-center justify-content-center"
                                     style="height: 200px">
-                                    <img onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                    <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                         src="{{ asset("storage/brand/$brand->image") }}" alt="{{ $brand->name }}">
                                 </div>
                             </a>

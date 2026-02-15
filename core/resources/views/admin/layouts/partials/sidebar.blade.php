@@ -327,7 +327,7 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
-      
+
         <li class="nav-item">
             <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="rolePermissionDropdown">
@@ -343,7 +343,7 @@
             </div>
         </li><!--end nav-item-->
         <li class="nav-item">
-            <a class="nav-link" href="apps-chat.html">
+            <a class="nav-link" href="apps-chat.html">0
                 <i class="iconoir-chat-bubble menu-icon"></i>
                 <span>Chat</span>
             </a>

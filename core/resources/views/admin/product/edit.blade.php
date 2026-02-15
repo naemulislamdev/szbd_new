@@ -576,7 +576,7 @@
                                                         <div class="card-body">
 
                                                             <img style="width: 100%" height="auto"
-                                                                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                                                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                                 src="{{ asset("assets/storage/product/$photo") }}"
                                                                 alt="Product image">
                                                             <input type="text" disabled

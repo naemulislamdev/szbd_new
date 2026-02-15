@@ -7,9 +7,10 @@
         border-radius: 50%;
     }
 </style>
-@php(
-    $banner = \App\Models\Banner::inRandomOrder()->where(['published' => 1, 'banner_type' => 'Popup Banner'])->first()
-)
+@php
+    $banner = \App\Models\Banner::inRandomOrder()->where(['published' => 1, 'banner_type' => 'Popup Banner'])->first();
+@endphp
+
 @if (isset($banner))
     <div class="modal fade" id="popup-modal">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -21,8 +22,7 @@
                 </div>
                 <div class="modal-body" style="padding: 3px!important; cursor: pointer"
                     onclick="location.href='{{ $banner['url'] }}'">
-                    <img class="d-block w-100"
-                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                    <img class="d-block w-100" onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}" alt="">
                 </div>
             </div>

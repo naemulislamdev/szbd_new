@@ -196,7 +196,7 @@
                 <div class="col-sm-6 col-lg-5 media pb-4  for-margin-sms">
                     <img class="rounded-circle"
                         style="text-align: {{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}; height:40px; width:40px;"
-                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         src="{{ asset('storage/profile') }}/{{ auth('customer')->user()->image }}"
                         alt="{{ auth('customer')->user()->f_name }}" />
                     <div class="media-body {{ Session::get('direction') === 'rtl' ? 'pr-3' : 'pl-3' }}">
@@ -225,7 +225,7 @@
                     @if ($conversation['admin_message'] == null)
                         <div class="col-sm-6 col-lg-5 media pb-4 for-margin-sms">
                             <img class="rounded-circle" height="40" width="40"
-                                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                 src="{{ asset('storage/profile') }}/{{ auth('customer')->user()->image }}"
                                 alt="{{ auth('customer')->user()->f_name }}" />
                             <div class="media-body {{ Session::get('direction') === 'rtl' ? 'pr-3' : 'pl-3' }}">

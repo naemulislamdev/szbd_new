@@ -37,7 +37,7 @@
                                 <div class="row">
                                     <div class="col-3 col-sm-2">
                                         <img class="d-block"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                             src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
                                             alt="VR Collection" width="60">
                                     </div>
@@ -131,7 +131,7 @@
                 groupClassName: 'col-md-4',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{ asset('assets/frontend/img/image-place-holder.png') }}',
+                    image: '{{ asset('assets/frontend/img/placeholder.jpg') }}',
                     width: '100%'
                 },
                 dropFileLabel: "{{ \App\CPU\translate('drop_here') }}",

@@ -414,7 +414,7 @@
                                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                         <div class="slider-img">
                                             <img class="d-block w-100"
-                                                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                 src="{{ asset('storage/landingpage/slider') }}/{{ $image }}"
                                                 alt="">
                                         </div>
@@ -585,7 +585,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                 src="{{ asset('storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
@@ -593,7 +593,7 @@
                                 @elseif ($section->section_direction == 'right')
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                 src="{{ asset('storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>

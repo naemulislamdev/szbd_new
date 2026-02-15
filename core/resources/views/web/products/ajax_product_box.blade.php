@@ -54,6 +54,9 @@
     $colorVariants = is_array($product->color_variant)
         ? $product->color_variant
         : json_decode($product->color_variant ?? '[]', true);
+    $choiceOptions = is_array($product->choice_options)
+        ? $product->choice_options
+        : json_decode($product->choice_options ?? '[]', true);
 @endphp
 <!-- AddToCart Modal -->
 <div class="modal fade addToCartModalCls" id="addToCartModal_{{ $product->id }}" tabindex="-1" role="dialog"
@@ -125,20 +128,20 @@
                     @endif
 
 
-                    @if (count(json_decode($product->choice_options)) > 0)
-                        @foreach (json_decode($product->choice_options) as $key => $choice)
+                    @if (count($choiceOptions) > 0)
+                        @foreach ($choiceOptions as $key => $choice)
                             <div class="row mb-3">
                                 <div class="col-12">
-                                    <h4 style="font-size: 18px; margin:0;">{{ $choice->title }}
+                                    <h4 style="font-size: 18px; margin:0;">{{ $choice['title'] }}
                                     </h4>
                                 </div>
                                 <div class="col-12 mt-3">
                                     <div class="d-flex">
-                                        @foreach ($choice->options as $key => $option)
+                                        @foreach ($choice['options'] as $key => $option)
                                             <div class="v-size-box">
                                                 <input type="radio"
                                                     id="{{ $product->id }}-size-{{ $key }}"
-                                                    name="{{ $choice->name }}" value="{{ $option }}"
+                                                    name="{{ $choice['name'] }}" value="{{ $option }}"
                                                     @if ($key == 0) checked @endif>
                                                 <label style="height: 38px !important;"
                                                     for="{{ $product->id }}-size-{{ $key }}"

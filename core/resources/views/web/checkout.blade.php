@@ -122,11 +122,26 @@
             bottom: 0px;
             right: 0px;
         }
+
+        .qty-btn {
+            width: 27px;
+            height: 27px;
+            line-height: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .qty-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+        }
     </style>
 @endpush
 
 @section('content')
-{{-- @dd(session('otp')) --}}
+    {{-- @dd(session('otp')) --}}
     <div class="container pb-5 mb-2 mt-3" id="cart-summary">
         @include('web.layouts.partials.cart_details')
     </div>

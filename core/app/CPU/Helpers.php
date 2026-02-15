@@ -127,7 +127,9 @@ class Helpers
             return auth('customer')->user();
         }
 
-        $phoneNumber = session()->has('otp_phone') ? session('otp_phone') : $request->phone;
+        $phoneNumber = session('otp_phone') ?? ($request?->phone ?? null);
+
+
 
         // API authenticated user
         if ($request && $request->user()) {
@@ -143,7 +145,7 @@ class Helpers
         if (!$user && $request->email) {
             $user = User::where('email', $request->email)->first();
         }
-
+        //dd($phoneNumber);
         // If still not found → create customer
         if (!$user) {
             $user = User::create([

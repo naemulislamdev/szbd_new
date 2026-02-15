@@ -48,7 +48,7 @@
                     <div class="card-header mb-2 p-2 side-category-bar"
                         onclick="get_categories('{{ route('category-ajax', [$category['id']]) }}')">
                         <img src="{{ asset("storage/category/$category->icon") }}"
-                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                             style="width: 18px; height: 18px; margin-right: 5px;">
                         {{-- <label class="ml-2 category-name-{{$key}}" style="cursor: pointer"> --}}
                         {{ $category['name'] }}

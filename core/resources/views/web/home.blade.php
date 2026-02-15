@@ -261,7 +261,7 @@
                         <div class="big-banner">
                             <a href="{{ $banner['url'] }}">
                                 <img style="max-height: 100%; width: 100%;"
-                                    onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}"
                                     alt="{{ @$banner['photo'] }}" width="100%;">
                             </a>
@@ -284,9 +284,9 @@
             <div class="row mb-5">
                 <div class="col text-center">
                     <div class="section-heading-title position-relative z-30">
-                            <div>
-                                <h3>Categories</h3>
-                            </div>
+                        <div>
+                            <h3>Categories</h3>
+                        </div>
                         <div class="heading-border"></div>
                     </div>
                 </div>
@@ -320,7 +320,7 @@
                                     <a href="{{ route('home') }}">
                                         <img style="max-width: 40px; height: auto;"
                                             src="{{ asset("assets/storage/company/$company_mobile_logo") }}"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                             alt="">
                                     </a>
                                 </div>
@@ -345,7 +345,7 @@
                                     <a href="https://asmishop.com/">
                                         <img style="max-width: 40px; height: auto;"
                                             src="{{ asset('assets/front-end') }}/images/logo/asmi.png"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                             alt="">
                                     </a>
                                 </div>
@@ -512,7 +512,7 @@
                     <div class="col-md-12">
                         <div class="big-banner">
                             <a href="{{ $banner['url'] }}">
-                                <img onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}"
                                     alt="{{ @$banner['photo'] }}" width="100%;">
                             </a>

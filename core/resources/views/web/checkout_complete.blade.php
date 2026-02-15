@@ -69,12 +69,12 @@
                                                         <div class="col-4 for-tab-img">
                                                             @if ($detail['color_image'])
                                                                 <img class="d-block mr-2"
-                                                                    onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                                     src="{{ $detail['color_image'] }}" alt="VR Collection"
                                                                     width="60">
                                                             @else
                                                                 <img class="d-block mr-2"
-                                                                    onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                                     src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product['thumbnail'] }}"
                                                                     alt="VR Collection" width="60">
                                                             @endif

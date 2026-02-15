@@ -138,7 +138,7 @@
                     @csrf
                     <img id="blah" style=" border-radius: 50px; width: 50px!important;height: 50px!important;"
                         class="rounded-circle border"
-                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         src="{{ asset('assets/storage/profile') }}/{{ $customerDetail['image'] }}">
 
                     <div class="col-md-10">

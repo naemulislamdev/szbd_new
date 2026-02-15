@@ -285,7 +285,7 @@
                                 <div class="col-md-6" onclick="location.href='{{ route('product', $product['slug']) }}'">
                                     <td class="col-2 for-tab-img">
                                         <img class="d-block"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                             src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product['thumbnail'] }}"
                                             alt="VR Collection" width="60">
                                     </td>
@@ -311,8 +311,7 @@
                                 <div class="col-md-4">
                                     <td width="100%">
                                         <div class="">
-                                            <span
-                                                class="font-weight-bold amount">{{ $detail->price }}
+                                            <span class="font-weight-bold amount">{{ $detail->price }}
                                             </span>
                                             <br>
                                             <span>qty: {{ $detail->qty }}</span>
@@ -325,7 +324,7 @@
                                 $order_details_date = $detail->created_at;
                                 $current = \Carbon\Carbon::now();
                                 $length = $order_details_date->diffInDays($current);
-
+                                
                                 ?>
                                 <div class="col-md-2">
                                     <td>
@@ -344,7 +343,6 @@
                                                     <a href="{{ route('refund-request', [$detail->id]) }}"
                                                         class="btn btn-primary btn-sm d-inline-block">refund request</a>
                                                 @endif
-
                                             @endif
                                         @else
                                             <label class="badge badge-secondary">

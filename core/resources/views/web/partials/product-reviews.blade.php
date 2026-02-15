@@ -34,7 +34,7 @@
                     @foreach (json_decode($productReview->attachment) as $key => $photo)
                         <img style="cursor: pointer;border-radius: 5px;border:1px;border-color: #7a6969; height: 67px ; margin-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}: 5px;"
                             onclick="showInstaImage('{{ asset("storage/review/$photo") }}')" class="cz-image-zoom"
-                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                             src="{{ asset("storage/review/$photo") }}" alt="Product review" width="67">
                     @endforeach
                 @endif

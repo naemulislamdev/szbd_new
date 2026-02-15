@@ -122,7 +122,7 @@
                                         @endphp
 
                                         <img class="{{ $cardClass }}" src="{{ asset('storage/blogs/' . $blog->image) }}"
-                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'">
+                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'">
                                     </div>
 
                                     <button class="btn btn-sm category-btn">{{ $blog->blogCategory->name }}</button>

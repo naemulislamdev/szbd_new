@@ -1,3 +1,9 @@
+@php
+    if (auth('customer')->check()) {
+        $customer = auth('customer')->user();
+        $shippingAddresses = \App\Models\ShippingAddress::where('customer_id', $customer->id)->get();
+    }
+@endphp
 <div class="row">
     <div class="col-md-10 mx-auto my-3">
         <div class="row">
@@ -45,19 +51,20 @@
                                         </td>
                                         <td class="quantity-col">
                                             <div class="product-quantity d-flex align-items-center">
-                                                <select name="quantity[{{ $key }}]"
-                                                    id="cartQuantity{{ $key }}"
-                                                    onchange="updateCartQuantity('{{ $key }}')">
-                                                    @for ($i = 1; $i <= 100; $i++)
-                                                        <option value="{{ $i }}" <?php if ($cartItem['quantity'] == $i) {
-                                                            echo 'selected';
-                                                        } ?>>
-                                                            {{ $i }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
+
+                                                <button type="button" class="qty-btn btn btn-sm btn-danger"
+                                                    onclick="changeQty('{{ $key }}', -1)">-</button>
+
+                                                <input type="number" id="cartQuantity{{ $key }}"
+                                                    value="{{ $cartItem['quantity'] }}" min="1" readonly
+                                                    class="qty-input">
+
+                                                <button type="button" class="qty-btn btn btn-sm btn-success"
+                                                    onclick="changeQty('{{ $key }}', 1)">+</button>
+
                                             </div>
                                         </td>
+
                                         <td class="total-col">
                                             {{ ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'] }}
                                         </td>
@@ -95,7 +102,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row {{ session()->has('otp') ? '':'d-none'}}" id="otpInputRow">
+                                <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpInputRow">
                                     <div class="col-md-6 mx-auto">
                                         <label>ওটিপি দিন</label>
                                         <input type="text" class="form-control" id="otp">
@@ -107,7 +114,8 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('product.checkout') }}" method="POST" id="userInfoForm" class="checkoutForm {{ (!$customer && !session('otp_verified')) ? 'd-none' : '' }}">
+                        <form action="{{ route('product.checkout') }}" method="POST" id="userInfoForm"
+                            class="checkoutForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }}">
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
@@ -189,7 +197,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3 {{ session()->has('otp_phone') ? 'd-none':''}}">
+                                    <div class="col-md-6 mb-3 {{ session()->has('otp_phone') ? 'd-none' : '' }}">
                                         <div class="form-group">
                                             <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
                                             <input type="number" class="form-control auto-save" id="phone"
@@ -230,7 +238,7 @@
         </div><!-- End .row -->
     </div>
 </div>
-
+<script></script>
 
 <script>
     function set_shipping_id(id) {

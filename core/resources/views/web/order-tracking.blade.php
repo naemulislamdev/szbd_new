@@ -400,7 +400,7 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
                                 <!-- Product Image -->
                                 <a style="width: 20%" href="{{ route('product', $productDetails->slug) }}" class="mr-3">
                                     <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productDetails->thumbnail }}"
-                                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                         style="width:80px;border-radius:6px;">
                                 </a>
 

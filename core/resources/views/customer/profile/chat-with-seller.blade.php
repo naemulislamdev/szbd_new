@@ -108,13 +108,13 @@
         }
 
         /* a{
-                color: #030303;
-                cursor: pointer;
-            }
-            a:hover{
-                color: #4884ea;
-                cursor: pointer;
-            } */
+                    color: #030303;
+                    cursor: pointer;
+                }
+                a:hover{
+                    color: #4884ea;
+                    cursor: pointer;
+                } */
         .divider-role {
             border-bottom: 1px solid whitesmoke;
         }
@@ -393,17 +393,17 @@
         }
 
         /* @media(max-width:992px)
-            {
-                .price_sidebar {
-                padding: 20px;
-                max-width: 230px;
-            }
-            .chatSel{
-                max-width: 262px;
-                display: flex;
-                margin-top: 1rem;
-            }
-            } */
+                {
+                    .price_sidebar {
+                    padding: 20px;
+                    max-width: 230px;
+                }
+                .chatSel{
+                    max-width: 262px;
+                    display: flex;
+                    margin-top: 1rem;
+                }
+                } */
     </style>
 @endpush
 
@@ -449,7 +449,7 @@
                                             id="user_{{ $shop->shop_id }}">
                                             <div class="chat_people" id="chat_people">
                                                 <div class="chat_img">
-                                                    <img onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                                    <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                         src="{{ asset('storage/shop/' . $shop->image) }}"
                                                         style="border-radius: 10px">
                                                 </div>

@@ -6,7 +6,7 @@
                 <a href="{{ route('home') }}">
                     <img class="header-logo"
                         src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
-                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
                 <div class="ml-5 d-flex align-items-center">
@@ -51,7 +51,7 @@
                                                 <div class="m-category-box">
                                                     <a href="{{ route('category.products', $category->slug) }}">
                                                         <img src="{{ asset("assets/>storage/category/$category->icon") }}"
-                                                            onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'">
+                                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'">
                                                         {{ $category['name'] }} <i
                                                             class="fa fa-angle-right float-right mt-1"></i>
                                                     </a>
@@ -108,7 +108,7 @@
                             <a href="{{ route('home') }}">
                                 <img style="width: 70px; height: auto;"
                                     src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
-                                    onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     alt="{{ $web_config['name']->value }}">
                             </a>
                             <div class="ml-4">
@@ -173,7 +173,7 @@ $company_mobile_logo = \App\Models\BusinessSetting::where('type', 'company_mobil
     <div class="mm-logo" style="background: #fff; padding: 11px 18px;">
         <a href="{{ route('home') }}">
             <img style="width:220px;" src="{{ asset("assets/storage/company/$company_mobile_logo") }}"
-                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'" alt="">
+                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="">
         </a>
         <div class="mm-cross-icon">
             <i class="fa fa-times mm-ci"></i>

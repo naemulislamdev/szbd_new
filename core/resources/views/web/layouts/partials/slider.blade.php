@@ -14,7 +14,7 @@
                     <div class="main-slider">
                         <a href="{{ $banner['url'] }}">
                             <img class="d-block w-100 rounded-0 rounded-lg"
-                                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                 src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}" alt="">
                         </a>
                     </div>

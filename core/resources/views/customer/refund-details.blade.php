@@ -55,7 +55,7 @@
                                 <div class="row">
                                     <div class="col-6 col-sm-6 col-md-2">
                                         <div>
-                                            <img onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+                                            <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                 src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $refund->product != null ? $refund->product->thumbnail : '' }}"
                                                 alt="VR Collection" style="width: 70%; height:70%;">
                                         </div>
