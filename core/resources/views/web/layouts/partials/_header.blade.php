@@ -6,11 +6,8 @@
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
 
                 <a href="{{ route('home') }}">
-                    <img class="header-logo" <<<<<<< HEAD
-                        src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
-                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"=======src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
-                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'">>>>>>>
-                    c8580a302358ecebe6eab32e9ad96995c0c9fa19
+                    <img class="header-logo" src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                     alt="{{ $web_config['name']->value }}">
                 </a>
 
@@ -95,14 +92,11 @@
                         <div class="ml-4 d-flex align-items-center flex-row">
                             <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                             <a href="{{ route('home') }}">
-                                <<<<<<< HEAD <img style="width: 70px; height: auto;"
-                                    src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
-                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"=======<img
+
+                                    <img
                                     style="max-width: 100%;"
                                     src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
-                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'">>>>>>>
-                                    c8580a302358ecebe6eab32e9ad96995c0c9fa19
-                                    alt="{{ $web_config['name']->value }}">
+                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="{{ $web_config['name']->value }}">
                             </a>
 
                         </div>
