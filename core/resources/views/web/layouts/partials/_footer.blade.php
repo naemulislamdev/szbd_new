@@ -13,8 +13,8 @@
                         @endif
                     </div>
                     <img class="footer-logo"
-                        src="{{ asset('assets/storage/company/') }}/{{ $web_config['footer_logo']->value }}"
-                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                        src="{{ asset('assets/storage/logo/') }}/{{ $web_config['footer_logo']->value }}"
+                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                     <ul>
                         @php
@@ -76,9 +76,9 @@
                     <div class="download-icon mb-3">
                         <a target="_blank"
                             href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android"><img
-                                src="{{ asset('assets/front-end') }}/images/logo/google_app.png"
+                                src="{{ asset('assets/frontend') }}/images/logo/google_app.png"
                                 alt="Google play store logo"></a>
-                        <a href="#"><img src="{{ asset('assets/front-end') }}/images/logo/apple_app.png"
+                        <a href="#"><img src="{{ asset('assets/frontend') }}/images/logo/apple_app.png"
                                 alt="Apple app store logo"></a>
 
                     </div>
@@ -89,7 +89,7 @@
         <div class="row my-2">
             <div class="col">
                 <div class="text-center footer-pay-logo">
-                    <img src="{{ asset('assets/front-end') }}/images/payment/SSLCommerz02.png" alt="">
+                    <img src="{{ asset('assets/frontend') }}/images/payment/SSLCommerz02.png" alt="">
                 </div>
 
             </div>

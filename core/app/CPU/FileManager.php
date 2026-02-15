@@ -67,10 +67,10 @@ class FileManager
         $image = null,
         $alt_text = null
     ) {
-        $fullPath = 'assets/storage/' . $dir;
+        $fullPath = 'assets/storage/' . $dir . $old_image;
 
-        if ($old_image && file_exists($fullPath . $old_image)) {
-            @unlink($fullPath . $old_image);
+        if ($old_image && file_exists($fullPath)) {
+            unlink($fullPath);
         }
 
         return self::uploadFile($dir, 300, $image, $alt_text);
@@ -78,6 +78,7 @@ class FileManager
 
     public static function delete($full_path,)
     {
+
         $delete_path = 'assets/storage/' . $full_path;
 
         if (file_exists($delete_path)) {

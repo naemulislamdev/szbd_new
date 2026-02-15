@@ -40,7 +40,7 @@ class CategoryController extends Controller
                     data-id="' . $row->id . '"
                     data-name="' . $row->name . '"
                     data-order="' . $row->order_number . '"
-                    data-icon="' . asset($row->icon) . '"
+                    data-icon="' . asset('assets/storage/category/' . $row->icon) . '"
                     data-bs-toggle="modal"
                     data-bs-target="#editModal">
                     <i class="la la-edit"></i>
@@ -113,6 +113,7 @@ class CategoryController extends Controller
     }
     public function update(Request $request)
     {
+
         $validinfo = $request->validate([
             'id' => 'required|numeric',
             'name' => 'required',
@@ -127,8 +128,8 @@ class CategoryController extends Controller
         $category = Category::find($request->id);
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
-        if ($request->image) {
-            $category->icon = FileManager::updateFile('category/', $category->icon, 300, $request->file('image'));
+        if ($request->icon) {
+            $category->icon = FileManager::updateFile('category/', $category->icon, $request->file('icon'));
         }
         $category->order_number = $request->order_number;
         if ($category->save()) {
@@ -146,11 +147,11 @@ class CategoryController extends Controller
     public function delete(Request $request)
     {
         $category = Category::find($request->id);
-        if (file_exists(public_path('assets/storage/category/' . $category->icon))) {
+
+        if ($category->icon) {
             FileManager::delete('category/' . $category->icon);
         }
         $category->delete();
-
         return response()->json();
     }
 

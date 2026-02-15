@@ -1,32 +1,24 @@
-<header id="header" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+<header id="header" class="py-2"
+    style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
     <div class="container">
         <div class="row main_row align-items-lg-center">
-            <div class="col-md-3 d-none d-lg-flex align-items-center flex-row gap-5">
+            <div class="col-md-2 d-none d-lg-flex align-items-center flex-row gap-5">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
+
                 <a href="{{ route('home') }}">
                     <img class="header-logo"
+<<<<<<< HEAD
                         src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+=======
+                        src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
+                        onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+>>>>>>> c8580a302358ecebe6eab32e9ad96995c0c9fa19
                         alt="{{ $web_config['name']->value }}">
                 </a>
-                <div class="ml-5 d-flex align-items-center">
-                    <img style="width: 40px;" src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
-                        alt="whatsapp icon">
-                    <div class="ml-2">
-                        <a class="text-success text-small d-block" target="_blank" title="Go Whatsapp"
-                            style="font-size: 15px; font-weight: 600"
-                            href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
-                            01406-667669
-                        </a>
-                        <a class="text-success text-small" target="_blank" title="Go Whatsapp"
-                            style="font-size: 15px; font-weight: 600 "
-                            href="https://wa.me/8801805035050?text=Is%20anyone%20available%20to%20chat%3F">
-                            01805-035050
-                        </a>
-                    </div>
-                </div>
+
             </div>
-            <div class="col-md-7">
+            <div class="col-md-8 pr-0">
                 @php $categories = \App\Models\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
                 @php
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
@@ -92,8 +84,8 @@
                             </li>
 
 
-                            <li><a href="{{ route('offers.product') }}"><img style="height: 30px; width: auto;"
-                                        src="{{ asset('assets/front-end/img/sp_offer.png') }}" alt="special image"></a>
+                            <li><a href="{{ route('offers.product') }}"><img style="height: 50px; width: auto;"
+                                        src="{{ asset('assets/frontend/img/sp_offer.png') }}" alt="special image"></a>
                             </li>
                             <li><a href="{{ route('outlets') }}">Our outlets</a></li>
                             <li><a href="{{ route('careers') }}">Careers</a></li>
@@ -103,24 +95,21 @@
                     <div class="d-flex d-lg-none">
                         <i class="fa fa-bars menu-icon"></i>
 
-                        <div class="ml-4 d-flex align-items-center flex-row gap-5">
+                        <div class="ml-4 d-flex align-items-center flex-row">
                             <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                             <a href="{{ route('home') }}">
+<<<<<<< HEAD
                                 <img style="width: 70px; height: auto;"
                                     src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
                                     onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+=======
+                                <img style="max-width: 100%;"
+                                    src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
+                                    onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'"
+>>>>>>> c8580a302358ecebe6eab32e9ad96995c0c9fa19
                                     alt="{{ $web_config['name']->value }}">
                             </a>
-                            <div class="ml-4">
-                                <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; "
-                                    class="text-success d-flex align-items-center"
-                                    href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
-                                    <img style="width: 40px;"
-                                        src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
-                                        alt="whatsapp icon">
-                                    <span class="ml-1"></span>
-                                </a>
-                            </div>
+
                         </div>
                     </div>
                 </nav>
@@ -135,25 +124,29 @@
                                 alt="offer image"></a>
                     @endif
 
-
                     <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
                         aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>
-                    <a href="{{ route('wishlists') }}"><i class="fa fa-heart-o" aria-hidden="true"></i>
+
+
+                    <a class="d-none d-lg-inline-block" href="{{ route('wishlists') }}"><i class="fa fa-heart-o"
+                            aria-hidden="true"></i>
                         <span
                             class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span></a>
-                    <a data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas" role="button"
-                        aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart"
+                    <a class="d-none d-lg-inline-block" data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas"
+                        role="button" aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart"
                             aria-hidden="true"></i><span class="badge badge-danger total_cart_count"
                             id="total_cart_count">
                             {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
                         </span></a>
+
                     @if (auth('customer')->check())
-                        <a href="{{ route('user-account') }}" class="d-lg-none"><i class="fa fa-user"
+                        <a href="{{ route('user-account') }}" class="d-none d-lg-inline-block"><i class="fa fa-user"
                                 aria-hidden="true"></i></a>
                     @else
-                        <a href="{{ route('customer.auth.login') }}" class="d-lg-none"><i class="fa fa-user"
-                                aria-hidden="true"></i></a>
+                        <a href="{{ route('customer.auth.login') }}" class="d-none d-lg-inline-block"><i
+                                class="fa fa-user" aria-hidden="true"></i></a>
                     @endif
+
 
 
                 </div>
@@ -162,20 +155,16 @@
     </div>
 </header>
 
-
-<?php
-$company_mobile_logo = \App\Models\BusinessSetting::where('type', 'company_mobile_logo')->first()->value;
-?>
-
 <!--end header-->
 <!--start mobile menu-->
 <div class="mobile-menu">
-    <div class="mm-logo" style="background: #fff; padding: 11px 18px;">
-        <a href="{{ route('home') }}">
-            <img style="width:220px;" src="{{ asset("assets/storage/company/$company_mobile_logo") }}"
-                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="">
+    <div class="mm-logo row align-items-center" style="background: #fff; padding: 11px 18px;">
+        <a href="{{ route('home') }}" class="col-9">
+            <img style="max-width: 100%; height: auto;"
+                src="{{ asset('assets/storage/logo') . '/' . $web_config['mob_logo']->value }}"
+                onerror="this.src='{{ asset('assets/frontend/img/image-place-holder.png') }}'" alt="">
         </a>
-        <div class="mm-cross-icon">
+        <div class="mm-cross-icon col-3 text-right">
             <i class="fa fa-times mm-ci"></i>
         </div>
     </div>
@@ -272,18 +261,26 @@ $company_mobile_logo = \App\Models\BusinessSetting::where('type', 'company_mobil
                     <a href="{{ route('careers') }}"><i class="fa fa-ptab3 mr-2"></i>Careers</a>
                 </div>
             </div>
-            <div class="menu-box mt-2 text-white">
-                <div class="menu-link">
-                    @if (auth('customer')->check())
-                        <a href="{{ route('user-account') }}" class="btn btn-primary"><i
-                                class="fa fa-ptab3 mr-2"></i>
-                            User Dashboard</a>
-                    @else
-                        <a href="{{ route('customer.auth.login') }}" class="btn btn-primary"><i
-                                class="fa fa-ptab3 mr-2"></i>Login</a>
-                    @endif
-                </div>
-            </div>
+            {{-- <div class="menu-box mt-2 text-white">
+
+            </div> --}}
         </div>
+    </div>
+    <div class="menu-link"
+        style="
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    color: #fff;
+">
+        @if (auth('customer')->check())
+            <a href="{{ route('user-account') }}" class="btn btn-primary"><i class="fa fa-ptab3 mr-2"></i>
+                User Dashboard</a>
+        @else
+            <a href="{{ route('customer.auth.login') }}" class="btn btn-primary"><i
+                    class="fa fa-ptab3 mr-2"></i>Login</a>
+        @endif
     </div>
 </div>

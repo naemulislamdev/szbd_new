@@ -65,10 +65,10 @@
                             </div>
                             <div class="col-md-6 ps-0 border-primary">
                                 @php
-                                    $config = \App\CPU\Helpers::get_business_settings('download_app_apple_store');
+                                    $config = \App\CPU\Helpers::get_business_settings('download_app_apple_stroe');
 
                                 @endphp
-                                <form action="{{ route('admin.web_config.app-store-update', 'download_app_apple_store') }}"
+                                <form action="{{ route('admin.web_config.app-store-update', 'download_app_apple_stroe') }}"
                                     method="POST">
                                     @csrf
                                     <div class="card">
@@ -108,10 +108,10 @@
                             </div>
                             <div class="col-md-6 ps-0 border-primary">
                                 @php
-                                    $config = \App\CPU\Helpers::get_business_settings('download_app_google_store');
+                                    $config = \App\CPU\Helpers::get_business_settings('download_app_google_stroe');
 
                                 @endphp
-                                <form action="{{ route('admin.web_config.app-store-update', 'download_app_google_store') }}"
+                                <form action="{{ route('admin.web_config.app-store-update', 'download_app_google_stroe') }}"
                                     method="POST">
                                     @csrf
                                     <div class="card">
@@ -1677,7 +1677,9 @@
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer5"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('loader_gif') ? \App\CPU\Helpers::get_business_settings('loader_gif') : '' }}"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('loader_gif')
+                                                            ? asset('assets/storage/company/' . \App\CPU\Helpers::get_business_settings('loader_gif'))
+                                                            : '' }}"
                                                         alt="Loader Gif" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload5" class="btn btn-primary">Choose

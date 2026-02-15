@@ -132,21 +132,12 @@
             color: #fff;
             text-align: center
         }
-
-        .btn-primary {
-            background-color: #303030;
-            border: none;
-            font-size: 17px;
-            font-weight: 600;
-
-        }
-
         .product-box {
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
 
         .product-box-col-2 {
-            height: 460px;
+            height: 465px;
         }
 
         .product-box-col-3 {
@@ -216,7 +207,7 @@
         }
 
         .header-logo {
-            width: 80px;
+            width: 210px;
         }
 
         @media (max-width: 768px) {
@@ -304,6 +295,19 @@
             transition: transform 0.2s;
         }
 
+        .social-item {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 22px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
         .chat-item:hover {
             transform: scale(1.1);
             color: #fff;
@@ -330,8 +334,7 @@
         }
 
         .menu-area>ul>li>a {
-            padding: 0;
-
+            padding: 0 4px;
         }
 
         /* slick slider style here */
@@ -431,6 +434,15 @@
             border-radius: 12px;
         }
 
+        .social-item {
+            margin-right: .5rem !important;
+            padding: 13px;
+            color: #fff !important;
+            border-radius: 100%;
+
+        }
+
+
         @media (max-width: 768px) {
             .chat-wrapper {
                 left: auto !important;
@@ -444,6 +456,14 @@
             .slick-dots {
                 bottom: 5px;
             }
+
+            .copyright-section {
+                padding-bottom: 60px;
+            }
+        }
+
+        #topcontrol {
+            bottom: 52px !important;
         }
     </style>
     @php
@@ -581,15 +601,22 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <a target="_blank" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
-                        class="cs_header_number_wrap d-flex flex-row align-items-center justify-content-end g-2">
-                        <div><i style="font-size: 2.1875rem; color: #fff" class="fa fa-whatsapp"></i></div>
-                        <div class="d-flex flex-column ml-2">
-                            <span style=" color:#fff;"
-                                class="cs_accent_color cs_fs_24 cs_header_number">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</span>
-                            <span class="cs_header_number_text">24/7 Support Center Hello</span>
+                    <div class="d-flex align-items-center">
+                        <img style="width: 40px;" src="{{ asset('assets/frontend/images/logo/whatsapp.png') }}"
+                            alt="whatsapp icon">
+                        <div class="ml-2">
+                            <a class=" text-white text-small d-block" target="_blank" title="Go Whatsapp"
+                                style="font-size: 15px; font-weight: 600"
+                                href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                                01406-667669
+                            </a>
+                            <a class=" text-white text-small" target="_blank" title="Go Whatsapp"
+                                style="font-size: 15px; font-weight: 600 "
+                                href="https://wa.me/8801805035050?text=Is%20anyone%20available%20to%20chat%3F">
+                                01805-035050
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="topbar-left">
@@ -656,9 +683,8 @@
         </div>
     </div>
     {{-- loader --}}
-
     <!-- Multi social start-->
-    <div class="chat-wrapper draggable" id="chat-wrapper">
+    <div class="chat-wrapper draggable d-none d-lg-block" id="chat-wrapper">
         <div class="chat-box" id="chatBox">
             <a title="Messenger" href="https://m.me/shoppingzonebd300" target="_blank" class="chat-item messenger">
                 <i class="bi bi-messenger"></i>
@@ -674,11 +700,57 @@
         </button>
     </div>
 
-
     <!-- Page Content-->
     @yield('content')
 
-    <!-- Footer-->
+    {{-- Bottom Social Bar --}}
+    <div style="position: fixed; left: 0; bottom: -2px; width: 100%; height: auto; z-index: 9999; box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;"
+        class="bottom-bar bg-white shadow py-1 rounded-top d-block d-md-none">
+        <div class="container">
+            <div class="d-flex justify-content-around align-items-center">
+                <div class="position-relative">
+                    <a style="height: 45px; width: 45px;" title="WhatsApp"
+                        href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F" target="_blank"
+                        class="chat-item whatsapp">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
+                <div class="position-relative">
+                    <a style="height: 45px; width: 45px;" title="Messenger" href="https://m.me/shoppingzonebd300"
+                        target="_blank" class="chat-item messenger">
+                        <i class="bi bi-messenger"></i>
+                    </a>
+                </div>
+
+                <a class="mr-2  bg-primary social-item" href="{{ route('wishlists') }}"><i class="fa fa-heart-o"
+                        aria-hidden="true"></i>
+                    <span style="right: 185px; top: -6px"
+                        class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span>
+                </a>
+
+
+                <a class="mr-2 social-item  bg-primary" data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas"
+                    role="button" aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart"
+                        aria-hidden="true"></i>
+
+                    <span style="right: 102px; top: -4px;" class="badge badge-danger total_cart_count"
+                        id="total_cart_count">
+                        {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
+                    </span>
+                </a>
+
+
+                @if (auth('customer')->check())
+                    <a href="{{ route('user-account') }}" class=" social-item bg-primary"><i class="fa fa-user"
+                            aria-hidden="true"></i></a>
+                @else
+                    <a href="{{ route('customer.auth.login') }}" class=" social-item bg-primary"><i
+                            class="fa fa-user" aria-hidden="true"></i></a>
+                @endif
+
+            </div>
+        </div>
+    </div>
     <!-- Footer-->
     @include('web.layouts.partials._footer')
 

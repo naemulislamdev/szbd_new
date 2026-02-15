@@ -91,10 +91,25 @@
                             <input required type="number" name="order_number" class="form-control" id="categoryOrder"
                                 required>
                         </div>
-                        <div class="mb-3">
-                            <label>Icon</label>
-                            <input required type="file" name="image" class="form-control" id="categoryIcon">
-                            <img id="previewIcon" style="width:100px;height:100px;margin-top:10px;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    image
+                                    <small class="text-danger">
+                                        ratio 1:1
+                                    </small>
+                                </label>
+                                <input id="customFileEg2" type="file" name="icon" class="form-control"
+                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*" required>
+                            </div>
+
+                            <div class="col-12">
+                                <hr>
+                                <div class="text-center">
+                                    <img id="viewer2" src="{{ asset('assets/backend/images/placeholder.jpg') }}"
+                                        style="width:200px;max-height:200px;border:1px solid;border-radius:10px; object-fit:contain;">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -326,7 +341,7 @@
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Sub-category added successfully');
+                        toastr.success(res.message ?? 'Category added successfully');
                     },
                     error: function(err) {
                         toastr.error(err.responseJSON.message ?? 'Something went wrong!');
@@ -394,6 +409,22 @@
         $("#customFileEg1").change(function() {
             readURL(this);
         });
+
+        function readURL2(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#viewer2').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#customFileEg2").change(function() {
+            readURL2(this);
+        });
     </script>
     <script>
         $(document).on('click', '.edit', function() {
@@ -401,7 +432,7 @@
             $('#categoryId').val(button.data('id'));
             $('#categoryName').val(button.data('name'));
             $('#categoryOrder').val(button.data('order'));
-            $('#previewIcon').attr('src', button.data('icon'));
+            $('#viewer2').attr('src', button.data('icon'));
             // Form action dynamically set if needed
             $('#editForm').attr('action', '/admin/category/' + button.data('id') + '/update');
         });
