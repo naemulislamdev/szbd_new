@@ -22,7 +22,7 @@
                     </form>
                 </li>
                 <li class="topbar-item">
-                    <a href="{{ route('home') }}" class="nav-link text-muted">
+                    <a target="_blank" href="{{ route('home') }}" class="nav-link text-muted">
                         <i style="font-size: 30px" class="las la-globe"></i>
                     </a>
                 </li>

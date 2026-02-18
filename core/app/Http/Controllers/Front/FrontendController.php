@@ -39,14 +39,12 @@ class FrontendController extends Controller
         //feature products finding based on selling
         $featured_products = Product::with(['reviews'])->active()
             ->where('featured', 1)
-            ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
             ->take(12)
             ->get();
         //end
         //Arrival products finding based on selling
         $arrival_products = Product::with(['reviews'])->active()
             ->where('arrival', 1)
-            ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
             ->take(12)
             ->get();
         //end
@@ -105,6 +103,8 @@ class FrontendController extends Controller
 
         return view('web.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts'));
     }
+
+
     //Products Search on ajax
     public function searchProducts(Request $request)
     {

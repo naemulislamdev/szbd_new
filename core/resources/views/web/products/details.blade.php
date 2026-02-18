@@ -466,7 +466,7 @@
                                                         name="quantity"
                                                         class="form-control bg-transparent input-number text-center cart-qty-field border-0 p-0"
                                                         placeholder="1" value="1" min="1" max="100">
-                                                    {{-- <p class="cart-qty-field input-number">1</p> --}}
+                                                    <p class="cart-qty-field input-number">1</p>
 
                                                     <button class="btn btn-success btn-number" type="button"
                                                         data-type="plus" data-field="quantity" style="padding: 10px">
