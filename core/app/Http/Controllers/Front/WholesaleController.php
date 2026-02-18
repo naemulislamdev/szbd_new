@@ -13,7 +13,7 @@ class WholesaleController extends Controller
 {
     public function create()
     {
-        return view("web-views.wholesale.wholesale");
+        return view("web.wholesale.wholesale");
     }
     public function store(Request $request)
     {
@@ -34,7 +34,7 @@ class WholesaleController extends Controller
 
         return redirect()->back()->with('success', 'Wholesale Info Submit successfully!');
     }
-      public function status(Request $request)
+    public function status(Request $request)
     {
         $wSale = Wholesale::find($request->id);
         $wSale->wholesale_status = $request->wholesale_status;
@@ -47,7 +47,8 @@ class WholesaleController extends Controller
             'note' => $wSale->wholesale_note
         ]);
     }
-    public function wholesaleList(Request $request)  {
+    public function wholesaleList(Request $request)
+    {
         $query_param = [];
         $search = $request['search'];
         if ($request->has('search')) {
@@ -66,7 +67,7 @@ class WholesaleController extends Controller
         $wholesaleList = $wholesaleList->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
         return view('admin-views.wholesale.list', compact('wholesaleList', 'search'));
     }
-      public function wholesaleView(Request $request)
+    public function wholesaleView(Request $request)
     {
 
         $item = Wholesale::findOrFail($request->id);
@@ -79,8 +80,9 @@ class WholesaleController extends Controller
         return response()->json([
             'status' => $item->status,
         ]);
-}
-    public function wholesaleDestroy(Request $request) {
+    }
+    public function wholesaleDestroy(Request $request)
+    {
         $wlist = Wholesale::find($request->id);
         $wlist->delete();
 

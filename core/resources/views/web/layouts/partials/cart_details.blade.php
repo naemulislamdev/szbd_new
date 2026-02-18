@@ -1,6 +1,6 @@
 @php
-    if (auth('customer')->check()) {
-        $customer = auth('customer')->user();
+    $customer = auth('customer')->user();
+    if ($customer) {
         $shippingAddresses = \App\Models\ShippingAddress::where('customer_id', $customer->id)->get();
     }
 @endphp

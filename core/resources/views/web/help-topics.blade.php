@@ -1,21 +1,21 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 
-@section('title',\App\CPU\translate('FAQ'))
+@section('title', 'FAQ')
 
 @push('css_or_js')
     <!-- Open Graph (Facebook, WhatsApp) -->
-<meta property="og:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
-<meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-<meta property="og:image" content="{{ asset('storage/company/'.$web_config['web_logo']->value) }}">
-<meta property="og:url" content="{{ url()->current() }}">
-<meta property="og:type" content="website">
+    <meta property="og:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
+    <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+    <meta property="og:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
-<meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-<meta name="twitter:image" content="{{ asset('storage/company/'.$web_config['web_logo']->value) }}">
-<meta name="twitter:url" content="{{ url()->current() }}">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
+    <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+    <meta name="twitter:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
+    <meta name="twitter:url" content="{{ url()->current() }}">
 
 
     <style>
@@ -57,7 +57,7 @@
 
         @media (max-width: 600px) {
             .sidebar_heading {
-                background: {{$web_config['primary_color']}}
+                background: {{ $web_config['primary_color'] }}
             }
 
             .sidebar_heading h1 {
@@ -73,7 +73,6 @@
                 margin-top: 1rem;
             }
         }
-
     </style>
 @endpush
 
@@ -82,7 +81,7 @@
     <div class="container rtl">
         <div class="row">
             <div class="col-md-12 sidebar_heading text-center mb-2">
-                <h1 class="h3  mb-0 folot-left headerTitle">{{\App\CPU\translate('frequently_asked_question')}}</h1>
+                <h1 class="h3  mb-0 folot-left headerTitle">Frequently Asked Question</h1>
             </div>
         </div>
         <hr>
@@ -90,7 +89,7 @@
 
     <!-- Page Content-->
     <div class="container pb-5 mb-2 mb-md-4 mt-3 rtl">
-        <div class="row">   <!-- Sidebar-->
+        <div class="row"> <!-- Sidebar-->
             <div class="col-lg-2"></div>
             <section class="col-lg-10 mt-3">
                 <section class="container pt-4 pb-5 ">
@@ -98,8 +97,14 @@
                         <div class="col-sm-6">
                             <ul class="list-unstyled">
                                 @php $length=count($helps); @endphp
-                                @php if($length%2!=0){$first=($length+1)/2;}else{$first=$length/2;}@endphp
-                                @for($i=0;$i<$first;$i++)
+                                @php
+                                    if ($length % 2 != 0) {
+                                        $first = ($length + 1) / 2;
+                                    } else {
+                                        $first = $length / 2;
+                                    }
+                                @endphp
+                                @for ($i = 0; $i < $first; $i++)
                                     <div id="accordion">
                                         <div class="row mb-0" style="color: black;">
                                             <div class="col-1 mt-3">
@@ -107,15 +112,16 @@
                                             </div>
                                             <div class="col-11">
                                                 <a class="btnF btn-link collapsed" data-toggle="collapse"
-                                                        data-target="#collapseTwo{{ $helps[$i]['id'] }}"
-                                                        aria-expanded="false" aria-controls="collapseTwo"
-                                                        style="cursor: pointer; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}}">
-                                                    <li class="d-flex align-items-center border-bottom pb-3 mb-3">{{ $helps[$i]['question'] }}</li>
+                                                    data-target="#collapseTwo{{ $helps[$i]['id'] }}" aria-expanded="false"
+                                                    aria-controls="collapseTwo"
+                                                    style="cursor: pointer; text-align: {{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
+                                                    <li class="d-flex align-items-center border-bottom pb-3 mb-3">
+                                                        {{ $helps[$i]['question'] }}</li>
                                                 </a>
                                             </div>
                                         </div>
                                         <div id="collapseTwo{{ $helps[$i]['id'] }}" class="collapse"
-                                             aria-labelledby="headingTwo" data-parent="#accordion">
+                                            aria-labelledby="headingTwo" data-parent="#accordion">
                                             <div class="card-body">
                                                 {{ $helps[$i]['answer'] }}
                                             </div>
@@ -127,7 +133,7 @@
                         <div class="col-sm-6">
 
                             <ul class="list-unstyled">
-                                @for($i=$first;$i<$length;$i++)
+                                @for ($i = $first; $i < $length; $i++)
                                     <div id="accordion">
                                         <div class="row mb-0" style="color: black;">
                                             <div class="col-1 mt-3">
@@ -135,15 +141,16 @@
                                             </div>
                                             <div class="col-11">
                                                 <a class="btnF btn-link collapsed" data-toggle="collapse"
-                                                        data-target="#collapseTwo{{ $helps[$i]['id'] }}"
-                                                        aria-expanded="false" aria-controls="collapseTwo"
-                                                        style="cursor: pointer; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}}">
-                                                    <li class="d-flex align-items-center border-bottom pb-3 mb-3">{{ $helps[$i]['question'] }}</li>
+                                                    data-target="#collapseTwo{{ $helps[$i]['id'] }}" aria-expanded="false"
+                                                    aria-controls="collapseTwo"
+                                                    style="cursor: pointer; text-align: {{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
+                                                    <li class="d-flex align-items-center border-bottom pb-3 mb-3">
+                                                        {{ $helps[$i]['question'] }}</li>
                                                 </a>
                                             </div>
                                         </div>
                                         <div id="collapseTwo{{ $helps[$i]['id'] }}" class="collapse"
-                                             aria-labelledby="headingTwo" data-parent="#accordion">
+                                            aria-labelledby="headingTwo" data-parent="#accordion">
                                             <div class="card-body">
                                                 {{ $helps[$i]['answer'] }}
                                             </div>
@@ -160,5 +167,3 @@
         </div>
     </div>
 @endsection
-
-

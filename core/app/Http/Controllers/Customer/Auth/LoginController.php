@@ -45,7 +45,8 @@ class LoginController extends Controller
                         },
                     ],
                 ]);
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         } else {
             if (strtolower($request->default_captcha_value) != strtolower(Session('default_captcha_code'))) {
                 Session::forget('default_captcha_code');
@@ -58,7 +59,7 @@ class LoginController extends Controller
         $user = User::where(['phone' => $request->user_id])->orWhere(['email' => $request->user_id])->first();
 
         if (isset($user) == false) {
-            Toastr::error('Credentials do not match or account has been suspended.');
+            // Toastr::error('Credentials do not match or account has been suspended.');
             return back()->withInput();
         }
 

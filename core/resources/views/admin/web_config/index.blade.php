@@ -170,7 +170,7 @@
                                     <div class="card-body">
                                         <div class="text-center" style="height: 200px; width: 100%">
                                             <img style="max-height: 100%; width: auto;"
-                                                src="{{ asset('assets/storage/shop') }}/{{ \App\CPU\Helpers::get_business_settings('shop_banner') }}"
+                                                src="{{ asset('assets/storage/shop/banner') }}/{{ \App\CPU\Helpers::get_business_settings('shop_banner') }}"
                                                 id="viewer1" alt="Admin Shop Banner">
                                         </div>
                                         <div class="mt-3">
@@ -1585,10 +1585,13 @@
                                                 <h5 class="card-title mb-0">Web Logo</h5>
                                                 <span class="text-danger">( 250x60 px )</span>
                                             </div>
+
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="preview"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_web_logo') ? \App\CPU\Helpers::get_business_settings('logo') : '' }}"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_web_logo')
+                                                            ? asset('assets/storage/logo/' . \App\CPU\Helpers::get_business_settings('company_web_logo'))
+                                                            : '' }}"
                                                         alt="Web Logo" class="img-fluid mb-3" style="max-height: 200px;">
                                                     <label for="webLogoUpload" class="btn btn-primary">Choose
                                                         File</label>
@@ -1609,7 +1612,9 @@
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer2"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_mobile_logo') ? \App\CPU\Helpers::get_business_settings('logo') : '' }}"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_mobile_logo')
+                                                            ? asset('assets/storage/logo/' . \App\CPU\Helpers::get_business_settings('company_mobile_logo'))
+                                                            : '' }}"
                                                         alt="Mobile Logo" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload2" class="btn btn-primary">Choose
@@ -1633,7 +1638,9 @@
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer3"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('web_footer_logo') ? \App\CPU\Helpers::get_business_settings('web_footer_logo') : '' }}"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_footer_logo')
+                                                            ? asset('assets/storage/logo/' . \App\CPU\Helpers::get_business_settings('company_footer_logo'))
+                                                            : '' }}"
                                                         alt="Web Footer Logo" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload3" class="btn btn-primary">Choose
@@ -1655,7 +1662,9 @@
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer4"
-                                                        src="{{ \App\CPU\Helpers::get_business_settings('web_favicon') ? \App\CPU\Helpers::get_business_settings('web_favicon') : '' }}"
+                                                        src="{{ \App\CPU\Helpers::get_business_settings('company_fav_icon')
+                                                            ? asset('assets/storage/company/' . \App\CPU\Helpers::get_business_settings('company_fav_icon'))
+                                                            : '' }}"
                                                         alt="Web Favicon" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload4" class="btn btn-primary">Choose
@@ -1694,7 +1703,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <button type="submit" class="btn btn-primary w-100 d-block">Update
+                                        <button type="submit" class="btn btn-primary w-100 d-block">Save
                                             Changes</button>
                                     </div>
                                 </div>

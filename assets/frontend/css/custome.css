@@ -1003,7 +1003,7 @@ header.scrolled {
   display: block;
   position: fixed;
   left: 0;
-  top: 22%;
+  top: 30%;
   z-index: 999999;
   transition: 0.3s;
 }
@@ -1676,4 +1676,50 @@ footer {
 /* smooth touch feedback */
 .mcat-box:active {
   transform: scale(0.97);
+}
+.product-box .product-image2 img {
+  border-radius: 10px 10px 0 0 !important;
+}
+.product-content button {
+  font-family: "SolaimanLipi", sans-serif !important;
+}
+.product-box {
+  border-radius: 10px;
+}
+.outlet-card {
+  border-radius: 12px;
+  height: 100%;
+  box-shadow:
+    rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+    rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
+    rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+  transition: 0.3s ease;
+}
+
+.outlet-card .card-title {
+  font-size: 18px;
+  font-family: "jost";
+  color: #ff5d00;
+}
+.search-result-box {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.search-result-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-result-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.search-result-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.search-result-box::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }

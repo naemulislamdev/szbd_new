@@ -1,4 +1,4 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 @section('title', 'Search products')
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo'] }}" />
@@ -15,7 +15,7 @@
     <section class="py-3">
         <div class="container">
             {{-- Product Filter section --}}
-            @include('layouts.front-end.partials.product_filter')
+            {{-- @include('layouts.frontend.partials.product_filter') --}}
             {{-- Product grid system section --}}
             <div class="row mb-3">
                 <div class="col text-center">
@@ -70,7 +70,7 @@
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
                     @foreach ($searchProducts as $product)
-                        @include('web-views.products.product_box', ['dataCategory' => 'category'])
+                        @include('web.products.product_box', ['dataCategory' => 'category'])
                     @endforeach
                 </div>
                 <hr class="my-3">
@@ -109,7 +109,7 @@
                             item_brand: "{{ $brand_name ?? 'Unknown' }}",
                             item_category: "{{ $brand_name ?? 'General' }}",
                             item_variant: "{{ $product->variant ?? 'Default' }}",
-                            price: "{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}",
+                            price: "$product->unit_price",
                             currency: "BDT",
                             index: {{ $loop->iteration }}
                         }

@@ -104,9 +104,8 @@
             <div class="col-md-12">
                 <div class="copyright-text text-center">
                     <p class="mb-0 pb-0">
-                        Copyright © 2025 - Shopping Zone BD All Rights Reserved. Design &
-                        <a target="_blank"
-                            href="https://evertechit.com/">{{ $web_config['copyright_text']->value }}</a>
+                        Copyright © 2026 - Shopping Zone BD All Rights Reserved. Design & Developed By
+                        <a target="_blank" href="#">{{ $web_config['copyright_text']->value }}</a>
                     </p>
                 </div>
             </div>

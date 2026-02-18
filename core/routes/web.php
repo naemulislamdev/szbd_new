@@ -23,6 +23,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/product-details', 'productDeails')->name('product.details');
         Route::get('/shop', 'shop')->name('shop');
         Route::get('/outlets', 'outlets')->name('outlets');
+        Route::get('/searched-outlets',  'searchOutlets')->name('outlet.search');
         Route::get('/checkout', 'checkout')->name('checkout');
         Route::get('/special-offers', 'specialProducts')->name('offers.product');
         Route::post('/client-review', 'clientReview')->name('client_review');
@@ -88,7 +89,7 @@ Route::middleware(['web'])->group(function () {
         Route::post('/send-otp', 'sendOtp')->name('send.otp');
         Route::post('/verify-otp', 'verifyOtp')->name('verify.otp');
         // checkout route
-        Route::get('set-shipping-method','set_shipping_method')->name('set-shipping-method');
+        Route::get('set-shipping-method', 'set_shipping_method')->name('set-shipping-method');
         Route::post('checkout-complete',  'productCheckout')->name('product.checkout');
         Route::post('checkout/complete', 'singlepCheckout')->name('sproduct.checkout');
         Route::get('checkout-complete/{id}', 'checkoutComplete')->name('checkout-complete');

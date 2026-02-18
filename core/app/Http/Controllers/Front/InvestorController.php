@@ -10,7 +10,7 @@ class InvestorController extends Controller
 {
     public function create()
     {
-        return view("web-views.investor_form");
+        return view("web.investor_form");
     }
     public function store(Request $request)
     {

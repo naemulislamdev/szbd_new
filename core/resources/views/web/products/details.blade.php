@@ -185,7 +185,7 @@
         .v-color-box>input:checked+.color-label::after {
             content: '✔';
             color: green;
-            font-size: 22px !important;
+            font-size: 28px !important;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -270,7 +270,7 @@
         }
     @endphp
 
-    <section class="" style="margin-top: 88px;">
+    <section class="my-3">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -364,13 +364,13 @@
                                     <input type="hidden" name="id" value="{{ $product->id }}">
 
                                     @if (!empty($colors) && count($colors) > 0)
-                                        <div class="row mb-4">
+                                        <div class="row">
                                             <div class="col-12 mb-3">
                                                 <h4 style="font-size: 18px; font-weight: bold;">Color</h4>
                                             </div>
                                             @if (!empty($colorVariants))
                                                 <div class="col-12 mb-3 mt-3">
-                                                    <div class="d-flex">
+                                                    <div class="d-flex " style="gap: 20px">
                                                         @foreach ($colorVariants as $key => $color)
                                                             @php
                                                                 $code = $color['code'] ?? $color->code;
@@ -378,28 +378,40 @@
                                                                 $cName = $color['color'] ?? $color->color;
                                                             @endphp
 
-                                                            <div class="v-color-box position-relative">
-                                                                <input type="radio"
-                                                                    id="{{ $product->id }}-color-{{ $key }}"
-                                                                    name="color" value="{{ $code }}"
-                                                                    @if ($key == 0) checked @endif>
-                                                                <label for="{{ $product->id }}-color-{{ $key }}"
-                                                                    class="color-label"
-                                                                    style="background-color: {{ $code }}; overflow: hidden;">
-                                                                    <img src="{{ asset($cImage) }}"
-                                                                        data-image="{{ asset($cImage) }}"
-                                                                        alt="{{ $cName }}"
-                                                                        style="max-width:100%; height:auto;">
-                                                                </label>
+                                                            <div>
+                                                                <div class="v-color-box position-relative mr-0"
+                                                                    style="margin: 0 !important;"
+                                                                    title="{{ $color['color'] }}">
+                                                                    <input type="radio"
+                                                                        id="{{ $product->id }}-color-{{ $key }}"
+                                                                        name="color" value="{{ $code }}"
+                                                                        @if ($key == 0) checked @endif>
+                                                                    <label
+                                                                        for="{{ $product->id }}-color-{{ $key }}"
+                                                                        class="color-label"
+                                                                        style="background-color: {{ $code }}; overflow: hidden;">
+                                                                        <img src="{{ asset($cImage) }}"
+                                                                            data-image="{{ asset($cImage) }}"
+                                                                            alt="{{ $cName }}"
+                                                                            style="max-width:100%; height:auto;">
+                                                                    </label>
 
-                                                                <span class="d-inline-block"
-                                                                    style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
+                                                                    <span class="d-inline-block"
+                                                                        style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
                                                                                             right: -14px;
                                                                                             top: -48px;
-                                                                                            background: {{ $code }}"></span>
 
+                                                                                            background: {{ $code }}; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;"></span>
+
+                                                                </div>
+                                                                <div class="mt-4 pt-2">
+                                                                    <small
+                                                                        style="background: {{ $code }}; padding: 3px;display: block;text-align: center;"
+                                                                        class="text-small rounded">{{ $color['color'] }}</small>
+                                                                </div>
                                                             </div>
                                                         @endforeach
+
                                                     </div>
                                                 </div>
 
@@ -442,23 +454,22 @@
                                             <h4 style="font-size: 18px; margin:0;" class="mb-2">Quantity:</h4>
 
                                             <div class="product-quantity d-flex align-items-center">
-                                                <div class="input-group input-group--style-2 pr-3 d-flex align-items-center"
-                                                    style="width: 160px; ">
+                                                <div
+                                                    class="input-group--style-2 pr-3 d-flex align-items-center justify-content-between">
 
-                                                    <button class="btn btn-danger btn-number rounded-circle"
-                                                        type="button" data-type="minus" data-field="quantity"
-                                                        style="padding: 10px">
+                                                    <button class="btn btn-danger btn-number" type="button"
+                                                        data-type="minus" data-field="quantity" style="padding: 10px">
                                                         <i class="fa fa-minus "></i>
                                                     </button>
 
-                                                    <input style="font-size: 20px; font-weight: 600" type="text"
+                                                    <input style="font-size: 20px; font-weight: 600" type="hidden"
                                                         name="quantity"
                                                         class="form-control bg-transparent input-number text-center cart-qty-field border-0 p-0"
                                                         placeholder="1" value="1" min="1" max="100">
+                                                    {{-- <p class="cart-qty-field input-number">1</p> --}}
 
-                                                    <button class="btn btn-success rounded-circle btn-number"
-                                                        type="button" data-type="plus" data-field="quantity"
-                                                        style="padding: 10px">
+                                                    <button class="btn btn-success btn-number" type="button"
+                                                        data-type="plus" data-field="quantity" style="padding: 10px">
                                                         <i class="fa fa-plus "></i>
                                                     </button>
 

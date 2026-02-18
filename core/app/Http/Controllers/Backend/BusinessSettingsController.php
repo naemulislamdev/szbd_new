@@ -232,10 +232,10 @@ class BusinessSettingsController extends Controller
 
         //comapy shop banner
         $imgBanner = BusinessSetting::where(['type' => 'shop_banner'])->first()['value'];
-        $imgBanner = isset($imgBanner) ? 'assets/storage/' . $imgBanner : null;
+        $imgBanner = isset($imgBanner) ? 'assets/storage/shop/banner' . $imgBanner : null;
         if ($request->has('admin_shop_banner')) {
 
-            $imgBanner = FileManager::updateFile('shop/', $imgBanner, $request->file('admin_shop_banner'));
+            $imgBanner = FileManager::updateFile('shop/banner/', $imgBanner, $request->file('admin_shop_banner'));
 
             DB::table('business_settings')->updateOrInsert(['type' => 'shop_banner'], [
                 'value' => $imgBanner

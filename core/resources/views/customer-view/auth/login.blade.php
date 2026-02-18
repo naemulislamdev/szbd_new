@@ -1,5 +1,5 @@
 @extends('web.layouts.app')
-@section('title', 'Login')
+@section('title', 'Customer Login')
 @push('css_or_js')
     <style>
         .password-toggle-btn .custom-control-input:checked~.password-toggle-indicator {
@@ -39,36 +39,36 @@
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
             padding-bottom: 10px;
         }
-        .btn-primary{
+
+        .btn-primary {
             position: relative !important;
         }
     </style>
 @endpush
 @section('content')
-    <div class="container py-4 py-lg-5 my-4"
-        style="text-align:left;">
+    <div class="container py-4 py-lg-5 my-4" style="text-align:left;">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card border-0 box-shadow">
+                <div class="card border-0 box-shadow p-3">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="login-image">
-                                <img src="{{ asset('assets/frontend/img/login-img.jpg')}}" style="width: 100%;" alt="">
+                                <img src="{{ asset('assets/frontend/img/login-img.jpg') }}" style="width: 100%;"
+                                    alt="">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="">
                                 <div class="card-body">
-                                    <h2 class="h4 mb-1">Sign in</h2>
-                                    <hr class="mt-2">
-                                    <form class="needs-validation mt-2" autocomplete="off" action="{{ route('customer.auth.login') }}"
-                                        method="post" id="form-id">
+                                    <h2 class="h4 mb-1">Login</h2>
+
+                                    <form class="needs-validation mt-2" autocomplete="off"
+                                        action="{{ route('customer.auth.login') }}" method="post" id="form-id">
                                         @csrf
                                         <div class="form-group">
                                             <label for="si-email">Email address</label>
                                             <input class="form-control" type="text" name="user_id" id="si-email"
-                                                style="text-align: left;"
-                                                value="{{ old('user_id') }}"
+                                                style="text-align: left;" value="{{ old('user_id') }}"
                                                 placeholder="Enter email address or phone number" required>
                                             <div class="invalid-feedback">
                                                 please provide valid email or phone number
@@ -78,8 +78,7 @@
                                             <label for="si-password">password</label>
                                             <div class="password-toggle">
                                                 <input class="form-control" name="password" type="password" id="si-password"
-                                                    style="text-align:left;"
-                                                    required>
+                                                    style="text-align:left;" required>
                                                 <label class="password-toggle-btn">
                                                     <input class="custom-control-input" type="checkbox"><i
                                                         class="czi-eye password-toggle-indicator"></i><span
@@ -90,8 +89,8 @@
                                         </div>
                                         <div class="form-group d-flex flex-wrap justify-content-between">
                                             <div class="form-group">
-                                                <input type="checkbox" name="remember"
-                                                    id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                                <input type="checkbox" name="remember" id="remember"
+                                                    {{ old('remember') ? 'checked' : '' }}>
 
                                                 <label class="" for="remember">remember_me</label>
                                             </div>
@@ -99,8 +98,7 @@
                                                 forgot password?
                                             </a>
                                         </div>
-                                        <button class="btn btn-primary btn-block btn-shadow"
-                                            type="submit">sign in</button>
+                                        <button class="btn btn-primary btn-block btn-shadow" type="submit">sign in</button>
                                     </form>
                                 </div>
                                 <div class="">
@@ -110,7 +108,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <a class="btn btn-outline-primary" href="{{ route('customer.auth.sign-up') }}">
-                                                <i class="fa fa-user-circle"></i>sign up
+                                                <i class="fa fa-user-circle"></i> sign up
                                             </a>
                                         </div>
                                     </div>
@@ -122,7 +120,8 @@
                                                         href="{{ route('customer.auth.service-login', $socialLoginService['login_medium']) }}"
                                                         style="width: 100%">
                                                         <i
-                                                            class="czi-{{ $socialLoginService['login_medium'] }} mr-2 ml-n1"></i> Sign in with {{$socialLoginService['login_medium'] }}
+                                                            class="czi-{{ $socialLoginService['login_medium'] }} mr-2 ml-n1"></i>
+                                                        Sign in with {{ $socialLoginService['login_medium'] }}
                                                     </a>
                                                 </div>
                                             @endif
@@ -139,7 +138,7 @@
 @endsection
 
 @push('scripts')
-<script>
+    <script>
         document.getElementById('phone').addEventListener('input', function() {
             const phoneInput = this.value;
             const phoneFeedback = document.getElementById('phoneFeedback');

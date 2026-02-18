@@ -28,6 +28,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
         Schema::defaultStringLength(191);
+        $web_config = [];
+        $language = null;
+        $orderCounts = null;
+        $todayOrders = null;
+        $userInfoCounts = null;
+        $todayUserinfos = null;
+        $file_path = null;
         try {
             $web = BusinessSetting::all();
 
@@ -75,7 +82,7 @@ class AppServiceProvider extends ServiceProvider
             $todayOrders = Order::whereDate('created_at', now())
                 ->where('order_status', 'pending')
                 ->count();
-        $file_path = "assets/storage/";
+            $file_path = "assets/storage/";
         } catch (\Throwable $e) {
             logger()->error('AppServiceProvider error: ' . $e->getMessage());
         }

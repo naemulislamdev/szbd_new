@@ -102,12 +102,11 @@
             $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollX: false,
                 autoWidth: false,
                 ajax: "{{ route('admin.product.datatables') }}",
                 ordering: false,
-                columns: [
-                    {
+                columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
                         searchable: false
