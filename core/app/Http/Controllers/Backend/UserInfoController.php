@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Exports\DataExport;
 use App\Http\Controllers\Controller;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\UserInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserInfoController extends Controller
@@ -194,7 +196,6 @@ class UserInfoController extends Controller
             ]);
         }
 
-
         // return view content for modal
         $html = view('admin.user_infos.show', compact('item'))->render();
 
@@ -203,5 +204,41 @@ class UserInfoController extends Controller
             'html' => $html,
             'seen_by' => $item->seen_by,
         ]);
+    }
+
+    public function dateWiseExport(Request $request)
+    {
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date'   => 'required|date|after_or_equal:from_date',
+        ]);
+
+        $query = UserInfo::with('customer')
+            ->whereBetween('created_at', [
+                Carbon::parse($request->from_date)->startOfDay(),
+                Carbon::parse($request->to_date)->endOfDay(),
+            ]);
+
+        if ($request->status && $request->status != 'all') {
+            $query->where('order_status', $request->status);
+        }
+
+        $userinfos = $query->latest()->cursor();
+
+        $data = [];
+        foreach ($userinfos as $item) {
+            // $customer = User::find($item->customer_id);
+            $data[] = [
+                $item->created_at->format('d M Y'),
+                $item->name ?? 'Guest',
+                $item->phone ?? 'N/A',
+                $item->address ?? 'N/A',
+                $item->order_status,
+            ];
+        }
+
+        $headings = ['Date', 'Customer Name', 'Customer Phone', 'Customer Address', 'Status'];
+
+        return Excel::download(new DataExport($headings, $data), 'userinfo' . $request->from_date . '_to_' . $request->to_date . '.xlsx');
     }
 }

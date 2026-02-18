@@ -32,7 +32,8 @@
                                 <h4 class="card-title">Investors List</h4>
                             </div><!--end col-->
                             <div class="col-sm-6 text-end mb-2">
-                                <button class="btn btn-sm btn-primary"><i class="las la-file-excel"></i> Export</button>
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#dateExportModal"><i class="las la-file-excel"></i> Export</button>
                             </div>
                         </div><!--end row-->
                     </div><!--end card-header-->
@@ -198,8 +199,41 @@
             </div>
         </div>
     </div>
+    {{-- Data Export Modal --}}
+   <div class="modal fade" id="dateExportModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="GET" action="{{ route('admin.investors.data_export') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Export Investors (Date Wise)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Form Date <span class="text-danger">*</span></label>
+                        <input type="date" name="from_date" class="form-control" required>
+                    </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">To Date <span class="text-danger">*</span></label>
+                        <input type="date" name="to_date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn btn-success">
+                        Export Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection
 @push('scripts')

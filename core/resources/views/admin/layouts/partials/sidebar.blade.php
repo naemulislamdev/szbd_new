@@ -343,13 +343,13 @@
             </div>
         </li><!--end nav-item-->
         <li class="nav-item">
-            <a class="nav-link" href="apps-chat.html">0
+            <a class="nav-link" href="#">
                 <i class="iconoir-chat-bubble menu-icon"></i>
                 <span>Chat</span>
             </a>
         </li><!--end nav-item-->
         <li class="nav-item">
-            <a class="nav-link" href="apps-contact-list.html">
+            <a class="nav-link" href="#">
                 <i class="las la-phone menu-icon"></i>
                 <span>Contact List</span>
             </a>

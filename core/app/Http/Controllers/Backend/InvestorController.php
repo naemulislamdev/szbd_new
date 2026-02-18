@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Exports\DataExport;
 use App\Http\Controllers\Controller;
 use App\Models\Investor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -113,9 +116,18 @@ class InvestorController extends Controller
             'error' => 0,
         ], 500);
     }
-    public function bulk_export_investors()
+    public function dateWiseExport(Request $request)
     {
-        $investors = Investor::latest()->get();
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date'   => 'required|date|after_or_equal:from_date',
+        ]);
+
+        $investors = Investor::whereBetween('created_at', [
+            Carbon::parse($request->from_date)->startOfDay(),
+            Carbon::parse($request->to_date)->endOfDay(),
+        ])->latest()->cursor();
+        //export from userInfos
         $data = [];
         foreach ($investors as $item) {
             $data[] = [
@@ -125,11 +137,13 @@ class InvestorController extends Controller
                 'address' => $item->address,
                 'occupation' => $item->occupation,
                 'investment_amount' => $item->investment_amount,
+                'status' => $item->status == 0 ? 'Unseen' : 'Seen',
             ];
         }
-        $headings = ['Date', 'Name', 'Phone', 'Address', 'Occupation', 'Investment Amount'];
 
-        return Excel::download(new DynamicExport($headings, $data), 'investors_info.xlsx');
+        $headings = ['Date', 'Name', 'Phone', 'Address', 'Occupation', 'Investment Amount', 'Status'];
+
+        return Excel::download(new DataExport($headings, $data), 'investors_info.xlsx');
     }
     public function remarkStore(Request $request)
     {
