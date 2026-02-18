@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Exports\DataExport;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderHistory;
 use App\Models\Product;
 use App\Models\ShippingAddress;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -151,7 +155,8 @@ class OrderController extends Controller
 
             ->toJson();
     }
-    public function status(Request $request){
+    public function status(Request $request)
+    {
         $order = Order::with('customer')->where(['id' => $request->id])->first();
 
         $order->order_status = $request->order_status;
@@ -343,5 +348,43 @@ class OrderController extends Controller
         return view('admin.order.invoice', compact('order'));
         $pdf = PDF::loadView('admin.order.invoice', $data);
         return $pdf->download($order->id . '.pdf');
+    }
+    public function dateWiseExport(Request $request)
+    {
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date'   => 'required|date|after_or_equal:from_date',
+        ]);
+
+        $query = Order::with('customer')
+            ->whereBetween('created_at', [
+                Carbon::parse($request->from_date)->startOfDay(),
+                Carbon::parse($request->to_date)->endOfDay(),
+            ]);
+
+        if ($request->status && $request->status != 'all') {
+            $query->where('order_status', $request->status);
+        }
+
+        $orders = $query->latest()->cursor();
+
+        $data = [];
+        foreach ($orders as $item) {
+            // $customer = User::find($item->customer_id);
+            $data[] = [
+                $item->created_at->format('d M Y'),
+                $item->Order_id,
+                $item->customer->name != null ? $item->customer->name :  $item->customer->f_name . ' ' . $item->customer->l_name ?? 'Guest',
+                $item->customer->phone ?? 'N/A',
+                $item->customer->email ?? 'N/A',
+                $item->customer->address ?? 'N/A',
+                $item->order_amount,
+                $item->order_status,
+            ];
+        }
+
+        $headings = ['Date', 'Order id', 'Customer Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Amount', 'Status'];
+
+        return Excel::download(new DataExport($headings, $data), 'orders_' . $request->from_date . '_to_' . $request->to_date . '.xlsx');
     }
 }

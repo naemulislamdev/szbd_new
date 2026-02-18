@@ -28,6 +28,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
         Schema::defaultStringLength(191);
+        $web_config = [];
+        $language = null;
+        $orderCounts = null;
+        $todayOrders = null;
+        $userInfoCounts = null;
+        $todayUserinfos = null;
+        $file_path = null;
         try {
             $web = BusinessSetting::all();
 

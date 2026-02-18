@@ -31,7 +31,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::post('login/store', 'submit')->name('login.store');
         Route::get('logout', 'logout')->name('logout');
     });
-    Route::middleware('admin')->group(function () {
+    Route::middleware(['admin', 'check_permission'])->group(function () {
         Route::controller(DashboardController::class)->prefix('/dashboard')->as('dashboard.')->group(function () {
             Route::get('/', 'dashboard')->name('index');
             Route::post('order-stats', 'order_stats')->name('order-stats');
@@ -103,7 +103,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             // Route::post('update-deliver-info', 'update_deliver_info')->name('update-deliver-info');
             // Route::get('add-delivery-man/{order_id}/{d_man_id}', 'add_delivery_man')->name('add-delivery-man');
 
-            Route::get('export-order-data/{status}', 'bulk_export_data')->name('order-bulk-export');
+            Route::get('bulk-export', 'dateWiseExport')->name('data_export');
         });
 
         Route::controller(UserInfoController::class)->prefix('/userinfo')->as('userinfo.')->group(function () {
@@ -112,6 +112,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('show', 'show')->name('show');
             Route::get('delete/{userinfo}', 'delete')->name('delete');
             Route::post('/status-update', 'updateStatus')->name('status.update');
+            Route::get('bulk-export', 'dateWiseExport')->name('data_export');
         });
         // Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
         //     Route::get('add-new', 'add_new')->name('add-new');
@@ -205,7 +206,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('delete', 'delete')->name('delete');
             Route::post('status', 'status')->name('status');
             Route::post('remark', 'remarkStore')->name('remark.store');
-            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+            Route::get('bulk-export', 'dateWiseExport')->name('data_export');
         });
         // Franchise Routes
         Route::controller(FranchiseController::class)->prefix('/franchise')->as('franchise.')->group(function () {
