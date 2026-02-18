@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Blog;
 use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\BusinessSetting;
@@ -248,7 +249,55 @@ class FrontendController extends Controller
         $branchs = Branch::where('status', 1)->get();
         return view('web.outlets', compact('branchs'));
     }
+    public function searchOutlets(Request $request)
+    {
+        $name = $request->name;
 
+        $outlets = Branch::where(function ($query) use ($name) {
+            $query->where('name', 'like', "%$name%")
+                ->orWhere('address', 'like', "%$name%");
+        })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $html = view('web.partials.outlet_search_result', compact('outlets', 'name'))->render();
+
+        return response()->json([
+            'result' => $html
+        ]);
+    }
+    // blog front-end view
+    public function blogs()
+    {
+        $blogs = Blog::where('status', 1)->latest()->get();
+
+        if ($blogs) {
+            return view("web.blogs.blogs", compact("blogs"));
+        } else {
+            return redirect()->route('/')->with("error", "file not found!");
+        }
+    }
+    public function blogDetails($slug)
+    {
+        // insert views start
+        $blog = Blog::where('slug', $slug)->firstOrFail();
+        $cookieName = 'blog_viewed_' . $blog->id;
+        if (!request()->hasCookie($cookieName)) {
+            $blog->increment('views');
+            cookie()->queue($cookieName, true, 60 * 24 * 30);
+        }
+        // insert views end
+
+        $blog = Blog::find($blog->id);
+
+        $latest_blogs = Blog::latest("created_at")
+            ->inRandomOrder()
+            ->take(3)
+            ->where("status", 1)
+            ->get();
+        return view("web.blogs.blogDetails", compact("blog", "latest_blogs"));
+    }
     public function clientReview(Request $request)
     {
         if (auth('customer')->check()) {

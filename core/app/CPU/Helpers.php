@@ -48,7 +48,7 @@ class Helpers
     public static function get_business_settings($name)
     {
         $config = null;
-        $check = ['currency_model', 'currency_symbol_position', 'system_default_currency', 'language', 'company_name', 'decimal_point_settings', 'company_web_logo', 'company_mobile_logo'];
+        $check = ['currency_model', 'currency_symbol_position', 'system_default_currency', 'language', 'company_name', 'decimal_point_settings', 'company_web_logo', 'company_mobile_logo', 'company_footer_logo', 'company_fav_icon'];
 
         if (in_array($name, $check) == true && session()->has($name)) {
             $config = session($name);

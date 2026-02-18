@@ -53,8 +53,8 @@
                                 <div class="card-body p-0 bg-black auth-header-box rounded-top">
                                     @php($e_commerce_logo = \App\Models\BusinessSetting::where(['type' => 'company_web_logo'])->first()->value)
                                     <div class="text-center p-3">
-                                        <a href="index.html" class="logo logo-admin">
-                                            <img src="{{ asset('assets/storage/company/' . $e_commerce_logo) }}"
+                                        <a href="{{ route('home') }}" class="logo logo-admin">
+                                            <img src="{{ asset('assets/storage/logo/' . $e_commerce_logo) }}"
                                                 height="50" alt="logo" class="auth-logo">
                                         </a>
                                         <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">Let's Get Started Shopping
@@ -111,8 +111,10 @@
                                         <div class="form-group mb-0 row">
                                             <div class="col-12">
                                                 <div class="d-grid mt-3">
-                                                    <button class="btn btn-primary" type="submit">Log In <i
-                                                            class="fas fa-sign-in-alt ms-1"></i></button>
+                                                    <button
+                                                        class="btn btn-primary d-flex justify-content-center align-items-center"
+                                                        type="submit">Log In <i class="las la-sign-in-alt ms-1"
+                                                            style="font-size: 17px"></i></button>
                                                 </div>
                                             </div><!--end col-->
                                         </div> <!--end form-group-->
@@ -131,13 +133,13 @@
 
     @if (Session::has('success'))
         <script>
-           toastr.success("{{ Session::get('success') }}");
+            toastr.success("{{ Session::get('success') }}");
         </script>
     @endif
 
     @if (Session::has('error'))
         <script>
-           toastr.error("{{ Session::get('error') }}");
+            toastr.error("{{ Session::get('error') }}");
         </script>
     @endif
 

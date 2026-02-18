@@ -8,7 +8,8 @@
                     </button>
                 </li>
                 <li class="mx-2 welcome-text">
-                    <h5 class="mb-0 fw-semibold text-truncate">Welcome Our Dashboard, {{ auth('admin')->user()->name }} </h5>
+                    <h5 class="mb-0 fw-semibold text-truncate">Welcome Our Dashboard, {{ auth('admin')->user()->name }}
+                    </h5>
                     <!-- <h6 class="mb-0 fw-normal text-muted text-truncate fs-14">Here's your overview this week.</h6> -->
                 </li>
             </ul>
@@ -19,6 +20,11 @@
                             placeholder="Search here...">
                         <button type="submit"><i class="iconoir-search"></i></button>
                     </form>
+                </li>
+                <li class="topbar-item">
+                    <a href="{{ route('home') }}" class="nav-link text-muted">
+                        <i style="font-size: 30px" class="las la-globe"></i>
+                    </a>
                 </li>
                 {{-- <li class="dropdown">
                     <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#"
@@ -80,8 +86,8 @@
                         <div class="ms-0" style="max-height:230px;" data-simplebar>
                             <div class="tab-content" id="myTabContent">
 
-                                <div class="tab-pane fade" id="Teams" role="tabpanel"
-                                    aria-labelledby="teams-tab" tabindex="0">
+                                <div class="tab-pane fade" id="Teams" role="tabpanel" aria-labelledby="teams-tab"
+                                    tabindex="0">
                                     <!-- item-->
                                     <a href="#" class="dropdown-item py-3">
                                         <small class="float-end text-muted ps-2">1 hr ago</small>
@@ -126,22 +132,24 @@
                 <li class="dropdown topbar-item">
                     <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false" data-bs-offset="0,19">
-                        <img src="{{ asset('assets/storage/profile/' . auth('admin')->user()->image) }}" alt="" class="thumb-md rounded-circle">
+                        <img src="{{ asset('assets/storage/profile/' . auth('admin')->user()->image) }}"
+                            alt="" class="thumb-md rounded-circle">
                     </a>
                     <div class="dropdown-menu dropdown-menu-end py-0">
                         <div class="d-flex align-items-center dropdown-item py-2 bg-secondary-subtle">
                             <div class="flex-shrink-0">
-                                <img src="{{ asset('assets/storage/profile/' . auth('admin')->user()->image) }}" alt=""
-                                    class="thumb-md rounded-circle">
+                                <img src="{{ asset('assets/storage/profile/' . auth('admin')->user()->image) }}"
+                                    alt="" class="thumb-md rounded-circle">
                             </div>
                             <div class="flex-grow-1 ms-2 text-truncate align-self-center">
                                 <h6 class="my-0 fw-medium text-dark fs-13">{{ auth('admin')->user()->name }}</h6>
-                                <small class="text-muted mb-0">{{ ucfirst(str_replace('_', ' ', auth('admin')->user()->getRoleNames()->first() ?? '')) }}</small>
+                                <small
+                                    class="text-muted mb-0">{{ ucfirst(str_replace('_', ' ', auth('admin')->user()->getRoleNames()->first() ?? '')) }}</small>
                             </div><!--end media-body-->
                         </div>
                         <div class="dropdown-divider mt-0"></div>
                         <small class="text-muted px-2 pb-1 d-block">Account</small>
-                        <a class="dropdown-item" href="{{ route('admin.profile')}}"><i
+                        <a class="dropdown-item" href="{{ route('admin.profile') }}"><i
                                 class="las la-user fs-18 me-1 align-text-bottom"></i> Profile</a>
 
                         <small class="text-muted px-2 py-1 d-block">Settings</small>

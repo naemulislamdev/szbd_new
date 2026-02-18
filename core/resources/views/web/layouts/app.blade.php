@@ -86,7 +86,7 @@
             content: '✓';
             position: absolute;
             color: green !important;
-            font-size: 19px !important;
+            font-size: 28px;
             top: 51% !important;
             left: 77% !important;
             font-weight: bolder;
@@ -132,6 +132,7 @@
             color: #fff;
             text-align: center
         }
+
         .product-box {
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
@@ -229,7 +230,7 @@
         .chat-wrapper {
             position: fixed;
             right: 0;
-            bottom: 9%;
+            bottom: 14%;
             z-index: 9999;
             text-align: center;
             border-radius: 40px;
@@ -1144,7 +1145,39 @@
             @endforeach
         </script>
     @endif
+    {{-- outlet search --}}
+    <script>
+        jQuery(".outlet-search-input").keyup(function() {
+            let name = $(this).val();
 
+            if (name.length > 1) {
+                $(".search-card").show();
+
+                $.get({
+                    url: "{{ route('outlet.search') }}",
+                    dataType: "json",
+                    data: {
+                        name: name
+                    },
+
+                    beforeSend: function() {
+                        $('#loading').show();
+                    },
+
+                    success: function(data) {
+                        $('.search-result-box').html(data.result);
+                    },
+
+                    complete: function() {
+                        $('#loading').hide();
+                    }
+                });
+            } else {
+                $('.search-result-box').empty();
+                $(".search-card").hide(); // important
+            }
+        });
+    </script>
     <script>
         function couponCode() {
             $.ajaxSetup({

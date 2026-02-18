@@ -75,7 +75,7 @@ class AppServiceProvider extends ServiceProvider
             $todayOrders = Order::whereDate('created_at', now())
                 ->where('order_status', 'pending')
                 ->count();
-        $file_path = "assets/storage/";
+            $file_path = "assets/storage/";
         } catch (\Throwable $e) {
             logger()->error('AppServiceProvider error: ' . $e->getMessage());
         }

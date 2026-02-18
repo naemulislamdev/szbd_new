@@ -1,4 +1,4 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 @section('title', 'Blogs')
 
 <style>

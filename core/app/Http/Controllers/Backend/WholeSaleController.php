@@ -11,7 +11,7 @@ class WholeSaleController extends Controller
 {
     public function create()
     {
-        return view("web-views.wholesale.wholesale");
+        // return view("web.wholesale.wholesale");
     }
     public function list()
     {

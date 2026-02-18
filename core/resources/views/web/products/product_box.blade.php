@@ -29,23 +29,25 @@
                 </li>
             </ul>
         </div>
-        <div class="product-content">
-            <h3 class="title"><a
-                    href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 40) }}</a>
-            </h3>
-            <div class="price d-flex justify-content-center align-content-center">
-                @if ($product->discount > 0)
-                    <span
-                        class="mr-2">৳{{
-                            $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
-                         }}</span>
-                    <del>৳ {{ $product->unit_price }}</del>
-                @else
-                    <span>৳ {{ $product->unit_price }}</span>
-                @endif
+        <div class="product-content" style="height: 140px">
+            <div class="h-100 d-flex flex-column justify-content-between ">
+                <h3 class="title"><a
+                    href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 37) }}</a>
+                </h3>
+                <div class="price d-flex justify-content-center align-content-center">
+                    @if ($product->discount > 0)
+                        <span
+                            class="mr-2">৳{{
+                                $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
+                            }}</span>
+                        <del>৳ {{ $product->unit_price }}</del>
+                    @else
+                        <span>৳ {{ $product->unit_price }}</span>
+                    @endif
+                </div>
+                <button type="button" style="cursor: pointer;" class="btn btn-primary w-100"
+                    onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
             </div>
-            <button type="button" style="cursor: pointer;" class="btn btn-primary"
-                onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
         </div>
     </div>
 </div>
