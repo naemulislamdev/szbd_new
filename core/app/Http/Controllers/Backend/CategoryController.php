@@ -76,7 +76,7 @@ class CategoryController extends Controller
             ->rawColumns([
                 'action',
                 'icon',
-                'home_status',
+                'home_status'
             ])
             ->toJson();
     }

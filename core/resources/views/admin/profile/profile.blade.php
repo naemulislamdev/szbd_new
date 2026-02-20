@@ -19,9 +19,7 @@
                     <h4 class="page-title">Profile</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="#">Mifty</a>
-                            </li><!--end nav-item-->
-                            <li class="breadcrumb-item"><a href="#">Pages</a>
+                            <li class="breadcrumb-item"><a href="#">Dashboard</a>
                             </li><!--end nav-item-->
                             <li class="breadcrumb-item active">Profile</li>
                         </ol>
@@ -58,14 +56,17 @@
                                 <div class="mt-3">
                                     <div class="text-body mb-2  d-flex align-items-center"><i
                                             class="iconoir-language fs-20 me-1 text-muted"></i><span
-                                            class="text-body fw-semibold">Language :</span> Bangla / English / French / Spanish</div>
+                                            class="text-body fw-semibold">Language :</span> Bangla / English / French /
+                                        Spanish</div>
                                     <div class="text-muted mb-2 d-flex align-items-center"><i
                                             class="iconoir-mail-out fs-20 me-1"></i><span
                                             class="text-body fw-semibold">Email :</span><a href="#"
-                                            class="text-primary text-decoration-underline">{{ auth('admin')->user()->email }}</a></div>
+                                            class="text-primary text-decoration-underline">{{ auth('admin')->user()->email }}</a>
+                                    </div>
                                     <div class="text-body mb-3 d-flex align-items-center"><i
                                             class="iconoir-phone fs-20 me-1 text-muted"></i><span
-                                            class="text-body fw-semibold">Phone :</span> {{ auth('admin')->user()->phone }}</div>
+                                            class="text-body fw-semibold">Phone :</span> {{ auth('admin')->user()->phone }}
+                                    </div>
                                 </div>
                             </div><!--end col-->
                         </div><!--end row-->

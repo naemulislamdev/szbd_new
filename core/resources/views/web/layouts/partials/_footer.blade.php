@@ -13,17 +13,18 @@
                         @endif
                     </div>
                     <img class="footer-logo"
-                        src="{{ asset('assets/storage/logo/') }}/{{ $web_config['footer_logo']->value }}"
+                        src="{{ asset('assets/storage/company/') }}/{{ $web_config['footer_logo']->value }}"
                         onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         alt="{{ $web_config['name']->value }}">
-                    <ul>
+                    <ul class="d-flex flex-column gap-4">
                         @php
                             $company_email = $web_config['email']->value;
                             $company_phone = $web_config['phone']->value;
                         @endphp
-                        <li><i class="fa fa-map-marker"></i><a href="#">Address:
-                                {{ \App\CPU\Helpers::get_business_settings('shop_address') }}</a></li>
-                        <li><i class="fa fa-envelope"></i><a href="mailto:{{ $company_email }}">Email:
+                        <li><i class="fa fa-map-marker"></i><a href="#"><span class="ms-3">Address:
+                                    {{ \App\CPU\Helpers::get_business_settings('shop_address') }}</span></a></li>
+
+                        <li><i class="fa fa-envelope"></i><a href="mailto:{{ $company_email }}">
                                 {{ $company_email }}</a></li>
                         <li><i class="fa fa-phone"></i><a href="tel:{{ $company_phone }}">{{ $company_phone }}</a>
                         </li>
