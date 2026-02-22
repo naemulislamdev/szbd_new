@@ -38,7 +38,10 @@ class OrderController extends Controller
     }
     public function datatables(Request $request, $status)
     {
-        $query = Order::query();
+        // $query = Order::with('shippingAddress');
+        $query = Order::leftJoin('shipping_addresses', 'orders.shipping_address', '=', 'shipping_addresses.id')
+            ->select('orders.*', 'shipping_addresses.contact_person_name as shipping_name', 'shipping_addresses.phone as shipping_phone');
+
 
         // 🔹 Filter by date range
         if ($request->filled('from_date') && $request->filled('to_date')) {
@@ -74,13 +77,16 @@ class OrderController extends Controller
                 return $order->created_at->format('h:i A');
             })
 
-            ->addColumn('customer_name', function (Order $order) {
-                return optional($order->customer)->name ?? 'Guest';
+            ->addColumn('customer_name', function ($order) {
+            // return optional($order->shippingAddress)->contact_person_name ?? 'N/A';
+            return $order->shipping_name ?? 'N/A';
             })
 
-            ->addColumn('phone', function (Order $order) {
-                return optional($order->customer)->phone ?? 'N/A';
+            ->addColumn('phone', function ($order) {
+                // return optional($order->shippingAddress)->phone ?? 'N/A';
+                return $order->shipping_phone ?? 'N/A';
             })
+
 
             ->addColumn('amount', function (Order $order) {
                 return number_format($order->order_amount, 2);
@@ -146,6 +152,17 @@ class OrderController extends Controller
                 </a>
             ';
             })
+            // ->filterColumn('customer_name', function ($query, $keyword) {
+            //     $query->whereHas('shippingAddress', function ($q) use ($keyword) {
+            //         $q->where('contact_person_name', 'like', "%{$keyword}%");
+            //     });
+            // })
+
+            // ->filterColumn('phone', function ($query, $keyword) {
+            //     $query->whereHas('shippingAddress', function ($q) use ($keyword) {
+            //         $q->where('phone', 'like', "%{$keyword}%");
+            //     });
+            // })
 
             ->rawColumns([
                 'order_number',

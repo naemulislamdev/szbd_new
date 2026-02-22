@@ -150,7 +150,7 @@
             var table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollX: false,
                 autoWidth: false,
                 ajax: {
                     url: "{{ route('admin.order.datatables', 'all') }}",
@@ -168,7 +168,8 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        className: 'text-center p-1'
                     },
                     {
                         data: 'order_number',
@@ -184,11 +185,11 @@
                     },
                     {
                         data: 'customer_name',
-                        name: 'customer_name'
+                        name: 'shipping_addresses.contact_person_name'
                     },
                     {
                         data: 'phone',
-                        name: 'phone'
+                        name: 'shipping_addresses.phone'
                     },
                     {
                         data: 'amount',
@@ -200,7 +201,9 @@
                     },
                     {
                         data: 'total',
-                        name: 'total'
+                        name: 'total',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'order_status',

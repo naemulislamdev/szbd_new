@@ -70,8 +70,8 @@
                                                                 @foreach ($permissions as $permission)
                                                                     <div class="form-check me-2">
                                                                         <input class="form-check-input permission-checkbox"
-                                                                            type="checkbox" value="{{ $module->slug}}_{{ $permission }}"
-                                                                            id="{{ $module->slug}}_{{ $permission }}" name="module_access[]" {{ in_array($module->slug . '_' . $permission, $moduleAccess) ? 'checked' : '' }}>
+                                                                            type="checkbox" value="{{ $permission }}"
+                                                                            id="{{ $module->slug}}_{{ $permission }}" name="module_access[]" {{ in_array($permission, $moduleAccess) ? 'checked' : '' }}>
                                                                         <label for="{{ $module->slug}}_{{ $permission }}" class="form-check-label">
                                                                             {{ ucfirst(str_replace('_', ' ', $permission)) }}
                                                                         </label>

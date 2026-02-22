@@ -1,3 +1,6 @@
+@php
+    $routeName = request()->route()->getName();
+@endphp
 <div class="d-flex align-items-start flex-column w-100">
     <!-- Navigation -->
     <ul class="navbar-nav mb-auto w-100">
@@ -12,81 +15,98 @@
                 <span class="badge text-bg-warning ms-auto"></span>
             </a>
         </li><!--end nav-item-->
+        @php
+            $statuses = [
+                'all' => [
+                    'permission' => 'order_all',
+                    'label' => 'All Orders',
+                    'badge' => 'dark',
+                    'count' => $orderCounts->total ?? 0,
+                ],
+                'pending' => [
+                    'permission' => 'order_pending',
+                    'label' => 'Pending',
+                    'badge' => 'warning',
+                    'count' => $orderCounts->pending ?? 0,
+                ],
+                'confirmed' => [
+                    'permission' => 'order_confirmed',
+                    'label' => 'Confirmed',
+                    'badge' => 'primary',
+                    'count' => $orderCounts->confirmed ?? 0,
+                ],
+                'processing' => [
+                    'permission' => 'order_processing',
+                    'label' => 'Processing',
+                    'badge' => 'info',
+                    'count' => $orderCounts->processing ?? 0,
+                ],
+                'out_for_delivery' => [
+                    'permission' => 'order_out_for_delivery',
+                    'label' => 'Out for delivery',
+                    'badge' => 'primary',
+                    'count' => $orderCounts->out_for_delivery ?? 0,
+                ],
+                'delivered' => [
+                    'permission' => 'order_delivered',
+                    'label' => 'Delivery',
+                    'badge' => 'success',
+                    'count' => $orderCounts->delivered ?? 0,
+                ],
+                'returned' => [
+                    'permission' => 'order_returned',
+                    'label' => 'Returned',
+                    'badge' => 'secondary',
+                    'count' => $orderCounts->returned ?? 0,
+                ],
+                'failed' => [
+                    'permission' => 'order_failed',
+                    'label' => 'Failed',
+                    'badge' => 'dark',
+                    'count' => $orderCounts->failed ?? 0,
+                ],
+                'canceled' => [
+                    'permission' => 'order_canceled',
+                    'label' => 'Canceled',
+                    'badge' => 'danger',
+                    'count' => $orderCounts->canceled ?? 0,
+                ],
+            ];
+        @endphp
         @canAny(['order_all', 'order_pending', 'order_confirmed', 'order_processing', 'order_out_for_delivery',
             'order_delivered', 'order_returned', 'order_failed', 'order_canceled'])
+            @php
+                $isOrderRoute = $routeName == 'admin.order.list';
+            @endphp
             <li class="nav-item">
-                <a class="nav-link" href="#sidebarEcommerce" data-bs-toggle="collapse" role="button" aria-expanded="false"
-                    aria-controls="sidebarEcommerce">
+                <a class="nav-link {{ $isOrderRoute ? 'active' : '' }}" href="#sidebarEcommerce" data-bs-toggle="collapse"
+                    role="button" aria-expanded="{{ $isOrderRoute ? 'true' : 'false' }}" aria-controls="sidebarEcommerce">
                     <i class="iconoir-cart-alt menu-icon"></i>
                     <span>Orders</span>
                 </a>
-                <div class="collapse " id="sidebarEcommerce">
+
+                <div class="collapse {{ $isOrderRoute ? 'show' : '' }}" id="sidebarEcommerce">
                     <ul class="nav flex-column">
-                        @can('order_all')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}">All Orders
-                                    <span class="badge bg-dark ms-2">{{ $orderCounts->total ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_pending')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=pending">Pending
-                                    <span class="badge bg-warning ms-2">{{ $orderCounts->pending ?? 0 }}</span>
-                                </a>
-                            </li>
-                        @endcan
-                        @can('order_confirmed')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=confirmed">Confirmed
-                                    <span class="badge bg-primary ms-2">{{ $orderCounts->confirmed ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_processing')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=processing">Processing
-                                    <span class="badge bg-info ms-2">{{ $orderCounts->processing ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_out_for_delivery')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=out_for_delivery">Out for
-                                    delivery
-                                    <span class="badge bg-primary ms-2">{{ $orderCounts->out_for_delivery ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_delivered')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=delivered">Delivery
-                                    <span class="badge bg-success ms-2">{{ $orderCounts->delivered ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_returned')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=returned">Returned
-                                    <span class="badge bg-secondary ms-2">{{ $orderCounts->returned ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_failed')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=failed">Failed
-                                    <span class="badge bg-dark ms-2">{{ $orderCounts->failed ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('order_canceled')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.order.list') }}?status=canceled">Canceled
-                                    <span class="badge bg-danger ms-2">{{ $orderCounts->canceled ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                    </ul><!--end nav-->
+                        @foreach ($statuses as $status => $data)
+                            @can($data['permission'])
+                                @php
+                                    $isActive =
+                                        $isOrderRoute &&
+                                        (($status == 'all' && !request('status')) || request('status') == $status);
+                                @endphp
+
+                                <li class="nav-item">
+                                    <a class="nav-link {{ $isActive ? 'active' : '' }}"
+                                        href="{{ $status == 'all' ? route('admin.order.list') : route('admin.order.list', ['status' => $status]) }}">
+                                        {{ $data['label'] }}
+                                        <span class="badge bg-{{ $data['badge'] }} ms-2">
+                                            {{ $data['count'] }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
+                        @endforeach
+                    </ul>
                 </div>
             </li><!--end nav-item-->
         @endcanAny
@@ -115,69 +135,103 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
+        @php
+            $userInfoStatuses = [
+                'all' => [
+                    'permission' => 'userinfo_all',
+                    'label' => 'All User Info',
+                    'badge' => 'dark',
+                    'count' => $userInfoCounts->total ?? 0,
+                ],
+                'pending' => [
+                    'permission' => 'userinfo_pending',
+                    'label' => 'Pending',
+                    'badge' => 'warning',
+                    'count' => $userInfoCounts->pending ?? 0,
+                ],
+                'confirmed' => [
+                    'permission' => 'userinfo_confirmed',
+                    'label' => 'Confirmed',
+                    'badge' => 'success',
+                    'count' => $userInfoCounts->confirmed ?? 0,
+                ],
+                'canceled' => [
+                    'permission' => 'userinfo_canceled',
+                    'label' => 'Canceled',
+                    'badge' => 'danger',
+                    'count' => $userInfoCounts->canceled ?? 0,
+                ],
+            ];
+        @endphp
         @canAny(['userinfo_all', 'userinfo_pending', 'userinfo_confirmed', 'userinfo_canceled'])
+            @php
+                $isUserInfoRoute = $routeName == 'admin.userinfo.all';
+            @endphp
             <li class="nav-item">
-                <a class="nav-link" href="#userInfoDropDown" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                <a class="nav-link {{ $isUserInfoRoute ? 'active' : '' }}" href="#userInfoDropDown"
+                    data-bs-toggle="collapse" role="button" aria-expanded="{{ $isUserInfoRoute ? 'true' : 'false' }}"
                     aria-controls="userInfoDropDown">
                     <i class="iconoir-community menu-icon"></i>
                     <span>User Info</span>
                 </a>
-                <div class="collapse " id="userInfoDropDown">
+
+                <div class="collapse {{ $isUserInfoRoute ? 'show' : '' }}" id="userInfoDropDown">
                     <ul class="nav flex-column">
-                        @can('userinfo_all')
-                            <li class="nav-item">
-                                <a href="{{ route('admin.userinfo.all') }}" class="nav-link ">All User Info
-                                    <span class="badge bg-dark ms-2">{{ $userInfoCounts->total ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('userinfo_pending')
-                            <li class="nav-item">
-                                <a href="{{ route('admin.userinfo.all') }}?status=pending" class="nav-link ">Pending
-                                    <span class="badge bg-warning ms-2">{{ $userInfoCounts->pending ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('userinfo_confirmed')
-                            <li class="nav-item">
-                                <a href="{{ route('admin.userinfo.all') }}?status=confirmed" class="nav-link ">Confirmed
-                                    <span class="badge bg-success ms-2">{{ $userInfoCounts->confirmed ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                        @can('userinfo_canceled')
-                            <li class="nav-item">
-                                <a href="{{ route('admin.userinfo.all') }}?status=canceled" class="nav-link ">Canceled
-                                    <span class="badge bg-danger ms-2">{{ $userInfoCounts->canceled ?? 0 }}</span>
-                                </a>
-                            </li><!--end nav-item-->
-                        @endcan
-                    </ul><!--end nav-->
+                        @foreach ($userInfoStatuses as $status => $data)
+                            @can($data['permission'])
+                                @php
+                                    $isActive =
+                                        $routeName == 'admin.userinfo.all' &&
+                                        (($status == 'all' && !request('status')) || request('status') == $status);
+                                @endphp
+
+                                <li class="nav-item">
+                                    <a href="{{ $status == 'all' ? route('admin.userinfo.all') : route('admin.userinfo.all', ['status' => $status]) }}"
+                                        class="nav-link {{ $isActive ? 'active' : '' }}">
+                                        {{ $data['label'] }}
+                                        <span class="badge bg-{{ $data['badge'] }} ms-2">
+                                            {{ $data['count'] }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endcan
+                        @endforeach
+                    </ul>
                 </div>
-            </li><!--end nav-item-->
+            </li>
         @endcanAny
+        @php
+            $productRoutes = ['admin.category.view', 'admin.sub-category.view', 'admin.child-category.view'];
+
+            $isProductSettingActive = request()->routeIs($productRoutes);
+        @endphp
         @canAny(['category_view', 'sub_category_view', 'child_category_view'])
             <li class="nav-item">
-                <a class="nav-link" href="#productsSettingDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="productsSettingDropdown">
+                <a class="nav-link {{ $isProductSettingActive ? 'active' : '' }}" href="#productsSettingDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="{{ $isProductSettingActive ? 'true' : 'false' }}" aria-controls="productsSettingDropdown">
                     <i class="las la-cog menu-icon"></i>
                     <span>Product Settings</span>
                 </a>
-                <div class="collapse " id="productsSettingDropdown">
+                <div class="collapse {{ $isProductSettingActive ? 'show' : '' }}" id="productsSettingDropdown">
                     <ul class="nav flex-column">
                         @can('category_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.category.view') }}" class="nav-link ">Category</a>
+                                <a href="{{ route('admin.category.view') }}"
+                                    class="nav-link {{ $isProductSettingActive ? 'active' : '' }}">Category</a>
                             </li>
                         @endcan
                         @can('sub_category_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.sub-category.view') }}" class="nav-link ">Sub Category</a>
+                                <a href="{{ route('admin.sub-category.view') }}"
+                                    class="nav-link {{ $isProductSettingActive ? 'active' : '' }}">Sub
+                                    Category</a>
                             </li>
                         @endcan
                         @can('child_category_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.child-category.view') }}" class="nav-link ">Child Category</a>
+                                <a href="{{ route('admin.child-category.view') }}"
+                                    class="nav-link {{ $isProductSettingActive ? 'active' : '' }}">Child
+                                    Category</a>
                             </li>
                         @endcan
                     </ul><!--end nav-->
@@ -210,8 +264,8 @@
         @endcanAny
         @canAny(['banner_view'])
             <li class="nav-item">
-                <a class="nav-link" href="#bannerDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="bannerDropdown">
+                <a class="nav-link" href="#bannerDropdown" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                    aria-controls="bannerDropdown">
                     <i class="la la-desktop menu-icon"></i>
                     <span>Banners</span>
                 </a>

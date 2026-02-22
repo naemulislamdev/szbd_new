@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Blog;
@@ -17,6 +18,7 @@ use App\Models\FlashDeal;
 use App\Models\FlashDealProduct;
 use App\Models\HelpTopic;
 use App\Models\LandingPages;
+use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductLandingPage;
@@ -613,6 +615,47 @@ class FrontendController extends Controller
         }
         return "Product Price Updated Successfully!";
     }
+    public function currency_convert_order()
+    {
+        $currency_model = Helpers::get_business_settings('currency_model');
+
+        if ($currency_model == 'multi_currency') {
+
+            $default = 1;
+
+            $usd = 0.011904761904762;
+
+            $rate = $default / $usd;
+        } else {
+            $rate = 1;
+        }
+
+        Order::chunk(200, function ($orders) use ($rate) {
+
+
+            foreach ($orders as $order) {
+
+                $order->update([
+                    'order_number'     => $order->id,
+                    'order_amount'    => round($order->order_amount * $rate),
+                    'discount_amount' => round($order->discount_amount * $rate),
+                    'shipping_cost'   => round($order->shipping_cost * $rate),
+                ]);
+                // dd($order->details);
+                if (count($order->details) > 0) {
+
+                    foreach ($order->details as $detail) {
+                        $detail->update([
+                            'price' => round($detail->price * $rate),
+                        ]);
+                    }
+                }
+            }
+        });
+
+        return "USD Converted Back To BDT Successfully!";
+    }
+
     //end
     public function create_role()
     {

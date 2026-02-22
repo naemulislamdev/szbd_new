@@ -97,10 +97,10 @@
             var table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollX: false,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.order.datatables', 'all') }}",
+                    url: "{{ route('admin.order.datatables', 'out_for_delivery') }}",
                     data: function(d) {
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
@@ -133,11 +133,11 @@
                     },
                     {
                         data: 'customer_name',
-                        name: 'customer_name'
+                        name: 'shipping_addresses.contact_person_name'
                     },
                     {
                         data: 'phone',
-                        name: 'phone'
+                        name: 'shipping_addresses.phone'
                     },
                     {
                         data: 'amount',

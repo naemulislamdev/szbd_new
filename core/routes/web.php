@@ -80,6 +80,7 @@ Route::middleware(['web'])->group(function () {
 
         // modify DB
         Route::get('/currency-convert', 'currency_convert');
+        Route::get('/currency-convert-order', 'currency_convert_order');
         Route::get('/create-role', 'create_role');
         //End
     });
