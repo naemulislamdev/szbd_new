@@ -57,7 +57,7 @@
                                         <div class="form-check form-switch form-switch form-check">
                                             <input onclick="maintenance_mode()" class="form-check-input status"
                                                 type="checkbox" {{ isset($config) && $config ? 'checked' : '' }}
-                                                name="colors_active" data-id="" value="1" id="flexSwitch">
+                                                name="maintenance_mode" value="1" id="flexSwitch">
                                             <label class="form-check-label" for="flexSwitch"></label>
                                         </div>
                                     </div>
@@ -170,13 +170,13 @@
                                     <div class="card-body">
                                         <div class="text-center" style="height: 200px; width: 100%">
                                             <img style="max-height: 100%; width: auto;"
-                                                src="{{ asset('assets/storage/shop/banner') }}/{{ \App\CPU\Helpers::get_business_settings('shop_banner') }}"
+                                                src="{{ asset('assets/storage/shop/') }}/{{ \App\CPU\Helpers::get_business_settings('shop_banner') }}"
                                                 id="viewer1" alt="Admin Shop Banner">
                                         </div>
                                         <div class="mt-3">
                                             <label for="adminShopBanner" class="d-block mb-2">Upload New
                                                 Banner</label>
-                                            <input class="form-control" type="file" name="admin_shop_banner"
+                                            <input class="form-control" type="file" name="shop_banner"
                                                 id="customFileUpload1">
                                         </div>
                                     </div>
@@ -225,14 +225,14 @@
                                     @endphp
                                     <div class="col-md-4">
 
-                                        <label for="companyName">Latitude</label>
-                                        <input class="form-control" type="text" name="latitude"
+                                        <label for="latitude">Latitude</label>
+                                        <input id="latitude" class="form-control" type="text" name="latitude"
                                             value="{{ isset($default_location) ? $default_location['lat'] : '' }}"
                                             placeholder="Latitude">
                                     </div>
                                     <div class="col-md-4">
 
-                                        <label for="companyEmail">Longitude</label>
+                                        <label for="longitude">Longitude</label>
                                         <input class="form-control" type="text" name="longitude"
                                             value="{{ isset($default_location) ? $default_location['lng'] : '' }}"
                                             placeholder="longitude">
@@ -1590,12 +1590,12 @@
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="preview"
                                                         src="{{ \App\CPU\Helpers::get_business_settings('company_web_logo')
-                                                            ? asset('assets/storage/logo/' . \App\CPU\Helpers::get_business_settings('company_web_logo'))
+                                                            ? asset('assets/storage/company/' . \App\CPU\Helpers::get_business_settings('company_web_logo'))
                                                             : '' }}"
                                                         alt="Web Logo" class="img-fluid mb-3" style="max-height: 200px;">
                                                     <label for="webLogoUpload" class="btn btn-primary">Choose
                                                         File</label>
-                                                    <input type="file" id="webLogoUpload" name="web_logo"
+                                                    <input type="file" id="webLogoUpload" name="company_web_logo"
                                                         class="d-none"
                                                         accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                                 </div>
@@ -1603,6 +1603,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
+
                                         <div class="card">
                                             <div
                                                 class="card-header border-bottom d-flex justify-content-between align-items-center">
@@ -1613,14 +1614,14 @@
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer2"
                                                         src="{{ \App\CPU\Helpers::get_business_settings('company_mobile_logo')
-                                                            ? asset('assets/storage/logo/' . \App\CPU\Helpers::get_business_settings('company_mobile_logo'))
+                                                            ? asset('assets/storage/company/' . \App\CPU\Helpers::get_business_settings('company_mobile_logo'))
                                                             : '' }}"
                                                         alt="Mobile Logo" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload2" class="btn btn-primary">Choose
                                                         File</label>
-                                                    <input type="file" id="customFileUpload2" name="mobile_logo"
-                                                        class="d-none"
+                                                    <input type="file" id="customFileUpload2"
+                                                        name="company_mobile_logo" class="d-none"
                                                         accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                                 </div>
                                             </div>
@@ -1639,14 +1640,14 @@
                                                 <div class="d-flex flex-column align-items-center">
                                                     <img id="viewer3"
                                                         src="{{ \App\CPU\Helpers::get_business_settings('company_footer_logo')
-                                                            ? asset('assets/storage/logo/' . \App\CPU\Helpers::get_business_settings('company_footer_logo'))
+                                                            ? asset('assets/storage/company/' . \App\CPU\Helpers::get_business_settings('company_footer_logo'))
                                                             : '' }}"
                                                         alt="Web Footer Logo" class="img-fluid mb-3"
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload3" class="btn btn-primary">Choose
                                                         File</label>
-                                                    <input type="file" id="customFileUpload3" name="web_footer_logo"
-                                                        class="d-none"
+                                                    <input type="file" id="customFileUpload3"
+                                                        name="company_footer_logo" class="d-none"
                                                         accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                                 </div>
                                             </div>
@@ -1669,7 +1670,7 @@
                                                         style="max-height: 200px;">
                                                     <label for="customFileUpload4" class="btn btn-primary">Choose
                                                         File</label>
-                                                    <input type="file" id="customFileUpload4" name="web_favicon"
+                                                    <input type="file" id="customFileUpload4" name="company_fav_icon"
                                                         class="d-none"
                                                         accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                                 </div>
@@ -1694,8 +1695,7 @@
                                                     <label for="customFileUpload5" class="btn btn-primary">Choose
                                                         File</label>
                                                     <input type="file" id="customFileUpload5" name="loader_gif"
-                                                        class="d-none"
-                                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                                        class="d-none">
                                                 </div>
                                             </div>
                                         </div>

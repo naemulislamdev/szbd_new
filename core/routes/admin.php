@@ -5,7 +5,10 @@ use App\Http\Controllers\Backend\AdminProfileController;
 use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
+use App\Http\Controllers\Backend\BlogController;
+use App\Http\Controllers\Backend\CareerController;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\LandingPagesController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmplyeeController;
@@ -311,12 +314,65 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(BusinessSettingsController::class)->prefix('/web-config')->as('web_config.')->group(function () {
             Route::get('view', 'index')->name('view');
             Route::post('app-store/{name}', 'update')->name('app-store-update');
-            // Route::get('datatables', 'datatables')->name('datatables');
-            // Route::post('delete', 'destroy')->name('delete');
             Route::post('store', 'updateInfo')->name('updateInfo');
-            // Route::post('update', 'update')->name('update');
-            // Route::post('status', 'status')->name('status');
-            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
+        // Blog Management Routes
+        Route::controller(BlogController::class)->prefix('/blog')->as('blog.')->group(function () {
+            //blog category
+            Route::get('/category/list', 'categoryList')->name('categoryList');
+            Route::get('/category/datatables', 'categoryDatatables')->name('categoryDatatables');
+            Route::post('/category/delete', 'categoryDelete')->name('categoryDelete');
+            Route::post('/category/status', 'categoryStatus')->name('categoryStatus');
+            Route::post('/category/store', 'categoryStore')->name('categoryStore');
+            Route::post('/category/update', 'categoryUpdate')->name('categoryUpdate');
+            // Blog Routes
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('store', 'store')->name('store');
+            Route::post('update/{id}', 'update')->name('update');
+        });
+
+        //  Coupon management routes
+        // Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->group(function () {
+        //     Route::get('add-new', 'add_new')->name('add-new')->middleware('actch');;
+        //     Route::post('store-coupon', 'store')->name('store-coupon');
+        //     Route::get('update/{id}', 'edit')->name('update')->middleware('actch');
+        //     Route::post('update/{id}', 'update');
+        //     Route::get('status/{id}/{status}', 'status')->name('status');
+        //     Route::delete('delete/{id}', 'delete')->name('delete');
+        // });
+
+        // career management routes
+        Route::controller(CareerController::class)->prefix("/career")->as('career.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/create', 'create')->name('create');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::post('/update/{id}', 'update')->name('update');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+            Route::get('/datatables', 'datatables')->name('datatables');
+
+            // Job Departments
+            Route::get('/department/view', 'department')->name('department');
+            Route::post('/department/store', 'departmentStore')->name('departmentStore');
+            Route::post('/department/update', 'departmentUpdate')->name('departmentUpdate');
+            Route::post('/department/delete', 'departmentDelete')->name('departmentDelete');
+            Route::post('/department/status', 'departmentStatus')->name('departmentStatus');
+            Route::get('/department/datatables', 'departmentDatatables')->name('departmentDatatables');
+        });
+        // applications routes
+        // Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
+        //     Route::get('/view', 'index')->name('view');
+        //     Route::post('/delete', 'delete')->name('delete');
+        //     Route::post('/status', 'status')->name('status');
+        //     Route::get('bulk-export', 'bulk_export_applications')->name('bulk-export');
+        //     Route::get('/datatables/{slug}', 'datatables')->name('datatables'); //JSON REQUEST
+        //     Route::post('/viewApplication', 'viewApplication')->name('viewApplication');
+        // });
     });
 });

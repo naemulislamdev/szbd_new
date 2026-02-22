@@ -383,12 +383,12 @@
         @endcanAny
 
         <li class="nav-item">
-            <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
-                aria-expanded="false" aria-controls="rolePermissionDropdown">
+            <a class="nav-link" href="#settingsDropDown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="settingsDropDown">
                 <i class="la la-gear menu-icon"></i>
                 <span>Settings</span>
             </a>
-            <div class="collapse " id="rolePermissionDropdown">
+            <div class="collapse " id="settingsDropDown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a href="{{ route('admin.web_config.view') }}" class="nav-link ">Website Configuration</a>
@@ -397,11 +397,49 @@
             </div>
         </li><!--end nav-item-->
         <li class="nav-item">
+            <a class="nav-link" href="#blogDropDown" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                aria-controls="blogDropDown">
+                <i class="las la-blog menu-icon"></i>
+                <span>Blogs Management</span>
+            </a>
+            <div class="collapse " id="blogDropDown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.blog.categoryList') }}" class="nav-link ">Blog Category</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.blog.list') }}" class="nav-link ">Blog</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="#careerDropdown" data-bs-toggle="collapse" role="button"
+                aria-expanded="false" aria-controls="blogDropDown">
+                <i class="las la-briefcase menu-icon"></i>
+                <span>Career Management</span>
+            </a>
+            <div class="collapse " id="careerDropdown">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.career.department') }}" class="nav-link ">Departments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.career.view') }}" class="nav-link ">Job Posts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link ">Applications</a>
+                    </li>
+                </ul><!--end nav-->
+            </div>
+        </li><!--end nav-item-->
+        <li class="nav-item">
             <a class="nav-link" href="#">
-                <i class="iconoir-chat-bubble menu-icon"></i>
-                <span>Chat</span>
+                <i class="las la-gift menu-icon"></i>
+                <span>Coupon</span>
             </a>
         </li><!--end nav-item-->
+
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="las la-phone menu-icon"></i>
@@ -412,7 +450,7 @@
         <li class="nav-item">
             <a class="nav-link" href="#reportsDropdown" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="reportsDropdown">
-                <i class="las la-user-tag menu-icon"></i>
+                <i class="las la-file-alt menu-icon"></i>
                 <span>Reports</span>
             </a>
             <div class="collapse " id="reportsDropdown">

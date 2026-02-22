@@ -7,7 +7,7 @@
 
                 <a href="{{ route('home') }}">
                     <img class="header-logo"
-                        src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
+                        src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
@@ -95,7 +95,7 @@
                             <a href="{{ route('home') }}">
 
                                 <img style="max-width: 100%;"
-                                    src="{{ asset('assets/storage/logo') . '/' . $web_config['web_logo']->value }}"
+                                    src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
                                     onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     alt="{{ $web_config['name']->value }}">
                             </a>
@@ -151,7 +151,7 @@
     <div class="mm-logo row align-items-center" style="background: #fff; padding: 11px 18px;">
         <a href="{{ route('home') }}" class="col-9">
             <img style="max-width: 100%; height: auto;"
-                src="{{ asset('assets/storage/logo') . '/' . $web_config['mob_logo']->value }}"
+                src="{{ asset('assets/storage/company') . '/' . $web_config['mob_logo']->value }}"
                 onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="">
         </a>
         <div class="mm-cross-icon col-3 text-right">

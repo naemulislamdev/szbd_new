@@ -54,7 +54,7 @@
                                     @php($e_commerce_logo = \App\Models\BusinessSetting::where(['type' => 'company_web_logo'])->first()->value)
                                     <div class="text-center p-3">
                                         <a href="{{ route('home') }}" class="logo logo-admin">
-                                            <img src="{{ asset('assets/storage/logo/' . $e_commerce_logo) }}"
+                                            <img src="{{ asset('assets/storage/company/' . $e_commerce_logo) }}"
                                                 height="50" alt="logo" class="auth-logo">
                                         </a>
                                         <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">Let's Get Started Shopping

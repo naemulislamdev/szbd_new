@@ -47,27 +47,39 @@ class Helpers
     }
     public static function get_business_settings($name)
     {
-        $config = null;
-        $check = ['currency_model', 'currency_symbol_position', 'system_default_currency', 'language', 'company_name', 'decimal_point_settings', 'company_web_logo', 'company_mobile_logo', 'company_footer_logo', 'company_fav_icon'];
+        $data = BusinessSetting::where('type', $name)->first();
 
-        if (in_array($name, $check) == true && session()->has($name)) {
-            $config = session($name);
-        } else {
-            $data = BusinessSetting::where(['type' => $name])->first();
-            if (isset($data)) {
-                $config = json_decode($data['value'], true);
-                if (is_null($config)) {
-                    $config = $data['value'];
-                }
-            }
-
-            if (in_array($name, $check) == true) {
-                session()->put($name, $config);
-            }
+        if (!$data) {
+            return null;
         }
 
-        return $config;
+        return json_decode($data->value, true) ?? $data->value;
     }
+    // public static function get_business_settings($name)
+    // {
+    //     $config = null;
+    //     $check = ['currency_model', 'currency_symbol_position', 'system_default_currency', 'language', 'company_name', 'decimal_point_settings', 'company_web_logo', 'company_mobile_logo', 'company_footer_logo', 'company_fav_icon'];
+    //     session()->forget('company_mobile_logo');
+    //     session()->forget('company_web_logo');
+    //     session()->forget('company_footer_logo');
+    //     if (in_array($name, $check) == true && session()->has($name)) {
+    //         // $config = session($name);
+    //     } else {
+    //         $data = BusinessSetting::where(['type' => $name])->first();
+    //         if (isset($data)) {
+    //             $config = json_decode($data['value'], true);
+    //             if (is_null($config)) {
+    //                 $config = $data['value'];
+    //             }
+    //         }
+
+    //         if (in_array($name, $check) == true) {
+    //             session()->put($name, $config);
+    //         }
+    //     }
+
+    //     return $config;
+    // }
     public static function get_product_discount($product, $price)
     {
         $discount = 0;
