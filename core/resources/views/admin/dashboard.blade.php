@@ -201,19 +201,19 @@
                             <div class="col-auto">
                                 <div class="img-group d-flex">
                                     <a class="user-avatar position-relative d-inline-block" href="#">
-                                        <img src="assets/images/users/avatar-1.jpg" alt="avatar"
+                                        <img src="{{ asset('assets/backend/users/avatar-1.jpg') }}" alt="avatar"
                                             class="thumb-md shadow-sm rounded-circle">
                                     </a>
                                     <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
-                                        <img src="assets/images/users/avatar-2.jpg" alt="avatar"
+                                        <img src="{{ asset('assets/backend/users/avatar-2.jpg') }}" alt="avatar"
                                             class="thumb-md shadow-sm rounded-circle">
                                     </a>
                                     <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
-                                        <img src="assets/images/users/avatar-4.jpg" alt="avatar"
+                                        <img src="{{ asset('assets/backend/users/avatar-3.jpg') }}" alt="avatar"
                                             class="thumb-md shadow-sm rounded-circle">
                                     </a>
                                     <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
-                                        <img src="assets/images/users/avatar-3.jpg" alt="avatar"
+                                        <img src="{{ asset('assets/backend/users/avatar-4.jpg') }}" alt="avatar"
                                             class="thumb-md shadow-sm rounded-circle">
                                     </a>
                                     <a href="" class="user-avatar position-relative d-inline-block ms-1">
@@ -243,7 +243,7 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h4 class="card-title">Top Selling by Country</h4>
+                                <h4 class="card-title">Top Selling by Division</h4>
                             </div><!--end col-->
                             <div class="col-auto">
                                 <div class="dropdown">
@@ -272,7 +272,7 @@
                                                 <img src="assets/images/flags/us_flag.jpg"
                                                     class="me-2 align-self-center thumb-md rounded" alt="...">
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="m-0 text-truncate">USA</h6>
+                                                    <h6 class="m-0 text-truncate">Dhaka</h6>
                                                     <div class="d-flex align-items-center">
                                                         <div class="progress bg-primary-subtle w-100" style="height:4px;"
                                                             role="progressbar" aria-label="Success example"
@@ -294,7 +294,7 @@
                                                 <img src="assets/images/flags/spain_flag.jpg"
                                                     class="me-2 align-self-center thumb-md rounded" alt="...">
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="m-0 text-truncate">Spain</h6>
+                                                    <h6 class="m-0 text-truncate">Barishal</h6>
                                                     <div class="d-flex align-items-center">
                                                         <div class="progress bg-primary-subtle w-100" style="height:4px;"
                                                             role="progressbar" aria-label="Success example"
@@ -316,7 +316,7 @@
                                                 <img src="assets/images/flags/french_flag.jpg"
                                                     class="me-2 align-self-center thumb-md rounded" alt="...">
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="m-0 text-truncate">French</h6>
+                                                    <h6 class="m-0 text-truncate">Chitagong</h6>
                                                     <div class="d-flex align-items-center">
                                                         <div class="progress bg-primary-subtle w-100" style="height:4px;"
                                                             role="progressbar" aria-label="Success example"
@@ -338,7 +338,7 @@
                                                 <img src="assets/images/flags/germany_flag.jpg"
                                                     class="me-2 align-self-center thumb-md rounded" alt="...">
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="m-0 text-truncate">Germany</h6>
+                                                    <h6 class="m-0 text-truncate">Rangpur</h6>
                                                     <div class="d-flex align-items-center">
                                                         <div class="progress bg-primary-subtle w-100" style="height:4px;"
                                                             role="progressbar" aria-label="Success example"
@@ -360,7 +360,7 @@
                                                 <img src="assets/images/flags/baha_flag.jpg"
                                                     class="me-2 align-self-center thumb-md rounded" alt="...">
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="m-0 text-truncate">Bahamas</h6>
+                                                    <h6 class="m-0 text-truncate">Sylhet</h6>
                                                     <div class="d-flex align-items-center">
                                                         <div class="progress bg-primary-subtle w-100" style="height:4px;"
                                                             role="progressbar" aria-label="Success example"
@@ -382,7 +382,7 @@
                                                 <img src="assets/images/flags/russia_flag.jpg"
                                                     class="me-2 align-self-center thumb-md rounded" alt="...">
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="m-0 text-truncate">Russia</h6>
+                                                    <h6 class="m-0 text-truncate">Rajshahi</h6>
                                                     <div class="d-flex align-items-center">
                                                         <div class="progress bg-primary-subtle w-100" style="height:4px;"
                                                             role="progressbar" aria-label="Success example"

@@ -24,9 +24,9 @@ use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\JobApplicationController;
 use App\Http\Controllers\Backend\SystemController;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
 
@@ -339,14 +339,15 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         });
 
         //  Coupon management routes
-        // Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->group(function () {
-        //     Route::get('add-new', 'add_new')->name('add-new')->middleware('actch');;
-        //     Route::post('store-coupon', 'store')->name('store-coupon');
-        //     Route::get('update/{id}', 'edit')->name('update')->middleware('actch');
-        //     Route::post('update/{id}', 'update');
-        //     Route::get('status/{id}/{status}', 'status')->name('status');
-        //     Route::delete('delete/{id}', 'delete')->name('delete');
-        // });
+        Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->group(function () {
+            Route::get('view', 'list')->name('view');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('add-new', 'add_new')->name('add-new');
+            Route::post('store-coupon', 'store')->name('store-coupon');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
 
         // career management routes
         Route::controller(CareerController::class)->prefix("/career")->as('career.')->group(function () {
@@ -367,20 +368,18 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/department/status', 'departmentStatus')->name('departmentStatus');
             Route::get('/department/datatables', 'departmentDatatables')->name('departmentDatatables');
         });
+        // Reports routes
+        Route::controller(ReportController::class)->prefix("/report")->as('report.')->group(function () {
+            Route::get('/daily-sales', 'dailySales')->name('dailySales');
+            Route::get('/daily-sales-datatable', 'dailySalesData')->name('dailySalesData');
+            Route::get('/daily-sales-export', 'dailySalesExport')->name('dailySalesExport');
+        });
         // applications routes
-        // Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
-        //     Route::get('/view', 'index')->name('view');
-        //     Route::post('/delete', 'delete')->name('delete');
-        //     Route::post('/status', 'status')->name('status');
-        //     Route::get('bulk-export', 'bulk_export_applications')->name('bulk-export');
-        //     Route::get('/datatables/{slug}', 'datatables')->name('datatables'); //JSON REQUEST
-        //     Route::post('/viewApplication', 'viewApplication')->name('viewApplication');
-        // });
-
-            Route::controller(ReportController::class)->prefix("/report")->as('report.')->group(function () {
-                Route::get('/daily-sales', 'dailySales')->name('dailySales');
-                Route::get('/daily-sales-datatable', 'dailySalesData')->name('dailySalesData');
-                Route::get('/daily-sales-export', 'dailySalesExport')->name('dailySalesExport');
-            });
+        Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+        });
     });
 });

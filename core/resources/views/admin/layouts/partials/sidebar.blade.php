@@ -477,14 +477,14 @@
                         <a href="{{ route('admin.career.view') }}" class="nav-link {{ request()->routeIs('admin.career.view') ? 'active' : '' }}">Job Posts</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link ">Applications</a>
+                        <a href="{{ route('admin.application.view') }}" class="nav-link ">Applications</a>
                     </li>
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
         @endcanany
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('admin.coupon.view') }}">
                 <i class="las la-gift menu-icon"></i>
                 <span>Coupon</span>
             </a>

@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Create Job Posts</h4>
+                    <h4 class="page-title">Edit Job Posts</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
