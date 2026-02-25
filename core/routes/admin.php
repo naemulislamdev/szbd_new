@@ -23,8 +23,10 @@ use App\Http\Controllers\Backend\PermissionModuleController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
+use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\SystemController;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
 
@@ -374,5 +376,11 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         //     Route::get('/datatables/{slug}', 'datatables')->name('datatables'); //JSON REQUEST
         //     Route::post('/viewApplication', 'viewApplication')->name('viewApplication');
         // });
+
+            Route::controller(ReportController::class)->prefix("/report")->as('report.')->group(function () {
+                Route::get('/daily-sales', 'dailySales')->name('dailySales');
+                Route::get('/daily-sales-datatable', 'dailySalesData')->name('dailySalesData');
+                Route::get('/daily-sales-export', 'dailySalesExport')->name('dailySalesExport');
+            });
     });
 });

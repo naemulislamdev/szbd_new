@@ -9,6 +9,9 @@
     <meta name="meta_title" content="@yield('title')">
     <meta name="keywords" content="@yield('meta_keywords')">
     <meta name="description" content="@yield('meta_description')">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#0d6efd">
+    <link rel="apple-touch-icon" href="{{ asset('assets/default/icons/szbd.png') }}">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -1370,6 +1373,17 @@
             });
 
         });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/laravel12/szbd_new/service-worker.js')
+                .then(function(reg) {
+                    console.log("SW registered");
+                })
+                .catch(function(err) {
+                    console.log("SW failed", err);
+                });
+        }
     </script>
 
     @stack('scripts')

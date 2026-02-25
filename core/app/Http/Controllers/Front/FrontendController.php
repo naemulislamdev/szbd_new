@@ -576,7 +576,6 @@ class FrontendController extends Controller
         //1.0
         $rate = $my_currency / $usd;
 
-
         foreach ($products as $product) {
             /* ===============================
          | 1️⃣ Convert Variation Price

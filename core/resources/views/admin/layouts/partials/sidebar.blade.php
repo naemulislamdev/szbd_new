@@ -205,56 +205,78 @@
 
             $isProductSettingActive = request()->routeIs($productRoutes);
         @endphp
+
         @canAny(['category_view', 'sub_category_view', 'child_category_view'])
             <li class="nav-item">
-                <a class="nav-link {{ $isProductSettingActive ? 'active' : '' }}" href="#productsSettingDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="{{ $isProductSettingActive ? 'true' : 'false' }}" aria-controls="productsSettingDropdown">
+                <a class="nav-link {{ $isProductSettingActive ? 'active' : '' }}" href="#productsSettingDropdown"
+                    data-bs-toggle="collapse" role="button"
+                    aria-expanded="{{ $isProductSettingActive ? 'true' : 'false' }}"
+                    aria-controls="productsSettingDropdown">
                     <i class="las la-cog menu-icon"></i>
                     <span>Product Settings</span>
                 </a>
+
                 <div class="collapse {{ $isProductSettingActive ? 'show' : '' }}" id="productsSettingDropdown">
                     <ul class="nav flex-column">
+
                         @can('category_view')
                             <li class="nav-item">
                                 <a href="{{ route('admin.category.view') }}"
-                                    class="nav-link {{ $isProductSettingActive ? 'active' : '' }}">Category</a>
+                                    class="nav-link {{ request()->routeIs('admin.category.view') ? 'active' : '' }}">
+                                    Category
+                                </a>
                             </li>
                         @endcan
+
                         @can('sub_category_view')
                             <li class="nav-item">
                                 <a href="{{ route('admin.sub-category.view') }}"
-                                    class="nav-link {{ $isProductSettingActive ? 'active' : '' }}">Sub
-                                    Category</a>
+                                    class="nav-link {{ request()->routeIs('admin.sub-category.view') ? 'active' : '' }}">
+                                    Sub Category
+                                </a>
                             </li>
                         @endcan
+
                         @can('child_category_view')
                             <li class="nav-item">
                                 <a href="{{ route('admin.child-category.view') }}"
-                                    class="nav-link {{ $isProductSettingActive ? 'active' : '' }}">Child
-                                    Category</a>
+                                    class="nav-link {{ request()->routeIs('admin.child-category.view') ? 'active' : '' }}">
+                                    Child Category
+                                </a>
                             </li>
                         @endcan
-                    </ul><!--end nav-->
+
+                    </ul>
                 </div>
-            </li><!--end nav-item-->
+            </li>
         @endcanAny
+
+        @php
+            $landingPageRoutes = ['admin.landingpages.single.index', 'admin.landingpages.multiple.index'];
+            $isLandingPageActive = request()->routeIs($landingPageRoutes);
+        @endphp
+
         @canAny(['signle_page_view', 'multiple_page_view'])
             <li class="nav-item">
-                <a class="nav-link" href="#landingPageDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="landingPageDropdown">
+                <a class="nav-link {{ $isLandingPageActive ? 'active' : '' }}" href="#landingPageDropdown"
+                    data-bs-toggle="collapse" role="button" aria-expanded="{{ $isLandingPageActive ? 'true' : 'false' }}"
+                    aria-controls="landingPageDropdown">
                     <i class="la la-bolt menu-icon"></i>
                     <span>Landing Pages</span>
                 </a>
-                <div class="collapse " id="landingPageDropdown">
+                <div class="collapse {{ $isLandingPageActive ? 'show' : '' }}" id="landingPageDropdown">
                     <ul class="nav flex-column">
                         @can('signle_page_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.landingpages.single.index') }}" class="nav-link ">Single Product</a>
+                                <a href="{{ route('admin.landingpages.single.index') }}"
+                                    class="nav-link {{ request()->routeIs('admin.landingpages.single.index') ? 'active' : '' }}">Single
+                                    Product</a>
                             </li>
                         @endcan
                         @can('multiple_page_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.landingpages.multiple.index') }}" class="nav-link ">Multiple
+                                <a href="{{ route('admin.landingpages.multiple.index') }}"
+                                    class="nav-link {{ request()->routeIs('admin.landingpages.multiple.index') ? 'active' : '' }}">Multiple
                                     Product</a>
                             </li>
                         @endcan
@@ -269,10 +291,12 @@
                     <i class="la la-desktop menu-icon"></i>
                     <span>Banners</span>
                 </a>
-                <div class="collapse " id="bannerDropdown">
+                <div class="collapse {{ request()->routeIs('admin.banner.list') ? 'show' : '' }}" id="bannerDropdown">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="{{ route('admin.banner.list') }}" class="nav-link ">Banner List</a>
+                            <a href="{{ route('admin.banner.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.banner.list') ? 'active' : '' }}">Banner
+                                List</a>
                         </li>
                     </ul><!--end nav-->
                 </div>
@@ -285,10 +309,13 @@
                     <i class="iconoir-community  menu-icon"></i>
                     <span>Customers</span>
                 </a>
-                <div class="collapse " id="customersDropdown">
+                <div class="collapse {{ request()->routeIs('admin.customer.list') ? 'show' : '' }}"
+                    id="customersDropdown">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="{{ route('admin.customer.list') }}" class="nav-link ">Customers List</a>
+                            <a href="{{ route('admin.customer.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.customer.list') ? 'active' : '' }}">Customers
+                                List</a>
                         </li>
                     </ul><!--end nav-->
                 </div>
@@ -301,10 +328,13 @@
                     <i class="las la-hand-holding-usd menu-icon"></i>
                     <span>Investors</span>
                 </a>
-                <div class="collapse " id="investorDropdown">
+                <div class="collapse {{ request()->routeIs('admin.investors.list') ? 'show' : '' }}"
+                    id="investorDropdown">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="{{ route('admin.investors.list') }}" class="nav-link ">Investors List</a>
+                            <a href="{{ route('admin.investors.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.investors.list') ? 'active' : '' }}">Investors
+                                List</a>
                         </li>
                     </ul><!--end nav-->
                 </div>
@@ -317,10 +347,13 @@
                     <i class="las la-handshake menu-icon"></i>
                     <span>Franchise</span>
                 </a>
-                <div class="collapse " id="franchiseDropdown">
+                <div class="collapse {{ request()->routeIs('admin.franchise.list') ? 'show' : '' }}"
+                    id="franchiseDropdown">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="{{ route('admin.franchise.list') }}" class="nav-link ">Franchise List</a>
+                            <a href="{{ route('admin.franchise.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.franchise.list') ? 'active' : '' }}">Franchise
+                                List</a>
                         </li>
                     </ul><!--end nav-->
                 </div>
@@ -333,48 +366,63 @@
                     <i class="las la-truck-moving menu-icon"></i>
                     <span>Wholesale</span>
                 </a>
-                <div class="collapse " id="wholesaleDropdown">
+                <div class="collapse {{ request()->routeIs('admin.wholesale.list') ? 'show' : '' }}"
+                    id="wholesaleDropdown">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="{{ route('admin.wholesale.list') }}" class="nav-link ">Wholesale List</a>
+                            <a href="{{ route('admin.wholesale.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.wholesale.list') ? 'active' : '' }}">Wholesale
+                                List</a>
                         </li>
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->
         @endcanAny
-        {{-- <li class="nav-item">
-            <a class="nav-link" href="">
-                <i class="las la-globe menu-icon"></i>
-                <span>Website Configuration</span>
-            </a>
-        </li> --}}
+
+        @php
+            $isDiscountRoute = request()->routeIs([
+                'admin.discount.flat',
+                'admin.discount.batch',
+                'admin.discount.offers',
+                'admin.discount.eid.offers',
+            ]);
+        @endphp
+
         @canAny(['discount_flat', 'discount_batch', 'discount_offers', 'discount_eid_offers'])
             <li class="nav-item">
-                <a class="nav-link" href="#discountDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="discountDropdown">
+                <a class="nav-link {{ $isDiscountRoute ? 'active' : '' }}" href="#discountDropdown"
+                    data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="discountDropdown">
                     <i class="las la-tags menu-icon"></i>
                     <span>Discount Management</span>
                 </a>
-                <div class="collapse " id="discountDropdown">
+                <div class="collapse {{ $isDiscountRoute ? 'show' : '' }}" id="discountDropdown">
                     <ul class="nav flex-column">
                         @can('discount_flat')
                             <li class="nav-item">
-                                <a href="{{ route('admin.discount.flat') }}" class="nav-link ">Flat Discount</a>
+                                <a href="{{ route('admin.discount.flat') }}"
+                                    class="nav-link {{ request()->routeIs('admin.discount.flat') ? 'active' : '' }}">Flat
+                                    Discount</a>
                             </li>
                         @endcan
                         @can('discount_batch')
                             <li class="nav-item">
-                                <a href="{{ route('admin.discount.batch') }}" class="nav-link ">Batch Discount</a>
+                                <a href="{{ route('admin.discount.batch') }}"
+                                    class="nav-link {{ request()->routeIs('admin.discount.batch') ? 'active' : '' }}">Batch
+                                    Discount</a>
                             </li>
                         @endcan
                         @can('discount_offers')
                             <li class="nav-item">
-                                <a href="{{ route('admin.discount.offers') }}" class="nav-link ">Discount Offers</a>
+                                <a href="{{ route('admin.discount.offers') }}"
+                                    class="nav-link {{ request()->routeIs('admin.discount.offers') ? 'active' : '' }}">Discount
+                                    Offers</a>
                             </li>
                         @endcan
                         @can('discount_eid_offers')
                             <li class="nav-item">
-                                <a href="{{ route('admin.discount.eid.offers') }}" class="nav-link ">Eid Offers ✨🌙</a>
+                                <a href="{{ route('admin.discount.eid.offers') }}"
+                                    class="nav-link {{ request()->routeIs('admin.discount.eid.offers') ? 'active' : '' }}">Eid
+                                    Offers ✨🌙</a>
                             </li>
                         @endcan
                     </ul><!--end nav-->
@@ -388,10 +436,10 @@
                 <i class="la la-gear menu-icon"></i>
                 <span>Settings</span>
             </a>
-            <div class="collapse " id="settingsDropDown">
+            <div class="collapse {{ request()->routeIs('admin.web_config.view') ? 'show' : '' }}" id="settingsDropDown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.web_config.view') }}" class="nav-link ">Website Configuration</a>
+                        <a href="{{ route('admin.web_config.view') }}" class="nav-link {{ request()->routeIs('admin.web_config.view') ? 'active' : '' }}">Website Configuration</a>
                     </li>
                 </ul><!--end nav-->
             </div>
@@ -405,27 +453,28 @@
             <div class="collapse " id="blogDropDown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.blog.categoryList') }}" class="nav-link ">Blog Category</a>
+                        <a href="{{ route('admin.blog.categoryList') }}" class="nav-link {{ request()->routeIs('admin.blog.categoryList') ? 'active' : '' }}">Blog Category</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.blog.list') }}" class="nav-link ">Blog</a>
+                        <a href="{{ route('admin.blog.list') }}" class="nav-link {{ request()->routeIs('admin.blog.list') ? 'active' : '' }}">Blog</a>
                     </li>
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        @canany(['career_view', 'career_create', 'career_edit', 'career_delete', 'career_department'])
         <li class="nav-item">
             <a class="nav-link" href="#careerDropdown" data-bs-toggle="collapse" role="button"
                 aria-expanded="false" aria-controls="blogDropDown">
                 <i class="las la-briefcase menu-icon"></i>
                 <span>Career Management</span>
             </a>
-            <div class="collapse " id="careerDropdown">
+            <div class="collapse {{ request()->routeIs('admin.career.department') || request()->routeIs('admin.career.view') ? 'show' : '' }}" id="careerDropdown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="{{ route('admin.career.department') }}" class="nav-link ">Departments</a>
+                        <a href="{{ route('admin.career.department') }}" class="nav-link {{ request()->routeIs('admin.career.department') ? 'active' : '' }}">Departments</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.career.view') }}" class="nav-link ">Job Posts</a>
+                        <a href="{{ route('admin.career.view') }}" class="nav-link {{ request()->routeIs('admin.career.view') ? 'active' : '' }}">Job Posts</a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link ">Applications</a>
@@ -433,6 +482,7 @@
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        @endcanany
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="las la-gift menu-icon"></i>
@@ -456,33 +506,40 @@
             <div class="collapse " id="reportsDropdown">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="#" class="nav-link ">Order Reports</a>
+                        <a href="{{ route('admin.report.dailySales') }}" class="nav-link {{ request()->routeIs('admin.report.dailySales') ? 'active' : '' }}">Daily Sales Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link ">Top Selling Products</a>
                     </li>
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
+        @php
+            $rolePermissionRoutes = ['admin.role_permission.list', 'admin.employee.list', 'admin.permission_module.list'];
+            $isRolePermissionActive = request()->routeIs($rolePermissionRoutes);
+        @endphp
         @canAny(['role_view', 'module_view', 'employee_view'])
             <li class="nav-item">
-                <a class="nav-link" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="rolePermissionDropdown">
+                <a class="nav-link {{ $isRolePermissionActive ? 'active' : '' }}" href="#rolePermissionDropdown" data-bs-toggle="collapse" role="button"
+                    aria-expanded="{{ $isRolePermissionActive ? 'true' : 'false' }}" aria-controls="rolePermissionDropdown">
                     <i class="las la-user-tag menu-icon"></i>
                     <span>Role & Permission</span>
                 </a>
-                <div class="collapse" id="rolePermissionDropdown">
+                <div class="collapse {{ $isRolePermissionActive ? 'show' : '' }}" id="rolePermissionDropdown">
                     <ul class="nav flex-column">
                         @can('role_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.role_permission.list') }}" class="nav-link ">Roles List</a>
+                                <a href="{{ route('admin.role_permission.list') }}" class="nav-link {{ request()->routeIs('admin.role_permission.list') ? 'active' : '' }}">Roles List</a>
                             </li>
                         @endcan
                         @can('employee_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.employee.list') }}" class="nav-link ">Employees</a>
+                                <a href="{{ route('admin.employee.list') }}" class="nav-link {{ request()->routeIs('admin.employee.list') ? 'active' : '' }}">Employees</a>
                             </li>
                         @endcan
                         @can('module_view')
                             <li class="nav-item">
-                                <a href="{{ route('admin.permission_module.list') }}" class="nav-link ">Modules</a>
+                                <a href="{{ route('admin.permission_module.list') }}" class="nav-link {{ request()->routeIs('admin.permission_module.list') ? 'active' : '' }}">Modules</a>
                             </li>
                         @endcan
                     </ul><!--end nav-->
