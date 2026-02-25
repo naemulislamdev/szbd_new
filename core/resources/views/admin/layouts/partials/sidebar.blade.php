@@ -207,8 +207,10 @@
         @endphp
         @canAny(['category_view', 'sub_category_view', 'child_category_view'])
             <li class="nav-item">
-                <a class="nav-link {{ $isProductSettingActive ? 'active' : '' }}" href="#productsSettingDropdown" data-bs-toggle="collapse" role="button"
-                    aria-expanded="{{ $isProductSettingActive ? 'true' : 'false' }}" aria-controls="productsSettingDropdown">
+                <a class="nav-link {{ $isProductSettingActive ? 'active' : '' }}" href="#productsSettingDropdown"
+                    data-bs-toggle="collapse" role="button"
+                    aria-expanded="{{ $isProductSettingActive ? 'true' : 'false' }}"
+                    aria-controls="productsSettingDropdown">
                     <i class="las la-cog menu-icon"></i>
                     <span>Product Settings</span>
                 </a>
@@ -428,13 +430,13 @@
                         <a href="{{ route('admin.career.view') }}" class="nav-link ">Job Posts</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link ">Applications</a>
+                        <a href="{{ route('admin.application.view') }}" class="nav-link ">Applications</a>
                     </li>
                 </ul><!--end nav-->
             </div>
         </li><!--end nav-item-->
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('admin.coupon.view') }}">
                 <i class="las la-gift menu-icon"></i>
                 <span>Coupon</span>
             </a>

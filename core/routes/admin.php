@@ -23,6 +23,7 @@ use App\Http\Controllers\Backend\PermissionModuleController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
+use App\Http\Controllers\Backend\JobApplicationController;
 use App\Http\Controllers\Backend\SystemController;
 use Illuminate\Support\Facades\Route;
 
@@ -337,14 +338,15 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         });
 
         //  Coupon management routes
-        // Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->group(function () {
-        //     Route::get('add-new', 'add_new')->name('add-new')->middleware('actch');;
-        //     Route::post('store-coupon', 'store')->name('store-coupon');
-        //     Route::get('update/{id}', 'edit')->name('update')->middleware('actch');
-        //     Route::post('update/{id}', 'update');
-        //     Route::get('status/{id}/{status}', 'status')->name('status');
-        //     Route::delete('delete/{id}', 'delete')->name('delete');
-        // });
+        Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->group(function () {
+            Route::get('view', 'list')->name('view');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('add-new', 'add_new')->name('add-new');
+            Route::post('store-coupon', 'store')->name('store-coupon');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
 
         // career management routes
         Route::controller(CareerController::class)->prefix("/career")->as('career.')->group(function () {
@@ -366,13 +368,11 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/department/datatables', 'departmentDatatables')->name('departmentDatatables');
         });
         // applications routes
-        // Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
-        //     Route::get('/view', 'index')->name('view');
-        //     Route::post('/delete', 'delete')->name('delete');
-        //     Route::post('/status', 'status')->name('status');
-        //     Route::get('bulk-export', 'bulk_export_applications')->name('bulk-export');
-        //     Route::get('/datatables/{slug}', 'datatables')->name('datatables'); //JSON REQUEST
-        //     Route::post('/viewApplication', 'viewApplication')->name('viewApplication');
-        // });
+        Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+        });
     });
 });
