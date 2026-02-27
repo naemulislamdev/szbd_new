@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\BusinessSettingsController;
 use App\Http\Controllers\Backend\AdminProfileController;
+use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\BlogController;
+use App\Http\Controllers\Backend\BranchController;
 use App\Http\Controllers\Backend\CareerController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
@@ -393,6 +396,37 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/datatables', 'datatables')->name('datatables');
             Route::post('/delete', 'delete')->name('delete');
             Route::post('/status', 'status')->name('status');
+        });
+        // Brands Routes
+        Route::controller(BrandController::class)->prefix('/brand')->as('brand.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'delete')->name('delete');
+            Route::get('export', 'export')->name('export');
+            Route::post('status', 'status')->name('status');
+        });
+        //Attribute Routes
+
+        Route::controller(AttributeController::class)->prefix('/attribute')->as('attribute.')
+            ->group(function () {
+                Route::get('view', 'index')->name('view');
+                Route::get('/datatables', 'datatables')->name('datatables');
+                Route::post('store', 'store')->name('store');
+                Route::post('update', 'update')->name('update');
+                Route::post('delete', 'delete')->name('delete');
+            });
+
+        // Branch Routes
+        Route::controller(BranchController::class)->prefix('/branches')->as('branch.')->group(function () {
+            Route::get('branch-list', 'index')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
         });
     });
 });
