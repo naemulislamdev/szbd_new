@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Category Management')
+@section('title', 'Brands Management')
 
 @push('styles')
 @endpush
@@ -8,14 +8,14 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">All Categories</h4>
+                    <h4 class="page-title">All Brands</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
 
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">All Categories</li>
+                            <li class="breadcrumb-item active">All Brands</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -27,14 +27,14 @@
                     <div class="card-header pb-0">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h4 class="card-title">All category</h4>
+                                <h4 class="card-title">All Brand</h4>
                             </div><!--end col-->
                             <div class="col-auto">
                                 <div class="row mb-3">
                                     <div class="col-lg-12">
                                         <button class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#categoryModal"><i class="la la-plus-circle"></i> Add New
-                                            Category</button>
+                                            Brand</button>
                                     </div>
 
                                 </div>
@@ -52,14 +52,13 @@
                             <table class="table" id="szbd-datatable">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>SL</th>
+                                        <th>SL#</th>
                                         <th>Name</th>
-                                        <th>Slug</th>
-                                        <th>Icon</th>
-                                        <th>Order Number</th>
-                                        <th>Home Status</th>
-
-                                        <th class="text-end">Action</th>
+                                        <th>Total Product</th>
+                                        <th>Total Order</th>
+                                        <th>Image</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -70,28 +69,25 @@
         </div> <!-- end row -->
     </div><!-- container -->
 
-    <!--Category Edit Modal -->
+    <!--brand Edit Modal -->
     <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form id="editForm" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Category</h5>
+                        <h5 class="modal-title">Edit Brand</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="id" id="categoryId">
-                        <div class="mb-3">
-                            <label>Category Name</label>
-                            <input required type="text" name="name" class="form-control" id="categoryName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Order Number</label>
-                            <input required type="number" name="order_number" class="form-control" id="categoryOrder"
-                                required>
-                        </div>
+                        <input type="hidden" name="id" id="brandId">
                         <div class="row">
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Brand Name</label>
+                                <input id="brandName" required type="text" name="name" class="form-control"
+                                    placeholder="New Category" required>
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">
                                     image
@@ -99,17 +95,18 @@
                                         ratio 1:1
                                     </small>
                                 </label>
-                                <input id="customFileEg2" type="file" name="icon" class="form-control"
-                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*" required>
+                                <input id="customFileEg2" type="file" name="image" class="form-control"
+                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*">
                             </div>
 
                             <div class="col-12">
                                 <hr>
                                 <div class="text-center">
-                                    <img id="viewer2" src="{{ asset('assets/backend/images/placeholder.jpg') }}"
+                                    <img id="viewer2" src="{{ asset('assets/storage/images/placeholder.jpg') }}"
                                         style="width:200px;max-height:200px;border:1px solid;border-radius:10px; object-fit:contain;">
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -121,7 +118,7 @@
         </div>
     </div>
 
-    <!-- Category Add Modal -->
+    <!-- brand Add Modal -->
     <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -129,7 +126,7 @@
                 <form id="categoryForm" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="categoryModalLabel">Add New Category</h5>
+                        <h5 class="modal-title" id="categoryModalLabel">Add New Brand</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -137,17 +134,10 @@
                         <div class="row">
 
                             <div class="col-md-12 mb-3">
-                                <label class="form-label">Category Name</label>
+                                <label class="form-label">Brand Name</label>
                                 <input required type="text" name="name" class="form-control"
-                                    placeholder="New Category" required>
+                                    placeholder="Brand Name" required>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Order Number</label>
-                                <input required type="number" name="order_number" class="form-control"
-                                    placeholder="Ex: 1,2,3..." required>
-                            </div>
-
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">
                                     image
@@ -155,7 +145,7 @@
                                         ratio 1:1
                                     </small>
                                 </label>
-                                <input id="customFileEg1" type="file" name="icon" class="form-control"
+                                <input id="customFileEg1" type="file" name="image" class="form-control"
                                     accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*" required>
                             </div>
 
@@ -201,10 +191,10 @@
             const table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollX: false,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.category.datatables', 'all') }}",
+                    url: "{{ route('admin.brand.datatables') }}",
 
                 },
 
@@ -219,16 +209,20 @@
                         data: 'name'
                     },
                     {
-                        data: 'slug'
+                        data: 'total_product',
+                        orderable: false,
+                        searchable: false
                     },
                     {
-                        data: 'icon'
+                        data: 'total_order',
+                        orderable: false,
+                        searchable: false
                     },
                     {
-                        data: 'order_number'
+                        data: 'image'
                     },
                     {
-                        data: 'home_status'
+                        data: 'status'
                     },
                     {
                         data: 'action',
@@ -272,14 +266,14 @@
                             }
                         });
                         $.ajax({
-                            url: "{{ route('admin.category.delete') }}",
+                            url: "{{ route('admin.brand.delete') }}",
                             method: 'POST',
                             data: {
                                 id: id
                             },
                             success: function() {
                                 toastr.success(
-                                    'Category_deleted_Successfully.'
+                                    'Brand Deleted Successfully.'
                                 );
                                 table.ajax.reload();
 
@@ -295,7 +289,7 @@
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ route('admin.category.store') }}",
+                    url: "{{ route('admin.brand.store') }}",
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -311,7 +305,7 @@
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Category added successfully');
+                        toastr.success(res.message ?? 'Brand added successfully');
                     },
                     error: function(err) {
                         toastr.error(err.responseJSON.message ?? 'Something went wrong!');
@@ -325,23 +319,21 @@
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ route('admin.category.update') }}",
+                    url: "{{ route('admin.brand.update') }}",
                     type: "POST",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function(res) {
-
                         // modal close
                         $('#editModal').modal('hide');
-
                         // form reset
                         $('#editForm')[0].reset();
 
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Category Updated successfully');
+                        toastr.success(res.message ?? 'Brand Updated successfully');
                     },
                     error: function(err) {
                         toastr.error(err.responseJSON.message ?? 'Something went wrong!');
@@ -376,11 +368,11 @@
                 }
             });
             $.ajax({
-                url: "{{ route('admin.category.status') }}",
+                url: "{{ route('admin.brand.status') }}",
                 method: 'POST',
                 data: {
                     id: id,
-                    home_status: status
+                    status: status
                 },
                 success: function(data) {
                     if (data.success == true) {
@@ -429,10 +421,9 @@
     <script>
         $(document).on('click', '.edit', function() {
             let button = $(this);
-            $('#categoryId').val(button.data('id'));
-            $('#categoryName').val(button.data('name'));
-            $('#categoryOrder').val(button.data('order'));
-            $('#viewer2').attr('src', button.data('icon'));
+            $('#brandId').val(button.data('id'));
+            $('#brandName').val(button.data('name'));
+            $('#viewer2').attr('src', button.data('image'));
             // Form action dynamically set if needed
             $('#editForm').attr('action', '/admin/category/' + button.data('id') + '/update');
         });

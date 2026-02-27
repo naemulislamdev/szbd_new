@@ -237,7 +237,6 @@ class CareerController extends Controller
             })
             ->rawColumns([
                 'action',
-
                 'status',
             ])
             ->toJson();

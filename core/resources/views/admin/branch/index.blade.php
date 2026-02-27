@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Category Management')
+@section('title', 'Branch Management')
 
 @push('styles')
 @endpush
@@ -8,14 +8,13 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">All Categories</h4>
+                    <h4 class="page-title">All Branch</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
-
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">All Categories</li>
+                            <li class="breadcrumb-item active">All Branch</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -27,14 +26,14 @@
                     <div class="card-header pb-0">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h4 class="card-title">All category</h4>
+                                <h4 class="card-title">All Branch</h4>
                             </div><!--end col-->
                             <div class="col-auto">
                                 <div class="row mb-3">
                                     <div class="col-lg-12">
                                         <button class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#categoryModal"><i class="la la-plus-circle"></i> Add New
-                                            Category</button>
+                                            Branch</button>
                                     </div>
 
                                 </div>
@@ -52,14 +51,13 @@
                             <table class="table" id="szbd-datatable">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>SL</th>
+                                        <th>SL#</th>
                                         <th>Name</th>
-                                        <th>Slug</th>
-                                        <th>Icon</th>
-                                        <th>Order Number</th>
-                                        <th>Home Status</th>
-
-                                        <th class="text-end">Action</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -70,45 +68,44 @@
         </div> <!-- end row -->
     </div><!-- container -->
 
-    <!--Category Edit Modal -->
+    <!--brand Edit Modal -->
     <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <form id="editForm" enctype="multipart/form-data">
+                <form id="editForm">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Category</h5>
+                        <h5 class="modal-title">Edit Branch</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="id" id="categoryId">
-                        <div class="mb-3">
-                            <label>Category Name</label>
-                            <input required type="text" name="name" class="form-control" id="categoryName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Order Number</label>
-                            <input required type="number" name="order_number" class="form-control" id="categoryOrder"
-                                required>
-                        </div>
+                        <input type="hidden" name="id" id="branchId">
                         <div class="row">
+
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    image
-                                    <small class="text-danger">
-                                        ratio 1:1
-                                    </small>
-                                </label>
-                                <input id="customFileEg2" type="file" name="icon" class="form-control"
-                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*" required>
+                                <label class="form-label">Branch Name</label>
+                                <input id="branchName" type="text" name="name" class="form-control"
+                                    placeholder="Branch Name" required>
                             </div>
 
-                            <div class="col-12">
-                                <hr>
-                                <div class="text-center">
-                                    <img id="viewer2" src="{{ asset('assets/backend/images/placeholder.jpg') }}"
-                                        style="width:200px;max-height:200px;border:1px solid;border-radius:10px; object-fit:contain;">
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Branch Email</label>
+                                <input id="branchEmail" type="email" name="email" class="form-control"
+                                    placeholder="Branch Email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">BranchPhone</label>
+                                <input id="branchPhone" type="phone" name="phone" class="form-control"
+                                    placeholder="Branch Phone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Branch Google Map Link </label>
+                                <input id="branchMap" type="url" name="map_url" class="form-control"
+                                    placeholder="EX: https://maps.app.goo.gl/" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Branch Address </label>
+                                <textarea name="address" id="address"></textarea>
                             </div>
                         </div>
                     </div>
@@ -121,52 +118,46 @@
         </div>
     </div>
 
-    <!-- Category Add Modal -->
+    <!--  Add Modal -->
     <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <form id="categoryForm" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="categoryModalLabel">Add New Category</h5>
+                        <h5 class="modal-title" id="categoryModalLabel">Add New Branch</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <div class="modal-body">
                         <div class="row">
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Category Name</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Branch Name</label>
                                 <input required type="text" name="name" class="form-control"
-                                    placeholder="New Category" required>
+                                    placeholder="Branch Name" required value="{{ old('name') }}">
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Order Number</label>
-                                <input required type="number" name="order_number" class="form-control"
-                                    placeholder="Ex: 1,2,3..." required>
+                                <label class="form-label">Branch Email</label>
+                                <input required type="email" name="email" class="form-control"
+                                    placeholder="Branch Email" required value="{{ old('email') }}">
                             </div>
-
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    image
-                                    <small class="text-danger">
-                                        ratio 1:1
-                                    </small>
-                                </label>
-                                <input id="customFileEg1" type="file" name="icon" class="form-control"
-                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*" required>
+                                <label class="form-label">BranchPhone</label>
+                                <input required type="phone" name="phone" class="form-control"
+                                    placeholder="Branch Phone" value="{{ old('phone') }}" required>
                             </div>
-
-                            <div class="col-12">
-                                <hr>
-                                <div class="text-center">
-                                    <img id="viewer" src="{{ asset('assets/backend/images/placeholder.jpg') }}"
-                                        style="width:200px;max-height:200px;border:1px solid;border-radius:10px; object-fit:contain;">
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Branch Google Map Link </label>
+                                <input required type="url" name="map_url" class="form-control"
+                                    placeholder="EX: https://maps.app.goo.gl/" value="{{ old('map_url') }}" required>
                             </div>
-
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Branch Address </label>
+                                <textarea name="address" id="address">{{ old('map_url') }}</textarea>
+                            </div>
                         </div>
                     </div>
 
@@ -187,6 +178,15 @@
 @endsection
 @push('scripts')
     <script>
+        $(document).ready(function() {
+            $('#address').summernote({
+                height: 150,
+                placeholder: 'Write Branch Address here...',
+
+            });
+        });
+    </script>
+    <script>
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -201,13 +201,12 @@
             const table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollX: false,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.category.datatables', 'all') }}",
+                    url: "{{ route('admin.branch.datatables') }}",
 
                 },
-
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -219,16 +218,18 @@
                         data: 'name'
                     },
                     {
-                        data: 'slug'
+                        data: 'phone',
+
                     },
                     {
-                        data: 'icon'
+                        data: 'email',
+
                     },
                     {
-                        data: 'order_number'
+                        data: 'address'
                     },
                     {
-                        data: 'home_status'
+                        data: 'status'
                     },
                     {
                         data: 'action',
@@ -272,14 +273,14 @@
                             }
                         });
                         $.ajax({
-                            url: "{{ route('admin.category.delete') }}",
+                            url: "{{ route('admin.branch.delete') }}",
                             method: 'POST',
                             data: {
                                 id: id
                             },
                             success: function() {
                                 toastr.success(
-                                    'Category_deleted_Successfully.'
+                                    'Branch Deleted Successfully.'
                                 );
                                 table.ajax.reload();
 
@@ -295,12 +296,14 @@
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ route('admin.category.store') }}",
+                    url: "{{ route('admin.branch.store') }}",
                     type: "POST",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function(res) {
+
+                        $('#loader').fadeOut(100);
 
                         // modal close
                         $('#categoryModal').modal('hide');
@@ -311,7 +314,8 @@
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Category added successfully');
+                        toastr.success(res.message ?? 'Branch Added successfully');
+
                     },
                     error: function(err) {
                         toastr.error(err.responseJSON.message ?? 'Something went wrong!');
@@ -325,23 +329,21 @@
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ route('admin.category.update') }}",
+                    url: "{{ route('admin.branch.update') }}",
                     type: "POST",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function(res) {
-
                         // modal close
                         $('#editModal').modal('hide');
-
                         // form reset
                         $('#editForm')[0].reset();
 
                         // datatable reload (🔥 main part)
                         table.ajax.reload(null, false);
 
-                        toastr.success(res.message ?? 'Category Updated successfully');
+                        toastr.success(res.message ?? 'Branch Updated successfully');
                     },
                     error: function(err) {
                         toastr.error(err.responseJSON.message ?? 'Something went wrong!');
@@ -376,11 +378,11 @@
                 }
             });
             $.ajax({
-                url: "{{ route('admin.category.status') }}",
+                url: "{{ route('admin.branch.status') }}",
                 method: 'POST',
                 data: {
                     id: id,
-                    home_status: status
+                    status: status
                 },
                 success: function(data) {
                     if (data.success == true) {
@@ -393,46 +395,18 @@
             });
         });
     </script>
-    <script>
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
 
-                reader.onload = function(e) {
-                    $('#viewer').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        $("#customFileEg1").change(function() {
-            readURL(this);
-        });
-
-        function readURL2(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    $('#viewer2').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        $("#customFileEg2").change(function() {
-            readURL2(this);
-        });
-    </script>
     <script>
         $(document).on('click', '.edit', function() {
             let button = $(this);
-            $('#categoryId').val(button.data('id'));
-            $('#categoryName').val(button.data('name'));
-            $('#categoryOrder').val(button.data('order'));
-            $('#viewer2').attr('src', button.data('icon'));
+            $('#branchId').val(button.data('id'));
+            $('#branchName').val(button.data('name'));
+            $('#branchEmail').val(button.data('email'));
+            $('#branchPhone').val(button.data('phone'));
+            let address = button.data('address');
+
+            $('#address').summernote('code', address);
+            $('#branchMap').val(button.data('map_url'));
             // Form action dynamically set if needed
             $('#editForm').attr('action', '/admin/category/' + button.data('id') + '/update');
         });
