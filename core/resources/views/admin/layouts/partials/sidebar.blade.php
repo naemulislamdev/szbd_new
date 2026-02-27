@@ -527,6 +527,12 @@
                 <span>Branch List</span>
             </a>
         </li><!--end nav-item-->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.sitemap') }}">
+                <i class="las la-sitemap menu-icon"></i>
+                <span>Sitemap</span>
+            </a>
+        </li><!--end nav-item-->
 
         <li class="nav-item">
             <a class="nav-link" href="#reportsDropdown" data-bs-toggle="collapse" role="button"
@@ -542,10 +548,14 @@
                             Sales Report</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.report.productReport') }}" class="nav-link {{ request()->routeIs('admin.report.productReport') ? 'active' : '' }}">Product Report</a>
+                        <a href="{{ route('admin.report.productReport') }}"
+                            class="nav-link {{ request()->routeIs('admin.report.productReport') ? 'active' : '' }}">Product
+                            Report</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.report.topSellingProducts') }}" class="nav-link {{ request()->routeIs('admin.report.topSellingProducts') ? 'active' : '' }}">Top Selling Product</a>
+                        <a href="{{ route('admin.report.topSellingProducts') }}"
+                            class="nav-link {{ request()->routeIs('admin.report.topSellingProducts') ? 'active' : '' }}">Top
+                            Selling Product</a>
                     </li>
                 </ul><!--end nav-->
             </div>
