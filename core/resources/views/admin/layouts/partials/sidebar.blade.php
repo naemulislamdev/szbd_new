@@ -509,7 +509,10 @@
                         <a href="{{ route('admin.report.dailySales') }}" class="nav-link {{ request()->routeIs('admin.report.dailySales') ? 'active' : '' }}">Daily Sales Report</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link ">Top Selling Products</a>
+                        <a href="{{ route('admin.report.productReport') }}" class="nav-link {{ request()->routeIs('admin.report.productReport') ? 'active' : '' }}">Product Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.report.topSellingProducts') }}" class="nav-link {{ request()->routeIs('admin.report.topSellingProducts') ? 'active' : '' }}">Top Selling Product</a>
                     </li>
                 </ul><!--end nav-->
             </div>

@@ -373,6 +373,19 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/daily-sales', 'dailySales')->name('dailySales');
             Route::get('/daily-sales-datatable', 'dailySalesData')->name('dailySalesData');
             Route::get('/daily-sales-export', 'dailySalesExport')->name('dailySalesExport');
+            // Product Report
+            Route::get('/product-report', 'productReport')->name('productReport');
+            Route::get('/product-report-datatable', 'productReportData')->name('productReportData');
+            Route::get('/product-report-export', 'productReportExport')->name('productReportExport');
+            // Product Report
+            Route::get('/moderatar-report', 'moderatarReport')->name('moderatarReport');
+            Route::get('/moderatar-report-datatable', 'moderatarReportData')->name('moderatarReportData');
+            Route::get('/moderatar-report-export', 'moderatarReportExport')->name('moderatarReportExport');
+            Route::get('/moderatar-id-update', 'moderationIdUpdate');
+            //Top Selling Product Report
+            Route::get('/top-selling-products', 'topSellingReport')->name('topSellingProducts');
+            // Route::get('daily-sales', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales');
+            // Route::post('daily-sales-filter', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales-filter');
         });
         // applications routes
         Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
