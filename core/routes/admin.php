@@ -26,6 +26,7 @@ use App\Http\Controllers\Backend\PermissionModuleController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
+use App\Http\Controllers\Backend\GlobalSearchController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\JobApplicationController;
 use App\Http\Controllers\Backend\SystemController;
@@ -428,5 +429,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('status', 'status')->name('status');
             Route::post('delete', 'delete')->name('delete');
         });
+        // Global Search Route
+        Route::get('/admin/global-search', [GlobalSearchController::class, 'search'])->name('global.search');
     });
 });

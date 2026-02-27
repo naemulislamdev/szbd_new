@@ -25,7 +25,7 @@ class Order extends Model
 
     public function details()
     {
-        return $this->hasMany(OrderDetail::class)->orderBy('seller_id', 'ASC');
+        return $this->hasMany(OrderDetail::class);
     }
 
     public function seller()

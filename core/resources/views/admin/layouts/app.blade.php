@@ -36,6 +36,39 @@
             color: #fff !important;
             font-weight: 500;
         }
+
+        /* Header Global Search */
+        .search-result-box {
+            position: absolute;
+            background: #fff;
+            width: 100%;
+            z-index: 9999;
+        }
+
+        .search-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .search-item:hover {
+            background: #f1f1f1;
+        }
+
+        #searchResultBox {
+            position: absolute;
+            width: 100%;
+            background: #fff;
+            z-index: 9999;
+
+            max-height: 420px;
+            /* 👈 scroll */
+            overflow-y: auto;
+
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .1);
+        }
+
+        /* Header Global Search End*/
     </style>
 
 </head>
@@ -188,6 +221,105 @@
             });
         });
     </script>
+    <script>
+        $('#globalSearch').on('keyup', function() {
+
+            let q = $(this).val().trim();
+
+            // empty input → hide result
+            if (q.length === 0) {
+                $('#searchResultBox').html('').hide();
+                return;
+            }
+
+            // less than 3 char → hide
+            if (q.length < 3) {
+                $('#searchResultBox').hide();
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('admin.global.search') }}",
+                data: {
+                    q
+                },
+                success: function(res) {
+
+                    let html = '';
+
+                    //ORDER RESULT
+                    if (res.type === 'order') {
+                        const invoiceRoute = "{{ route('admin.order.generate-invoice', ':id') }}";
+                        const orderDetailsRoute = "{{ route('admin.order.details', ':id') }}";
+                        // Total orders
+                        const totalOrders = res.data.length;
+
+                        // Show total orders at the top
+                        html += `
+    <div class="mb-2 bg-primary text-white p-2">
+            Orders Found <span class="badge bg-light text-dark">${totalOrders}</span>
+    </div>
+    `;
+
+                        res.data.forEach(order => {
+                            html += `
+                    <div class="card mb-2 shadow-sm">
+                        <div class="card-body d-flex justify-content-between">
+                            <div>
+                                <a href="${orderDetailsRoute.replace(':id', order.id)}"><strong>Order #${order.order_number}</strong></a>
+                                <span class="badge bg-warning ms-2">${order.order_status}</span>
+
+                                <p class="mb-1 mt-2">
+                                    👤 ${order.customer?.name ?? 'N/A'} |
+                                    📞 ${order.shipping_address?.phone ?? 'N/A'}
+                                </p>
+
+                                <p class="mb-1">
+                                    📦 ${order.total_qty ?? 0} item(s)
+                                </p>
+
+                                <p class="mb-0 text-muted">
+                                    💰 BDT ${order.order_amount}<br>
+                                    🕒 ${order.created_at}
+                                </p>
+                            </div>
+
+                            <div>
+                                <a href="${invoiceRoute.replace(':id', order.id)}"
+                                   class="btn btn-sm btn-outline-success">
+                                    Invoice
+                                </a>
+                            </div>
+                        </div>
+                    </div>`;
+                        });
+                    }
+
+                    // 🏷 PRODUCT RESULT
+                    if (res.type === 'product') {
+                        const productShow = "{{ route('admin.product.show', ':id') }}";
+
+                        res.data.forEach(p => {
+                            html += `
+                    <div class="card mb-2 shadow-sm">
+                        <div class="card-body">
+                            <a href="${productShow.replace(':id', p.id)}"><strong>${p.name}</strong></a><br>
+                            <span class="text-muted">Code: ${p.code}</span>
+                        </div>
+                    </div>`;
+                        });
+                    }
+
+                    //No data → hide
+                    if (html === '') {
+                        $('#searchResultBox').hide();
+                    } else {
+                        $('#searchResultBox').html(html).show();
+                    }
+                }
+            });
+        });
+    </script>
 
     @if (Session::has('success'))
         <script>
@@ -223,4 +355,5 @@
     @stack('scripts')
 </body>
 <!--end body-->
+
 </html>

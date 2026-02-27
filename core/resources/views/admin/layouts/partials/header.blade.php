@@ -17,9 +17,19 @@
                 <li class="hide-phone app-search">
                     <form role="search" action="#" method="get">
                         <input type="search" name="search" class="form-control top-search mb-0"
-                            placeholder="Search here...">
+                            placeholder="Search customer, phone, product..." id="globalSearch">
                         <button type="submit"><i class="iconoir-search"></i></button>
                     </form>
+                    <div id="searchResultBox" class="search-result-box">
+                        {{-- <div>
+                            <button type="button" class="btn btn-primary">
+                                Total Found Orders <span class="badge badge-light"></span>
+                            </button>
+                        </div>
+                        <div>
+
+                        </div> --}}
+                    </div>
                 </li>
                 <li class="topbar-item">
                     <a target="_blank" href="{{ route('home') }}" class="nav-link text-muted">
