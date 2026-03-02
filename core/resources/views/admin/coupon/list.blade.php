@@ -89,121 +89,87 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="id" id="categoryId">
+
                         <div class="row">
+
                             {{-- Coupon Type --}}
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Coupon Type</label>
-                                <select required class="form-select @error('coupon_type') is-invalid @enderror"
-                                    name="coupon_type" id="coupon_type">
-                                    <option value="" disabled selected>----Select----</option>
-                                    <option value="delivery_charge_free"
-                                        {{ old('coupon_type') == 'delivery_charge_free' ? 'selected' : '' }}>
+                                <select required class="form-select" name="coupon_type" id="coupon_type">
+                                    <option value="" disabled>----Select----</option>
+                                    <option value="delivery_charge_free">
                                         Delivery Charge Free
                                     </option>
-                                    <option value="discount_on_purchase"
-                                        {{ old('coupon_type') == 'discount_on_purchase' ? 'selected' : '' }}>
+                                    <option value="discount_on_purchase">
                                         Discount On Purchase
                                     </option>
                                 </select>
-                                @error('coupon_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             {{-- Coupon Code --}}
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Coupon Code</label>
                                 <a href="javascript:void(0)" class="float-end" onclick="generateCode()">Generate Code</a>
-                                <input required ="text" name="code" value="{{ old('code') }}" onclick="generateCode()"
-                                    class="code form-control @error('code') is-invalid @enderror">
-                                @error('code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input required type="text" name="code" id="code" class="form-control">
                             </div>
 
                             {{-- Title --}}
                             <div class="col-md-6 mb-2">
                                 <label>Title</label>
-                                <input required type="text" name="title" value="{{ old('title') }}"
-                                    class="form-control @error('title') is-invalid @enderror"
+                                <input required type="text" name="title" id="title" class="form-control"
                                     placeholder="Enter Coupon Title">
-                                @error('title')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             {{-- Discount Type --}}
                             <div class="col-md-6 mb-2">
                                 <label>Discount Type</label>
-                                <select required name="discount_type" id="discount_type2"
-                                    class=" form-control @error('discount_type') is-invalid @enderror"
+                                <select required name="discount_type" id="discount_type2" class="form-control"
                                     onchange="checkDiscountType2(this.value)">
-                                    <option value="amount" {{ old('discount_type') == 'amount' ? 'selected' : '' }}>Amount
-                                    </option>
-                                    <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>
-                                        Percentage</option>
+                                    <option value="amount">Amount</option>
+                                    <option value="percentage">Percentage</option>
                                 </select>
-                                @error('discount_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             {{-- Start Date --}}
                             <div class="col-md-6 mb-2">
                                 <label>Start Date</label>
-                                <input required type="date" name="start_date" value="{{ old('start_date') }}"
-                                    id="start_date2" class="form-control @error('start_date') is-invalid @enderror">
-                                @error('start_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input required type="date" name="start_date" id="start_date2" class="form-control">
                             </div>
 
                             {{-- Expire Date --}}
                             <div class="col-md-6 mb-2">
                                 <label>Expire Date</label>
-                                <input required type="date" name="expire_date" value="{{ old('expire_date') }}"
-                                    id="expire_date2" class="form-control @error('expire_date') is-invalid @enderror">
-                                @error('expire_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input required type="date" name="expire_date" id="expire_date2" class="form-control">
                             </div>
-                            <div class="col-md-6 form-group">
-                                <label for="name">Discount</label>
-                                <input type="number" min="1" max="1000000" name="discount"
-                                    value="{{ old('discount') }}" class="form-control" id="discount"
-                                    placeholder="Discount" required>
+
+                            {{-- Discount --}}
+                            <div class="col-md-6 mb-2">
+                                <label>Discount</label>
+                                <input type="number" min="1" max="1000000" name="discount" id="discount"
+                                    class="form-control" placeholder="Discount" required>
                             </div>
+
                             {{-- Limit --}}
                             <div class="col-md-6 mb-2">
                                 <label>Limit For Same User</label>
-                                <input required type="number" name="limit" min="0"
-                                    value="{{ old('limit') }}" class="form-control @error('limit') is-invalid @enderror"
-                                    placeholder="EX: 10">
-                                @error('limit')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input required type="number" name="limit" min="0" id="limit"
+                                    class="form-control" placeholder="EX: 10">
                             </div>
 
                             {{-- Minimum Purchase --}}
                             <div class="col-md-6 mb-2">
                                 <label>Minimum Purchase</label>
-                                <input required type="number" name="min_purchase" min="1" max="1000000"
-                                    value="{{ old('min_purchase') }}"
-                                    class="form-control @error('min_purchase') is-invalid @enderror"
-                                    placeholder="Minimum purchase">
-                                @error('min_purchase')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input required type="number" name="min_purchase" id="min_purchase" min="1"
+                                    max="1000000" class="form-control" placeholder="Minimum purchase">
                             </div>
 
                             {{-- Maximum Discount --}}
                             <div class="col-md-6 mb-2" id="max-discount2">
                                 <label>Maximum Discount</label>
-                                <input type="number" name="max_discount" min="1" max="1000000"
-                                    value="{{ old('max_discount') }}" class="form-control"
-                                    placeholder="Maximum discount">
-
+                                <input type="number" name="max_discount" id="max_discount" min="1"
+                                    max="1000000" class="form-control" placeholder="Maximum discount">
                             </div>
+
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -319,8 +285,8 @@
                             <div class="col-md-6 mb-2">
                                 <label>Limit For Same User</label>
                                 <input required type="number" name="limit" min="0"
-                                    value="{{ old('limit') }}"
-                                    class="form-control @error('limit') is-invalid @enderror" placeholder="EX: 10">
+                                    value="{{ old('limit') }}" class="form-control @error('limit') is-invalid @enderror"
+                                    placeholder="EX: 10">
                                 @error('limit')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -708,5 +674,22 @@
             let code = Math.random().toString(36).substring(2, 12);
             $('.code').val(code)
         }
+    </script>
+    <script>
+        $(document).on("click", ".edit", function() {
+
+            $("#categoryId").val($(this).data("id"));
+            $("#coupon_type").val($(this).data("coupon_type"));
+            $("#code").val($(this).data("code"));
+            $("#title").val($(this).data("title"));
+            $("#discount_type2").val($(this).data("discount_type"));
+            $("#start_date2").val($(this).data("start_date"));
+            $("#expire_date2").val($(this).data("expire_date"));
+            $("#discount").val($(this).data("discount"));
+            $("#limit").val($(this).data("limit"));
+            $("#min_purchase").val($(this).data("min_purchase"));
+            $("#max_discount").val($(this).data("max_discount"));
+
+        });
     </script>
 @endpush
