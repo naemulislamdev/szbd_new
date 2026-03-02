@@ -1,4 +1,4 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 @section('title', 'Trend-collections')
 
 <style>
@@ -129,10 +129,11 @@
     .first-image-col {
         max-width: 20% !important;
     }
+
     .product-box-col-2 {
-    height: 460px !important;
-    border-radius: 10px;
-}
+        height: 460px !important;
+        border-radius: 10px;
+    }
 
     @media (max-width: 768px) {
         .product-title {
@@ -162,15 +163,13 @@
         .first-image-col {
             max-width: 100% !important;
         }
-           .product-box-col-2 {
+
+        .product-box-col-2 {
             height: 440px !important;
             border-radius: 10px;
         }
 
     }
-
- 
-
 </style>
 
 @section('content')
@@ -245,7 +244,7 @@
                                     <img style="object-fit: contain; transform: scale(1.3)" class="img-fluid lazy-image"
                                         loading="lazy"
                                         src="data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"
-                                        data-src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $first_product['thumbnail'] }}"
+                                        data-src="{{ asset('assets/storage/landingpage/slider') }}/{{ $first_product->slider_img }}"
                                         alt="{{ $first_product['name'] }}">
                                 </a>
 
@@ -256,13 +255,14 @@
                                 </h3>
                                 <div class="price d-flex justify-content-center align-content-center">
                                     @if ($first_product->discount > 0)
-                                        <span
-                                            class="mr-2">৳ {{ \App\CPU\Helpers::currency_converter(
+                                        <span class="mr-2">৳
+                                            {{ \App\CPU\Helpers::currency_converter(
                                                 $first_product->unit_price - \App\CPU\Helpers::get_product_discount($first_product, $first_product->unit_price),
                                             ) }}</span>
                                         <del>{{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</del>
                                     @else
-                                        <span>৳ {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
+                                        <span>৳
+                                            {{ $first_product->unit_price }}</span>
                                     @endif
                                 </div>
                                 <button type="button" style="cursor: pointer;" class="btn btn-primary"
@@ -286,18 +286,18 @@
                                     <div class="modal-body">
                                         <div class="product-modal-box d-flex align-items-center mb-3">
                                             <div class="img mr-3">
-                                                <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $first_product['thumbnail'] }}"
+                                                <img src="{{ asset('assets/storage/landingpage/slider') }}/{{ $first_product['image'] }}"
                                                     alt="{{ $first_product['name'] }}" style="width: 80px;">
                                             </div>
                                             <div class="p-name">
                                                 <h5 class="title">{{ Str::limit($first_product['name'], 50) }}</h5>
                                                 <span
-                                                    class="mr-2">{{ \App\CPU\Helpers::currency_converter(
+                                                    class="mr-2">{{
                                                         $first_product->unit_price - \App\CPU\Helpers::get_product_discount($first_product, $first_product->unit_price),
-                                                    ) }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
-                                        @if (count(json_decode($first_product->colors)) > 0)
+                                        @if (count($first_product->colors) > 0)
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h4>Color</h4>
@@ -320,7 +320,7 @@
                                             </div>
                                         @endif
 
-                                        @if (count(json_decode($first_product->choice_options)) > 0)
+                                        @if (count($first_product->choice_options) > 0)
                                             @foreach (json_decode($first_product->choice_options) as $key => $choice)
                                                 <div class="row mb-3">
                                                     <div class="col-12">
@@ -444,7 +444,7 @@
                 <div class="d-block d-lg-none mt-3">
                     <div class="row">
                         @foreach ($subProducts as $key => $product)
-                            @include('web-views.products.product_box_2', ['classBox' => 'col-md-2'])
+                            {{-- @include('web-views.products.product_box_2', ['classBox' => 'col-md-2']) --}}
                         @endforeach
                     </div>
                 </div>
@@ -452,7 +452,7 @@
             <div class="d-none d-lg-block mt-4">
                 <div class="row">
                     @foreach ($subProducts as $key => $product)
-                        @include('web-views.products.product_box_2', ['classBox' => 'col-md-2'])
+                        {{-- @include('web-views.products.product_box_2', ['classBox' => 'col-md-2']) --}}
                     @endforeach
                 </div>
             </div>

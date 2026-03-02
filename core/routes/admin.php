@@ -188,6 +188,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/single-product/remove', 'removeSinglePage')->name('remove_single_page');
             Route::get('/single-product/create', 'create')->name('single.create');
             Route::post('/single-product/store', 'storeSingleProduct')->name('single.store');
+            Route::get('/single-product/edit/{id}', 'editSingleProduct')->name('single.edit');
+            Route::post('/single-product/update/{id}', 'updateSingleProduct')->name('single.update');
+            Route::get('/single-product/remove/slider', 'removeImage')->name('single.remove_image');
+            Route::get('/single-product/remove/feature-list', 'removeFeatureList')->name('single.remove_feature_list');
+            Route::get('/single-product/remove/landing-page/section', 'removePageSection')->name('single.remove_page_section');
+            Route::get('/single-product/remove/landing-page/{id}', 'removeLandingPage')->name('single.remove_landing_page');
         });
         Route::controller(BannerController::class)->prefix('/banner')->as('banner.')->group(function () {
             Route::get('list', 'list')->name('list');

@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\CPU\FileManager;
 use App\CPU\ImageManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
@@ -13,7 +14,6 @@ use App\Models\Product as ModelsProduct;
 use App\Models\ProductLandingPage;
 // use App\ProductLandingPage;
 use App\Models\ProductLandingPageSection;
-use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -353,6 +353,11 @@ class LandingPagesController extends Controller
     {
         return view('admin.landingPages.single_page.single_product');
     }
+    public function editSingleProduct($id)
+    {
+        $landingPage = ProductLandingPage::find($id);
+        return view('admin.landingPages.single_page.edit', compact('landingPage'));
+    }
     public function singleProductdatatables()
     {
         $query = ProductLandingPage::latest('id');
@@ -361,16 +366,11 @@ class LandingPagesController extends Controller
             ->addIndexColumn()
 
             ->addColumn('action', function ($row) {
+                $route = route('admin.landingpages.single.edit', $row->id);
                 return '
-                <button class="btn btn-primary btn-sm edit"
-                    data-id="' . $row->id . '"
-                    data-title="' . $row->title . '"
-                    data-product_id="' . $row->product_id . '"
-
-                    data-bs-toggle="modal"
-                    data-bs-target="#editModal">
+                <a href="' . $route . '" class="btn btn-primary btn-sm">
                     <i class="la la-edit"></i>
-                </button>
+                </a>
 
                 <button class="btn btn-danger btn-sm delete"
                     style="cursor: pointer;"
@@ -396,18 +396,27 @@ class LandingPagesController extends Controller
             ';
             })
             ->editColumn('product_id', function ($row) {
-                return Str::limit($row->product->name, 50);
+
+                if (!$row->product) {
+                    return '';
+                }
+
+                return Str::limit(
+                    $row->product->name . ' || ' . $row->product->code,
+                    70
+                );
             })
 
             ->editColumn('slug', function ($row) {
-                if ($row->status == 1) {
-                    $url = route('collections', $row->slug);
+
+                if ($row->status == 1 && $row->slug) {
+
+                    $url = url('/page/' . $row->slug);
 
                     return "<a href='{$url}' target='_blank'>{$row->slug}</a>";
                 }
 
-                // status = 0 → disabled
-                return "<span class='text-muted'>Link is Deactived</span>";
+                return "<span class='text-muted'>Link is Deactivated</span>";
             })
 
             ->rawColumns(['action',  'status', 'product_id', 'slug'])
@@ -439,6 +448,8 @@ class LandingPagesController extends Controller
     }
     public function storeSingleProduct(Request $request)
     {
+        // dd($request->images[0]);
+
         $request->validate([
             'title' => 'required|string',
             'images' => 'required',
@@ -449,13 +460,15 @@ class LandingPagesController extends Controller
             'video_url' => 'required',
         ]);
 
-        $images = null;
-        // if ($request->file('images')) {
-        //     foreach ($request->file('images') as $img) {
-        //         $main_slider_images[] = Helpers::uploadWithCompress('landingpage/slider/', 300, $img);
-        //     }
-        //     $images = json_encode($main_slider_images);
-        // }
+        $images = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $main_slider_images[] = FileManager::uploadFile('landingpage/slider/', 200, $img);
+            }
+            $images = json_encode($main_slider_images);
+        }
+
+
         $featureList = null;
         if ($request->feature_title) {
             foreach ($request->feature_title as $title) {
@@ -470,7 +483,7 @@ class LandingPagesController extends Controller
             'product_id' => $request->product_id,
             'description' => $request->description,
             'feature_list' => $featureList,
-            // 'feature_img' => Helpers::uploadWithCompress('landingpage/', 300, $request->file('feature_image')),
+            'feature_img' => $request->hasFile('feature_image') ? FileManager::uploadFile('landingpage/', 200, $request->file('feature_image')) : 'null',
             'video_url' => $request->video_url,
             'status' => 0,
             'created_at' => now(),
@@ -482,14 +495,14 @@ class LandingPagesController extends Controller
             foreach ($sectionTitles as $key => $val) {
 
                 $requestImg = $request->section_img[$key];
-                // $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
+                $sectionImg = FileManager::uploadFile('landingpage/', 300,    $requestImg);
                 $sectionDirection = $request->section_direction[$key];
                 $orderButton = $request->order_button[$key];
                 ProductLandingPageSection::create([
                     'product_landing_page_id' => $productLandingpage->id,
                     'section_title' => $val,
                     'section_description' => $request->section_description[$key],
-                    // 'section_img' => $sectionImg,
+                    'section_img' => $sectionImg,
                     'section_direction' => $sectionDirection,
                     'order_button' => $orderButton,
                 ]);
@@ -520,31 +533,29 @@ class LandingPagesController extends Controller
     }
     public function removeImage(Request $request)
     {
-        ImageManager::delete('/landingpage/slider/' . $request['image']);
         $landingPage = ProductLandingPage::find($request['id']);
         $array = [];
         if (count(json_decode($landingPage->slider_img)) == 2) {
-            Toastr::warning('You cannot delete all images!');
-            return back();
+            // Toastr::warning('You cannot delete all images!');
+            return back()->with("warning", "You cannot delete images, atleast 2 image exist");
         }
         foreach (json_decode($landingPage['slider_img']) as $image) {
             if ($image != $request['name']) {
                 array_push($array, $image);
             }
         }
+        FileManager::delete('/landingpage/slider/' . $request->name);
         ProductLandingPage::where('id', $request['id'])->update([
             'slider_img' => json_encode($array),
         ]);
-        Toastr::success('Slider image removed successfully!');
-        return back();
+        return back()->with("success", "Slider image removed successfully!");
     }
     public function removeFeatureList(Request $request)
     {
-        $landingPage = App\Http\Controllers\Admin\ProductLandingPage::find($request['id']);
+        $landingPage = ProductLandingPage::find($request['id']);
         $array = [];
         if (count(json_decode($landingPage->feature_list)) == 2) {
-            Toastr::warning('You cannot delete all feature list!');
-            return back();
+            return back()->with('warning', 'You cannot delete all feature list!');
         }
         foreach (json_decode($landingPage['feature_list']) as $list) {
             if ($list != $request['name']) {
@@ -554,21 +565,18 @@ class LandingPagesController extends Controller
         ProductLandingPage::where('id', $request['id'])->update([
             'feature_list' => json_encode($array),
         ]);
-        Toastr::success('Feature list removed successfully!');
         return back();
     }
     public function removePageSection(Request $request)
     {
         $pageSection = ProductLandingPageSection::find($request['id']);
         if ($pageSection->section_img) {
-            @unlink('storage/landingpage/' . $pageSection->section_img);
+            @unlink('assets/storage/landingpage/' . $pageSection->section_img);
         }
-
         $pageSection->delete();
-        Toastr::success('Landing page section remove successfully!');
         return back();
     }
-    public function SingleProductUpdate(Request $request, $id)
+    public function updateSingleProduct(Request $request, $id)
     {
         $request->validate([
             'title' => 'required|string',
@@ -583,7 +591,7 @@ class LandingPagesController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
-                $uploaded_image = Helpers::uploadWithCompress('landingpage/slider/', 300, $img);
+                $uploaded_image = FileManager::updateFile('landingpage/slider/', $productLandingpage->slider_img, $img);
                 $images[] = $uploaded_image;
             }
         }
@@ -611,7 +619,7 @@ class LandingPagesController extends Controller
 
 
         if ($request->feature_image) {
-            $featureImage = Helpers::updateWithCompress('landingpage/', $productLandingpage->feature_img, $request->file('feature_image'));
+            $featureImage = FileManager::updateFile('landingpage/', $productLandingpage->feature_img, $request->file('feature_image'));
         }
         $productLandingpage->update([
             'title' => $request->title,
@@ -629,12 +637,12 @@ class LandingPagesController extends Controller
             foreach ($request->existing_section_id as $sectionId) {
                 $section = ProductLandingPageSection::where('id', $sectionId)->first();
                 $requestImg = $request->file('section_img')[$sectionId] ?? null;
-                $sectionImg = Helpers::updateWithCompress('landingpage/', $section->section_img, $requestImg);
+                $sectionImg = FileManager::updateFile('landingpage/', $section->section_img, $requestImg);
                 $section->update([
                     'section_title' => $request->section_title[$sectionId],
                     'section_description' => $request->section_description[$sectionId],
                     'section_img' => $sectionImg,
-                    // 'section_img' => $this->handleImageUpload($request->file('section_img')[$sectionId]),
+                    'section_img' => FileManager::uploadFile('landingpage/', 300,    $requestImg),
                     'section_direction' => $request->section_direction[$sectionId],
                     'order_button' => $request->order_button[$sectionId],
                 ]);
@@ -646,7 +654,7 @@ class LandingPagesController extends Controller
             foreach ($request->new_section_title as $key => $title) {
 
                 $requestImg = $request->file('new_section_img')[$key] ?? null;
-                $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
+                $sectionImg = FileManager::uploadFile('landingpage/', 300, $requestImg);
                 ProductLandingPageSection::create([
                     'section_title' => $title,
                     'section_description' => $request->new_section_description[$key],
@@ -659,8 +667,7 @@ class LandingPagesController extends Controller
         }
 
 
-        Toastr::success('Landing pages  created is successfully!');
-        return back();
+        return back()->with('success', 'Landing pages  created is successfully!');
     }
     public function removeLandingPage($id)
     {
@@ -686,7 +693,6 @@ class LandingPagesController extends Controller
         }
 
         $productLandingpage->delete();
-        Toastr::success('Landing pages  deleted is successfully!');
-        return back();
+        return back()->with('success', 'Landing pages  deleted is successfully!');
     }
 }
