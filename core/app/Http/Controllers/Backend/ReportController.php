@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Services\DailySalesData;
 use App\Services\ModeratarReportData;
 use App\Services\ProductReportData;
+use App\Services\ProfitReportData;
 use App\Services\TopSellingData;
 use Illuminate\Http\Request;
 
@@ -104,5 +105,24 @@ class ReportController extends Controller
                     }
                 }
             });
+    }
+    // Profit Reports
+    public function profitReport()
+    {
+        return view('admin.reports.profit_report');
+    }
+
+    public function profitReportData(Request $request)
+    {
+        return ProfitReportData::getProfitData($request);
+    }
+    public function profitReportExport(Request $request)
+    {
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date'   => 'required|date|after_or_equal:from_date',
+        ]);
+
+        return ProfitReportData::getExportProfitReport($request);
     }
 }

@@ -98,21 +98,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('recalculate/{order}', 'recalculate')->name('recalculate');
             Route::get('product-variation/{id}', 'productVariation')->name('product_variation');
 
-
-
-            // Route::get('Individual/{status}', 'Individual')->name('Individual');
-            // Route::get('products/search/', 'productSearch')->name('products.search');
             Route::post('status', 'status')->name('status');
             Route::post('payment-status', 'payment_status')->name('payment-status');
             Route::post('advance-payment/{id}', 'advance_payment')->name('advance-payment');
-            // Route::post('productStatus', 'productStatus')->name('productStatus');
             Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
-            // Route::get('exchange-generate-invoice/{id}', 'exchange_generate_invoice')->name('exchange-generate-invoice');
-            // Route::get('inhouse-order-filter', 'inhouse_order_filter')->name('inhouse-order-filter');
-
-            // Route::post('update-deliver-info', 'update_deliver_info')->name('update-deliver-info');
-            // Route::get('add-delivery-man/{order_id}/{d_man_id}', 'add_delivery_man')->name('add-delivery-man');
-
             Route::get('bulk-export', 'dateWiseExport')->name('data_export');
         });
 
@@ -124,14 +113,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/status-update', 'updateStatus')->name('status.update');
             Route::get('bulk-export', 'dateWiseExport')->name('data_export');
         });
-        // Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
-        //     Route::get('add-new', 'add_new')->name('add-new');
-        //     Route::post('add-new', 'store');
-        //     Route::get('list', 'list')->name('list');
-        //     Route::get('update/{id}', 'edit')->name('update');
-        //     Route::post('update/{id}', 'update');
-        //     Route::get('status/{id}/{status}', 'status')->name('status');
-        // });
 
         Route::controller(CategoryController::class)->as('category.')->group(function () {
             Route::get('/category/view', 'index')->name('view');
@@ -162,6 +143,26 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/child-category/status', 'status')->name('status');
             Route::get('/child-category/datatables', 'datatables')->name('datatables');
         });
+        // Brands Routes
+        Route::controller(BrandController::class)->prefix('/brand')->as('brand.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'delete')->name('delete');
+            Route::get('export', 'export')->name('export');
+            Route::post('status', 'status')->name('status');
+        });
+        //Attribute Routes
+
+        Route::controller(AttributeController::class)->prefix('/attribute')->as('attribute.')
+            ->group(function () {
+                Route::get('list', 'index')->name('list');
+                Route::get('/datatables', 'datatables')->name('datatables');
+                Route::post('store', 'store')->name('store');
+                Route::post('update', 'update')->name('update');
+                Route::post('delete', 'delete')->name('delete');
+            });
         Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->group(function () {
             Route::get('multiple-product/landing', 'multiIndex')->name('multiple.index');
             Route::post('multiple-product/store', 'multipleStore')->name('multiple.store');
@@ -250,12 +251,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(RolePermissionController::class)->prefix('/role-permission')->as('role_permission.')->group(function () {
             Route::get('list', 'list')->name('list');
             Route::get('datatables', 'datatables')->name('datatables');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('update/{id}', 'update')->name('update');
             Route::post('delete', 'destroy')->name('delete');
             Route::post('status', 'status')->name('status');
-            Route::get('create', 'create')->name('create');
-            Route::post('store', 'store')->name('store');
             // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
         // Admin Roles Modules Routes
@@ -389,6 +390,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/moderatar-id-update', 'moderationIdUpdate');
             //Top Selling Product Report
             Route::get('/top-selling-products', 'topSellingReport')->name('topSellingProducts');
+            // profit report
+            Route::get('/profit', 'profitReport')->name('profitReport');
+            Route::get('/profit-report-data', 'profitReportData')->name('profitReportData');
+            Route::get('/profit-report-export', 'profitReportExport')->name('profitReportExport');
             // Route::get('daily-sales', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales');
             // Route::post('daily-sales-filter', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales-filter');
         });
@@ -399,26 +404,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/delete', 'delete')->name('delete');
             Route::post('/status', 'status')->name('status');
         });
-        // Brands Routes
-        Route::controller(BrandController::class)->prefix('/brand')->as('brand.')->group(function () {
-            Route::get('list', 'list')->name('list');
-            Route::get('/datatables', 'datatables')->name('datatables');
-            Route::post('store', 'store')->name('store');
-            Route::post('update', 'update')->name('update');
-            Route::post('delete', 'delete')->name('delete');
-            Route::get('export', 'export')->name('export');
-            Route::post('status', 'status')->name('status');
-        });
-        //Attribute Routes
 
-        Route::controller(AttributeController::class)->prefix('/attribute')->as('attribute.')
-            ->group(function () {
-                Route::get('view', 'index')->name('view');
-                Route::get('/datatables', 'datatables')->name('datatables');
-                Route::post('store', 'store')->name('store');
-                Route::post('update', 'update')->name('update');
-                Route::post('delete', 'delete')->name('delete');
-            });
 
         // Branch Routes
         Route::controller(BranchController::class)->prefix('/branches')->as('branch.')->group(function () {

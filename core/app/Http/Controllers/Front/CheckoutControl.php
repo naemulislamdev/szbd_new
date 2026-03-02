@@ -94,7 +94,6 @@ class CheckoutControl extends Controller
         if (!session()->has('cart') || count(session('cart')) == 0) {
             return redirect()->route('home');
         }
-
         // ================= VALIDATION =================
         $rules = [
             'shipping_area' => 'required',
@@ -222,7 +221,7 @@ class CheckoutControl extends Controller
 
     public function singlepCheckout(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'nullable|email',
             'address' => 'required|string|max:255',

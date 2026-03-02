@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class ProductReportData
+class ProfitReportData
 {
-    public static function getProductsReportData($request)
+    public static function getProfitData($request)
     {
         $from_date = $request->from_date
             ? Carbon::parse($request->from_date)->startOfDay()
@@ -29,7 +29,6 @@ class ProductReportData
                 'products.code',
                 'products.unit_price',
                 'products.purchase_price',
-                'products.current_stock',
                 'products.choice_options',
                 'products.color_variant',
 
@@ -48,16 +47,7 @@ class ProductReportData
                 THEN (order_details.price - products.purchase_price) * order_details.qty
                 ELSE 0
             END
-        ),0) as profit'),
-
-                //Returned Qty
-                DB::raw('COALESCE(SUM(
-            CASE
-                WHEN orders.order_status = "returned"
-                THEN order_details.qty
-                ELSE 0
-            END
-        ),0) as return_qty')
+        ),0) as profit')
             )->whereBetween('orders.created_at', [$from_date, $to_date])
             ->groupBy(
                 'products.thumbnail',
@@ -65,7 +55,6 @@ class ProductReportData
                 'products.code',
                 'products.unit_price',
                 'products.purchase_price',
-                'products.current_stock',
                 'products.choice_options',
                 'products.color_variant'
             );
@@ -130,26 +119,24 @@ class ProductReportData
             })
 
             ->editColumn('profit', function ($row) {
-                return '৳ ' . number_format($row->profit, 2);
+                return '৳ '. number_format($row->profit, 2);
             })
 
             ->rawColumns(['thumbnail'])
             ->make(true);
     }
-
-    public static function getExportProductsReport($request)
+    public static function getExportProfitReport($request)
     {
         $from_date = Carbon::parse($request->from_date)->startOfDay();
         $to_date   = Carbon::parse($request->to_date)->endOfDay();
 
-        $productReports = Product::leftJoin('order_details', 'order_details.product_id', '=', 'products.id')
+        $profitReports = Product::leftJoin('order_details', 'order_details.product_id', '=', 'products.id')
             ->leftJoin('orders', 'orders.id', '=', 'order_details.order_id')
             ->select(
                 'products.name',
                 'products.code',
                 'products.unit_price',
                 'products.purchase_price',
-                'products.current_stock',
                 'products.choice_options',
                 'products.color_variant',
 
@@ -169,30 +156,20 @@ class ProductReportData
                     THEN (order_details.price - products.purchase_price) * order_details.qty
                     ELSE 0
                 END
-            ),0) as profit'),
-
-                // ✅ Returned Qty (date aware)
-                DB::raw('COALESCE(SUM(
-                CASE
-                    WHEN orders.order_status = "returned"
-                    THEN order_details.qty
-                    ELSE 0
-                END
-            ),0) as return_qty')
+            ),0) as profit')
             )->whereBetween('orders.created_at', [$from_date, $to_date])
             ->groupBy(
                 'products.name',
                 'products.code',
                 'products.unit_price',
                 'products.purchase_price',
-                'products.current_stock',
                 'products.choice_options',
                 'products.color_variant'
             )
             ->get();
 
         /** ---------- Build Excel Rows ---------- */
-        $data = $productReports->map(function ($item) {
+        $data = $profitReports->map(function ($item) {
 
             // ----- Attribute build (same logic as DataTable) -----
             $sizes = [];
@@ -237,12 +214,10 @@ class ProductReportData
                 $item->name,
                 $item->code,
                 $attribute,
-                $item->current_stock,
                 $item->purchase_price,
                 $item->unit_price,
                 $item->sales_qty,
                 $item->profit,
-                $item->return_qty,
             ];
         })->toArray();
 
@@ -250,15 +225,13 @@ class ProductReportData
             'Product Name',
             'Product Code',
             'Attributes',
-            'Stock',
             'Purchase Price',
             'Selling Price',
             'Sales Qty',
             'Profit',
-            'Returned Qty',
         ];
 
-        $filename = 'Products_Report_' . $request->from_date . '_to_' . $request->to_date . '.xlsx';
+        $filename = 'Profit_Report_' . $request->from_date . '_to_' . $request->to_date . '.xlsx';
 
         return Excel::download(
             new DataExport($headings, $data),

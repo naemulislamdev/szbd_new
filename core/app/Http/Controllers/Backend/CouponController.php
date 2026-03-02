@@ -79,10 +79,10 @@ class CouponController extends Controller
     ';
             })
             ->editColumn('start_date', function ($row) {
-                return $row->created_at->format('d M Y ');
+                return $row->start_date->format('d M Y ');
             })
             ->editColumn('expire_date', function ($row) {
-                return $row->created_at->format('d M Y ');
+                return $row->expire_date->format('d M Y ');
             })
             ->editColumn('coupon_type', function ($row) {
                 return ucwords(str_replace('_', ' ', $row->coupon_type));
