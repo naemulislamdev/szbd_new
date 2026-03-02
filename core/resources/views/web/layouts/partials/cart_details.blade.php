@@ -85,7 +85,7 @@
                 </div>
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h2 class="address-title">আপনার ঠিকানা</h2>
+                        <h2 class="address-title mb-0">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
                         @if (!$customer && !session('otp_verified'))

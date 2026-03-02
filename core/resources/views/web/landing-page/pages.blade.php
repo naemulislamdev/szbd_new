@@ -1,5 +1,5 @@
 @extends('layouts.front-end.app')
-@section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
+@section('title', 'Welcome To' . ' ' . $web_config['name']->value)
 
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />

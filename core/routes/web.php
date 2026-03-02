@@ -34,6 +34,10 @@ Route::middleware(['web'])->group(function () {
         Route::get('/careers', 'careers')->name('careers');
         Route::get('/offers/{slug}', 'discountOffers')->name('discount.offers');
         Route::get('/sitemap.xml', 'siteMaps')->name('sitemap');
+        // single landing page route
+        Route::get('/page/{slug}', 'singleProductLandingPage')
+            ->name('single.landing_page');
+        // multi landing page route
         Route::get('/collections/{slug}', 'multiCollection')->name('collections');
         Route::get('/blogs', 'blogs')->name('blogs');
         Route::get('/blogs/{slug}', 'blogDetails')->name('blog.details');

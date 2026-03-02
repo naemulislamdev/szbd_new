@@ -50,7 +50,8 @@
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                         </div>
-                        <form action="{{ route('admin.landingpages.single.store') }}" method="post">
+                        <form action="{{ route('admin.landingpages.single.store') }}" method="post"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-12 mb-2">
@@ -72,8 +73,7 @@
                                     </div>
                                     <div class="upload-container">
                                         <input type="file" id="image-upload" name="images[]" multiple accept="image/*"
-                                            class="form-control">
-
+                                            class="custom-file-input form-control">
                                         <div id="image-preview" class="image-preview-container d-flex gap-3"></div>
                                     </div>
                                 </div>
@@ -106,8 +106,8 @@
                                     <label>Feature title <span class="text-danger">*</span></label>
                                     <div id="input-container">
                                         <div class="input-group mb-3">
-                                            <input type="text" value="{{ old('feature_title') }}"
-                                                class="form-control @error('feature_title') is-invalid @enderror"
+                                            <input type="text" value="{{ old('feature_title.0') }}"
+                                                class="form-control @error('feature_title[]') is-invalid @enderror"
                                                 name="feature_title[]" placeholder="Enter value">
                                         </div>
                                     </div>

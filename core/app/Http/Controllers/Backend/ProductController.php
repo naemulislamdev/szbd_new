@@ -27,6 +27,7 @@ class ProductController extends Controller
     // Store New Product
     public function store(ProductRequest $request)
     {
+
         $product = ProductService::store($request);
         return response()->json([
             'success' => true,

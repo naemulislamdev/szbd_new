@@ -1,5 +1,6 @@
-@extends('layouts.front-end.app')
-@section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
+@extends('web.layouts.app')
+@section('title', 'Welcome To' . ' ' . $web_config['name']->value)
+
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
@@ -389,6 +390,14 @@
         .v-size-box {
             margin-right: 0.925rem !important;
         }
+
+        .incDecBtn {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            line-height: 30px;
+            text-align: center;
+        }
     </style>
 @endpush
 @section('content')
@@ -413,9 +422,8 @@
                                 @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
                                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                         <div class="slider-img">
-                                            <img class="d-block w-100"
-                                                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                                src="{{ asset('storage/landingpage/slider') }}/{{ $image }}"
+                                            <img class="d-block w-100" {{-- onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'" --}}
+                                                src="{{ asset('assets/storage/landingpage/slider') }}/{{ $image }}"
                                                 alt="">
                                         </div>
                                     </div>
@@ -443,7 +451,7 @@
                                     <h3 class="mb-2">{{ $productLandingPage->product->name }}</h3>
                                 </div>
                                 <div class="p-short-details">
-                                    <p>{!! $productLandingPage->description !!}</p>
+                                    {!! $productLandingPage->description !!}
                                 </div>
                             </div>
                         </div>
@@ -504,20 +512,6 @@
         }
     @endphp
 
-    <!-- Video Section -->
-    <!--<div class="container video-section">-->
-    <!--    <div class="row justify-content-center">-->
-    <!--        <div class="col-md-{{ $col }}"> <!-- Adjust column width if needed -->
-    <!--            <div style="position: relative; width: {{ $width }}; height: {{ $height }}px;">-->
-    <!--                <iframe style="width: 100%; height: 100%;" src="{{ $embedUrl }}" title="Video Player"-->
-    <!--                    frameborder="0"-->
-    <!--                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"-->
-    <!--                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>-->
-    <!--                </iframe>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
 
 
     <!-- Benefit Section -->
@@ -585,7 +579,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                                            <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                                                 src="{{ asset('storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
@@ -593,7 +587,7 @@
                                 @elseif ($section->section_direction == 'right')
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                                            <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                                                 src="{{ asset('storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
@@ -629,10 +623,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <form action="{{ route('customer.sproduct.checkout') }}" method="POST" id="userInfoForm">
+                            <form action="{{ route('sproduct.checkout') }}" method="POST" id="userInfoForm">
                                 @csrf
-
-                                <input type="hidden" name="session_id" value="{{ session()->getId() }}">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="order-box">
@@ -647,7 +639,7 @@
                                                     <div class="col-md-6 mb-3">
                                                         <div class="form-group">
                                                             <label>নাম <span class="text-danger">*</span></label>
-                                                            <input required type="text" class="form-control auto-save"
+                                                            <input type="text" class="form-control auto-save"
                                                                 placeholder="আপনার নাম লিখুন" name="name"
                                                                 value="{{ old('name') }}">
                                                             @error('name')
@@ -669,17 +661,6 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    {{-- <div class="col-md-12 mb-3">
-                                                        <div class="form-group">
-                                                            <label>Email </label>
-                                                            <input type="email" class="form-control"
-                                                                placeholder="Enter your email" name="email"
-                                                                value="{{ old('email') }}">
-                                                            @error('email')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-                                                    </div> --}}
 
                                                     <div class="col-md-12 mb-3">
                                                         <div class="form-group">
@@ -691,7 +672,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>ইমার্জেন্সি নোট (ঐচ্ছিক) </label>
-                                                            <textarea class="form-control" placeholder="আপনার নোট লিখুন" name="customer_note">{{ old('customer_note') }}</textarea>
+                                                            <textarea class="form-control" placeholder="আপনার নোট লিখুন" name="customer_note">{{ old('order_note') }}</textarea>
                                                             @error('customer_note')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -729,56 +710,67 @@
                                                             <div class="p-data-box d-flex mb-2">
                                                                 <div class="mr-2">
                                                                     <img id="main-image" class="sp-right-img"
-                                                                        src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productLandingPage->product->thumbnail }}">
+                                                                        src="{{ asset('assets/storage/product/thumbnail') }}/{{ $productLandingPage->product['thumbnail'] }}">
                                                                 </div>
                                                                 <div>
                                                                     <p class="m-0">
                                                                         {{ $productLandingPage->product->name }} <i
-                                                                            class="fa fa-close"></i> 1</p>
+                                                                            class="fa fa-close"></i> <span
+                                                                            class="min-item fw-bold">1</span></p>
                                                                     <div>
                                                                         <span class="sp-price">৳
-                                                                            {{ \App\CPU\Helpers::get_price_range($productLandingPage->product) }}</span>
+                                                                            {{ $productLandingPage->product['unit_price'] }}</span>
+
+
                                                                     </div>
                                                                     @if ($productLandingPage->product->discount > 0)
                                                                         <span class="discount-price">
                                                                             <del>৳
-                                                                                {{ \App\CPU\Helpers::currency_converter($productLandingPage->product->unit_price) }}
+                                                                                {{ $productLandingPage->product->unit_price }}
                                                                             </del> -
                                                                             @if ($productLandingPage->product->discount_type == 'percent')
                                                                                 {{ round($productLandingPage->product->discount, $decimal_point_settings) }}%
                                                                             @elseif($productLandingPage->product->discount_type == 'flat')
-                                                                                {{ \App\CPU\Helpers::currency_converter($productLandingPage->product->discount) }}
+                                                                                {{ $productLandingPage->product->discount }}
                                                                             @endif
                                                                         </span>
                                                                     @endif
+
+                                                                    <div
+                                                                        class="product-quantity d-flex align-items-center">
+                                                                        <div class="input-group input-group-style-2 pr-3 d-flex align-items-center"
+                                                                            style="width: 160px; ">
+
+                                                                            <button
+                                                                                class="btn btn-danger btn-number btn-sm"
+                                                                                type="button" data-type="minus"
+                                                                                data-field="quantity"
+                                                                                style="padding: 10px">
+                                                                                <i class="fa fa-minus "></i>
+                                                                            </button>
+
+                                                                            <input
+                                                                                style="font-size: 20px; font-weight: 600"
+                                                                                type="text" readonly
+                                                                                class="form-control bg-transparent input-number text-center cart-qty-field"
+                                                                                placeholder="1" min="1"
+                                                                                max="100">
+
+                                                                            <button
+                                                                                class="btn btn-success btn-number btn-sm"
+                                                                                type="button" data-type="plus"
+                                                                                data-field="quantity"
+                                                                                style="padding: 10px">
+                                                                                <i class="fa fa-plus "></i>
+                                                                            </button>
+
+                                                                        </div>
+
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="p-variant">
-                                                                {{-- @if (count(json_decode($productLandingPage->product->colors)) > 0)
-                                                                    <div class="row">
-                                                                        <div class="col-12">
-                                                                            <h4 style="font-size: 18px;">Color
-                                                                            </h4>
-                                                                        </div>
-                                                                        <div class="col-12">
-                                                                            <div class="d-flex">
-                                                                                @foreach (json_decode($productLandingPage->product->colors) as $key => $color)
-                                                                                    <div class="v-color-box">
-                                                                                        <input type="radio"
-                                                                                            id="{{ $productLandingPage->product->id }}-color-{{ $key }}"
-                                                                                            checked name="color"
-                                                                                            value="{{ $color }}"
-                                                                                            @if ($key == 0) checked @endif>
-                                                                                        <label
-                                                                                            style="background: {{ $color }}"
-                                                                                            for="{{ $productLandingPage->product->id }}-color-{{ $key }}"
-                                                                                            class="color-label"></label>
-                                                                                    </div>
-                                                                                @endforeach
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                @endif --}}
+
                                                                 @php
                                                                     $qty = 0;
                                                                     if (!empty($productLandingPage->product)) {
@@ -816,7 +808,7 @@
                                                                         </div>
                                                                     </div>
                                                                 @endforeach --}}
-                                                                @if (count(json_decode($productLandingPage->product->colors)) > 0)
+                                                                @if (count($productLandingPage->product->colors) > 0)
                                                                     <div class="row mb-4 mt-3">
                                                                         <div class="col-12 mb-3">
                                                                             <h4 style="font-size: 18px;">Color</h4>
@@ -864,7 +856,7 @@
                                                 <div class="row mb-3">
                                                     <input type="hidden" name="price"
                                                         value="{{ $productLandingPage->product->unit_price }}">
-                                                    <input type="hidden" name="quantity" value="1">
+                                                    <input id="qty" type="hidden" name="quantity" value="1">
                                                     <input type="hidden" name="tax"
                                                         value="{{ $productLandingPage->product->tax }}">
                                                     <input type="hidden" name="discount"
@@ -881,7 +873,7 @@
                                                                     <tr>
                                                                         <th>Subtotal :</th>
                                                                         <td id="subtotal">
-                                                                            {{ \App\CPU\Helpers::get_price_range($productLandingPage->product) }}
+                                                                            {{ $productLandingPage->product['unit_price'] }}
                                                                             <span>৳</span>
                                                                         </td>
                                                                     </tr>
@@ -891,21 +883,22 @@
                                                                             <h5 class="shipping-title">Shipping :</h5>
 
                                                                             <div class="row">
-                                                                                @foreach (\App\Model\ShippingMethod::where(['status' => 1])->get() as $shipping)
+                                                                                @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
                                                                                     <div class="col-md-6">
                                                                                         <label class="shipping-box"
                                                                                             for="shipping_{{ $shipping['id'] }}">
-                                                                                            <input required type="radio"
+                                                                                            <input type="radio" required
                                                                                                 name="shipping_method"
                                                                                                 class="shipping-method"
                                                                                                 id="shipping_{{ $shipping['id'] }}"
                                                                                                 value="{{ $shipping['id'] }}"
-                                                                                                data-cost="{{ $shipping['cost'] }}">
+                                                                                                data-cost="{{ $shipping['cost'] }}"
+                                                                                                data-shpping="{{ $shipping['cost'] }}">
                                                                                             <span class="shipping-title">
                                                                                                 {{ $shipping['title'] }}
                                                                                             </span>
                                                                                             <span class="shipping-cost">
-                                                                                                {{ \App\CPU\Helpers::currency_converter($shipping['cost']) }}
+                                                                                                {{ $shipping['cost'] }}
                                                                                             </span>
                                                                                         </label>
                                                                                     </div>
@@ -917,7 +910,7 @@
                                                                         <th>Total:</th>
                                                                         <td>
                                                                             <span
-                                                                                id="total">{{ \App\CPU\Helpers::get_price_range($productLandingPage->product) }}
+                                                                                id="total">{{ $productLandingPage->product['unit_price'] }}
                                                                                 <span>
                                                                                     ৳</span></span>
                                                                             <div id="preloader" style="display: none;">
@@ -955,18 +948,20 @@
 @endsection
 @push('scripts')
     @php
-        $price = \App\CPU\Helpers::get_price_range($productLandingPage->product);
+        $price = $productLandingPage->product;
         $cleanPrice = floatval(str_replace(',', '', $price));
-        $shippingMethods = \App\Model\ShippingMethod::where(['status' => 1])->get();
+        $shippingMethods = \App\Models\ShippingMethod::where(['status' => 1])->get();
     @endphp
 
     <script>
         const unitPrice = {{ $cleanPrice }};
-        console.log(unitPrice);
+
+
+
         // Pre-converted shipping costs from the backend
         const shippingPrices = {
             @foreach ($shippingMethods as $shipping)
-                "{{ $shipping['id'] }}": parseFloat("{{ \App\CPU\Helpers::currency_converter2($shipping['cost']) }}"),
+                "{{ $shipping['id'] }}": parseFloat("{{ $shipping['cost'] }}"),
             @endforeach
         };
 
@@ -983,7 +978,7 @@
                 setTimeout(function() {
                     // Calculate the new total using pre-converted values
                     const total = unitPrice + shippingCost;
-                    console.log(unitPrice);
+                    console.log("Uporer", unitPrice);
 
 
                     // Update the total element with the new total
@@ -998,6 +993,7 @@
                 radio.addEventListener('change', function() {
                     const shippingCost = parseFloat(shippingPrices[this
                         .value]); // Get pre-converted shipping cost
+
                     updateTotal(shippingCost);
                 });
             });
@@ -1100,6 +1096,82 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            let unitPrice = $('input[name="price"]').val();
+            let convertPrice =
+                {{ $productLandingPage->product->unit_price }};
+
+
+
+            let hiddenQtyInput = $('input[name="quantity"]');
+            let visibleQtyInput = $('.cart-qty-field');
+            const preloader = document.getElementById('preloader');
+            const qty = document.getElementById('qty');
+            let qtyShow = document.querySelector('.min-item');
+            let spPrice = document.querySelector('.sp-price');
+
+            function updateTotal() {
+                preloader.style.display = 'inline-block';
+                let qty = parseInt(hiddenQtyInput.val()) || 1;
+                console.log(visibleQtyInput);
+
+                let subtotal = convertPrice * qty;
+                qtyShow.innerHTML = qty;
+                qty.value = qty;
+                spPrice.innerHTML = `৳ ${subtotal}`;
+
+                // Subtotal update
+                $('#subtotal')
+                    .data('value', subtotal)
+                    .html(subtotal.toFixed(2) + ' <span>৳</span>');
+
+                // Selected shipping cost
+                let shippingCost = parseFloat($('.shipping-method:checked').data('shpping')) || 0;
+                console.log("shipping cost: ", shippingCost);
+
+
+                let total = subtotal + shippingCost;
+                console.log("total: ", total);
+
+                $('#total').html(total.toFixed(2) + ' <span>৳</span>');
+                preloader.style.display = 'none';
+            }
+
+            // PLUS button
+            $('.btn-number[data-type="plus"]').click(function() {
+                let currentQty = parseInt(hiddenQtyInput.val());
+                let max = parseInt(visibleQtyInput.attr('max')) || 100;
+
+                if (currentQty < max) {
+                    currentQty++;
+                    hiddenQtyInput.val(currentQty);
+                    visibleQtyInput.val(currentQty);
+                    updateTotal();
+                }
+            });
+
+            // MINUS button
+            $('.btn-number[data-type="minus"]').click(function() {
+                let currentQty = parseInt(hiddenQtyInput.val());
+                let min = parseInt(visibleQtyInput.attr('min')) || 1;
+
+                if (currentQty > min) {
+                    currentQty--;
+                    hiddenQtyInput.val(currentQty);
+                    visibleQtyInput.val(currentQty);
+                    updateTotal();
+                }
+            });
+
+            // Shipping change হলে total update
+            $('.shipping-method').change(function() {
+                updateTotal();
+            });
+
         });
     </script>
 @endpush
