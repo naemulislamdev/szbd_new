@@ -36,6 +36,7 @@ class LandingPagesController extends Controller
             ->addIndexColumn()
 
             ->addColumn('action', function ($row) {
+
                 return '
                 <button class="btn btn-primary btn-sm edit"
                     data-id="' . $row->id . '"
@@ -124,10 +125,22 @@ class LandingPagesController extends Controller
             'product_id' => 'required',
         ]);
 
+        $main_slider_images = [];
+        $images = null;
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $main_slider_images[] = FileManager::uploadFile('landingpage/slider/', 200, $img);
+            }
+            $images = json_encode($main_slider_images);
+        }
+        dd($images);
         $landing_page = new LandingPages();
         $landing_page->title = $request->title;
+        $landing_page->main_banner = $images;
         $landing_page->product_id = $request->product_id;
         $landing_page->slug = Str::slug($request->title);
+        $landing_page->status = 1;
 
         if ($landing_page->save()) {
             return response()->json([

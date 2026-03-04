@@ -5,7 +5,7 @@
         padding: 0;
         text-align: center;
         font-family: sans-serif;
-        background-color: #E7FFFF;
+        background-color: #fff;
     }
 
     h1,
@@ -21,16 +21,16 @@
 
     .section .error {
         font-size: 150px;
-        color: #008B62;
+        color: #ff5d00;
         text-shadow:
-            1px 1px 1px #00593E,
-            2px 2px 1px #00593E,
-            3px 3px 1px #00593E,
-            4px 4px 1px #00593E,
-            5px 5px 1px #00593E,
-            6px 6px 1px #00593E,
-            7px 7px 1px #00593E,
-            8px 8px 1px #00593E,
+            1px 1px 1px #ff5d00,
+            2px 2px 1px #ff5d00,
+            3px 3px 1px #ff5d00,
+            4px 4px 1px #ff5d00,
+            5px 5px 1px #ff5d00,
+            6px 6px 1px #ff5d00,
+            7px 7px 1px #ff5d00,
+            8px 8px 1px #ff5d00,
             25px 25px 8px rgba(0, 0, 0, 0.2);
     }
 

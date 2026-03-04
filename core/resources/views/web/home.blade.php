@@ -3,7 +3,7 @@
 
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
+    <meta property="og:title" content="remium Clothing & Original Skincare BD | {{ $web_config['name']->value }} Home" />
     <meta property="og:url" content="{{ env('APP_URL') }}">
     <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
