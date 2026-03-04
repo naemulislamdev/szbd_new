@@ -569,6 +569,12 @@
                                     class="nav-link {{ request()->routeIs('admin.report.profitReport') ? 'active' : '' }}">Profit Report</a>
                             </li>
                         @endcan
+                        @can('track_visitor_report')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.report.trackVisitorReport') }}"
+                                    class="nav-link {{ request()->routeIs('admin.report.trackVisitorReport') ? 'active' : '' }}">Track Visitor Report</a>
+                            </li>
+                        @endcan
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->

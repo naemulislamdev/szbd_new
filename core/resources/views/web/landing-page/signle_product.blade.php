@@ -403,7 +403,10 @@
 @section('content')
     <!-- Header Section -->
     @php
-        $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings');
+        $customer = auth('customer')->user();
+        if ($customer) {
+            $shippingAddresses = \App\Models\ShippingAddress::where('customer_id', $customer->id)->get();
+        }
     @endphp
     <section>
         <div class="container">
@@ -608,7 +611,7 @@
             </section>
         @endforeach
     @endif
-
+    {{-- @dd(session('otp')) --}}
     <!-- Form Section -->
     <section id="orderPlace" class="my-4">
         <div class="container">
@@ -623,8 +626,38 @@
                                     </div>
                                 </div>
                             </div>
-                            <form action="{{ route('sproduct.checkout') }}" method="POST" id="userInfoForm">
+                            @if (!$customer && !session('otp_verified'))
+                                <input type="hidden" name="session_id" id="session_id"
+                                    value="{{ session()->getId() }}">
+                                <div id="otpSection">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control otp-phone-save check-phone" id="otp_phone"
+                                                    name="phone">
+                                                <button type="button" id="send_otp" class="btn btn-info btn-sm">
+                                                    ওটিপি পাঠান
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpInputRow">
+                                        <div class="col-md-6">
+                                            <label>ওটিপি দিন</label>
+                                            <input type="text" class="form-control" id="otp" name="otp">
+                                            <button class="btn btn-success btn-sm mt-2" id="verify_otp">
+                                                Verify OTP
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            <form action="{{ route('sproduct.checkout') }}" method="POST" id=""
+                                class="checkoutForm userInfoForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }}">
                                 @csrf
+                                <input type="hidden" name="session_id" value="{{ session()->getId() }}">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="order-box">
@@ -636,9 +669,44 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-md-6 mb-3">
+                                                    <div class="col-md-12">
+                                                        @if ($customer && $shippingAddresses->count() > 0)
+                                                            @foreach ($shippingAddresses as $key => $address)
+                                                                <div class="address-box {{ $key == 0 ? 'active' : '' }}">
+                                                                    <input type="radio"
+                                                                        id="address_{{ $address->id }}"
+                                                                        name="address_type" value="{{ $address->id }}"
+                                                                        {{ $key == 0 ? 'checked' : '' }}
+                                                                        onclick="selectAddress(false,this)">
+                                                                    <label for="address_{{ $address->id }}">
+                                                                        <strong>Name:
+                                                                            {{ $address->contact_person_name }}</strong>
+                                                                        <br>
+                                                                        📞 Phone: {{ $address->phone }}<br>
+                                                                        🏠 Address: {{ $address->address }}
+                                                                    </label>
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-outline-primary edit-btn"
+                                                                        onclick="openEditModal({{ $address }})">✏️</button>
+                                                                </div>
+                                                            @endforeach
+
+                                                            <label class="address-box">
+                                                                <input type="radio" name="address_type" value="new"
+                                                                    onclick="selectAddress(true,this)">
+                                                                ➕ নতুন ঠিকানা যোগ করুন
+                                                            </label>
+                                                        @endif
+                                                    </div>
+                                                    <div id="newAddressForm"
+                                                        style="{{ $customer ? 'display:none;' : '' }}"
+                                                        class="col-md-12 mb-4">
+                                                        @if (!$customer)
+                                                            <input type="hidden" name="address_type" value="new">
+                                                        @endif
                                                         <div class="form-group">
-                                                            <label>নাম <span class="text-danger">*</span></label>
+                                                            <label for="name">নাম <span
+                                                                    class="text-danger">*</span></label>
                                                             <input type="text" class="form-control auto-save"
                                                                 placeholder="আপনার নাম লিখুন" name="name"
                                                                 value="{{ old('name') }}">
@@ -646,30 +714,31 @@
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-6 mb-3">
+                                                        <div class="{{ session()->has('otp_phone') ? 'd-none' : '' }}">
+                                                            <div class="form-group">
+                                                                <label for="phone">ফোন নম্বর <span
+                                                                        class="text-danger">*</span></label>
+                                                                <input type="number" class="form-control auto-save check-phone"
+                                                                    id="phone" name="phone"
+                                                                    placeholder="ফোন নম্বর লিখুন"
+                                                                    value="{{ old('phone') }}">
+                                                                <span id="phoneFeedback" class="small text-danger"></span>
+                                                                @error('phone')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+
                                                         <div class="form-group">
-                                                            <label for="phone">ফোন নম্বর <span
-                                                                    class="text-danger">*</span></label>
-                                                            <input type="number" class="form-control auto-save"
-                                                                id="phone" name="phone"
-                                                                placeholder="আপনার ফোন নম্বর লিখুন" required
-                                                                value="{{ old('phone') }}">
-                                                            <span id="phoneFeedback" class="small text-danger"></span>
-                                                            @error('phone')
+                                                            <label>আপনার ঠিকানা <span class="text-danger">*</span></label>
+                                                            <textarea class="form-control auto-save" placeholder="আপনার শিপিং ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
+                                                            @error('address')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-12 mb-3">
-                                                        <div class="form-group">
-                                                            <label>আপনার ঠিকানা <span class="text-danger">*</span></label>
-                                                            <textarea class="form-control auto-save" placeholder="আপনার ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
-                                                            @error('address')
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
                                                         <div class="form-group">
                                                             <label>ইমার্জেন্সি নোট (ঐচ্ছিক) </label>
                                                             <textarea class="form-control" placeholder="আপনার নোট লিখুন" name="customer_note">{{ old('order_note') }}</textarea>
@@ -686,7 +755,7 @@
                                                 <div class="size-chart">
                                                     @if ($productLandingPage->product->size_chart)
                                                         <img class="w-100"
-                                                            src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productLandingPage->product['size_chart'] }}"
+                                                            src="{{ asset('assets/storage/product/thumbnail') }}/{{ $productLandingPage->product['size_chart'] }}"
                                                             class="img-fluid" alt="Product size chart image">
                                                     @endif
                                                 </div>
@@ -721,7 +790,6 @@
                                                                         <span class="sp-price">৳
                                                                             {{ $productLandingPage->product['unit_price'] }}</span>
 
-
                                                                     </div>
                                                                     @if ($productLandingPage->product->discount > 0)
                                                                         <span class="discount-price">
@@ -729,9 +797,9 @@
                                                                                 {{ $productLandingPage->product->unit_price }}
                                                                             </del> -
                                                                             @if ($productLandingPage->product->discount_type == 'percent')
-                                                                                {{ round($productLandingPage->product->discount, $decimal_point_settings) }}%
+                                                                                {{ $productLandingPage->product->discount }}%
                                                                             @elseif($productLandingPage->product->discount_type == 'flat')
-                                                                                {{ $productLandingPage->product->discount }}
+                                                                                {{ $productLandingPage->product->discount }}৳
                                                                             @endif
                                                                         </span>
                                                                     @endif
@@ -784,30 +852,7 @@
                                                                         }
                                                                     }
                                                                 @endphp
-                                                                {{-- @foreach (json_decode($productLandingPage->product->choice_options) as $key => $choice)
-                                                                    <div class="row">
-                                                                        <div class="col-12">
-                                                                            <h4 style="font-size: 18px; margin:5px;">
-                                                                                {{ $choice->title }}</h4>
-                                                                        </div>
-                                                                        <div class="col-12">
-                                                                            <div class="d-flex">
-                                                                                @foreach ($choice->options as $key => $option)
-                                                                                    <div class="v-size-box">
-                                                                                        <input type="radio"
-                                                                                            id="{{ $choice->name }}-{{ $option }}"
-                                                                                            name="{{ $choice->name }}"
-                                                                                            value="{{ $option }}"
-                                                                                            @if ($key == 0) checked @endif>
-                                                                                        <label
-                                                                                            for="{{ $choice->name }}-{{ $option }}"
-                                                                                            class="size-label">{{ $option }}</label>
-                                                                                    </div>
-                                                                                @endforeach
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach --}}
+
                                                                 @if (count($productLandingPage->product->colors) > 0)
                                                                     <div class="row mb-4 mt-3">
                                                                         <div class="col-12 mb-3">
@@ -954,6 +999,50 @@
     @endphp
 
     <script>
+        $(document).ready(function() {
+
+            let typingTimer;
+            let doneTypingInterval = 1000;
+
+            $(".otp-phone-save").on("input", function() {
+
+                clearTimeout(typingTimer);
+
+                let phoneValue = $(this).val();
+                let sessionId = $('#session_id').val();
+
+                console.log('phone:', phoneValue, 'session:', sessionId);
+
+                typingTimer = setTimeout(function() {
+
+                    $.ajax({
+                        url: "{{ route('save.user.info') }}",
+                        type: "POST",
+                        data: {
+                            phone: phoneValue,
+                            session_id: sessionId,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.success) {
+                                console.log("Phone auto-saved successfully!");
+                            } else {
+                                console.log("Failed to save phone.");
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log("Error:", xhr.responseText);
+                        }
+                    });
+
+                }, doneTypingInterval);
+            });
+
+        });
+    </script>
+
+    <script>
         const unitPrice = {{ $cleanPrice }};
 
 
@@ -1000,34 +1089,48 @@
         });
     </script>
     <script>
-        document.getElementById('phone').addEventListener('input', function() {
-            const phoneInput = this.value;
-            const phoneFeedback = document.getElementById('phoneFeedback');
-            const regex = /^(01[3-9]\d{8})$/;
+        document.addEventListener('DOMContentLoaded', function() {
 
-            if (phoneInput === '') {
-                phoneFeedback.textContent = '';
-            } else if (!regex.test(phoneInput)) {
-                phoneFeedback.classList.add('text-danger');
-                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            } else {
-                phoneFeedback.textContent = 'Valid phone number!';
-                phoneFeedback.classList.remove('text-danger');
-                phoneFeedback.classList.add('text-success');
-            }
-        });
+            const phoneRegex = /^(01[3-9]\d{8})$/;
 
-        // Also validate when the field loses focus
-        document.getElementById('phone').addEventListener('blur', function() {
-            const phoneInput = this.value;
-            const phoneFeedback = document.getElementById('phoneFeedback');
-            const regex = /^(01[3-9]\d{8})$/;
+            document.querySelectorAll('.check-phone').forEach(function(input) {
 
-            if (phoneInput === '') {
-                phoneFeedback.textContent = 'Phone number is required';
-            } else if (!regex.test(phoneInput)) {
-                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            }
+                const container = input.closest('.col-md-6');
+                const feedback = container.querySelector('.phone-feedback');
+
+                input.addEventListener('input', function() {
+
+                    const value = this.value.trim();
+
+                    feedback.classList.remove('text-danger', 'text-success');
+
+                    if (value === '') {
+                        feedback.textContent = '';
+                        return;
+                    }
+
+                    if (!phoneRegex.test(value)) {
+                        feedback.classList.add('text-danger');
+                        feedback.textContent = 'Please enter valid BD number (017XXXXXXXX)';
+                    } else {
+                        feedback.classList.add('text-success');
+                        feedback.textContent = 'Valid phone number!';
+                    }
+                });
+
+                input.addEventListener('blur', function() {
+
+                    const value = this.value.trim();
+
+                    if (value === '') {
+                        feedback.classList.remove('text-success');
+                        feedback.classList.add('text-danger');
+                        feedback.textContent = 'Phone number is required';
+                    }
+                });
+
+            });
+
         });
     </script>
     <script>
@@ -1041,7 +1144,7 @@
             });
 
             function saveUserData() {
-                let formData = $("#userInfoForm").serialize();
+                let formData = $(".userInfoForm").serialize();
 
                 $.ajax({
                     url: "{{ route('save.user.info') }}",
@@ -1062,6 +1165,7 @@
             }
         });
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const mainImage = document.getElementById('main-image');
@@ -1172,6 +1276,62 @@
                 updateTotal();
             });
 
+        });
+    </script>
+    <script>
+        function selectAddress(showNew, el) {
+            const form = document.getElementById('newAddressForm');
+            if (showNew) {
+                form.style.display = 'block';
+                form.querySelectorAll('input,textarea').forEach(i => i.disabled = false);
+            } else {
+                form.style.display = 'none';
+                form.querySelectorAll('input,textarea').forEach(i => i.disabled = true);
+            }
+
+            document.querySelectorAll('.address-box').forEach(b => b.classList.remove('active'));
+            el.closest('.address-box').classList.add('active');
+        }
+    </script>
+    <script>
+        function openEditModal(address) {
+            event.stopPropagation();
+
+            document.getElementById('edit_id').value = address.id;
+            document.getElementById('edit_name').value = address.contact_person_name;
+            document.getElementById('edit_phone').value = address.phone;
+            document.getElementById('edit_address').value = address.address;
+
+            $('#editAddressModal').modal('show');
+        }
+    </script>
+    <script>
+        // Send OTP
+        $('#send_otp').on('click', function() {
+            let phone = $('#otp_phone').val();
+
+            $.post("{{ route('send.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: phone
+            }, function(res) {
+                if (res.status === 'success') {
+                    $('#otpInputRow').removeClass('d-none');
+                }
+            });
+        });
+
+        // Verify OTP
+        $('#verify_otp').on('click', function() {
+            $.post("{{ route('verify.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: $('#otp_phone').val(),
+                otp: $('#otp').val()
+            }, function(res) {
+                if (res.status === 'success') {
+                    $('#otpSection').hide();
+                    $('.checkoutForm').removeClass('d-none');
+                }
+            });
         });
     </script>
 @endpush

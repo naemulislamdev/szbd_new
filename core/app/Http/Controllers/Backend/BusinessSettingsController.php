@@ -24,203 +24,9 @@ class BusinessSettingsController extends Controller
         $admin_shop_banner = BusinessSetting::where('type', 'company_web_logo')->first();
         return view('admin.web_config.index', compact('google_store', 'apple_store', 'admin_shop_banner'));
     }
-    // public function index()
-    // {
-    //     return view('admin-views.business-settings.general-settings');
-    // }
 
-    // public function about_us()
-    // {
-    //     $about_us = BusinessSetting::where('type', 'about_us')->first();
-    //     return view('admin-views.business-settings.about-us', [
-    //         'about_us' => $about_us,
-    //     ]);
-    // }
-
-    // public function about_usUpdate(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'about_us' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'about_us')->update(['value' => $data->about_us]);
-    //     Toastr::success('About Us updated successfully!');
-    //     return back();
-    // }
-
-    // public function currency_symbol_position($side)
-    // {
-    //     $currency_symbol_position = BusinessSetting::where('type', 'currency_symbol_position')->first();
-    //     if (isset($currency_symbol_position) == false) {
-    //         DB::table('business_settings')->insert([
-    //             'type' => 'currency_symbol_position',
-    //             'value' => $side,
-    //             'created_at' => now(),
-    //             'updated_at' => now(),
-    //         ]);
-    //     } else {
-    //         DB::table('business_settings')->where(['type' => 'currency_symbol_position'])->update([
-    //             'type' => 'currency_symbol_position',
-    //             'value' => $side,
-    //             'updated_at' => now(),
-    //         ]);
-    //     }
-    //     return response()->json(['message' => 'Symbol position is ' . $side]);
-    // }
-
-    // public function business_mode_settings($mode)
-    // {
-    //     $business_mode = BusinessSetting::where('type', 'business_mode')->first();
-    //     if (isset($business_mode) == false) {
-    //         DB::table('business_settings')->insert([
-    //             'type' => 'business_mode',
-    //             'value' => $mode,
-    //             'created_at' => now(),
-    //             'updated_at' => now(),
-    //         ]);
-    //     } else {
-    //         DB::table('business_settings')->where(['type' => 'business_mode'])->update([
-    //             'type' => 'business_mode',
-    //             'value' => $mode,
-    //             'updated_at' => now(),
-    //         ]);
-    //     }
-    //     return response()->json(['message' => 'Business Mode is changed to ' . $mode . ' vendor']);
-    // }
-    // // Social Media
-    // public function social_media()
-    // {
-    //     // $about_us = BusinessSetting::where('type', 'about_us')->first();
-    //     return view('admin-views.business-settings.social-media');
-    // }
-
-    // public function facebook_post()
-    // {
-    //     // $about_us = BusinessSetting::where('type', 'about_us')->first();
-    //     return view('admin-views.business-settings.facebook-post');
-    // }
-
-
-    // public function fetch(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $data = SocialMedia::where('status', 1)->orderBy('id', 'desc')->get();
-    //         return response()->json($data);
-    //     }
-    // }
-
-    // public function social_media_store(Request $request)
-    // {
-    //     $check = SocialMedia::where('name', $request->name)->first();
-    //     if ($check != null) {
-    //         return response()->json([
-    //             'error' => 1,
-    //         ]);
-    //     }
-    //     if ($request->name == 'google-plus') {
-    //         $icon = 'fa fa-google-plus-square';
-    //     }
-    //     if ($request->name == 'facebook') {
-    //         $icon = 'fa fa-facebook';
-    //     }
-    //     if ($request->name == 'twitter') {
-    //         $icon = 'fa fa-twitter';
-    //     }
-    //     if ($request->name == 'pinterest') {
-    //         $icon = 'fa fa-pinterest';
-    //     }
-    //     if ($request->name == 'instagram') {
-    //         $icon = 'fa fa-instagram';
-    //     }
-    //     if ($request->name == 'linkedin') {
-    //         $icon = 'fa fa-linkedin';
-    //     }
-    //     $social_media = new SocialMedia;
-    //     $social_media->name = $request->name;
-    //     $social_media->link = $request->link;
-    //     $social_media->icon = $icon;
-    //     $social_media->save();
-    //     return response()->json([
-    //         'success' => 1,
-    //     ]);
-    // }
-
-    // public function social_media_edit(Request $request)
-    // {
-    //     $data = SocialMedia::where('id', $request->id)->first();
-    //     return response()->json($data);
-    // }
-
-    // public function social_media_update(Request $request)
-    // {
-    //     $social_media = SocialMedia::find($request->id);
-    //     $social_media->name = $request->name;
-    //     $social_media->link = $request->link;
-    //     $social_media->save();
-    //     return response()->json();
-    // }
-
-    // public function social_media_delete(Request $request)
-    // {
-    //     $br = SocialMedia::find($request->id);
-    //     $br->delete();
-    //     return response()->json();
-    // }
-
-    // public function social_media_status_update(Request $request)
-    // {
-    //     SocialMedia::where(['id' => $request['id']])->update([
-    //         'active_status' => $request['status'],
-    //     ]);
-    //     return response()->json([
-    //         'success' => 1,
-    //     ], 200);
-    // }
-
-    // public function terms_condition()
-    // {
-    //     $terms_condition = BusinessSetting::where('type', 'terms_condition')->first();
-    //     return view('admin-views.business-settings.terms-condition', compact('terms_condition'));
-    // }
-
-    // public function updateTermsCondition(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'value' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'terms_condition')->update(['value' => $data->value]);
-    //     Toastr::success('Terms and Condition Updated successfully!');
-    //     return redirect()->back();
-    // }
-
-    // public function privacy_policy()
-    // {
-    //     $privacy_policy = BusinessSetting::where('type', 'privacy_policy')->first();
-    //     return view('admin-views.business-settings.privacy-policy', compact('privacy_policy'));
-    // }
-
-    // public function privacy_policy_update(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'value' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'privacy_policy')->update(['value' => $data->value]);
-    //     Toastr::success('Privacy policy Updated successfully!');
-    //     return redirect()->back();
-    // }
-
-    // public function companyInfo()
-    // {
-    //     $company_name = BusinessSetting::where('type', 'company_name')->first();
-    //     $company_email = BusinessSetting::where('type', 'company_email')->first();
-    //     $company_phone = BusinessSetting::where('type', 'company_phone')->first();
-    //     return view('admin-views.business-settings.website-info', [
-    //         'company_name' => $company_name,
-    //         'company_email' => $company_email,
-    //         'company_phone' => $company_phone,
-    //     ]);
-    // }
-
-    public function updateInfo(Request $request)
+    // no need
+    public function updateInfo2(Request $request)
     {
 
 
@@ -396,54 +202,105 @@ class BusinessSettingsController extends Controller
 
         return redirect()->back()->with('success', 'Company info updated successfully!');
     }
+    public function updateInfo(Request $request)
+    {
+        // 1) Make email/phone verification mutually exclusive
+        $email = (int) $request->input('email_verification', 0);
+        $phone = (int) $request->input('phone_verification', 0);
 
-    // public function updateCompany(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'company_name' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'company_name')->update(['value' => $data->company_name]);
-    //     Toastr::success('Company Updated successfully!');
-    //     return redirect()->back();
-    // }
+        if ($email === 1) $phone = 0;
+        if ($phone === 1) $email = 0;
 
-    // public function updateCompanyEmail(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'company_email' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'company_email')->update(['value' => $data->company_email]);
-    //     Toastr::success('Company Email Updated successfully!');
-    //     return redirect()->back();
-    // }
+        // 2) Simple scalar settings (single loop)
+        $settings = [
+            'company_name' => $request->input('company_name'),
+            'company_email' => $request->input('company_email'),
+            'company_phone' => $request->input('company_phone'),
+            'company_hotline' => $request->input('company_hotline'),
+            'stock_limit' => $request->input('stock_limit'),
+            'company_copyright_text' => $request->input('company_copyright_text'),
+            'timezone' => $request->input('timezone'),
+            'country_code' => $request->input('country'),
+            'phone_verification' => $phone,
+            'email_verification' => $email,
+            'order_verification' => $request->input('order_verification'),
+            'forgot_password_verification' => $request->input('forgot_password_verification'),
+            'decimal_point_settings' => $request->input('decimal_point_settings'),
+            'shop_address' => $request->input('shop_address'),
+        ];
 
-    // public function updateCompanyCopyRight(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'company_copyright_text' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'company_copyright_text')->update(['value' => $data->company_copyright_text]);
-    //     Toastr::success('Company Copy Right Updated successfully!');
-    //     return redirect()->back();
-    // }
+        foreach ($settings as $type => $value) {
+            DB::table('business_settings')->updateOrInsert(['type' => $type], ['value' => $value]);
+        }
 
-    // public function shop_banner(Request $request)
-    // {
-    //     $img = BusinessSetting::where(['type' => 'shop_banner'])->first();
-    //     if (isset($img)) {
-    //         $img = ImageManager::update('shop/', $img, 'png', $request->file('image'));
-    //         BusinessSetting::where(['type' => 'shop_banner'])->update([
-    //             'value' => $img,
-    //         ]);
-    //     } else {
-    //         $img = ImageManager::upload('shop/', 'png', $request->file('image'));
-    //         DB::table('business_settings')->insert([
-    //             'type' => 'shop_banner',
-    //             'value' => $img,
-    //         ]);
-    //     }
-    //     return back();
-    // }
+        // 3) Files (small helper)
+        $this->updateSettingFile($request, 'shop_banner', 'shop/', 'assets/storage/shop/');
+        $this->updateSettingFile($request, 'company_web_logo', 'company/', 'assets/storage/company/', true);
+        $this->updateSettingFile($request, 'company_mobile_logo', 'company/', 'assets/storage/company/', true);
+        $this->updateSettingFile($request, 'company_footer_logo', 'company/', 'assets/storage/company/', true);
+        $this->updateSettingFile($request, 'company_fav_icon', 'company/', 'assets/storage/', true);
+        $this->updateSettingFile($request, 'loader_gif', 'company/', 'assets/storage/company/', false, true);
+
+        // 4) JSON settings (small helper)
+        $this->updateSettingJson('colors', [
+            'primary' => $request->input('primary'),
+            'secondary' => $request->input('secondary'),
+        ]);
+
+        $this->updateSettingJson('announcement', [
+            'status' => $request->input('announcement_status'),
+            'color' => $request->input('announcement_color'),
+            'text_color' => $request->input('text_color'),
+            'announcement' => $request->input('announcement'),
+        ]);
+
+        $this->updateSettingJson('default_location', [
+            'lat' => $request->input('latitude'),
+            'lng' => $request->input('longitude'),
+        ]);
+
+        // 5) Validation + pagination
+        $request->validate(['pagination_limit' => 'numeric']);
+        DB::table('business_settings')->updateOrInsert(
+            ['type' => 'pagination_limit'],
+            ['value' => $request->input('pagination_limit')]
+        );
+
+        return back()->with('success', 'Company info updated successfully!');
+    }
+
+    private function updateSettingFile(
+        Request $request,
+        string $type,
+        string $folder,
+        string $oldPathPrefix,
+        bool $useUpdate = false,
+        bool $forceInsert = false
+    ): void {
+        if (!$request->hasFile($type)) return;
+
+        $current = BusinessSetting::where('type', $type)->first();
+        $oldValue = $current?->value;
+
+        $oldPath = $oldValue ? $oldPathPrefix . $oldValue : null;
+
+        $newValue = FileManager::updateFile($folder, $oldPath, $request->file($type));
+
+        if ($forceInsert || !$useUpdate) {
+            DB::table('business_settings')->updateOrInsert(['type' => $type], ['value' => $newValue]);
+            return;
+        }
+
+        BusinessSetting::where('type', $type)->update(['value' => $newValue]);
+    }
+
+    private function updateSettingJson(string $type, array $payload): void
+    {
+        DB::table('business_settings')->updateOrInsert(
+            ['type' => $type],
+            ['value' => json_encode($payload)]
+        );
+    }
 
     public function update(Request $request, $name)
     {
@@ -501,452 +358,4 @@ class BusinessSettingsController extends Controller
 
         return redirect()->back()->with('success', 'App Store updated successfully!');
     }
-
-    // public function updateCompanyPhone(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'company_phone' => 'required',
-    //     ]);
-    //     BusinessSetting::where('type', 'company_phone')->update(['value' => $data->company_phone]);
-    //     Toastr::success('Company Phone Updated successfully!');
-    //     return redirect()->back();
-    // }
-
-    // public function uploadWebLogo(Request $data)
-    // {
-    //     $img = BusinessSetting::where(['type' => 'company_web_logo'])->pluck('value')[0];
-    //     if ($data->image) {
-    //         $img = ImageManager::update('company/', $img, 'png', $data->file('image'));
-    //     }
-
-    //     BusinessSetting::where(['type' => 'company_web_logo'])->update([
-    //         'value' => $img,
-    //     ]);
-    //     return back();
-    // }
-
-    // public function uploadFooterLog(Request $data)
-    // {
-    //     $img = BusinessSetting::where(['type' => 'company_footer_logo'])->pluck('value')[0];
-    //     if ($data->image) {
-    //         $img = ImageManager::update('company/', $img, 'png', $data->file('image'));
-    //     }
-
-    //     BusinessSetting::where(['type' => 'company_footer_logo'])->update([
-    //         'value' => $img,
-    //     ]);
-    //     Toastr::success('Footer Logo updated successfully!');
-    //     return back();
-    // }
-
-    // public function uploadFavIcon(Request $data)
-    // {
-    //     $img = BusinessSetting::where(['type' => 'company_fav_icon'])->pluck('value')[0];
-
-    //     if ($data->image) {
-    //         $img = ImageManager::update('company/', $img, 'png', $data->file('image'));
-    //     }
-
-    //     BusinessSetting::where(['type' => 'company_fav_icon'])->update([
-    //         'value' => $img,
-    //     ]);
-    //     Toastr::success('Fav Icon updated successfully!');
-    //     return back();
-    // }
-
-    // public function uploadMobileLogo(Request $data)
-    // {
-    //     $img = BusinessSetting::where(['type' => 'company_mobile_logo'])->pluck('value')[0];
-    //     if ($data->image) {
-    //         $img = ImageManager::update('company/', $img, 'png', $data->file('image'));
-    //     }
-    //     BusinessSetting::where(['type' => 'company_mobile_logo'])->update([
-    //         'value' => $img,
-    //     ]);
-    //     return back();
-    // }
-
-    // public function update_colors(Request $request)
-    // {
-    //     $colors = BusinessSetting::where('type', 'colors')->first();
-    //     if (isset($colors)) {
-    //         BusinessSetting::where('type', 'colors')->update([
-    //             'value' => json_encode(
-    //                 [
-    //                     'primary' => $request['primary'],
-    //                     'secondary' => $request['secondary'],
-    //                 ]
-    //             ),
-    //         ]);
-    //     } else {
-    //         DB::table('business_settings')->insert([
-    //             'type' => 'colors',
-    //             'value' => json_encode(
-    //                 [
-    //                     'primary' => $request['primary'],
-    //                     'secondary' => $request['secondary'],
-    //                 ]
-    //             ),
-    //         ]);
-    //     }
-    //     Toastr::success('Color  updated!');
-    //     return back();
-    // }
-
-    // public function fcm_index()
-    // {
-    //     return view('admin-views.business-settings.fcm-index');
-    // }
-
-    // public function update_fcm(Request $request)
-    // {
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'fcm_project_id'], [
-    //         'value' => $request['fcm_project_id'],
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'push_notification_key'], [
-    //         'value' => $request['push_notification_key'],
-    //     ]);
-
-    //     Toastr::success('Settings updated!');
-    //     return back();
-    // }
-
-    // public function update_fcm_messages(Request $request)
-    // {
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'order_pending_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['pending_status'],
-    //             'message' => $request['pending_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'order_confirmation_msg'], [
-    //         'value' => json_encode([
-    //             'status' => $request['confirm_status'],
-    //             'message' => $request['confirm_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'order_processing_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['processing_status'],
-    //             'message' => $request['processing_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'out_for_delivery_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['out_for_delivery_status'],
-    //             'message' => $request['out_for_delivery_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'order_delivered_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['delivered_status'],
-    //             'message' => $request['delivered_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'order_returned_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['returned_status'],
-    //             'message' => $request['returned_message'],
-    //         ]),
-    //     ]);
-
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'order_failed_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['failed_status'],
-    //             'message' => $request['failed_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'delivery_boy_assign_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['delivery_boy_assign_status'] == 1 ? 1 : 0,
-    //             'message' => $request['delivery_boy_assign_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'delivery_boy_start_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['delivery_boy_start_status'] == 1 ? 1 : 0,
-    //             'message' => $request['delivery_boy_start_message'],
-    //         ]),
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'delivery_boy_delivered_message'], [
-    //         'value' => json_encode([
-    //             'status' => $request['delivery_boy_delivered_status'] == 1 ? 1 : 0,
-    //             'message' => $request['delivery_boy_delivered_message'],
-    //         ]),
-    //     ]);
-
-    //     Toastr::success('Message updated!');
-    //     return back();
-    // }
-
-    // public function seller_settings()
-    // {
-    //     $sales_commission = BusinessSetting::where('type', 'sales_commission')->first();
-    //     if (!isset($sales_commission)) {
-    //         DB::table('business_settings')->insert(['type' => 'sales_commission', 'value' => 0]);
-    //     }
-
-    //     $seller_registration = BusinessSetting::where('type', 'seller_registration')->first();
-    //     if (!isset($seller_registration)) {
-    //         DB::table('business_settings')->insert(['type' => 'seller_registration', 'value' => 1]);
-    //     }
-
-    //     return view('admin-views.business-settings.seller-settings');
-    // }
-
-    // public function sales_commission(Request $data)
-    // {
-    //     $validatedData = $data->validate([
-    //         'commission' => 'required|min:0',
-    //     ]);
-    //     $sales_commission = BusinessSetting::where('type', 'sales_commission')->first();
-
-    //     if (isset($sales_commission)) {
-    //         BusinessSetting::where('type', 'sales_commission')->update(['value' => $data->commission]);
-    //     } else {
-    //         DB::table('business_settings')->insert(['type' => 'sales_commission', 'value' => $data->commission]);
-    //     }
-
-    //     Toastr::success('Sales commission Updated successfully!');
-    //     return redirect()->back();
-    // }
-
-    // public function seller_registration(Request $data)
-    // {
-    //     $seller_registration = BusinessSetting::where('type', 'seller_registration')->first();
-    //     if (isset($seller_registration)) {
-    //         BusinessSetting::where(['type' => 'seller_registration'])->update(['value' => $data->seller_registration]);
-    //     } else {
-    //         DB::table('business_settings')->insert([
-    //             'type' => 'seller_registration',
-    //             'value' => $data->seller_registration,
-    //             'updated_at' => now()
-    //         ]);
-    //     }
-
-    //     Toastr::success('Seller registration Updated successfully!');
-    //     return redirect()->back();
-    // }
-    // public function seller_pos_settings(Request $request)
-    // {
-    //     $seller_pos = BusinessSetting::where('type', 'seller_pos')->first();
-    //     if (isset($seller_pos)) {
-    //         BusinessSetting::where(['type' => 'seller_pos'])->update(['value' => $request->seller_pos]);
-    //     } else {
-    //         DB::table('business_settings')->insert([
-    //             'type' => 'seller_pos',
-    //             'value' => $request->seller_pos,
-    //             'updated_at' => now()
-    //         ]);
-    //     }
-
-    //     Toastr::success('Seller pos permission Updated successfully!');
-    //     return redirect()->back();
-    // }
-
-    // public function product_approval(Request $request)
-    // {
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'new_product_approval'], [
-    //         'value' => $request->new_product_approval == 'on' ? 1 : 0
-    //     ]);
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'product_wise_shipping_cost_approval'], [
-    //         'value' => $request->product_wise_shipping_cost_approval == 'on' ? 1 : 0
-    //     ]);
-    //     Toastr::success(\App\CPU\translate('admin_approval_for_products_updated_successfully!'));
-    //     return redirect()->back();
-    // }
-
-    // public function update_language(Request $request)
-    // {
-    //     $languages = $request['language'];
-    //     if (in_array('en', $languages)) {
-    //         unset($languages[array_search('en', $languages)]);
-    //     }
-    //     array_unshift($languages, 'en');
-
-    //     DB::table('business_settings')->where(['type' => 'pnc_language'])->update([
-    //         'value' => json_encode($languages),
-    //     ]);
-    //     Toastr::success('Language  updated!');
-    //     return back();
-    // }
-
-    // public function viewSocialLogin()
-    // {
-    //     return view('admin-views.business-settings.social-login.view');
-    // }
-
-    // public function updateSocialLogin($service, Request $request)
-    // {
-    //     $socialLogin = BusinessSetting::where('type', 'social_login')->first();
-    //     $credential_array = [];
-    //     foreach (json_decode($socialLogin['value'], true) as $key => $data) {
-    //         if ($data['login_medium'] == $service) {
-    //             $cred = [
-    //                 'login_medium' => $service,
-    //                 'client_id' => $request['client_id'],
-    //                 'client_secret' => $request['client_secret'],
-    //                 'status' => $request['status'],
-    //             ];
-    //             array_push($credential_array, $cred);
-    //         } else {
-    //             array_push($credential_array, $data);
-    //         }
-    //     }
-    //     BusinessSetting::where('type', 'social_login')->update([
-    //         'value' => $credential_array
-    //     ]);
-
-    //     Toastr::success($service . ' credentials  updated!');
-    //     return redirect()->back();
-    // }
-
-    // //recaptcha
-    // public function recaptcha_index(Request $request)
-    // {
-    //     return view('admin-views.business-settings.recaptcha-index');
-    // }
-    // public function recaptcha_update(Request $request)
-    // {
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'recaptcha'], [
-    //         'type' => 'recaptcha',
-    //         'value' => json_encode([
-    //             'status' => $request['status'],
-    //             'site_key' => $request['site_key'],
-    //             'secret_key' => $request['secret_key']
-    //         ]),
-    //         'created_at' => now(),
-    //         'updated_at' => now(),
-    //     ]);
-
-
-    //     Toastr::success('Updated Successfully');
-    //     return back();
-    // }
-    // public function map_api()
-    // {
-    //     return view('admin-views.business-settings.map-api.index');
-    // }
-
-    // public function map_api_update(Request $request)
-    // {
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'map_api_key'], [
-    //         'value' => $request['map_api_key']
-    //     ]);
-
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'map_api_key_server'], [
-    //         'value' => $request['map_api_key_server']
-    //     ]);
-
-    //     Toastr::success(\App\CPU\translate('config_data_updated'));
-    //     return back();
-    // }
-
-    // public function analytics_index()
-    // {
-    //     return view('admin-views.business-settings.analytics.index');
-    // }
-    // public function analytics_update(Request $request)
-    // {
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'pixel_analytics'], [
-    //         'value' => $request['pixel_analytics']
-    //     ]);
-
-    //     Toastr::success(\App\CPU\translate('config_data_updated'));
-    //     return back();
-    // }
-    // public function google_tag_analytics_update(Request $request)
-    // {
-    //     DB::table('business_settings')->updateOrInsert(['type' => 'google_tag_manager_id'], [
-    //         'value' => $request['google_tag_manager_id']
-    //     ]);
-
-    //     Toastr::success(\App\CPU\translate('google_tag_manager_id_updated'));
-    //     return back();
-    // }
-
-    // public function facebook_media_store(Request $request)
-    // {
-    //     $social_media = new facebook_post;
-    //     $social_media->name = $request->name;
-    //     $social_media->link = $request->link;
-    //     $social_media->status = 1;
-    //     $social_media->save();
-    //     return response()->json([
-    //         'success' => 1,
-    //     ]);
-    // }
-
-    // public function facebookget(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $data = facebook_post::where('status', 1)->orderBy('id', 'desc')->get();
-    //         return response()->json($data);
-    //     }
-    // }
-
-
-    // public function facebook_status_update(Request $request)
-    // {
-
-    //     facebook_post::where(['status' => 1])->update(['status' => 0]);
-    //     facebook_post::where(['id' => $request['id']])->update([
-    //         'status' => $request['status'],
-    //     ]);
-    //     return response()->json([
-    //         'success' => 1,
-    //     ], 200);
-    // }
-
-    // public function facebook_media_delete(Request $request)
-    // {
-    //     $br = facebook_post::find($request->id);
-    //     $br->delete();
-    //     return response()->json();
-    // }
-
-    // // Meta
-
-
-    // public function meta_post()
-    // {
-    //     // $about_us = BusinessSetting::where('type', 'about_us')->first();
-    //     return view('admin-views.business-settings.meta');
-    // }
-
-    // public function meta(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $data = metaAdd::all();
-    //         return response()->json($data);
-    //     }
-    // }
-
-    // public function meta_post_edit(Request $request)
-    // {
-    //     $data = metaAdd::where('id', $request->id)->first();
-    //     return response()->json($data);
-    // }
-
-    // public function meta_post_update(Request $request)
-    // {
-    //     $social_media = metaAdd::find($request->id);
-    //     $social_media->title = $request->title;
-    //     $social_media->description = $request->description;
-    //     $social_media->save();
-    //     return response()->json([
-    //         'success' => 1,
-    //     ]);
-    // }
 }

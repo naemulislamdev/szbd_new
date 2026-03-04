@@ -26,6 +26,7 @@ use App\Models\Review;
 use App\Models\ShippingAddress;
 use App\Models\SubCategory;
 use App\Models\User;
+use App\Models\UserInfo;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -182,9 +183,9 @@ class FrontendController extends Controller
         $allProducts = Product::active()->with(['reviews'])->where('video_shopping', true);
 
         $query = null;
-        if ($request->get('min_price') !== null && $request->get('max_price') !== null) {
-            $min_price = $request->get('min_price');
-            $max_price = $request->get('max_price');
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
             $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
         }
         $products = $query;
@@ -210,9 +211,9 @@ class FrontendController extends Controller
         $allProducts = Product::with(['reviews'])->latest()->active();
 
         $query = null;
-        if ($request->get('min_price') !== null && $request->get('max_price') !== null) {
-            $min_price = $request->get('min_price');
-            $max_price = $request->get('max_price');
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
             $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
         }
         $products = $query;
@@ -230,9 +231,9 @@ class FrontendController extends Controller
         $allProducts = Product::with(['reviews'])->where('discount', '>', 0)->active();
 
         $query = null;
-        if ($request->get('min_price') !== null && $request->get('max_price') !== null) {
-            $min_price = $request->get('min_price');
-            $max_price = $request->get('max_price');
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
             $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
         }
         $products = $query;
@@ -564,6 +565,42 @@ class FrontendController extends Controller
         } else {
             return redirect()->route('home')->with('warning', 'Landing page is not available!');
         }
+    }
+    public function saveUserInfo(Request $request)
+    {
+        $sessionId = $request->input('session_id');
+        if (!$sessionId) {
+            return response()->json(['success' => false, 'message' => 'session_id missing'], 422);
+        }
+
+        $identifier = ['session_id' => $sessionId];
+
+        // Cart/product_details handling
+        $cart = session('cart', []);
+        $type = 'Main page';
+
+        // Only if landing page request has product_id
+        if ($request->has('product_id')) {
+            $cart = $request->all();
+            $type = 'Landing page';
+        }
+
+        // Only update fields that are present & not empty
+        $data = [];
+
+        if ($request->filled('name'))    $data['name'] = $request->name;
+        if ($request->filled('email'))   $data['email'] = $request->email;
+        if ($request->filled('phone'))   $data['phone'] = $request->phone;
+        if ($request->filled('address')) $data['address'] = $request->address;
+
+        $data['type'] = $type;
+        $data['order_process'] = 'pending';
+
+        $data['product_details'] = json_encode($cart);
+
+        UserInfo::updateOrCreate($identifier, $data);
+
+        return response()->json(['success' => true]);
     }
 
     // DB Modify Funciton for some time

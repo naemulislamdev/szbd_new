@@ -16,7 +16,7 @@ use App\Http\Controllers\Front\WholesaleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web'])->group(function () {
+Route::middleware(['web', 'track_visitor'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
         Route::get('/', 'home')->name('home');
         Route::get('/category', 'category')->name('category');

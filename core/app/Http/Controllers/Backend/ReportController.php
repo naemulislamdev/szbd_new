@@ -10,6 +10,7 @@ use App\Services\ModeratarReportData;
 use App\Services\ProductReportData;
 use App\Services\ProfitReportData;
 use App\Services\TopSellingData;
+use App\Services\TrackVisitorData;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -124,5 +125,24 @@ class ReportController extends Controller
         ]);
 
         return ProfitReportData::getExportProfitReport($request);
+    }
+    // track visitor Reports
+    public function trackVisitor()
+    {
+        return view('admin.reports.track_visitor');
+    }
+
+    public function trackVisitorData(Request $request)
+    {
+        return TrackVisitorData::getVisitorData($request);
+    }
+    public function trackVisitorExport(Request $request)
+    {
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date'   => 'required|date|after_or_equal:from_date',
+        ]);
+
+        return TrackVisitorData::getExportVisitorReport($request);
     }
 }

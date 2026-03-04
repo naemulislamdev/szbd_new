@@ -177,37 +177,94 @@
 
 @push('scripts')
     <script>
+        $(document).ready(function() {
+
+            let typingTimer;
+            let doneTypingInterval = 1000;
+
+            $(".otp-phone-save").on("input", function() {
+
+                clearTimeout(typingTimer);
+
+                let phoneValue = $(this).val();
+                let sessionId = $('#session_id').val();
+
+                console.log('phone:', phoneValue, 'session:', sessionId);
+
+                typingTimer = setTimeout(function() {
+
+                    $.ajax({
+                        url: "{{ route('save.user.info') }}",
+                        type: "POST",
+                        data: {
+                            phone: phoneValue,
+                            session_id: sessionId,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.success) {
+                                console.log("Phone auto-saved successfully!");
+                            } else {
+                                console.log("Failed to save phone.");
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log("Error:", xhr.responseText);
+                        }
+                    });
+
+                }, doneTypingInterval);
+            });
+
+        });
+    </script>
+    <script>
         cartQuantityInitialize();
     </script>
     <script>
-        document.getElementById('phone').addEventListener('input', function() {
-            const phoneInput = this.value;
-            const phoneFeedback = document.getElementById('phoneFeedback');
-            const regex = /^(01[3-9]\d{8})$/;
+        document.addEventListener('DOMContentLoaded', function() {
 
-            if (phoneInput === '') {
-                phoneFeedback.textContent = '';
-            } else if (!regex.test(phoneInput)) {
-                phoneFeedback.classList.add('text-danger');
-                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            } else {
-                phoneFeedback.textContent = 'Valid phone number!';
-                phoneFeedback.classList.remove('text-danger');
-                phoneFeedback.classList.add('text-success');
-            }
-        });
+            const phoneRegex = /^(01[3-9]\d{8})$/;
 
-        // Also validate when the field loses focus
-        document.getElementById('phone').addEventListener('blur', function() {
-            const phoneInput = this.value;
-            const phoneFeedback = document.getElementById('phoneFeedback');
-            const regex = /^(01[3-9]\d{8})$/;
+            document.querySelectorAll('.check-phone').forEach(function(input) {
 
-            if (phoneInput === '') {
-                phoneFeedback.textContent = 'Phone number is required';
-            } else if (!regex.test(phoneInput)) {
-                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            }
+                const container = input.closest('.col-md-6');
+                const feedback = container.querySelector('.phone-feedback');
+
+                input.addEventListener('input', function() {
+
+                    const value = this.value.trim();
+
+                    feedback.classList.remove('text-danger', 'text-success');
+
+                    if (value === '') {
+                        feedback.textContent = '';
+                        return;
+                    }
+
+                    if (!phoneRegex.test(value)) {
+                        feedback.classList.add('text-danger');
+                        feedback.textContent = 'Please enter valid BD number (017XXXXXXXX)';
+                    } else {
+                        feedback.classList.add('text-success');
+                        feedback.textContent = 'Valid phone number!';
+                    }
+                });
+
+                input.addEventListener('blur', function() {
+
+                    const value = this.value.trim();
+
+                    if (value === '') {
+                        feedback.classList.remove('text-success');
+                        feedback.classList.add('text-danger');
+                        feedback.textContent = 'Phone number is required';
+                    }
+                });
+
+            });
+
         });
     </script>
 

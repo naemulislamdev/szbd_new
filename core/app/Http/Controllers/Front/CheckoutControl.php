@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Front;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
+use App\Models\Color;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ShippingAddress;
 use App\Models\ShippingMethod;
@@ -90,7 +92,6 @@ class CheckoutControl extends Controller
 
     public function productCheckout(Request $request)
     {
-        // dd($request->all());
         if (!session()->has('cart') || count(session('cart')) == 0) {
             return redirect()->route('home');
         }
@@ -144,6 +145,8 @@ class CheckoutControl extends Controller
             $discount = session('coupon_discount', 0);
             $coupon_code = session('coupon_code');
 
+            $shippingMethod = ShippingMethod::findOrFail($request->shipping_area);
+
             $order_id = DB::table('orders')->insertGetId([
                 'order_number' => rand(100000, 999999),
                 'verification_code' => rand(100000, 999999),
@@ -160,6 +163,7 @@ class CheckoutControl extends Controller
                 'shipping_address' => $shippingAddress->id,
                 'shipping_address_data' => json_encode($shippingAddress),
                 'shipping_method_id' => $request->shipping_area,
+                'shipping_cost' => $shippingMethod->cost,
                 'created_at' => now(),
             ]);
 
@@ -221,25 +225,51 @@ class CheckoutControl extends Controller
 
     public function singlepCheckout(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'nullable|email',
-            'address' => 'required|string|max:255',
-            'phone' => 'required|regex:/^(01[3-9]\d{8})$/',
-            'customer_note' => 'nullable|string|max:200',
+        //dd($request->all());
+        // ================= VALIDATION =================
+        $rules = [
             'shipping_method' => 'required',
-        ]);
+            // 'payment_method' => 'required|in:cash_on_delivery,online_payment',
+        ];
 
+        if ($request->address_type === 'new' || !auth('customer')->check()) {
+            $rules += [
+                'name' => 'required|string',
+                'phone' => 'nullable|regex:/^(01[3-9]\d{8})$/',
+                'address' => 'required|string|max:200',
+                'customer_note' => 'nullable|string|max:200',
+            ];
+        }
+
+        $request->validate($rules);
+
+        // ================= CUSTOMER CHECK =================
         $authUser = Helpers::get_customer_check($request);
+        //dd($authUser);
+
+        if (!$authUser || $authUser === 'offline') {
+            return back()->with('error', 'Customer authentication failed');
+        }
+        $userFind = User::find($authUser->id);
+
+        if ($userFind->is_active == 0) {
+            return back()->with('error', 'Your account is inactive.');
+        }
+
         if ($authUser) {
-            $shippingAddress = new ShippingAddress();
-            $shippingAddress->customer_id = auth('customer')->id();
-            $shippingAddress->contact_person_name = $request->name;
-            $shippingAddress->address = $request->address;
-            $shippingAddress->city = 'city';
-            $shippingAddress->phone = $request->phone;
-            $shippingAddress->created_at = now();
-            $shippingAddress->save();
+            // ================= Address CREATE =================
+            $addressType = $request->input('address_type', 'new');
+
+            if ($addressType === 'new' || !auth('customer')->check()) {
+                $shippingAddress = ShippingAddress::create([
+                    'customer_id' => auth('customer')->id(),
+                    'contact_person_name' => $request->name,
+                    'phone' => session()->has('otp_phone') ? session('otp_phone') : $request->phone,
+                    'address' => $request->address,
+                ]);
+            } else {
+                $shippingAddress = ShippingAddress::findOrFail($addressType);
+            }
 
             $product = Product::find($request->product_id);
             $str = '';
@@ -264,15 +294,19 @@ class CheckoutControl extends Controller
                     dd('No matching color found');
                 }
             }
+            // $product = Product::find($request->product_id);
+            $choiceOptions = is_array($product->choice_options)
+                ? $product->choice_options
+                : json_decode($product->choice_options ?? '[]', true);
             //Gets all the choice values of customer choice option and generate a string like Black-S-Cotton
-            foreach (json_decode(Product::find($request->product_id)->choice_options) as $key => $choice) {
-                $data[$choice->name] = $request[$choice->name];
+            foreach ($choiceOptions as $key => $choice) {
+                $data[$choice['name']] = $request[$choice['name']];
 
-                $variations[$choice->title] = $request[$choice->name];
+                $variations[$choice['title']] = $request[$choice['name']];
                 if ($str != null) {
-                    $str .= '-' . str_replace(' ', '', $request[$choice->name]);
+                    $str .= '-' . str_replace(' ', '', $request[$choice['name']]);
                 } else {
-                    $str .= str_replace(' ', '', $request[$choice->name]);
+                    $str .= str_replace(' ', '', $request[$choice['name']]);
                 }
             }
             $variations[] = $variations;
@@ -295,9 +329,9 @@ class CheckoutControl extends Controller
 
             $f_discount = $discount * $quantity;
             $granTotal = ($price * $quantity) + ($tax * $quantity) - $f_discount;
-
+            $shippingMethod = ShippingMethod::findOrFail($request->shipping_method);
             $or = [
-                'id' => 100000 + Order::all()->count() + 1,
+                'order_number' => rand(100000, 999999),
                 'verification_code' => rand(100000, 999999),
                 'customer_id' => auth('customer')->id(),
                 'customer_type' => 'customer',
@@ -311,19 +345,19 @@ class CheckoutControl extends Controller
                 'discount_type' => null,
                 'order_amount' => $granTotal,
                 'shipping_address' => $shippingAddress->id,
-                'shipping_address_data' => ShippingAddress::find($shippingAddress->id),
+                'shipping_address_data' => json_encode($shippingAddress),
                 'shipping_method_id' => $request->shipping_method,
-                'shipping_cost' => CartManager::get_shipping_cost($request->shipping_method),
+                'shipping_cost' => $shippingMethod->cost,
+
                 'created_at' => now()
             ];
 
-            $order_id = DB::table('orders')->insertGetId($or);
+            $order = Order::create($or);
 
-            $product = Product::where(['id' => $request['product_id']])->first();
-            $or_d = [
-                'order_id' => $order_id,
+            // $product = Product::where(['id' => $request['product_id']])->first();
+            $orderDetails = [
+                'order_id' => $order->id,
                 'product_id' => $request['product_id'],
-                'seller_id' => $product->added_by == 'seller' ? $product->user_id : '0',
                 'product_details' => $product,
                 'color_image' => $color_image_path,
                 'qty' => $request['quantity'],
@@ -362,7 +396,7 @@ class CheckoutControl extends Controller
                 'current_stock' => $product['current_stock'] - $request['quantity']
             ]);
 
-            DB::table('order_details')->insert($or_d);
+            OrderDetail::create($orderDetails);
 
             $userInfo = UserInfo::where('session_id', $request->input('session_id'))
                 ->where('order_process', 'pending')
@@ -372,32 +406,20 @@ class CheckoutControl extends Controller
                 $userInfo->delete();
             }
 
-            try {
-                $fcm_token = User::where(['id' => auth('customer')->id()])->first()->cm_firebase_token;
-                $value = \App\CPU\Helpers::order_status_update_message('pending');
-                if ($value) {
-                    $data = [
-                        'title' => 'Order',
-                        'description' => $value,
-                        'order_id' => $order_id,
-                        'image' => '',
-                    ];
-                    Helpers::send_push_notif_to_device($fcm_token, $data);
-                }
-            } catch (\Exception $e) {
-                Toastr::error('FCM token config issue.');
-            }
+            session(['otp_verified' => false]);
 
+            session()->forget([
+                'cart',
+                'coupon_code',
+                'coupon_discount',
+                'payment_method',
+                'customer_info',
+                'shipping_method_id',
+                'otp',
+                'otp_phone',
+            ]);
 
-            session()->forget('cart');
-            session()->forget('coupon_code');
-            session()->forget('coupon_discount');
-            session()->forget('payment_method');
-            session()->forget('customer_info');
-            session()->forget('shipping_method_id');
-            $order = Order::find($order_id);
-
-            return redirect()->route('customer.checkout-complete', ['id' => $order_id]);
+            return redirect()->route('checkout-complete', ['id' => $order->id]);
         } else {
             return "something went wrong please try again";
         }

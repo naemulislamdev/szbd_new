@@ -4,6 +4,9 @@
         $shippingAddresses = \App\Models\ShippingAddress::where('customer_id', $customer->id)->get();
     }
 @endphp
+
+    {{-- @dd(session('otp')) --}}
+
 <div class="row">
     <div class="col-md-10 mx-auto my-3">
         <div class="row">
@@ -89,16 +92,19 @@
                     </div>
                     <div class="card-body">
                         @if (!$customer && !session('otp_verified'))
+                        <input type="hidden" name="session_id" id="session_id"
+                                    value="{{ session()->getId() }}">
                             <div id="otpSection">
                                 <div class="row">
                                     <div class="col-md-6 mx-auto">
                                         <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control auto-save" id="otp_phone">
+                                            <input type="number" class="form-control otp-phone-save check-phone" id="otp_phone">
                                             <button type="button" id="send_otp" class="btn btn-info btn-sm">
                                                 ওটিপি পাঠান
                                             </button>
                                         </div>
+                                        <span class="phone-feedback small"></span>
                                     </div>
                                 </div>
 
@@ -200,7 +206,7 @@
                                     <div class="col-md-6 mb-3 {{ session()->has('otp_phone') ? 'd-none' : '' }}">
                                         <div class="form-group">
                                             <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control auto-save" id="phone"
+                                            <input type="number" class="form-control auto-save check-phone" id="phone"
                                                 name="phone" placeholder="ফোন নম্বর লিখুন"
                                                 value="{{ old('phone') }}">
                                             <span id="phoneFeedback" class="small text-danger"></span>

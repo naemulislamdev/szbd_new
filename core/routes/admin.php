@@ -400,6 +400,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/profit', 'profitReport')->name('profitReport');
             Route::get('/profit-report-data', 'profitReportData')->name('profitReportData');
             Route::get('/profit-report-export', 'profitReportExport')->name('profitReportExport');
+            // Daily Track Visitor
+            Route::get('/track-visitor', 'trackVisitor')->name('trackVisitorReport');
+            Route::get('/track-visitor-data', 'trackVisitorData')->name('trackVisitorData');
+            Route::get('/track-visitor-export', 'trackVisitorExport')->name('trackVisitorExport');
             // Route::get('daily-sales', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales');
             // Route::post('daily-sales-filter', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales-filter');
         });
