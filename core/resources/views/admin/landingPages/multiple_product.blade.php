@@ -218,7 +218,6 @@
             }
         });
     </script>
-
     <script>
         (function($) {
             "use strict";
@@ -438,7 +437,6 @@
 
         })(jQuery);
     </script>
-
     <script>
         $.ajaxSetup({
             headers: {
@@ -450,28 +448,12 @@
     </script>
 
     <script>
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    $('#viewer').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        $("#customFileEg1").change(function() {
-            readURL(this);
-        });
-    </script>
-    <script>
         $(document).on('click', '.edit', function() {
             let button = $(this);
+            console.log(button);
             $('#pageId').val(button.data('id'));
             $('#title').val(button.data('title'));
-            // $('#images').attr('src', button.data('images'));
+            $('#imageBox').attr('src', button.data('images'));
             let productId = $(this).data('product_id');
             $('#productId').val(productId).trigger('change');
             $('#editForm').attr('action', '/admin/category/' + button.data('id') + '/update');
@@ -490,7 +472,34 @@
                         // create preview div
                         var preview = $(`
                     <div class="position-relative" style="width:150px; height:150px; border:1px solid #ccc; border-radius:10px; overflow:hidden;">
-                        <img src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">
+                        <img  src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">
+                        <span class="btn btn-sm btn-danger position-absolute"
+                              style="top:5px; right:5px; cursor:pointer;"
+                              data-index="${index}">&times;</span>
+                    </div>
+                `);
+
+                        container.append(preview);
+                    }
+
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function readMultipleFiles2(input) {
+            var container = $('#imagePreviewContainer2');
+            container.html(''); // clear previous previews
+
+            if (input.files) {
+                Array.from(input.files).forEach((file, index) => {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        // create preview div
+                        var preview = $(`
+                    <div class="position-relative" style="width:150px; height:150px; border:1px solid #ccc; border-radius:10px; overflow:hidden;">
+                        <img id="imageBox" src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">
                         <span class="btn btn-sm btn-danger position-absolute"
                               style="top:5px; right:5px; cursor:pointer;"
                               data-index="${index}">&times;</span>
@@ -508,6 +517,9 @@
         // when files selected
         $("#customFileEg1").change(function() {
             readMultipleFiles(this);
+        });
+        $("#customFileEg2").change(function() {
+            readMultipleFiles2(this);
         });
 
         // delete preview
@@ -533,6 +545,32 @@
 
             // re-index remaining previews
             $('#imagePreviewContainer div').each(function(i, el) {
+                $(el).find('span').attr('data-index', i);
+            });
+        });
+        // delete preview 2
+        $(document).on('click', '#imagePreviewContainer2 span', function() {
+            var index = $(this).data('index');
+            var dt = new DataTransfer(); // new FileList
+
+            var input = document.getElementById('customFileEg2');
+            var {
+                files
+            } = input;
+
+            for (let i = 0; i < files.length; i++) {
+                if (i !== index) {
+                    dt.items.add(files[i]); // keep other files
+                }
+            }
+
+            input.files = dt.files; // update input
+
+            // remove preview div
+            $(this).parent().remove();
+
+            // re-index remaining previews
+            $('#imagePreviewContainer2 div').each(function(i, el) {
                 $(el).find('span').attr('data-index', i);
             });
         });

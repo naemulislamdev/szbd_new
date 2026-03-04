@@ -56,12 +56,12 @@
                                         <label>Upload product images</label><small style="color: red">* ( ratio) 1:1
                                         </small>
                                     </div>
-                                    <div class="upload-container">
+                                    <div class="upload-container mt-4">
                                         <input type="file" id="image-upload" name="images[]" multiple accept="image/*"
                                             class="custom-file-input form-control">
                                         <div id="image-preview" class="image-preview-container d-flex gap-3"></div>
                                     </div>
-                                    <div class="exsit-image-container">
+                                    <div class="exsit-image-containe mt-3r">
                                         <div class="row">
                                             @if ($landingPage->slider_img)
                                                 @foreach (json_decode($landingPage->slider_img) as $key => $photo)
@@ -123,10 +123,11 @@
                                 <div class="col-md-6">
                                     <label>Feature title <span class="text-danger">*</span></label>
                                     <div id="input-container">
-                                        <div class="input-group mb-3">
+                                        <div class="input-group mb-2">
 
                                             @foreach (json_decode($landingPage->feature_list) as $list)
                                                 <div class="input-group mb-3">
+
                                                     <input type="text" class="form-control" value="{{ $list }}"
                                                         name="feature_title[]" placeholder="Enter value">
                                                     <a href="javascript:void(0);" class="btn btn-danger delete-existing"
@@ -136,7 +137,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="button" class="btn btn-success add-new">Add New</button>
+                                    <button type="button" class="btn btn-success add-new mt-2">Add New</button>
                                     @error('feature_title')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -278,7 +279,45 @@
 @endsection
 @push('scripts')
     <script>
-        function readURL3(input) {
+        $(document).on("change", ".section-image-input", function(event) {
+
+            let previewContainer = $(this).closest('.form-group')
+                .next('.image-preview-container');
+
+            previewContainer.empty();
+
+            const files = event.target.files;
+
+            if (files.length > 0) {
+                $.each(files, function(index, file) {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+
+                        const previewItem = `
+                    <div class="preview-item text-center">
+                        <img style="max-width:200px; height:auto; border-radius:10px;"
+                             src="${e.target.result}">
+                    </div>
+                `;
+
+                        previewContainer.append(previewItem);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#description').summernote();
+        });
+    </script>
+    <script>
+        // for feature image upload
+        function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
@@ -289,84 +328,13 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
         $("#customFileUpload3").change(function() {
-            readURL3(this);
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            const previewContainer = $("#image-preview");
-            $("#image-upload").on("change", function(event) {
-                previewContainer.empty(); // Clear existing previews
-                const files = event.target.files;
-
-                if (files) {
-                    $.each(files, function(index, file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const previewItem = $(`
-                             <div class="preview-item ">
-                                 <img style="max-width: 200px; height: auto;" src="${e.target.result}" class="preview-image">
-                                 <button type="button" class="remove-icon btn btn-danger btn-sm" data-index="${index}">&#10005;</button>
-                             </div>
-                         `);
-                            previewContainer.append(previewItem);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-            });
-
-
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            // Function to handle adding new input fields
-            $('.add-new').click(function() {
-                let inputCount = $('#input-container .input-group').length;
-
-                // Create new input field with delete button
-                let newInput = `
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="feature_title[]" placeholder="Enter value">
-                        <button type="button" class="btn btn-danger delete">Delete</button>
-                    </div>`;
-
-                // Append the new input field to the input container
-                $('#input-container').append(newInput);
-            });
-
-            // Function to handle deleting input fields
-            $(document).on('click', '.delete', function() {
-                $(this).closest('.input-group').remove();
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#description').summernote();
-        });
-    </script>
-
-    <script>
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    $('#viewer').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        $("#customFileEg1").change(function() {
             readURL(this);
         });
     </script>
     <script>
+        // Product image upload script
         $(document).ready(function() {
             const previewContainer = $("#image-preview");
             $("#image-upload").on("change", function(event) {
@@ -378,11 +346,11 @@
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             const previewItem = $(`
-                             <div class="preview-item">
-                                 <img src="${e.target.result}" class="preview-image">
-                                 <button type="button" class="remove-icon" data-index="${index}">&#10005;</button>
-                             </div>
-                         `);
+                         <div class="preview-item">
+                             <img src="${e.target.result}" class="preview-image">
+                             <button type="button" class="btn btn-danger btn-sm remove-icon" data-index="${index}">&#10005;</button>
+                         </div>
+                     `);
                             previewContainer.append(previewItem);
                         };
                         reader.readAsDataURL(file);
@@ -411,39 +379,15 @@
             });
         });
     </script>
-    <script>
-        $(document).ready(function() {
-            const previewContainer = $("#image-preview");
-            $("#image-upload").on("change", function(event) {
-                previewContainer.empty(); // Clear existing previews
-                const files = event.target.files;
 
-                if (files) {
-                    $.each(files, function(index, file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const previewItem = $(`
-                             <div class="preview-item">
-                                 <img src="${e.target.result}" class="preview-image">
-                                 <button type="button" class="remove-icon" data-index="${index}">&#10005;</button>
-                             </div>
-                         `);
-                            previewContainer.append(previewItem);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-            });
-
-
-        });
-    </script>
     <script>
         $(document).ready(function() {
             $('.add-new').click(function() {
                 let inputCount = $('#input-container .input-group').length;
                 let newInput = `
-                    <div class="input-group mb-3">
+                 <label class="form-lebel">Feature title</label> <br/>
+                    <div class="input-group mb-">
+
                         <input type="text" class="form-control" name="feature_title[]" placeholder="Enter value">
                         <button type="button" class="btn btn-danger delete">Delete</button>
                     </div>`;
@@ -473,7 +417,7 @@
             // Add new section when clicking 'add_new_section'
             $('#add_new_section').click(function() {
                 let newInput = `
-            <div class="row mb-3">
+            <div class="row mb-3 border p-3">
             <div class="col-md-8">
                 <div class="form-group">
                     <label>Section title (New)</label>
@@ -513,11 +457,12 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Section Image</label>
-                    <input type="file" name="new_section_img[${sectionCounter}]" class="form-control">
+                    <input type="file" name="new_section_img[${sectionCounter}]" class="form-control section-image-input">
                 </div>
+               <div class="image-preview-container"></div>
             </div>
-            <div class="col-md-3 mx-auto">
-                <div class="delete-button">
+            <div class="col-md-3 ms-auto">
+                <div class="delete-button text-end">
                     <button type="button" class="btn btn-danger section_delete">Remove</button>
                 </div>
             </div>

@@ -422,7 +422,7 @@
                                 @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
                                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                         <div class="slider-img">
-                                            <img class="d-block w-100" {{-- onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'" --}}
+                                            <img class="d-block w-100"
                                                 src="{{ asset('assets/storage/landingpage/slider') }}/{{ $image }}"
                                                 alt="">
                                         </div>
@@ -579,16 +579,14 @@
 
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                                src="{{ asset('storage/landingpage/' . $section->section_img) }}"
+                                            <img src="{{ asset('storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
                                     </div>
                                 @elseif ($section->section_direction == 'right')
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                                src="{{ asset('storage/landingpage/' . $section->section_img) }}"
+                                            <img src="{{ asset('storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
                                     </div>
