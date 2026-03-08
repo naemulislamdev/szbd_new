@@ -14,6 +14,8 @@ use App\Models\Category;
 use App\Models\ChildCategory;
 use App\Models\ClientReview;
 use App\Models\DealOfTheDay;
+use App\Models\DiscountOffer;
+use App\Models\EidOffer;
 use App\Models\FlashDeal;
 use App\Models\FlashDealProduct;
 use App\Models\HelpTopic;
@@ -711,5 +713,24 @@ class FrontendController extends Controller
 
 
         return back()->with('success', 'successfully!');
+    }
+    public function eidOffers($slug)
+    {
+
+        $eidoffer = EidOffer::where('slug', $slug)->where('status', 1)->first();
+        if ($eidoffer) {
+            return view('web.eidOffers', compact('eidoffer'));
+        } else {
+            return "<h2>Eid offer ✨🌙 coming very soon !</h2>";
+        }
+    }
+    public function discountOffers($slug)
+    {
+        $discount_offers = DiscountOffer::where('slug', $slug)->where('status', 1)->first();
+        if ($discount_offers) {
+            return view('web.discount_offer', compact('discount_offers'));
+        } else {
+            return "<h2>This Offer coming very soon !</h2>";
+        }
     }
 }

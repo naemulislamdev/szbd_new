@@ -33,6 +33,7 @@ Route::middleware(['web', 'track_visitor'])->group(function () {
         Route::post('/save-user-info', 'saveUserInfo')->name('save.user.info');
         Route::get('/careers', 'careers')->name('careers');
         Route::get('/offers/{slug}', 'discountOffers')->name('discount.offers');
+        Route::get('/eid-offers/{slug}', 'eidOffers')->name('eid.offers');
         Route::get('/sitemap.xml', 'siteMaps')->name('sitemap');
         // single landing page route
         Route::get('/page/{slug}', 'singleProductLandingPage')

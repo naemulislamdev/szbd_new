@@ -18,14 +18,30 @@
                 @php
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
                 @endphp
+                @php
+                    $eidoffers = \App\Models\EidOffer::where('status', 1)->first();
+                @endphp
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
                             @if ($discountOffer != null)
                                 <li><a href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
                                             style="height: 60px; width: auto;"
-                                            src="{{ asset('storage/offer') }}/{{ $discountOffer['image'] }}"
+                                            src="{{ asset('assets/storage/offer') }}/{{ $discountOffer['image'] }}"
                                             alt="offer image"></a>
+                                </li>
+                            @endif
+                            {{-- Eid offers --}}
+                            @if ($eidoffers != null)
+                                <li><a href="{{ route('eid.offers', ['slug' => $eidoffers->slug ?? '']) }}">
+                                        @if ($eidoffers->image)
+                                            <img style="height: 60px; width: auto;"
+                                                src="{{ asset('assets/storage/eidOffer') }}/{{ $eidoffers['image'] }}"
+                                                alt="offer image">
+                                        @else
+                                            {{ $eidoffers->title }}
+                                        @endif
+                                    </a>
                                 </li>
                             @endif
                             <li><a href="{{ route('home') }}">Home</a></li>

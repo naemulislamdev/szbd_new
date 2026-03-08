@@ -29,8 +29,10 @@ use App\Http\Controllers\Backend\DiscountManageController;
 use App\Http\Controllers\Backend\GlobalSearchController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\JobApplicationController;
+use App\Http\Controllers\Backend\RoleDepartmentController;
 use App\Http\Controllers\Backend\SiteMapController;
 use App\Http\Controllers\Backend\SystemController;
+use App\Models\RoleDepartment;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -426,6 +428,16 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('status', 'status')->name('status');
             Route::post('delete', 'delete')->name('delete');
         });
+        // Role Department Routes
+        Route::controller(RoleDepartmentController::class)->prefix('/role_department')->as('role_department.')->group(function () {
+            Route::get('list', 'index')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
+
         // Global Search Route
         Route::get('/admin/global-search', [GlobalSearchController::class, 'search'])->name('global.search');
         //sitemap generate

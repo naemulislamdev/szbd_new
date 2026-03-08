@@ -566,13 +566,15 @@
                         @can('porfit_report')
                             <li class="nav-item">
                                 <a href="{{ route('admin.report.profitReport') }}"
-                                    class="nav-link {{ request()->routeIs('admin.report.profitReport') ? 'active' : '' }}">Profit Report</a>
+                                    class="nav-link {{ request()->routeIs('admin.report.profitReport') ? 'active' : '' }}">Profit
+                                    Report</a>
                             </li>
                         @endcan
                         @can('track_visitor_report')
                             <li class="nav-item">
                                 <a href="{{ route('admin.report.trackVisitorReport') }}"
-                                    class="nav-link {{ request()->routeIs('admin.report.trackVisitorReport') ? 'active' : '' }}">Track Visitor Report</a>
+                                    class="nav-link {{ request()->routeIs('admin.report.trackVisitorReport') ? 'active' : '' }}">Track
+                                    Visitor Report</a>
                             </li>
                         @endcan
                     </ul><!--end nav-->
@@ -617,6 +619,11 @@
                                     class="nav-link {{ request()->routeIs('admin.permission_module.list') ? 'active' : '' }}">Modules</a>
                             </li>
                         @endcan
+                        <li class="nav-item">
+                            <a href="{{ route('admin.role_department.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.role_department.list') ? 'active' : '' }}">Role
+                                Departments</a>
+                        </li>
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->

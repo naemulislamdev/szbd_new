@@ -39,13 +39,13 @@
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                         </button>
-                        <button class="grid-btn" data-columns="2" data-category="category">
+                        <button class="grid-btn" data-columns="5" data-category="category">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
+
                         </button>
                     </div>
                     <div class="grid-controls mobile-grid-controls">
@@ -62,7 +62,7 @@
 
             @if (count($videoProducts) > 0)
                 <div class="row product-grid" id="video-ajax-products">
-                    @include('web.products.video_ajax_products',['products'=> $videoProducts])
+                    @include('web.products.video_ajax_products', ['products' => $videoProducts])
                 </div>
                 <div class="row">
                     <div class="col-12 d-flex align-items-center justify-content-center">

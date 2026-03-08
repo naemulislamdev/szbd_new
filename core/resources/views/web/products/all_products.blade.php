@@ -3,8 +3,8 @@
 @section('content')
     <section class="py-3">
         <div class="container">
-             {{-- Product Filter section --}}
-             @include('web.layouts.partials.product_filter')
+            {{-- Product Filter section --}}
+            @include('web.layouts.partials.product_filter')
 
             <div class="row mb-3">
                 <div class="col text-center">
@@ -13,35 +13,35 @@
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">
-                        <button class="grid-btn" data-columns="6" data-category="category">
+                        <button class="grid-btn" data-columns="6" data-category="category2">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                         </button>
-                        <button class="grid-btn" data-columns="4" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="3" data-category="category">
-                            <div class="grid-icon"></div>
+                        <button class="grid-btn" data-columns="4" data-category="category2">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                         </button>
-                        <button class="grid-btn" data-columns="2" data-category="category">
+                        <button class="grid-btn" data-columns="3" data-category="category2">
+                            <div class="grid-icon"></div>
+                            <div class="grid-icon"></div>
+                            <div class="grid-icon"></div>
+                            <div class="grid-icon"></div>
+                        </button>
+                        <button class="grid-btn" data-columns="5" data-category="category2">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
+
                         </button>
                     </div>
                     <div class="grid-controls mobile-grid-controls">
-                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category">
+                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category2">
                             <div class="grid-icon"></div>
                         </button>
-                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category">
+                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category2">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                         </button>
@@ -70,8 +70,8 @@
             <div class="row my-3">
                 <div class="col-md-12">
                     <div class="big-banner">
-                        <img src="{{ asset('assets/front-end') }}/images/product-banner/main-banner3.jpg"
-                            alt="Banner Image" style="width: 100%;">
+                        <img src="{{ asset('assets/front-end') }}/images/product-banner/main-banner3.jpg" alt="Banner Image"
+                            style="width: 100%;">
                     </div>
                 </div>
             </div>
@@ -101,7 +101,6 @@
                 },
             });
         }
-
     </script>
     <script>
         cartQuantityInitialize();

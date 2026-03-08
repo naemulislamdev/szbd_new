@@ -2,7 +2,7 @@
 @section('title', 'Product Add - Admin Dashboard')
 
 @push('styles')
-<style>
+    <style>
         .upload-container {
             max-width: 600px;
             margin: 0 auto;
@@ -70,6 +70,15 @@
 
         .remove-icon:hover {
             background: rgba(255, 0, 0, 1);
+        }
+
+        .select2-container--default .color-preview {
+            height: 12px;
+            width: 12px;
+            display: inline-block;
+            margin-right: 5px;
+            margin-left: 3px;
+            margin-top: 2px;
         }
     </style>
 @endpush
@@ -517,8 +526,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Upload product images</label><small
-                                            style="color: red">* ( ratio')</small>
+                                        <label>Upload product images</label><small style="color: red">* ( ratio')</small>
                                     </div>
                                     <div class="upload-container">
                                         <input type="file" id="image-upload" name="images[]" multiple
