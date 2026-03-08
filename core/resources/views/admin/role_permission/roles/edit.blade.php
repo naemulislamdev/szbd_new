@@ -62,7 +62,7 @@
                                                                     Access All
                                                                 </label>
                                                             </div>
-                                                            <div class="d-flex ms-5">
+                                                            <div class="d-flex flex-column ms-5">
                                                                 @php
                                                                     $permissions = json_decode($module->actions, true);
                                                                     $moduleAccess = json_decode($role->module_access, true);
@@ -80,9 +80,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
-
                                             </div>
                                         @endforeach
                                         <div class="mt-4">

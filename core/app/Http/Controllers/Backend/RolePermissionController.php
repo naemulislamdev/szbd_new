@@ -87,7 +87,6 @@ class RolePermissionController extends Controller
     }
     public function store(Request $request)
     {
-        // 1️⃣ Validate request
         $request->validate([
             'name' => 'required|string|max:100|unique:roles,name',
             'module_access' => 'required|array|min:1',
@@ -96,29 +95,32 @@ class RolePermissionController extends Controller
         DB::beginTransaction();
 
         try {
-            // 2️⃣ Create role
             $role = Role::create([
-                'name'       => $request->name,
+                'name' => $request->name,
                 'guard_name' => 'admin',
                 'module_access' => json_encode($request->module_access),
             ]);
 
             $permissions = [];
 
-            // 3️⃣ Create permissions if not exists
             foreach ($request->module_access as $permissionName) {
-                $permission = Permission::firstOrCreate(
-                    [
-                        'name'       => $permissionName,
-                        'guard_name' => 'admin',
-                    ]
-                );
+                $permission = Permission::firstOrCreate([
+                    'name' => $permissionName,
+                    'guard_name' => 'admin',
+                ]);
 
-                $permissions[] = $permission->name;
+                $permissions[] = $permission;
             }
 
-            // 4️⃣ Assign permissions to role
             $role->syncPermissions($permissions);
+
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+            if (auth('admin')->check()) {
+                auth('admin')->setUser(
+                    auth('admin')->user()->fresh(['roles', 'permissions'])
+                );
+            }
 
             DB::commit();
 
@@ -142,7 +144,6 @@ class RolePermissionController extends Controller
     }
     public function update(Request $request, $id)
     {
-        // 1️⃣ Validate request
         $request->validate([
             'name' => 'required|string|max:100|unique:roles,name,' . $id,
             'module_access' => 'required|array|min:1',
@@ -152,26 +153,32 @@ class RolePermissionController extends Controller
 
         try {
             $role = Role::findOrFail($id);
+
             $role->name = $request->name;
+            $role->guard_name = 'admin';
             $role->module_access = json_encode($request->module_access);
             $role->save();
 
             $permissions = [];
 
-            // 2️⃣ Create permissions if not exists
             foreach ($request->module_access as $permissionName) {
-                $permission = Permission::firstOrCreate(
-                    [
-                        'name'       => $permissionName,
-                        'guard_name' => 'admin',
-                    ]
-                );
+                $permission = Permission::firstOrCreate([
+                    'name' => $permissionName,
+                    'guard_name' => 'admin',
+                ]);
 
-                $permissions[] = $permission->name;
+                $permissions[] = $permission;
             }
 
-            // 3️⃣ Sync permissions to role
             $role->syncPermissions($permissions);
+
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+            if (auth('admin')->check()) {
+                auth('admin')->setUser(
+                    auth('admin')->user()->fresh(['roles', 'permissions'])
+                );
+            }
 
             DB::commit();
 

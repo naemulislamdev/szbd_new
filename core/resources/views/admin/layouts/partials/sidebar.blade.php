@@ -621,7 +621,7 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
-        @canAny(['web_config'])
+        @canAny(['web_config', "sitemap"])
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.web_config.view') ? 'active' : '' }}"
                     href="#settingsDropDown" data-bs-toggle="collapse" role="button" aria-expanded="false"

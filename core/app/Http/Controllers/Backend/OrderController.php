@@ -20,6 +20,17 @@ class OrderController extends Controller
 {
     public function list(Request $request)
     {
+        // $admin = auth('admin')->user()->fresh(['roles', 'permissions']);
+
+
+        // dd([
+        //     'direct_permissions' => $admin->permissions->pluck('name')->values(),
+        //     'role_permissions' => $admin->getPermissionsViaRoles()->pluck('name')->values(),
+        //     'all_permissions' => $admin->getAllPermissions()->pluck('name')->values(),
+        //     'has_direct_order_delete' => $admin->hasDirectPermission('order_delete'),
+        //     'can_order_delete' => $admin->can('order_delete'),
+        // ]);
+
         $views = [
             'pending'         => 'admin.order.pending',
             'confirmed'       => 'admin.order.confirmed',
@@ -78,8 +89,8 @@ class OrderController extends Controller
             })
 
             ->addColumn('customer_name', function ($order) {
-            // return optional($order->shippingAddress)->contact_person_name ?? 'N/A';
-            return $order->shipping_name ?? 'N/A';
+                // return optional($order->shippingAddress)->contact_person_name ?? 'N/A';
+                return $order->shipping_name ?? 'N/A';
             })
 
             ->addColumn('phone', function ($order) {
@@ -138,19 +149,26 @@ class OrderController extends Controller
             })
 
             ->addColumn('action', function (Order $order) {
-                return '
-                <a href="' . route('admin.order.details', $order->id) . '" class="btn btn-sm btn-info">
-                    <i class="las la-eye"></i>
-                </a>
-                <a href="' . route('admin.order.generate-invoice', $order->id) . '"
-                   class="btn btn-sm btn-secondary">
-                    <i class="las la-receipt"></i>
-                </a>
-                <a href="' . route('admin.order.delete', $order->id) . '"
-                   class="btn btn-sm btn-danger">
-                    <i class="las la-trash-alt"></i>
-                </a>
-            ';
+
+                $buttons = '
+        <a href="' . route('admin.order.details', $order->id) . '" class="btn btn-sm btn-info">
+            <i class="las la-eye"></i>
+        </a>
+
+        <a href="' . route('admin.order.generate-invoice', $order->id) . '" class="btn btn-sm btn-secondary">
+            <i class="las la-receipt"></i>
+        </a>
+    ';
+
+                if (auth('admin')->user()->can('order_delete')) {
+                    $buttons .= '
+            <a href="' . route('admin.order.delete', $order->id) . '" class="btn btn-sm btn-danger">
+                <i class="las la-trash-alt"></i>
+            </a>
+        ';
+                }
+
+                return $buttons;
             })
             // ->filterColumn('customer_name', function ($query, $keyword) {
             //     $query->whereHas('shippingAddress', function ($q) use ($keyword) {
