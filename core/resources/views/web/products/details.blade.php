@@ -843,7 +843,7 @@
                                     <img src="{{ asset('assets/frontend/images/payment/payment.png') }}" alt="">
                                 </div>
                             </div>
-                            @if ($product->video_shopping == 0)
+                            @if ($product->video_shopping == 0 && $product->video_url == '')
                                 @if ($product['video_url'])
                                     <div class="row">
                                         <div class="col-md-12">
@@ -892,13 +892,13 @@
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                         </button>
-                        <button class="grid-btn" data-columns="2" data-category="category3">
+                        <button class="grid-btn" data-columns="5" data-category="category3">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
+
                         </button>
                     </div>
                     <div class="grid-controls mobile-grid-controls">

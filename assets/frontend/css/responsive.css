@@ -65,7 +65,6 @@
     color: #000;
   }
   .header-icon {
-    margin-top: 13px;
     display: flex;
   }
   .header-logo {
@@ -238,5 +237,11 @@
     display: block;
     display: flex;
     width: 20%;
+  }
+}
+@media (min-width: 768px) {
+  .five-col {
+    flex: 0 0 20%;
+    max-width: 20%;
   }
 }

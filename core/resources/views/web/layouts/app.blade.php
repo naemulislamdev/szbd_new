@@ -140,8 +140,29 @@
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
 
+        .product-column.five-col {
+            height: 570px;
+        }
+
+        .col-sm-6.product-column.col-md-3 .product-image2-col-2 {
+            height: 526px;
+        }
+
+        .product-column.five-col .product-image2-col-2 {
+            height: 424px;
+        }
+
+        .col-sm-6.product-column.col-md-6 .product-box.product-box-col-2 .product-image2-col-2 {
+            height: 1000px;
+        }
+
+        .col-sm-6.product-column.col-md-4 .product-image2-col-2 {
+            height: 735px;
+        }
+
+
         .product-box-col-2 {
-            height: 465px;
+            height: 100%;
         }
 
         .product-box-col-3 {
@@ -162,10 +183,6 @@
 
         .product-box-col-sm-12 {
             height: 750px;
-        }
-
-        .product-image2-col-2 {
-            height: 325px
         }
 
         .product-box .title {
@@ -804,6 +821,62 @@
 
         new WOW().init();
     </script>
+    <script>
+        $(document).ready(function() {
+
+            $('.grid-btn').on('click', function() {
+
+                var columns = $(this).data('columns');
+                var category = $(this).data('category');
+
+                var columnClass = (columns == 5) ? 'five-col' : 'col-md-' + columns;
+
+                $('.product-column[data-category="' + category + '"]')
+                    .removeClass(function(index, className) {
+                        return (className.match(/col-md-\d+/g) || []).join(' ');
+                    })
+                    .removeClass('five-col')
+                    .addClass(columnClass);
+
+                $('.grid-btn[data-category="' + category + '"]').removeClass('active');
+                $(this).addClass('active');
+
+            });
+
+            $('.grid-btn[data-columns="5"]').trigger('click');
+
+        });
+    </script>
+    <script>
+        //Grid view system on product in mobile responsive
+        $(document).ready(function() {
+            $('.grid-btn-mobile').on('click', function() {
+                var columns = $(this).data('columns');
+                var category = $(this).data('category');
+                // console.log(columns);
+                $('.product-column[data-category="' + category + '"]')
+                    .removeClass('col-md-2 col-md-3 col-md-4 col-md-5 col-md-6 col-sm-12 col-sm-6')
+                    .addClass('col-sm-' + columns);
+
+                $('.grid-btn-mobile[data-category="' + category + '"]').removeClass('active');
+                $(this).addClass('active');
+                // Apply fixed dimensions to images
+                $('.product-box[data-category="' + category + '"]')
+                    .removeClass(
+                        'product-box-col-2 product-box-col-3 product-box-col-4 product-box-col-6 product-box-col-sm-12 product-box-col-sm-6'
+                    )
+                    .addClass('product-box-col-sm-' + columns);
+
+                $('.product-image2[data-category="' + category + '"]')
+                    .removeClass(
+                        'product-image2-col-2 product-image2-col-3 product-image2-col-4 product-image2-col-6 product-image2-col-sm-12 product-image2-col-sm-6'
+                    )
+                    .addClass('product-image2-col-sm-' + columns);
+            });
+        });
+    </script>
+
+
 
     <script src="https://ai.szbdfinancing.com/static/js/product-sdk.js"></script>
     <script>

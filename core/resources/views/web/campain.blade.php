@@ -82,13 +82,13 @@
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                         </button>
-                        <button class="grid-btn" data-columns="2" data-category="category">
+                        <button class="grid-btn" data-columns="5" data-category="category">
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
                             <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
+
                         </button>
                     </div>
                     <div class="grid-controls mobile-grid-controls">
@@ -105,7 +105,7 @@
 
             @if (count($campainProducts) > 0)
                 <div class="row product-grid" id="campain-ajax-products">
-                    @include('web-views.products.campain_ajax_products',['products'=> $campainProducts])
+                    @include('web-views.products.campain_ajax_products', ['products' => $campainProducts])
                 </div>
                 <hr class="my-3">
                 <div class="row">
@@ -129,19 +129,19 @@
             let min = $('#min_price').val();
             let max = $('#max_price').val();
             $.get({
-                url: '{{url('/')}}/products',
+                url: '{{ url('/') }}/products',
                 data: {
                     min_price: min,
                     max_price: max,
                 },
                 dataType: 'json',
-                beforeSend: function () {
+                beforeSend: function() {
                     $('#loading').show();
                 },
-                success: function (response) {
+                success: function(response) {
                     $('#campain-ajax-products').html(response.view);
                 },
-                complete: function () {
+                complete: function() {
                     $('#loading').hide();
                 },
             });
@@ -159,5 +159,4 @@
     <script>
         cartQuantityInitialize();
     </script>
-
 @endpush

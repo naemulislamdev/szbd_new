@@ -1,4 +1,4 @@
-<div class="{{ $classBox ?? 'col-md-2' }} col-sm-6 product-column" data-category="{{ $dataCategory ?? '' }}">
+<div class="{{ $classBox ?? 'col-md-3' }} col-sm-6 product-column" data-category="{{ $dataCategory ?? '' }}">
     <div class="product-box product-box-col-2" data-category="{{ $dataCategory ?? '' }}">
         <input type="hidden" name="quantity" value="{{ $product->minimum_order_qty ?? 1 }}"
             min="{{ $product->minimum_order_qty ?? 1 }}" max="100">
@@ -32,9 +32,9 @@
         <div class="product-content" style="height: 140px">
             <div class="h-100 d-flex flex-column justify-content-between ">
                 <h3 class="title"><a
-                    href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 37) }}</a>
+                    href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 35) }}</a>
                 </h3>
-                <div class="price d-flex justify-content-center align-content-center">
+                <div class="price d-flex  align-content-center">
                     @if ($product->discount > 0)
                         <span
                             class="mr-2">৳{{
@@ -45,7 +45,7 @@
                         <span>৳ {{ $product->unit_price }}</span>
                     @endif
                 </div>
-                <button type="button" style="cursor: pointer;" class="btn btn-primary w-100"
+                <button type="button" style="cursor: pointer;" class="btn btn-primary btn btn-primary align-self-center"
                     onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
             </div>
         </div>

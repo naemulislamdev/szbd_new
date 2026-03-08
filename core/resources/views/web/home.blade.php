@@ -1,9 +1,9 @@
 @extends('web.layouts.app')
-@section('title', 'Welcome To' . ' ' . $web_config['name']->value)
+{{-- @section('title', 'Welcome To' . ' ' . $web_config['name']->value) --}}
 
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="remium Clothing & Original Skincare BD | {{ $web_config['name']->value }} Home" />
+    <meta property="og:title" content="Premium Clothing & Original Skincare BD | {{ $web_config['name']->value }} Home" />
     <meta property="og:url" content="{{ env('APP_URL') }}">
     <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
@@ -250,30 +250,7 @@
     @include('web.layouts.partials._modals')
     <!------start  header main slider-->
     @include('web.layouts.partials.slider')
-    {{-- New Arrivals Section Start --}}
-
-    {{-- To Banner Section Start --}}
-    <section class="top-banner">
-        <div class="container-fluid">
-            @foreach (\App\Models\Banner::where('banner_type', 'Main Section Banner')->where('published', 1)->orderBy('id', 'desc')->take(3)->get() as $banner)
-                <div class="row my-3">
-                    <div class="col-md-12">
-                        <div class="big-banner">
-                            <a href="{{ $banner['url'] }}">
-                                <img style="max-height: 100%; width: 100%;"
-                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                    src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}"
-                                    alt="{{ @$banner['photo'] }}" width="100%;">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </section>
-    {{-- Top Banner Section End --}}
-
-
+    <!------start  header main slider-->
     <?php
     $company_mobile_logo = \App\Models\BusinessSetting::where('type', 'company_web_logo')->first()->value;
     ?>
@@ -330,59 +307,54 @@
                         </a>
                     </div>
                 @endforeach
-
-
             </div>
         </div>
     </section>
-
-
-
     <!------Start Product section----->
     <section class="py-3">
         <div class="container">
             {{-- @include('web.layouts.partials.product_filter') --}}
+            <div class="row mb-3 mt-3">
+                <div class="col-12">
+                    <div class="section-heading-title d-flex align-items-center justify-content-between">
+                        <h3>Feature Products</h3>
+                        <div class="grid-controls m-0 " style="margin: 0; width: auto !important;">
+                            <button class="grid-btn" data-columns="6" data-category="category1">
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                            </button>
+                            <button class="grid-btn" data-columns="4" data-category="category1">
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                            </button>
+                            <button class="grid-btn" data-columns="3" data-category="category1">
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                            </button>
+                            <button class="grid-btn" data-columns="5" data-category="category1">
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
 
-            <div class="row mb-3">
-                <div class="col text-center">
-                    <div class="section-heading-title">
-                        <h3>Our Feature Products</h3>
-                        <div class="heading-border"></div>
+                            </button>
+
+                        </div>
+                        <div class="grid-controls mobile-grid-controls m-0">
+                            <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category1">
+                                <div class="grid-icon"></div>
+                            </button>
+                            <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category1">
+                                <div class="grid-icon"></div>
+                                <div class="grid-icon"></div>
+                            </button>
+                        </div>
                     </div>
-                    <div class="grid-controls">
-                        <button class="grid-btn" data-columns="6" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="4" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="3" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="2" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
-                    <div class="grid-controls mobile-grid-controls">
-                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category1">
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
+
                 </div>
             </div>
             @php($decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'))
@@ -395,48 +367,58 @@
                 </div>
             @endif
 
+
+
             @foreach ($home_categories as $category)
-                <div class="row mb-3">
-                    <div class="col text-center">
-                        <div class="section-heading-title">
-                            <h3>{{ Str::limit($category['name'], 18) }}</h3>
-                            <div class="heading-border"></div>
-                        </div>
-                        <div class="grid-controls">
-                            <button class="grid-btn" data-columns="6" data-category="category_{{ $category->id }}">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn" data-columns="4" data-category="category_{{ $category->id }}">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn" data-columns="3" data-category="category_{{ $category->id }}">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn" data-columns="2" data-category="category_{{ $category->id }}">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                        </div>
-                        <div class="grid-controls mobile-grid-controls">
-                            <button class="grid-btn grid-btn-mobile" data-columns="12"
-                                data-category="category_{{ $category->id }}">
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn grid-btn-mobile" data-columns="6"
-                                data-category="category_{{ $category->id }}">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
+                <div class="container">
+                    <div class="row mb-3">
+                        <div class="col-md-12 ">
+                            <div class="section-heading-title d-flex align-items-center justify-content-between">
+                                <h3>{{ Str::limit($category['name'], 18) }}</h3>
+                                <div>
+                                    <div class="grid-controls m-0 " style="margin: 0; width: auto !important;">
+                                        <button class="grid-btn" data-columns="6"
+                                            data-category="category_{{ $category->id }}">
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                        </button>
+                                        <button class="grid-btn" data-columns="4"
+                                            data-category="category_{{ $category->id }}">
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                        </button>
+                                        <button class="grid-btn" data-columns="3"
+                                            data-category="category_{{ $category->id }}">
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                        </button>
+                                        <button class="grid-btn" data-columns="5"
+                                            data-category="category_{{ $category->id }}">
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+
+                                        </button>
+                                    </div>
+                                    <div class="grid-controls mobile-grid-controls">
+                                        <button class="grid-btn grid-btn-mobile" data-columns="12"
+                                            data-category="category_{{ $category->id }}">
+                                            <div class="grid-icon"></div>
+                                        </button>
+                                        <button class="grid-btn grid-btn-mobile" data-columns="6"
+                                            data-category="category_{{ $category->id }}">
+                                            <div class="grid-icon"></div>
+                                            <div class="grid-icon"></div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

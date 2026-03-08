@@ -116,11 +116,35 @@ class DiscountManageController extends Controller
 
         $foundAnyProduct = false;
 
+        // foreach ($products as $product) {
+        //     $categoryIds = json_decode($product->category_ids, true);
+        //     $ids = array_column($categoryIds, 'id'); // error ekhane
+
+        //     if ($request->category === 'all-category' || in_array($request->category, $ids)) {
+        //         $foundAnyProduct = true;
+
+        //         if ($discountType === 'flat') {
+        //             $product->discount = $discountAmount;
+        //             $product->discount_type = 'flat';
+        //         } elseif ($discountType === 'percent') {
+        //             $product->discount = $discountAmount;
+        //             $product->discount_type = 'percent';
+        //         }
+
+        //         $product->save();
+        //     }
+        // }
+
         foreach ($products as $product) {
+
             $categoryIds = json_decode($product->category_ids, true);
+
+            if (!is_array($categoryIds)) {
+                continue; // skip this product
+            }
+
             $ids = array_column($categoryIds, 'id');
 
-            // Check if this product belongs to the selected category OR all-category
             if ($request->category === 'all-category' || in_array($request->category, $ids)) {
                 $foundAnyProduct = true;
 
@@ -855,7 +879,7 @@ class DiscountManageController extends Controller
                 $image = $row->image
                     ? asset('assets/storage/eidOffer/' . $row->image)
                     : '';
-                return '<img src="' . $image . '" alt="' . $row->title . '" width="80">';
+                return $row->image ? '<img src="' . $image . '" alt="' . $row->title . '" width="80">' : '';
             })
 
 
