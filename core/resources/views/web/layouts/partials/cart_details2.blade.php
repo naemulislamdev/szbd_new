@@ -94,10 +94,7 @@
                         @if (!$customer && !session('otp_verified'))
                             <input type="hidden" name="session_id" id="session_id" value="{{ session()->getId() }}">
 
-                            <div id="otpWrapper">
-                                <input type="hidden" id="otp_expires_at" value="{{ session('otp_expires_at', '') }}">
-                                <input type="hidden" id="session_phone" value="{{ session('otp_phone', '') }}">
-
+                            <div id="otpSection">
                                 <div class="row {{ session()->has('otp_phone') ? 'd-none' : '' }}" id="phoneRow">
                                     <div class="col-md-6 mx-auto">
                                         <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
@@ -112,38 +109,27 @@
                                     </div>
                                 </div>
 
-                                <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpRow">
+                                <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpInputRow">
                                     <div class="col-md-6 mx-auto">
-                                        <div class="otp-card">
-                                            <h2 class="otp-title">OTP Verification</h2>
-                                            <p class="otp-subtitle">আপনার মোবাইলে পাঠানো ৪ সংখ্যার কোডটি দিন</p>
+                                        <label>ওটিপি দিন</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" id="otp" maxlength="4">
+                                            <button type="button" class="btn btn-success btn-sm" id="verify_otp">
+                                                Verify OTP
+                                            </button>
+                                        </div>
 
-                                            <div class="otp-timer" id="otpTimer"></div>
-                                            <div class="otp-expired text-danger d-none" id="otpExpiredMsg">
-                                                OTP এর সময় শেষ। আবার OTP পাঠান।
-                                            </div>
+                                        <div class="mt-2">
+                                            <button type="button" class="btn btn-warning btn-sm d-none"
+                                                id="resend_otp">
+                                                আবার OTP পাঠান
+                                            </button>
+                                        </div>
 
-                                            <div class="otp-inputs" id="otpBoxesWrap">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box" autofocus>
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box">
-                                            </div>
-
-                                            <input type="hidden" id="otp" autocomplete="one-time-code">
-
-                                            <div class="mt-3 d-flex gap-2 justify-content-center">
-                                                <button type="button" class="btn btn-success"
-                                                    id="verify_otp">ভেরিফাই করুন</button>
-                                                <button type="button" class="btn btn-secondary d-none"
-                                                    id="resend_otp">আবার ওটিপি পাঠান</button>
-                                            </div>
-
-                                            <div id="otpMessage" class="mt-2 small"></div>
+                                        <div class="mt-2">
+                                            <small id="otpTimer" class="text-primary d-none"></small>
+                                            <small id="otpExpiredMsg" class="text-danger d-none">OTP এর সময় শেষ। আবার
+                                                OTP পাঠান।</small>
                                         </div>
                                     </div>
                                 </div>
@@ -343,6 +329,159 @@
                     @endforeach
                 ]
             }
+        });
+    </script>
+
+     <script>
+        let otpCountdownInterval = null;
+        let otpRemainingSeconds = 300; // 5 minutes
+        let otpTimerStarted = false;
+
+        function startOtpTimer(seconds = 300) {
+            otpRemainingSeconds = seconds;
+            otpTimerStarted = true;
+
+            $('#otpTimer').removeClass('d-none');
+            $('#otpExpiredMsg').addClass('d-none');
+            $('#verify_otp').removeClass('d-none').prop('disabled', false);
+            $('#resend_otp').addClass('d-none');
+
+            if (otpCountdownInterval) {
+                clearInterval(otpCountdownInterval);
+            }
+
+            updateOtpTimerText();
+
+            otpCountdownInterval = setInterval(function() {
+                otpRemainingSeconds--;
+
+                if (otpRemainingSeconds <= 0) {
+                    clearInterval(otpCountdownInterval);
+                    otpCountdownInterval = null;
+                    otpTimerStarted = false;
+
+                    $('#otpTimer').addClass('d-none');
+                    $('#verify_otp').addClass('d-none').prop('disabled', true);
+                    $('#otpExpiredMsg').removeClass('d-none').text('OTP এর সময় শেষ। আবার OTP পাঠান।');
+                    $('#resend_otp').removeClass('d-none');
+                    return;
+                }
+
+                updateOtpTimerText();
+            }, 1000);
+        }
+
+        function updateOtpTimerText() {
+            let minutes = Math.floor(otpRemainingSeconds / 60);
+            let seconds = otpRemainingSeconds % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            $('#otpTimer').text('OTP এর মেয়াদ শেষ হবে: ' + minutes + ':' + seconds);
+        }
+
+        function setSendOtpLoading(state) {
+            if (state) {
+                $('#send_otp')
+                    .prop('disabled', true)
+                    .html(
+                        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> OTP পাঠানো হচ্ছে...'
+                        );
+            } else {
+                $('#send_otp')
+                    .prop('disabled', false)
+                    .html('ওটিপি পাঠান');
+            }
+        }
+
+        // Page load এ timer auto start হবে না
+        $(document).ready(function() {
+            if (!otpTimerStarted) {
+                $('#otpTimer').addClass('d-none').text('');
+            }
+        });
+
+        // Send OTP
+        $('#send_otp').on('click', function() {
+            let phone = $('#otp_phone').val();
+
+            if (!phone) {
+                $('.phone-feedback').text('ফোন নাম্বার দিন').removeClass('text-success').addClass('text-danger');
+                return;
+            }
+
+            setSendOtpLoading(true);
+
+            $.post("{{ route('send.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: phone
+            }, function(res) {
+                if (res.status === 'success') {
+                    $('#phoneRow').hide();
+                    $('#otpInputRow').removeClass('d-none');
+                    $('.phone-feedback').text(res.message).removeClass('text-danger').addClass(
+                        'text-success');
+
+                    startOtpTimer(300);
+                } else {
+                    $('.phone-feedback').text(res.message).removeClass('text-success').addClass(
+                        'text-danger');
+                }
+            }).fail(function(xhr) {
+                let msg = xhr.responseJSON?.message ?? 'OTP পাঠানো যায়নি';
+                $('.phone-feedback').text(msg).removeClass('text-success').addClass('text-danger');
+            }).always(function() {
+                setSendOtpLoading(false);
+            });
+        });
+
+        // Verify OTP
+        $('#verify_otp').on('click', function() {
+            $.post("{{ route('verify.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: $('#otp_phone').val(),
+                otp: $('#otp').val()
+            }, function(res) {
+                if (res.status === 'success') {
+                    if (otpCountdownInterval) {
+                        clearInterval(otpCountdownInterval);
+                    }
+
+                    $('#otpSection').hide();
+                    $('.checkoutForm').removeClass('d-none');
+                }
+            }).fail(function(xhr) {
+                let msg = xhr.responseJSON?.message ?? 'OTP verify হয়নি';
+                $('#otpExpiredMsg').removeClass('d-none').text(msg);
+            });
+        });
+
+        // Resend OTP
+        $('#resend_otp').on('click', function() {
+            let phone = $('#otp_phone').val();
+
+            $(this)
+                .prop('disabled', true)
+                .html(
+                    '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> OTP পাঠানো হচ্ছে...'
+                    );
+
+            $.post("{{ route('send.otp') }}", {
+                _token: "{{ csrf_token() }}",
+                phone: phone
+            }, function(res) {
+                if (res.status === 'success') {
+                    $('#otp').val('');
+                    $('#otpExpiredMsg').addClass('d-none').text('OTP এর সময় শেষ। আবার OTP পাঠান।');
+                    startOtpTimer(300);
+                }
+            }).fail(function(xhr) {
+                let msg = xhr.responseJSON?.message ?? 'OTP আবার পাঠানো যায়নি';
+                $('#otpExpiredMsg').removeClass('d-none').text(msg);
+            }).always(function() {
+                $('#resend_otp')
+                    .prop('disabled', false)
+                    .html('আবার OTP পাঠান');
+            });
         });
     </script>
 @endif

@@ -87,6 +87,7 @@ Route::middleware(['web', 'track_visitor'])->group(function () {
         Route::get('/currency-convert', 'currency_convert');
         Route::get('/currency-convert-order', 'currency_convert_order');
         Route::get('/create-role', 'create_role');
+        // Route::get('/send-otp', 'sendOtp');
         //End
     });
 
@@ -94,6 +95,7 @@ Route::middleware(['web', 'track_visitor'])->group(function () {
     Route::controller(CheckoutControl::class)->group(function () {
         Route::post('/send-otp', 'sendOtp')->name('send.otp');
         Route::post('/verify-otp', 'verifyOtp')->name('verify.otp');
+        Route::post('/resend-otp', 'resendOtp')->name('resend.otp')->middleware('throttle:3,1');
         // checkout route
         Route::get('set-shipping-method', 'set_shipping_method')->name('set-shipping-method');
         Route::post('checkout-complete',  'productCheckout')->name('product.checkout');

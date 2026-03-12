@@ -13,6 +13,8 @@ use App\Models\ShippingMethod;
 use App\Models\UserInfo;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutControl extends Controller
@@ -20,48 +22,209 @@ class CheckoutControl extends Controller
     public function sendOtp(Request $request)
     {
         $request->validate([
-            'phone' => 'required|regex:/^(01[3-9]\d{8})$/'
+            'phone' => ['required', 'regex:/^(01[3-9]\d{8})$/'],
         ]);
 
-        $otp = rand(100000, 999999);
+        $userPhone = trim($request->phone);
 
+        $now = now()->timestamp;
+        $cooldownUntil = session('otp_resend_cooldown_until');
+
+        // cooldown check
+        if ($cooldownUntil && $now < $cooldownUntil) {
+            $waitSeconds = $cooldownUntil - $now;
+            $minutes = floor($waitSeconds / 60);
+            $seconds = $waitSeconds % 60;
+
+            $timeText = $minutes > 0
+                ? "{$minutes} মিনিট {$seconds} সেকেন্ড"
+                : "{$seconds} সেকেন্ড";
+
+            return response()->json([
+                'status' => 'error',
+                'message' => "অনুগ্রহ করে {$timeText} পরে আবার OTP চেষ্টা করুন।",
+                'retry_after' => $waitSeconds
+            ], 429);
+        }
+
+        $otp = random_int(1000, 9999);
+
+        $sendSMS = $this->sendOtpSMS($userPhone, $otp);
+
+        if (!$sendSMS) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'OTP পাঠানো যায়নি। আবার চেষ্টা করুন।'
+            ], 500);
+        }
+
+        // OTP session save
         session([
-            'otp' => $otp,
-            'otp_phone' => $request->phone,
+            'otp' => hash('sha256', (string) $otp),
+            'otp_phone' => $userPhone,
             'otp_verified' => false,
+            'otp_expires_at' => now()->addMinutes(5)->timestamp,
+            'otp_last_sent_at' => $now,
+            'otp_resend_cooldown_until' => now()->addMinute()->timestamp,
+            'otp_expired_once' => false,
         ]);
-
-        // 👉 SMS API call here
-        // sendSms($request->phone, "Your OTP is $otp");
 
         return response()->json([
             'status' => 'success',
-            'message' => 'OTP sent successfully'
+            'message' => 'OTP sent successfully',
+            'otp_expires_at' => session('otp_expires_at'),
+            'resend_cooldown_until' => session('otp_resend_cooldown_until'),
         ]);
     }
 
+    public function sendOtpSMS($userPhone, $otpCode)
+    {
+        // Ensure BD number format: 8801XXXXXXXXX
+        if (substr($userPhone, 0, 2) !== '88') {
+            $userPhone = '88' . $userPhone;
+        }
+
+        $message = "{$otpCode} আপনার অর্ডার যাচাইয়ের OTP কোড। Shopping Zone BD";
+
+        $response = Http::asForm()->post(env('BULKSMSBD_URL'), [
+            'api_key'  => env('BULKSMSBD_API_KEY'),
+            'type'     => 'text',
+            'number'   => $userPhone,
+            'senderid' => env('BULKSMSBD_SENDER_ID'), // NON-masking
+            'message'  => $message,
+        ]);
+
+        $result = $response->json();
+        // dd($result);
+
+        // Log if SMS fails
+        if (!isset($result['response_code']) || $result['response_code'] != 202) {
+            Log::error('SMS Failed', [
+                'mobile' => $userPhone,
+                'response' => $result
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+    public function resendOtp(Request $request)
+    {
+        $request->validate([
+            'phone' => ['required', 'regex:/^(01[3-9]\d{8})$/'],
+        ]);
+
+        $userPhone = trim($request->phone);
+        $now = now()->timestamp;
+
+        $cooldownUntil = session('otp_resend_cooldown_until');
+
+        if ($cooldownUntil && $now < $cooldownUntil) {
+            $waitSeconds = $cooldownUntil - $now;
+            $minutes = floor($waitSeconds / 60);
+            $seconds = $waitSeconds % 60;
+
+            $timeText = $minutes > 0
+                ? "{$minutes} মিনিট {$seconds} সেকেন্ড"
+                : "{$seconds} সেকেন্ড";
+
+            return response()->json([
+                'status' => 'error',
+                'message' => "অনুগ্রহ করে {$timeText} পরে আবার OTP চেষ্টা করুন।",
+                'retry_after' => $waitSeconds
+            ], 429);
+        }
+
+        $otp = random_int(1000, 9999);
+
+        $sendSMS = $this->sendOtpSMS($userPhone, $otp);
+
+        if (!$sendSMS) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'OTP পাঠানো যায়নি। আবার চেষ্টা করুন।'
+            ], 500);
+        }
+
+        session([
+            'otp' => hash('sha256', (string) $otp),
+            'otp_phone' => $userPhone,
+            'otp_verified' => false,
+            'otp_expires_at' => now()->addMinutes(5)->timestamp,
+            'otp_last_sent_at' => $now,
+            'otp_resend_cooldown_until' => now()->addMinute()->timestamp,
+            'otp_expired_once' => false,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'নতুন OTP পাঠানো হয়েছে।',
+            'otp_expires_at' => session('otp_expires_at'),
+            'resend_cooldown_until' => session('otp_resend_cooldown_until'),
+        ]);
+    }
 
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'otp' => 'required'
+            'otp'   => ['required', 'digits:4'],
         ]);
 
-        if (
-            session()->has('otp') &&
-            session('otp') == $request->otp
-        ) {
-            session(['otp_verified' => true]);
-
+        if (!session('otp') || !session('otp_phone')) {
             return response()->json([
-                'status' => 'success'
-            ]);
+                'status' => 'error',
+                'message' => 'OTP পাওয়া যায়নি। আবার OTP নিন।'
+            ], 422);
         }
 
+        if (session('otp_phone') !== $request->phone) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'ফোন নাম্বার মিলছে না।'
+            ], 422);
+        }
+
+        if (now()->timestamp > (int) session('otp_expires_at')) {
+            session([
+                'otp_expired_once' => true,
+                'otp_resend_cooldown_until' => null, // first resend immediately allow
+            ]);
+
+            session()->forget([
+                'otp',
+                'otp_expires_at',
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'OTP expired. এখন আবার OTP নিতে পারবেন।',
+                'expired' => true,
+                'allow_resend_now' => true,
+            ], 422);
+        }
+
+        if (!hash_equals(session('otp'), hash('sha256', (string) $request->otp))) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid OTP'
+            ], 422);
+        }
+
+        session([
+            'otp_verified' => true
+        ]);
+
+        session()->forget([
+            'otp',
+            'otp_expires_at',
+            'otp_resend_cooldown_until',
+            'otp_expired_once',
+        ]);
+
         return response()->json([
-            'status' => 'error',
-            'message' => 'Invalid OTP'
-        ], 422);
+            'status' => 'success',
+            'message' => 'OTP verified successfully.'
+        ]);
     }
     //End of OTP functions
 
@@ -211,6 +374,8 @@ class CheckoutControl extends Controller
                 'shipping_method_id',
                 'otp',
                 'otp_phone',
+                'otp_expires_at',
+                'otp_last_sent_at',
             ]);
 
             DB::commit();
@@ -417,6 +582,8 @@ class CheckoutControl extends Controller
                 'shipping_method_id',
                 'otp',
                 'otp_phone',
+                'otp_expires_at',
+                'otp_last_sent_at',
             ]);
 
             return redirect()->route('checkout-complete', ['id' => $order->id]);

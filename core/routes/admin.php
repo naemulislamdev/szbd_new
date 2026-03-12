@@ -92,6 +92,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
             Route::post("multiple-note", 'multipleNote')->name("multiple_note");
             Route::get('details/{id}', 'details')->name('details');
+            Route::post('shipping-address/{id}', 'updateAddress')->name('shipping.update');
             Route::get('delete/{id}', 'delete')->name('delete');
 
             Route::get('product-search', 'productSearch')->name('product_search');

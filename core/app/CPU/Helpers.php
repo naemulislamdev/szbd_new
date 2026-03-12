@@ -3,6 +3,7 @@
 namespace App\CPU;
 
 use App\Models\BusinessSetting;
+use App\Models\Color;
 use App\Models\Review;
 use App\Models\User;
 
@@ -185,5 +186,58 @@ class Helpers
             }
         }
         return $total;
+    }
+    public static function set_data_format($data)
+    {
+        try {
+            $variation = [];
+            // $data['category_ids'] = json_decode($data['category_ids']);
+            $data['images'] = json_decode($data['images']);
+            $data['colors'] = Color::whereIn('code', json_decode($data['colors']))->get(['name', 'code']);
+            $attributes = [];
+            if (json_decode($data['attributes']) != null) {
+                foreach (json_decode($data['attributes']) as $attribute) {
+                    $attributes[] = (int)$attribute;
+                }
+            }
+            $data['attributes'] = $attributes;
+            $data['choice_options'] = json_decode($data['choice_options']);
+            foreach (json_decode($data['variation'], true) as $var) {
+                $variation[] = [
+                    'type' => $var['type'],
+                    'price' => (float)$var['price'],
+                    'sku' => $var['sku'],
+                    'qty' => (int)$var['qty'],
+                ];
+            }
+            $data['variation'] = $variation;
+        } catch (\Exception $exception) {
+            info($exception);
+        }
+
+        return $data;
+    }
+
+    public static function product_data_formatting($data, $multi_data = false)
+    {
+        $storage = [];
+        if ($multi_data == true) {
+            foreach ($data as $item) {
+                $storage[] = Helpers::set_data_format($item);
+            }
+            $data = $storage;
+        } else {
+            $data = Helpers::set_data_format($data);
+        }
+
+        return $data;
+    }
+    public static function error_processor($validator)
+    {
+        $err_keeper = [];
+        foreach ($validator->errors()->getMessages() as $index => $error) {
+            $err_keeper[] = ['code' => $index, 'message' => $error[0]];
+        }
+        return $err_keeper;
     }
 }

@@ -78,8 +78,8 @@ class EmplyeeController extends Controller
             ->addIndexColumn()
 
             ->addColumn('action', function ($row) {
-                return '
-        <button
+                if (auth('admin')->user()->can('employee_edit')) {
+                    $buttons = ' <button
         data-id="' . ($row->id ?? '') . '"
         data-name="' . $row->name . '"
         data-mobile="' . $row->phone . '"
@@ -91,15 +91,17 @@ class EmplyeeController extends Controller
                data-bs-target="#viewInvestorModal"
          class="btn btn-primary btn-sm viewBtn" title="View" style="cursor: pointer;">
             <i class="las la-edit"></i>
-        </button>
-
-        <button class="btn btn-danger btn-sm delete"
+        </button>';
+                }
+                if (auth('admin')->user()->can('employee_delete')) {
+                    $buttons .= '<button class="btn btn-danger btn-sm delete"
                 style="cursor: pointer;"
                 title="Delete"
                 data-id="' . $row->id . '">
             <i class="la la-trash"></i>
-        </button>
-    ';
+        </button>';
+                }
+                return $buttons;
             })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y h:i A');

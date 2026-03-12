@@ -278,6 +278,8 @@
                                 <div class="card-body cinfo-box">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h5>Shipping Address</h5>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#editModal"><i class="la la-edit"></i></button>
                                     </div>
 
                                     @if ($order->shippingAddress)
@@ -457,6 +459,40 @@
         </div>
         <!-- End Row -->
     </div>
+    <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('admin.order.shipping.update', $order->shipping_address)}}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Shipping Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Name</label>
+                            <input type="text" name="contact_person_name" value="{{ $shipping_address->contact_person_name ?? '' }}" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Address</label>
+                            <input type="text" name="address" value="{{ $shipping_address->address ?? '' }}" class="form-control" id="address"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Phone</label>
+                            <input type="number" name="phone" value="{{ $shipping_address->phone ?? '' }}" class="form-control" id="phone"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- End Page Header -->
     <div class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true" id="variationModal">
         <div class="modal-dialog modal-md modal-dialog-centered">

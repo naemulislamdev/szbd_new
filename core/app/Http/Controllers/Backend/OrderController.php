@@ -21,8 +21,6 @@ class OrderController extends Controller
     public function list(Request $request)
     {
         // $admin = auth('admin')->user()->fresh(['roles', 'permissions']);
-
-
         // dd([
         //     'direct_permissions' => $admin->permissions->pluck('name')->values(),
         //     'role_permissions' => $admin->getPermissionsViaRoles()->pluck('name')->values(),
@@ -36,7 +34,7 @@ class OrderController extends Controller
             'confirmed'       => 'admin.order.confirmed',
             'processing'      => 'admin.order.processing',
             'out_for_delivery' => 'admin.order.out_for_delivery',
-            'delivered'       => 'admin.order.delivered',
+            'delivered'       => 'admin.order.delivery',
             'returned'        => 'admin.order.returned',
             'failed'          => 'admin.order.failed',
             'canceled'        => 'admin.order.canceled',
@@ -272,6 +270,16 @@ class OrderController extends Controller
         $orderHistories = OrderHistory::where('order_id', $id)->get();
 
         return view('admin.order.order_details', compact('order', 'orderHistories', 'shipping_address'));
+    }
+
+    public function updateAddress(Request $request, $id)
+    {
+        $sa = ShippingAddress::findOrFail($id);
+        $sa->contact_person_name = $request->contact_person_name;
+        $sa->address = $request->address;
+        $sa->phone = $request->phone;
+        $sa->save();
+        return back()->with('success', 'Shipping Address Successfully Updated!');
     }
 
     // Add Multiple Product In order Details page Start

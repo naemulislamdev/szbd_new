@@ -31,12 +31,14 @@
                             <div class="col-6">
                                 <h4 class="card-title">Module List</h4>
                             </div><!--end col-->
-                            <div class="col-6 text-end pb-2">
-                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#addUserModal">
-                                    <i class="la la-plus-circle"></i> Add New Module
-                                </button>
-                            </div>
+                            @can('module_create')
+                                <div class="col-6 text-end pb-2">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#addUserModal">
+                                        <i class="la la-plus-circle"></i> Add New Module
+                                    </button>
+                                </div>
+                            @endcan
 
                         </div><!--end row-->
                     </div><!--end card-header-->
@@ -54,6 +56,7 @@
                                         <th>SL#</th>
                                         <th>Title</th>
                                         <th>Module Items</th>
+                                        <th>Order</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
@@ -134,7 +137,7 @@
                                 <input type="text" name="title" id="title" class="form-control"
                                     placeholder="Enter Module Title" required>
                             </div>
-                             <div class="col-md-6 mb-2">
+                            <div class="col-md-6 mb-2">
                                 <label class="form-label">Serial Number</label>
                                 <input type="number" name="serial_number" class="form-control"
                                     placeholder="Enter serial number" required>

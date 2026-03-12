@@ -21,25 +21,27 @@ class PermissionModuleController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                return '
-        <button
+                if (auth('admin')->user()->can('module_edit')) {
+                    $buttons = '<button
             data-bs-toggle="modal"
             data-id="' . $row->id . '"
         data-title="' . $row->title . '"
         data-actions=' . json_encode($row->actions) . '
 
                data-bs-target="#viewInvestorModal"
-         class="btn btn-primary btn-sm viewBtn" title="View" style="cursor: pointer;">
+         class="btn btn-primary btn-sm mb-2 viewBtn" title="View" style="cursor: pointer;">
             <i class="las la-edit"></i>
-        </button>
-
-        <button class="btn btn-danger btn-sm delete"
+        </button>';
+                }
+                if (auth('admin')->user()->can('module_delete')) {
+                    $buttons .= '<button class="btn btn-danger btn-sm delete"
                 style="cursor: pointer;"
                 title="Delete"
                 data-id="' . $row->id . '">
             <i class="la la-trash"></i>
-        </button>
-    ';
+        </button>';
+                }
+                return $buttons;
             })
             ->editColumn('actions', function ($row) {
 

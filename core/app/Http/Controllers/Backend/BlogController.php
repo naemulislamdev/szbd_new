@@ -27,23 +27,25 @@ class BlogController extends Controller
 
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-
-                return '
-                <button class="btn btn-primary btn-sm edit"
+                if (auth('admin')->user()->can('blog_edit')) {
+                    $buttons = '<button class="btn btn-primary btn-sm edit"
                     data-id="' . $row->id . '"
                     data-name="' . $row->name . '"
                     data-bs-toggle="modal"
                     data-bs-target="#editModal">
                     <i class="la la-edit"></i>
-                </button>
-
-                <button class="btn btn-danger btn-sm delete"
+                </button>';
+                }
+                if (auth('admin')->user()->can('blog_delete')) {
+                    $buttons .= '<button class="btn btn-danger btn-sm delete"
                         style="cursor: pointer;"
                         title="Delete"
                         data-id="' . $row->id . '">
                     <i class="la la-trash"></i>
-                </button>
-            ';
+                </button>';
+                }
+
+                return $buttons;
             })
 
             // Edit Column

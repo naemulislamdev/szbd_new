@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AdminModule;
 use App\Models\AdminRole;
 use App\Models\PermissionModule;
+use App\Models\RoleDepartment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -25,19 +26,27 @@ class RolePermissionController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                return '
-        <a href="' . route('admin.role_permission.edit', $row->id) . '"
-         class="btn btn-primary btn-sm viewBtn" title="View" style="cursor: pointer;">
-            <i class="las la-edit"></i>
-        </a>
+                if (auth('admin')->user()->can('role_edit')) {
 
-        <button class="btn btn-danger btn-sm delete"
+                    $buttons = '<a href="' . route('admin.role_permission.edit', $row->id) . '"
+         class="btn btn-primary btn-sm mb-2 viewBtn" title="View" style="cursor: pointer;">
+            <i class="las la-edit"></i>
+        </a>';
+                }
+                if (auth('admin')->user()->can('role_delete')) {
+                    $buttons .= ' <button class="btn btn-danger btn-sm delete"
                 style="cursor: pointer;"
                 title="Delete"
                 data-id="' . $row->id . '">
             <i class="la la-trash"></i>
-        </button>
-    ';
+        </button>';
+                }
+                return $buttons;
+            })
+            ->editColumn('role_department', function ($row) {
+                $departmentName = $row->roleDepartment->name ?? '';
+                $html = '<span class="badge bg-primary me-1 mb-1">' . $departmentName . '</span>';
+                return $html;
             })
             ->editColumn('module_access', function ($row) {
                 $access = $row->module_access;
@@ -76,6 +85,7 @@ class RolePermissionController extends Controller
             ->rawColumns([
                 'status',
                 'module_access',
+                'role_department',
                 'action',
             ])
             ->toJson();
@@ -83,7 +93,8 @@ class RolePermissionController extends Controller
     public function create()
     {
         $modules = AdminModule::all();
-        return view('admin.role_permission.roles.create', compact('modules'));
+        $roleDepartments = RoleDepartment::where('status', 1)->get();
+        return view('admin.role_permission.roles.create', compact('modules', 'roleDepartments'));
     }
     public function store(Request $request)
     {
@@ -99,6 +110,7 @@ class RolePermissionController extends Controller
                 'name' => $request->name,
                 'guard_name' => 'admin',
                 'module_access' => json_encode($request->module_access),
+                'role_department_id' => $request->role_department
             ]);
 
             $permissions = [];
@@ -140,7 +152,8 @@ class RolePermissionController extends Controller
     {
         $role = Role::findOrFail($id);
         $modules = AdminModule::all();
-        return view('admin.role_permission.roles.edit', compact('role', 'modules'));
+        $roleDepartments = RoleDepartment::where('status', 1)->get();
+        return view('admin.role_permission.roles.edit', compact('role', 'modules', 'roleDepartments'));
     }
     public function update(Request $request, $id)
     {
@@ -157,6 +170,8 @@ class RolePermissionController extends Controller
             $role->name = $request->name;
             $role->guard_name = 'admin';
             $role->module_access = json_encode($request->module_access);
+            $role->role_department_id = $request->role_department;
+
             $role->save();
 
             $permissions = [];

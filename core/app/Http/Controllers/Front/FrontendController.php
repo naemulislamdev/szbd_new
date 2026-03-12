@@ -32,6 +32,8 @@ use App\Models\UserInfo;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -732,5 +734,49 @@ class FrontendController extends Controller
         } else {
             return "<h2>This Offer coming very soon !</h2>";
         }
+    }
+
+    public function sendOtp()
+    {
+        // session()->forget([
+        //     'otp',
+        //     'otp_phone',
+        //     'otp_expires_at',
+        //     'otp_last_sent_at',
+        // ]);
+        // return "ok";
+        $userPhone = '0173280521854551';
+        $otpCode = random_int(1000, 9999);
+        // Ensure BD number format: 8801XXXXXXXXX
+        if (substr($userPhone, 0, 2) !== '88') {
+            $userPhone = '88' . $userPhone;
+        }
+
+        $message = "Your OTP code is: {$otpCode}";
+
+        $response = Http::asForm()->post('http://bulksmsbd.net/api/smsapi', [
+            'api_key'  => 'nE7hJ4XJtJAOATmE6bow',
+            'type'     => 'text',
+            'number'   => $userPhone,
+            'senderid' => '8809648906719', // NON-masking
+            'message'  => $message,
+        ]);
+
+        $result = $response->json();
+
+
+        // Log if SMS fails
+        $responseCode = (int) ($result['response_code'] ?? 0);
+
+        if ($responseCode !== 202) {
+            dd($result['response_code']);
+            Log::error('SMS Failed', [
+                'mobile' => $userPhone,
+                'response' => $result
+            ]);
+            return false;
+        }
+
+        return true;
     }
 }

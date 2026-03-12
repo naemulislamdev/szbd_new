@@ -29,16 +29,17 @@
                             <div class="col">
                                 <h4 class="card-title">Blog</h4>
                             </div><!--end col-->
-                            <div class="col-auto">
-                                <div class="row mb-3">
-                                    <div class="col-lg-12">
-                                        <a href="{{ route('admin.blog.create') }}" class="btn btn-primary"><i
-                                                class="la la-plus-circle"></i> Add New
-                                            Blog</a>
+                            @can('blog_create')
+                                <div class="col-auto">
+                                    <div class="row mb-3">
+                                        <div class="col-lg-12">
+                                            <a href="{{ route('admin.blog.create') }}" class="btn btn-primary"><i
+                                                    class="la la-plus-circle"></i> Add New
+                                                Blog</a>
+                                        </div>
                                     </div>
-
-                                </div>
-                            </div><!--end col-->
+                                </div><!--end col-->
+                            @endcan
                         </div><!--end row-->
                     </div><!--end card-header-->
                     <div class="card-body pt-0">

@@ -84,11 +84,11 @@
                         <input type="hidden" name="id" id="categoryId">
                         <div class="mb-3">
                             <label>Category Name</label>
-                            <input required type="text" name="name" class="form-control" id="categoryName" required>
+                            <input type="text" name="name" class="form-control" id="categoryName" required>
                         </div>
                         <div class="mb-3">
                             <label>Order Number</label>
-                            <input required type="number" name="order_number" class="form-control" id="categoryOrder"
+                            <input type="number" name="order_number" class="form-control" id="categoryOrder"
                                 required>
                         </div>
                         <div class="row">

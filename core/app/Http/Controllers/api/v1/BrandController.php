@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\api\v1;
 
-use App\CPU\BrandManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Brand;
+use App\Models\Product;
 
 class BrandController extends Controller
 {
     public function get_brands()
     {
         try {
-            $brands = BrandManager::get_active_brands();
+            $brands = Brand::active()->withCount('brandProducts')->latest()->get();;
         } catch (\Exception $e) {
         }
 
@@ -22,7 +22,7 @@ class BrandController extends Controller
     public function get_products($brand_id)
     {
         try {
-            $products = BrandManager::get_products($brand_id);
+            $products = Helpers::product_data_formatting(Product::active()->where(['brand_id' => $brand_id])->get(), true);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e], 403);
         }

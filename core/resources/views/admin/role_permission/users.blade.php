@@ -31,12 +31,14 @@
                             <div class="col-6">
                                 <h4 class="card-title">Users List</h4>
                             </div><!--end col-->
-                            <div class="col-6 text-end pb-2">
-                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#addUserModal">
-                                    <i class="la la-plus-circle"></i> Add User
-                                </button>
-                            </div>
+                            @can('employee_create')
+                                <div class="col-6 text-end pb-2">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#addUserModal">
+                                        <i class="la la-plus-circle"></i> Add User
+                                    </button>
+                                </div>
+                            @endcan
 
                         </div><!--end row-->
                     </div><!--end card-header-->
@@ -75,7 +77,8 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
 
-                <form id="addFor" action="{{ route('admin.employee.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="addFor" action="{{ route('admin.employee.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Add User</h5>

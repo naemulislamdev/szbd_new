@@ -31,12 +31,14 @@
                             <div class="col-6">
                                 <h4 class="card-title">Roles List</h4>
                             </div><!--end col-->
-                            <div class="col-6 text-end pb-2">
-                                <a href="{{ route('admin.role_permission.create') }}" type="button"
-                                    class="btn btn-primary btn-sm">
-                                    <i class="la la-plus-circle"></i> Add New Role
-                                </a>
-                            </div>
+                            @can('role_create')
+                                <div class="col-6 text-end pb-2">
+                                    <a href="{{ route('admin.role_permission.create') }}" type="button"
+                                        class="btn btn-primary btn-sm">
+                                        <i class="la la-plus-circle"></i> Add New Role
+                                    </a>
+                                </div>
+                            @endcan
 
                         </div><!--end row-->
                     </div><!--end card-header-->
@@ -54,6 +56,7 @@
                                         <th>SL#</th>
                                         <th>Date</th>
                                         <th>Role Name</th>
+                                        <th>Department</th>
                                         <th>Access Modules</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
@@ -101,6 +104,9 @@
                     },
                     {
                         data: 'name'
+                    },
+                    {
+                        data: 'role_department'
                     },
                     {
                         data: 'module_access',

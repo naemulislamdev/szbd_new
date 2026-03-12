@@ -39,11 +39,25 @@
                             <h4 class="card-title">Role Edit Form</h4>
                             <form action="{{ route('admin.role_permission.update', $role->id) }}" method="POST">
                                 @csrf
-                                <div class="mt-3">
-                                    <label for="name" class="form-label">Role Name <span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ $role->name}}"
-                                        placeholder="Ex: Admin" required>
+                                <div class="row mt-3">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="name" class="form-label">Role Name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="name" name="name" value="{{ $role->name}}"
+                                                placeholder="Ex: Admin" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="role_department" class="form-label">Role Department <span class="text-danger">*</span></label>
+                                            <select class="form-select" name="role_department">
+                                                <option>select Department</option>
+                                                @foreach ($roleDepartments as $item)
+                                                    <option {{$role->role_department_id == $item->id ? 'selected': ''}} value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="mt-3">
                                     <h5 class="fw-bold">Update Permissions</h5>

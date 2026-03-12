@@ -4,8 +4,8 @@ namespace App\Http\Controllers\api\v1;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\Banner;
-use App\Model\Product;
+use App\Models\Banner;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,16 +27,16 @@ class BannerController extends Controller
             $banners = Banner::where(['published' => 1, 'banner_type' => 'Main Banner'])->get();
         } elseif ($request['banner_type'] == 'main_section_banner') {
             $banners = Banner::where(['published' => 1, 'banner_type' => 'Main Section Banner'])->get();
-        }elseif ($request['banner_type'] == 'popup_banner') {
+        } elseif ($request['banner_type'] == 'popup_banner') {
             $banners = Banner::where(['published' => 1, 'banner_type' => 'Popup Banner'])->get();
-        }else {
+        } else {
             $banners = Banner::where(['published' => 1, 'banner_type' => 'Footer Banner'])->get();
         }
         $pro_ids = [];
         $data = [];
         foreach ($banners as $banner) {
             if ($banner['resource_type'] == 'product' && !in_array($banner['resource_id'], $pro_ids)) {
-                array_push($pro_ids,$banner['resource_id']);
+                array_push($pro_ids, $banner['resource_id']);
                 $product = Product::find($banner['resource_id']);
                 $banner['product'] = Helpers::product_data_formatting($product);
             }
@@ -44,24 +44,21 @@ class BannerController extends Controller
         }
 
         return response()->json($data, 200);
-
     }
 
     public function get_banners(Request $request)
     {
+        $data['main_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Main Banner'])->get();
 
-            $data['main_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Main Banner'])->get();
+        $data['main_section_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Main Section Banner'])->get();
 
-            $data['main_section_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Main Section Banner'])->get();
+        $data['popup_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Popup Banner'])->get();
 
-            $data['popup_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Popup Banner'])->get();
-
-            $data['mobile_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Mobile Banner'])->get();
-            $data['footer_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Footer Banner'])->get();
+        $data['mobile_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Mobile Banner'])->get();
+        $data['footer_banner'] = Banner::where(['published' => 1, 'banner_type' => 'Footer Banner'])->get();
 
 
 
         return response()->json($data, 200);
-
     }
 }
