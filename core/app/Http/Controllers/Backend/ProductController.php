@@ -9,6 +9,8 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\ChildCategory;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\SubCategory;
@@ -249,5 +251,208 @@ class ProductController extends Controller
             ->get();
 
         return response()->json($childCategories);
+    }
+
+
+    /* =====================================================
+    Product Sales Report methods
+========================================================
+*/
+
+    public function ProductSalesReport()
+    {
+
+        return view('admin.product.report.view');
+    }
+
+    // public function reportDatatables(Request $request)
+    // {
+
+
+    //     $query = Order::with('details') // eager load details
+    //         ->leftJoin('shipping_addresses', 'orders.shipping_address', '=', 'shipping_addresses.id')
+    //         ->select('orders.*', 'shipping_addresses.contact_person_name as shipping_name', 'shipping_addresses.phone as shipping_phone');
+
+
+    //     // 🔹 Filter by status
+    //     if ($request->status != 'all') {
+    //         $query->where('order_status', $request->status);
+    //     }
+    //     // 🔹 Filter by date range
+    //     if ($request->filled('from_date') && $request->filled('to_date')) {
+    //         $query->whereDate('created_at', '>=', $request->from_date)
+    //             ->whereDate('created_at', '<=', $request->to_date);
+    //     } elseif ($request->filled('from_date')) {
+    //         $query->whereDate('created_at', '>=', $request->from_date);
+    //     } elseif ($request->filled('to_date')) {
+    //         $query->whereDate('created_at', '<=', $request->to_date);
+    //     }
+
+    //     $orders = $query->latest('id')->get();
+
+    //     // 🔹 Aggregate product data
+    //     $productReport = [];
+
+    //     foreach ($orders as $order) {
+    //         foreach ($order->details as $detail) {
+    //             $product = json_decode($detail->product_details, true);
+
+    //             if (!$product) continue;
+
+    //             $productId = $product['id'] ?? null;
+    //             if (!$productId) continue;
+
+    //             $qty = $detail->qty ?? 0;
+    //             $price = $product['price'] ?? 0;
+    //             $discount = $detail->discount ?? 0;
+    //             $total = ($price * $qty) - $discount;
+
+    //             if (!isset($productReport[$productId])) {
+    //                 $productReport[$productId] = [
+    //                     'purchase_price' => $product['purchase_price'] ?? '',
+    //                     'unit_price' => $product['unit_price'] ?? '',
+    //                     'choice_options' => $product['choice_options'] ?? '',
+    //                     'code' => $product['code'] ?? '',
+    //                     'thumbnail' => $product['thumbnail'] ?? null,
+    //                     'total_qty' => 0,
+    //                     'total_amount' => 0,
+    //                     'total_discount' => 0,
+    //                 ];
+    //             }
+
+    //             $productReport[$productId]['total_qty'] += $qty;
+    //             $productReport[$productId]['total_amount'] += $total;
+    //             $productReport[$productId]['total_discount'] += $discount;
+    //         }
+    //     }
+
+    //     return DataTables::of(collect($productReport))
+    //         ->addIndexColumn()
+    //         ->addColumn('code', fn($row) => $row['code'])
+    //         ->addColumn('image', function ($row) {
+    //             $src = $row['thumbnail']
+    //                 ? asset('assets/storage/product/thumbnail/' . $row['thumbnail'])
+    //                 : asset('assets/noimage.png');
+    //             return "<img src='" . $src . "' width='50'>";
+    //         })
+    //         ->addColumn('purchase_price', fn($row) => $row['purchase_price'])
+    //         ->addColumn('sold_price', fn($row) => $row['unit_price'])
+    //         ->addColumn('quantity', fn($row) => $row['total_qty'])
+    //         ->addColumn('attribute', function ($row) {
+    //             // 1️⃣ Check if choice_options exist
+    //             if (!empty($row['choice_options'])) {
+    //                 $choiceOptions = json_decode($row['choice_options'], true);
+
+    //                 if ($choiceOptions) {
+    //                     // Assume only first choice option is relevant (like Size)
+    //                     $option = $choiceOptions[0];
+    //                     $title = $option['title'] ?? $option['name'];
+    //                     $values = implode(', ', $option['options']);
+    //                     return $title . ': ' . $values;
+    //                 }
+    //             }
+
+    //             // 2️⃣ If no choice_options, fallback to Pc
+    //             return 'Pc';
+    //         })
+    //         ->rawColumns(['image', 'attribute'])
+    //         ->toJson();
+    // }
+    public function reportDatatables(Request $request)
+    {
+        $query = Order::with('details') // eager load details
+            ->leftJoin('shipping_addresses', 'orders.shipping_address', '=', 'shipping_addresses.id')
+            ->select('orders.*', 'shipping_addresses.contact_person_name as shipping_name', 'shipping_addresses.phone as shipping_phone');
+
+        // 🔹 Filter by status
+        if ($request->status != 'all') {
+            $query->where('order_status', $request->status);
+        }
+
+        // 🔹 Filter by date range
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date)
+                ->whereDate('created_at', '<=', $request->to_date);
+        } elseif ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        } elseif ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+
+        $orders = $query->latest('id')->get();
+
+        // 🔹 Aggregate product data & totals
+        $productReport = [];
+        $totals = [
+            'total_qty' => 0,
+            'total_price' => 0,
+            'total_discount' => 0,
+        ];
+
+        foreach ($orders as $order) {
+            foreach ($order->details as $detail) {
+                $product = json_decode($detail->product_details, true);
+                if (!$product) continue;
+
+                $productId = $product['id'] ?? null;
+                if (!$productId) continue;
+
+                $qty = $detail->qty ?? 0;
+                $price = $product['unit_price'] ?? 0; // <-- unit_price fix
+                $discount = $detail->discount ?? 0;
+                $total = ($price * $qty) - $discount;
+
+                // 🔹 Update page-wide totals
+                $totals['total_qty'] += $qty;
+                $totals['total_price'] += $total;
+                $totals['total_discount'] += $discount;
+
+                // 🔹 Aggregate per product
+                if (!isset($productReport[$productId])) {
+                    $productReport[$productId] = [
+                        'purchase_price' => $product['purchase_price'] ?? '',
+                        'unit_price' => $product['unit_price'] ?? '',
+                        'choice_options' => $product['choice_options'] ?? '',
+                        'code' => $product['code'] ?? '',
+                        'thumbnail' => $product['thumbnail'] ?? null,
+                        'total_qty' => 0,
+                        'total_amount' => 0,
+                        'total_discount' => 0,
+                    ];
+                }
+
+                $productReport[$productId]['total_qty'] += $qty;
+                $productReport[$productId]['total_amount'] += $total;
+                $productReport[$productId]['total_discount'] += $discount;
+            }
+        }
+
+        return DataTables::of(collect($productReport))
+            ->addIndexColumn()
+            ->addColumn('code', fn($row) => $row['code'])
+            ->addColumn('image', function ($row) {
+                $src = $row['thumbnail']
+                    ? asset('assets/storage/product/thumbnail/' . $row['thumbnail'])
+                    : asset('assets/noimage.png');
+                return "<img src='" . $src . "' width='50'>";
+            })
+            ->addColumn('purchase_price', fn($row) => $row['purchase_price'])
+            ->addColumn('sold_price', fn($row) => $row['unit_price'])
+            ->addColumn('quantity', fn($row) => $row['total_qty'])
+            ->addColumn('attribute', function ($row) {
+                if (!empty($row['choice_options'])) {
+                    $choiceOptions = json_decode($row['choice_options'], true);
+                    if ($choiceOptions) {
+                        $option = $choiceOptions[0];
+                        $title = $option['title'] ?? $option['name'];
+                        $values = implode(', ', $option['options']);
+                        return $title . ': ' . $values;
+                    }
+                }
+                return 'Pc';
+            })
+            ->rawColumns(['image', 'attribute'])
+            ->with('totals', $totals) // <-- totals pass
+            ->toJson();
     }
 }

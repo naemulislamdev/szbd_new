@@ -123,6 +123,12 @@
 @endpush
 
 @section('customer_content')
+    {{-- Bredcrumb start  --}}
+    <nav class="breadcrumb custom-breadcrumb mt-3">
+        <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+        <span class="breadcrumb-item active" aria-current="page">Customer Profile</span>
+    </nav>
+    {{--  Bredcrumb End --}}
     <!-- Page Title-->
     <div class="row mb-3">
         <div class="col-md-12 sidebar_heading">

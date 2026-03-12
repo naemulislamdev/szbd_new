@@ -245,29 +245,30 @@ class UserProfileController extends Controller
 
     public function track_order_result(Request $request)
     {
-
         $user =  auth('customer')->user();
-        if (!isset($user)) {
+        if (!isset($user) && $request->phone_number != "") {
+
             $user_id = User::where('phone', $request->phone_number)->first()->id;
-            $orderDetails = Order::where('id', $request['order_id'])->whereHas('details', function ($query) use ($user_id) {
+
+            $orderDetails = Order::where('order_number', $request['order_id'])->whereHas('details', function ($query) use ($user_id) {
                 $query->where('customer_id', $user_id);
             })->first();
         } else {
             if ($user->phone == $request->phone_number) {
-                $orderDetails = Order::where('id', $request['order_id'])->whereHas('details', function ($query) {
+                $orderDetails = Order::where('order_number', $request['order_id'])->whereHas('details', function ($query) {
                     $query->where('customer_id', auth('customer')->id());
                 })->first();
             }
             if ($request->from_order_details == 1) {
-                $orderDetails = Order::where('id', $request['order_id'])->whereHas('details', function ($query) {
+                $orderDetails = Order::where('order_number', $request['order_id'])->whereHas('details', function ($query) {
                     $query->where('customer_id', auth('customer')->id());
                 })->first();
             }
         }
-        // dd($orderDetails);
+
 
         if (isset($orderDetails)) {
-            return view('web-views.order-tracking', compact('orderDetails'));
+            return view('web.order-tracking', compact('orderDetails'));
         }
 
         return to_route('track-order.index')->with('Error', 'Invalid Order Id or Phone Number');

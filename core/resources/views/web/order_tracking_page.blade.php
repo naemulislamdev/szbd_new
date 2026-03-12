@@ -31,42 +31,17 @@
             text-shadow: none;
             opacity: .5;
         }
-
-        .breadcrumb {
-            background: none;
-
-        }
-
-        .breadcrumb-link {
-            color: #f26d21;
-            font-weight: 500;
-            text-decoration: none;
-        }
-
-        .breadcrumb-link:hover {
-            color: #d85e1c;
-
-        }
-
-        .breadcrumb-active {
-            color: #f26d21;
-            font-weight: 600;
-        }
     </style>
 @endpush
 
 @section('content')
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent px-0 mb-2">
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/') }}" class="breadcrumb-link">Home</a>
-                </li>
-                <li class="breadcrumb-item active breadcrumb-active" aria-current="page">
-                    Track Your Order
-                </li>
-            </ol>
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+            <span class="breadcrumb-item active" aria-current="page">Track Your Order</span>
         </nav>
+        {{--  Bredcrumb End --}}
     </div>
 
 
@@ -108,7 +83,7 @@
                                         placeholder="Enter your phone number" required>
                                 </div>
                                 <div class="input-group-append mx-auto">
-                                    <button class="btn btn-light w-50" type="submit" name="trackOrder">
+                                    <button class="btn btn-light" type="submit" name="trackOrder">
                                         <i class="fa fa-search" aria-hidden="true"></i>
                                         Track order</button>
                                 </div>

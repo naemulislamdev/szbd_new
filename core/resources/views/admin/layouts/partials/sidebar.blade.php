@@ -131,6 +131,11 @@
                                 <a href="{{ route('admin.product.index') }}" class="nav-link ">All Products</a>
                             </li><!--end nav-item-->
                         @endcan
+                        @can('product_view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.product.salesReport') }}" class="nav-link ">Product Sales Report</a>
+                            </li><!--end nav-item-->
+                        @endcan
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->
@@ -628,7 +633,7 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
-        @canAny(['web_config', "sitemap"])
+        @canAny(['web_config', 'sitemap'])
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.web_config.view') ? 'active' : '' }}"
                     href="#settingsDropDown" data-bs-toggle="collapse" role="button" aria-expanded="false"
@@ -652,6 +657,30 @@
                                     class="nav-link {{ request()->routeIs('admin.web_config.view') ? 'active' : '' }}">Sitemap</a>
                             </li>
                         @endcan
+                        <li class="nav-item">
+                            <a href="{{ route('admin.social_media.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.social_media.list') ? 'active' : '' }}">Social
+                                Media</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.terms-condition') }}"
+                                class="nav-link {{ request()->routeIs('admin.terms-condition') ? 'active' : '' }}">Terms
+                                and Condition</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.privacy_policy') }}"
+                                class="nav-link {{ request()->routeIs('admin.privacy_policy') ? 'active' : '' }}">Privacy
+                                Policy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.about-us') }}"
+                                class="nav-link {{ request()->routeIs('admin.about-us') ? 'active' : '' }}">About
+                                Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.faq.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.faq.list') ? 'active' : '' }}">FAQ</a>
+                        </li>
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->

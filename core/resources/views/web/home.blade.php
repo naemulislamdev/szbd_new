@@ -260,7 +260,7 @@
         <div class="container px-0">
             <div class="section-heading-title position-relative z-30 text-center">
                 <div>
-                    <h3>Categories</h3>
+                    <h1>Categories</h1>
                 </div>
                 <div class="heading-border"></div>
             </div>
@@ -285,9 +285,9 @@
         <div class="container">
             <div>
                 <div class=" text-center">
-                    <div class="section-heading-title position-relative z-30 ">
+                    <div class=" position-relative z-30 ">
                         <div class="text-center">
-                            <h3>Categories</h3>
+                            <h2>Categories</h2>
                         </div>
                         <div class="heading-border"></div>
                     </div>

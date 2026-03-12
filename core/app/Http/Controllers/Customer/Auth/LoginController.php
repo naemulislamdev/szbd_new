@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Customer\Auth;
 use App\CPU\CartManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\Wishlist;
+use App\Models\Wishlist;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -74,13 +74,10 @@ class LoginController extends Controller
 
         if (isset($user) && $user->is_active && auth('customer')->attempt(['email' => $user->email, 'password' => $request->password], $remember)) {
             session()->put('wish_list', Wishlist::where('customer_id', auth('customer')->user()->id)->pluck('product_id')->toArray());
-            Toastr::info('Welcome to ' . Helpers::get_business_settings('company_name') . '!');
             CartManager::cart_to_db();
             return redirect(session('keep_return_url'));
         }
-
-        Toastr::error('Credentials do not match or account has been suspended.');
-        return back()->withInput();
+        return back()->withInput()->with("Credentials do not match or account has been suspended.");
     }
 
     public function logout(Request $request)

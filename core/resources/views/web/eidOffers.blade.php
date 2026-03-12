@@ -15,10 +15,16 @@
 @section('content')
     <section>
         <div class="container mt-4">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">{{ $eidoffer->title }}</span>
+            </nav>
+            {{--  Bredcrumb End --}}
             <div class="mb-4">
                 <div class=" text-center">
                     <div class="section-heading-title position-relative z-30 ">
-                        <h3> Eid offers ✨🌙</h3>
+                        <h1>{{ $eidoffer->title }}</h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">

@@ -10,3 +10,4 @@
 <link href="{{ asset('assets/backend/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/backend/css/custom.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/backend/css/responsive.css') }}" rel="stylesheet" type="text/css" />
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">

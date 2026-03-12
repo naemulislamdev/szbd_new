@@ -46,8 +46,14 @@
     </style>
 @endpush
 @section('content')
-    <div class="container py-4 py-lg-5 my-4" style="text-align:left;">
-        <div class="row justify-content-center">
+    <div class="container " style="text-align:left;">
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+            <span class="breadcrumb-item active" aria-current="page">Customer Login</span>
+        </nav>
+        {{--  Bredcrumb End --}}
+        <div class="row justify-content-center mt-4">
             <div class="col-md-10">
                 <div class="card border-0 box-shadow p-3">
                     <div class="row">
@@ -58,14 +64,16 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="">
+                            <div class="card border-none">
                                 <div class="card-body">
                                     <h2 class="h4 mb-1">Login</h2>
+                                    <p>Don't have an account yet? <a href="{{ route('customer.auth.sign-up') }}">Create
+                                            account</a></p>
 
                                     <form class="needs-validation mt-2" autocomplete="off"
                                         action="{{ route('customer.auth.login') }}" method="post" id="form-id">
                                         @csrf
-                                        <div class="form-group">
+                                        <div class="form-group mb-2">
                                             <label for="si-email">Email address</label>
                                             <input class="form-control" type="text" name="user_id" id="si-email"
                                                 style="text-align: left;" value="{{ old('user_id') }}"
@@ -74,8 +82,8 @@
                                                 please provide valid email or phone number
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="si-password">password</label>
+                                        <div class="form-group mb-0">
+                                            <label for="si-password">Password</label>
                                             <div class="password-toggle">
                                                 <input class="form-control" name="password" type="password" id="si-password"
                                                     style="text-align:left;" required>
@@ -87,40 +95,33 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group d-flex flex-wrap justify-content-between">
+                                        <div class="form-group d-flex flex-wrap justify-content-between mb-0">
                                             <div class="form-group">
                                                 <input type="checkbox" name="remember" id="remember"
                                                     {{ old('remember') ? 'checked' : '' }}>
 
-                                                <label class="" for="remember">remember_me</label>
+                                                <label class="" for="remember">Remember_me</label>
                                             </div>
                                             <a class="font-size-sm" href="{{ route('customer.auth.recover-password') }}">
                                                 forgot password?
                                             </a>
                                         </div>
-                                        <button class="btn btn-primary btn-block btn-shadow" type="submit">sign in</button>
+                                        <button class="btn btn-secondary btn-block btn-shadow" type="submit">sign
+                                            in</button>
                                     </form>
                                 </div>
-                                <div class="">
-                                    <div class="p-3 d-flex justify-content-between">
-                                        <div class="mb-3">
-                                            <h6>No account Sign up now</h6>
-                                        </div>
-                                        <div class="mb-3">
-                                            <a class="btn btn-outline-primary" href="{{ route('customer.auth.sign-up') }}">
-                                                <i class="fa fa-user-circle"></i> sign up
-                                            </a>
-                                        </div>
-                                    </div>
+                                <div class="mb-2">
+
                                     <div class="row">
                                         @foreach (\App\CPU\Helpers::get_business_settings('social_login') as $socialLoginService)
                                             @if (isset($socialLoginService) && $socialLoginService['status'] == true)
                                                 <div class="col-sm-6 text-center mb-1 mx-auto">
-                                                    <a class="btn btn-outline-primary"
+                                                    <a class=" border px-3 py-2 rounded"
                                                         href="{{ route('customer.auth.service-login', $socialLoginService['login_medium']) }}"
-                                                        style="width: 100%">
-                                                        <i
-                                                            class="czi-{{ $socialLoginService['login_medium'] }} mr-2 ml-n1"></i>
+                                                        style="width: 100%; color: #ff5d00">
+                                                        <img style="max-width: 100%; width: 20px;"
+                                                            src="{{ asset('assets/frontend/images/logo/google_logo.png') }}"
+                                                            alt="google logo">
                                                         Sign in with {{ $socialLoginService['login_medium'] }}
                                                     </a>
                                                 </div>

@@ -96,20 +96,22 @@
 @section('content')
     <section class="py-2 career">
         <div class="container " style="min-height: 100vh;">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+
+                <span class="breadcrumb-item active" aria-current="page">Blogs </span>
+            </nav>
+            {{--  Bredcrumb End --}}
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>Blogs</h3>
+                        <h1>Blogs</h1>
                         <div class="heading-border"></div>
                     </div>
                 </div>
             </div>
-            <nav aria-label="breadcrumb bg-transparent">
-                <ol class="breadcrumb bg-transparent">
-                    <li class="breadcrumb-item"><a style="color: #ff5d00;" href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Blogs</li>
-                </ol>
-            </nav>
+
             <div class="row">
                 @foreach ($blogs as $blog)
                     <div class="col-lg-3 col-md-6 mb-4">

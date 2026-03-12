@@ -216,7 +216,7 @@
             <div class="row ">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>New Trending Collections</h3>
+                        <h1>New Trending Collections</h1>
                         <div class="heading-border"></div>
                     </div>
                 </div>

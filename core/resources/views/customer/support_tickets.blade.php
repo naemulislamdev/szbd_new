@@ -19,7 +19,12 @@
 @endpush
 
 @section('customer_content')
-
+    {{-- Bredcrumb start  --}}
+    <nav class="breadcrumb custom-breadcrumb mt-3">
+        <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+        <span class="breadcrumb-item active" aria-current="page">Support Ticket</span>
+    </nav>
+    {{--  Bredcrumb End --}}
     <div class="modal fade rtl" id="open-ticket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg  " role="document">

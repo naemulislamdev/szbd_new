@@ -106,6 +106,7 @@ class CareerController extends Controller
             'department'   => $request->department,
             'description'  => $request->description,
             'location'     => $request->location,
+            'experience'     => $request->experience,
             'type'     => $request->type,
             'opening_date' => $request->opening_date,
             'deadline'     => $request->deadline,
@@ -176,6 +177,7 @@ class CareerController extends Controller
         $career->department   = $request->department;
         $career->description  = $request->description;
         $career->location     = $request->location;
+        $career->experience     = $request->experience;
         $career->type     = $request->type;
         $career->opening_date = $request->opening_date;
         $career->deadline     = $request->deadline;

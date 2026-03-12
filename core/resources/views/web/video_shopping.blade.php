@@ -12,15 +12,21 @@
     <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 @endpush
 @section('content')
-    <section class="py-3">
+    <section>
         <div class="container">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Video Shopping</span>
+            </nav>
+            {{--  Bredcrumb End --}}
             {{-- Product Filter section --}}
             @include('web.layouts.partials.product_filter')
             {{-- Product grid system section --}}
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>Video Shopping</h3>
+                        <h1>Video Shopping</h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">

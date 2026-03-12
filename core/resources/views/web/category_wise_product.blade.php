@@ -20,7 +20,7 @@
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>
+                        <h1>
                             @if (!empty($data['cat']->name) && !empty($data['subCat']->name) && !empty($data['childCat']->name))
                                 {{ $data['childCat']->name }}
                             @elseif (!empty($data['cat']->name) && !empty($data['subCat']->name))
@@ -30,7 +30,7 @@
                             @else
                                 All Products
                             @endif
-                        </h3>
+                        </h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">

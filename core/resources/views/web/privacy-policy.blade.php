@@ -1,16 +1,16 @@
 @extends('web.layouts.app')
 
-@section('title','Privacy policy')
+@section('title', 'Privacy policy')
 
 @push('css_or_js')
-    <meta property="og:image" content="{{asset('assets/storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="og:title" content="Terms & conditions of {{$web_config['name']->value}} "/>
-    <meta property="og:url" content="{{env('APP_URL')}}">
+    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+    <meta property="og:title" content="Terms & conditions of {{ $web_config['name']->value }} " />
+    <meta property="og:url" content="{{ env('APP_URL') }}">
     <meta property="og:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
 
-    <meta property="twitter:card" content="{{asset('assets/storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="twitter:title" content="Terms & conditions of {{$web_config['name']->value}}"/>
-    <meta property="twitter:url" content="{{env('APP_URL')}}">
+    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+    <meta property="twitter:title" content="Terms & conditions of {{ $web_config['name']->value }}" />
+    <meta property="twitter:url" content="{{ env('APP_URL') }}">
     <meta property="twitter:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
 
     <style>
@@ -34,6 +34,14 @@
 @endpush
 
 @section('content')
+    <div class="container">
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+            <span class="breadcrumb-item active" aria-current="page">Privacy Policy</span>
+        </nav>
+        {{--  Bredcrumb End --}}
+    </div>
     <div class="container for-container rtl" style="text-align: left">
         <h2 class="text-center mt-3 headerTitle">Privacy policy</h2>
         <div class="for-padding">

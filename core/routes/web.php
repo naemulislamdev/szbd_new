@@ -16,7 +16,7 @@ use App\Http\Controllers\Front\WholesaleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'track_visitor'])->group(function () {
+Route::middleware(['web', 'track_visitor', 'content_security_policy'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
         Route::get('/', 'home')->name('home');
         Route::get('/category', 'category')->name('category');
@@ -88,6 +88,12 @@ Route::middleware(['web', 'track_visitor'])->group(function () {
         Route::get('/currency-convert-order', 'currency_convert_order');
         Route::get('/create-role', 'create_role');
         //End
+
+        // career routes
+        Route::get('/careers', 'careers')->name('careers');
+        Route::get('/careers-details/{slug}', 'careerDetails')->name('career.details');
+        Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
+        Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
     });
 
     // Checkout routes

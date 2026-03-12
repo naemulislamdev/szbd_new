@@ -89,4 +89,38 @@ class FileManager
             'message' => 'Removed successfully !'
         ];
     }
+    public static function uploadFileSimple(
+        string $dir,
+        $file = null,
+        $alt_text = null
+    ) {
+        // Validate file
+        if (!$file instanceof \Illuminate\Http\UploadedFile) {
+            return null;
+        }
+
+        if (!$file->isValid()) {
+            return null;
+        }
+
+        // Save path
+        $fullPath = 'assets/storage/' . $dir . '/';
+
+        if (!is_dir($fullPath)) {
+            mkdir($fullPath, 0777, true);
+        }
+
+        // File extension
+        $extension = $file->getClientOriginalExtension();
+
+        // Unique file name
+        $fileName = $alt_text
+            ? Str::slug($alt_text) . '.' . $extension
+            : Carbon::now()->format('YmdHis') . '-' . uniqid() . '.' . $extension;
+
+        // Move file
+        $file->move($fullPath, $fileName);
+
+        return $fileName;
+    }
 }

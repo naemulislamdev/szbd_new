@@ -2,8 +2,14 @@
 @section('title', 'Our outlets')
 
 @section('content')
-    <section class="offer-section py-3">
+    <section class="offer-section ">
         <div class="container">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Outlets</span>
+            </nav>
+            {{--  Bredcrumb End --}}
             <div class="row mb-4">
                 <div class="col">
                     <div class="outlets-heading border-bottom-0">

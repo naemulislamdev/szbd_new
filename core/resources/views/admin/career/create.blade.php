@@ -108,6 +108,17 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                {{-- Location --}}
+                                <div class="col-md-6">
+                                    <label for="experience">Experience</label>
+                                    <input type="text" name="experience" id="experience"
+                                        class="form-control @error('experience') is-invalid @enderror"
+                                        value="{{ old('experience') }}" placeholder="Ex: 2-3 Years">
+
+                                    @error('experience')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
                                 {{-- Job Type --}}
                                 <div class="col-md-6">

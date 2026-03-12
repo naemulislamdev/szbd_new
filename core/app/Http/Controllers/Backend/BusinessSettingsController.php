@@ -304,7 +304,6 @@ class BusinessSettingsController extends Controller
 
     public function update(Request $request, $name)
     {
-
         if ($name == 'download_app_apple_stroe') {
             $download_app_store = BusinessSetting::where('type', 'download_app_apple_stroe')->first();
             if (isset($download_app_store) == false) {
@@ -357,5 +356,54 @@ class BusinessSettingsController extends Controller
 
 
         return redirect()->back()->with('success', 'App Store updated successfully!');
+    }
+
+    // Terms & conditon functions start
+    public function terms_condition()
+    {
+        $terms_condition = BusinessSetting::where('type', 'terms_condition')->first();
+        return view('admin.term_conditon.index', compact('terms_condition'));
+    }
+    public function updateTermsCondition(Request $data)
+    {
+        $data->validate([
+            'terms' => 'required',
+        ]);
+        BusinessSetting::where('type', 'terms_condition')->update(['value' => $data->terms]);
+        return redirect()->back()->with('success', 'Terms and Condition Updated successfully!');
+    }
+    // Terms & conditon functions end
+    // Start Privacy Policy functions
+
+    public function privacy_policy()
+    {
+        $privacy_policy = BusinessSetting::where('type', 'privacy_policy')->first();
+        return view('admin.privacy_policy.index', compact('privacy_policy'));
+    }
+
+    public function privacy_policy_update(Request $data)
+    {
+        $validatedData = $data->validate([
+            'value' => 'required',
+        ]);
+        BusinessSetting::where('type', 'privacy_policy')->update(['value' => $data->value]);
+        return redirect()->back()->with('success', 'Privacy Policy Updated Successfully!');
+    }
+    // End Privacy Policy functions
+
+    // about us  functions
+    public function about_us()
+    {
+        $about_us = BusinessSetting::where('type', 'about_us')->first();
+        return view('admin.about_us.index', compact('about_us'));
+    }
+
+    public function about_usUpdate(Request $data)
+    {
+        $validatedData = $data->validate([
+            'about_us' => 'required',
+        ]);
+        BusinessSetting::where('type', 'about_us')->update(['value' => $data->about_us]);
+        return back()->with('success', 'About Us updated successfully!');
     }
 }

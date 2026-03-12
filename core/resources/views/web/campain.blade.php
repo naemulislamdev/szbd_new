@@ -63,7 +63,7 @@
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>Campaing Products</h3>
+                        <h1>Campaing Products</h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">
