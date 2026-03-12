@@ -14,19 +14,25 @@
 @section('content')
     <section class="py-3">
         <div class="container">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Search: {{ $keyword }}</span>
+            </nav>
+            {{--  Bredcrumb End --}}
             {{-- Product Filter section --}}
             {{-- @include('layouts.frontend.partials.product_filter') --}}
             {{-- Product grid system section --}}
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>
+                        <h1>
                             @if (!empty($keyword))
                                 {{ $keyword }}
                             @else
                                 All Products
                             @endif
-                        </h3>
+                        </h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">

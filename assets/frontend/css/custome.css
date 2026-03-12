@@ -4,12 +4,41 @@
   position: fixed;
   width: 100%;
 }
+/* CSS */
+.custom-breadcrumb {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+.custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  content: "»";
+  color: #6c757d;
+  font-size: 23px;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.custom-breadcrumb .breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #ff5d00;
+}
+.custom-breadcrumb .breadcrumb-item {
+  font-weight: 500;
+  color: #ff5d00;
+}
+
+.custom-breadcrumb .breadcrumb-item.active {
+  color: #6c757d;
+}
 
 .menu-area > ul > li > a,
 .p-banner-content > .p-banner-btn > a:hover,
 .slider-inner-btn > a:hover,
 .tp-category-title-3 > a:hover,
 a:hover {
+  display: inline-block;
   text-decoration: none;
 }
 .navbar,
@@ -718,6 +747,14 @@ header.scrolled {
 .section-heading-title > h5 {
   font-size: 16px;
   font-family: var(--jost);
+  color: #ff9100;
+}
+.section-heading-title h1 {
+  font-size: 25px;
+  font-family: var(--jost);
+  color: var(--text-black);
+  margin: 0 0 6px;
+  text-transform: uppercase;
   color: #ff9100;
 }
 .section-heading-title > h3 {

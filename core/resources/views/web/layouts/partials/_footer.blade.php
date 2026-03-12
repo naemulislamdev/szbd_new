@@ -8,7 +8,8 @@
                     <div class="footer-social-icon mb-3">
                         @if (isset($social_media))
                             @foreach ($social_media as $item)
-                                <a href="{{ $item->link }}"><i class="{{ $item->icon }}"></i></a>
+                                <a href="{{ $item->link }}"><i style="display: inline-block; margin-top: 3px;"
+                                        class="{{ $item->icon }}"></i></a>
                             @endforeach
                         @endif
                     </div>
@@ -21,7 +22,7 @@
                             $company_email = $web_config['email']->value;
                             $company_phone = $web_config['phone']->value;
                         @endphp
-                        <li><i class="fa fa-map-marker"></i><a href="#"><span class="ms-3">Address:
+                        <li><i class="fa fa-map-marker mr-0"></i><a href="#"><span class="ms-3">Address:
                                     {{ \App\CPU\Helpers::get_business_settings('shop_address') }}</span></a></li>
 
                         <li><i class="fa fa-envelope"></i><a href="mailto:{{ $company_email }}">
@@ -41,7 +42,7 @@
                         <li><a href="{{ route('terms') }}">Terms & Conditions</a></li>
                         <li><a href="{{ route('privacy-policy') }}">Privacy Policy</a>
                         </li>
-                        <li><a href="{{ route('outlets') }}">Our Outlets'</a></li>
+                        <li><a href="{{ route('outlets') }}">Our Outlets</a></li>
                         <li><a href="{{ route('contacts') }}">Contact Us</a></li>
                         <li><a href="{{ route('customer.complain') }}">Complain</a></li>
                     </ul>
@@ -67,6 +68,9 @@
                         </li>
                         <li>
                             <a href="{{ route('wholesale.crate') }}">Wholesale</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('leads') }}">Leads</a>
                         </li>
                     </ul>
                 </div>

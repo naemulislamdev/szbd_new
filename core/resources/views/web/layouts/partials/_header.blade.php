@@ -130,6 +130,20 @@
                                 alt="offer image"></a>
                     @endif
 
+                    {{-- Eid offers --}}
+                    @if ($eidoffers != null)
+                        <a class="text-dark d-block d-lg-none"
+                            href="{{ route('eid.offers', ['slug' => $eidoffers->slug ?? '']) }}">
+                            @if ($eidoffers->image)
+                                <img style="height: 60px; width: auto;"
+                                    src="{{ asset('assets/storage/eidOffer') }}/{{ $eidoffers['image'] }}"
+                                    alt="offer image">
+                            @else
+                                {{ $eidoffers->title }}
+                            @endif
+                        </a>
+                    @endif
+
                     <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
                         aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>
 

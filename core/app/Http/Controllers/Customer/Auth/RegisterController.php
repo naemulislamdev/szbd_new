@@ -30,7 +30,7 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'phone' => ['required|regex:/^(01[3-9]\d{8})$/', 'unique:users'],
+            'phone' => ['required', 'regex:/^(01[3-9]\d{8})$/', 'unique:users'],
             'password' => 'required|min:8|same:con_password'
         ], [
             'name.required' => 'First name is required',
@@ -83,8 +83,8 @@ class RegisterController extends Controller
             if ($emailServices_smtp['status'] == 1) {
                 Mail::to($user->email)->send(new \App\Mail\EmailVerification($token));
                 $response = translate('check_your_email');
-            }else{
-                $response= translate('email_failed');
+            } else {
+                $response = translate('email_failed');
             }
 
             Toastr::success($response);
@@ -116,12 +116,10 @@ class RegisterController extends Controller
                 }
 
                 Toastr::success(translate('verification_done_successfully'));
-
             } else {
                 Toastr::error(translate('Verification_code_or_OTP mismatched'));
                 return redirect()->back();
             }
-
         } else {
             if (isset($verify)) {
                 try {
@@ -136,7 +134,6 @@ class RegisterController extends Controller
             } else {
                 Toastr::error('Verification code/ OTP mismatched');
             }
-
         }
 
         return redirect(route('customer.auth.login'));
@@ -155,5 +152,4 @@ class RegisterController extends Controller
 
         return $message;
     }
-
 }

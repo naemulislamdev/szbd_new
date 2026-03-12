@@ -38,8 +38,14 @@
     }
 </style>
 @section('content')
-    <section class="py-3 career">
+    <section class=" career">
         <div class="container " style="min-height: 100vh;">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Wholesale</span>
+            </nav>
+            {{--  Bredcrumb End --}}
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-3 mb-lg-0">
                     <img class="rounded" style="max-width: 100%; height: auto;"

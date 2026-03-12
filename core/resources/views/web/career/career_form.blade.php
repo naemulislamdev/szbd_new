@@ -1,4 +1,4 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 <style>
     .application-form {
         box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
@@ -21,11 +21,18 @@
 
 @section('title', 'career-details')
 
-
 @section('content')
-    <section class="py-3 career">
+    <section class=" career">
         <div class="container mt-3 mb-4">
-            <div class="row">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <a class="breadcrumb-item" href="{{ route('careers') }}">Career</a>
+
+                <span class="breadcrumb-item active" aria-current="page">{{ $career->position }} Application Form</span>
+            </nav>
+            {{--  Bredcrumb End --}}
+            <div class="row mt-3">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8">
                     <div class=" application-form rounded">
@@ -78,50 +85,34 @@
                                             <div class="text-danger mt-2">{{ ucwords($message) }}</div>
                                         @enderror
                                     </div>
-
-
-                                    <!-- Expected Salary -->
+                                    <!-- Postion -->
                                     <div class="form-group">
-                                        <label for="expected_salary">Expected Salary (optional)</label>
-                                        <input value="{{ old('expected_salary') }}" type="text" name="expected_salary"
-                                            id="expected_salary"
-                                            class="form-control @error('expected_salary')
+                                        <label>Position <span class="text-danger">*</span></label>
+                                        <input readonly value="{{ $career->position }}" type="text"
+                                            class="form-control @error('phone')
                                                 is-invalid
-                                            @enderror"
-                                            placeholder="Negotiable / e.g. 10xxxxx BDT">
-                                        @error('expected_salary')
-                                            <div class="text-danger mt-2">{{ ucwords($message) }}</div>
-                                        @enderror
-                                    </div>
+                                            @enderror">
 
-                                    <!-- Current Position -->
-                                    <div class="form-group">
-                                        <label for="current_position">Current Job Position (optional) </label>
-                                        <input value="{{ old('current_position') }}" type="text" name="current_position"
-                                            id="current_position"
-                                            class="form-control @error('current_position')
-                                                is-invalid
-                                            @enderror"
-                                            placeholder="e.g. Digital Marketer">
-                                        @error('current_position')
-                                            <div class="text-danger mt-2">{{ ucwords($message) }}</div>
-                                        @enderror
                                     </div>
-
                                     <!-- Experience Level -->
                                     <div class="form-group">
                                         <label for="experience_level">Experience Level <span
-                                                class="text-danger">*</span></label>
-                                        <select name="experience_level" id="experience_level"
-                                            class="form-control @error('experience_level')
-                                                is-invalid
-                                            @enderror">
-                                            <option value="">Select Experience Level</option>
-                                            <option value="Fresher">Fresher</option>
-                                            <option value="1-2 years">1–2 Years</option>
-                                            <option value="3-5 years">3–5 Years</option>
-                                            <option value="5+ years">5+ Years</option>
-                                        </select>
+                                                class="text-danger">*</span></label><br>
+                                        <label class="cursor-pointer" for="exp1"><input
+                                                {{ old('experience_level') == '1-2 years' ? 'checked' : '' }}
+                                                type="radio" name="experience_level" id="exp1" value="1-2 years"> 1-2
+                                            Years</label><br>
+                                        <label class="cursor-pointer" for="exp2"> <input
+                                                {{ old('experience_level') == '2-3 years' ? 'checked' : '' }}
+                                                type="radio" name="experience_level" id="exp2" value="2-3 years"> 2-3
+                                            Years</label><br>
+                                        <label class="cursor-pointer" for="exp3"><input
+                                                {{ old('experience_level') == '3-5 years' ? 'checked' : '' }}
+                                                type="radio" name="experience_level" id="exp3" value="3-5 years"> 3-5
+                                            Years</label><br>
+                                        <label class="cursor-pointer" for="exp4"><input
+                                                {{ old('experience_level') == '5+ years' ? 'checked' : '' }} type="radio"
+                                                name="experience_level" id="exp4" value="5+ years"> 5+ Years</label>
                                         @error('experience_level')
                                             <div class="text-danger mt-2">{{ ucwords($message) }}</div>
                                         @enderror
@@ -129,13 +120,14 @@
 
                                     <!-- Portfolio Link -->
                                     <div class="form-group">
-                                        <label for="portfolio_link">Portfolio / LinkedIn (optional) </label>
+                                        <label for="portfolio_link">Portfolio / LinkedIn <span
+                                                class="text-muted">(optional)</span> </label>
                                         <input value="{{ old('portfolio_link') }}" type="text" name="portfolio_link"
                                             id="portfolio_link"
                                             class="form-control @error('portfolio_link')
                                                 is-invalid
                                             @enderror"
-                                            placeholder="https://github.com/username">
+                                            placeholder="Enter Your Portfolio or linkedin link">
                                         @error('portfolio_link')
                                             <div class="text-danger mt-2">{{ ucwords($message) }}</div>
                                         @enderror
@@ -145,7 +137,7 @@
                                     <div class="form-group">
                                         <label for="resume">Upload Your Resume (PDF) <span
                                                 class="text-danger">*</span></label>
-                                        <input type="file" value="{{ old('resume') }}" name="resume" id="resume"
+                                        <input type="file" name="resume" id="resume"
                                             class="form-control-file @error('resume')
                                                 is-invalid
                                             @enderror"
@@ -158,7 +150,8 @@
                                     <!-- Cover Letter -->
 
                                     <div class="form-group pt-4">
-                                        <label class="input-label" for="message">Cover Letter</label>
+                                        <label class="input-label" for="message">Cover Letter <span
+                                                class="text-muted">(optional)</span></label>
                                         <textarea name="message" class="editor form-control" id="summernote" cols="6" rows="10">
                                         {{ old('message') }}
                                     </textarea>
@@ -170,7 +163,7 @@
 
                                     <!-- Submit Button -->
 
-                                    <button type="submit" class="btn bg-orange px-4">
+                                    <button type="submit" class="btn bg-orange px-4 mt-4">
                                         <i class="fa fa-paper-plane"></i> Submit Application
                                     </button>
 

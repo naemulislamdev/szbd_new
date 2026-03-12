@@ -259,7 +259,7 @@ class OrderController extends Controller
     public function detailsProduct($id)
     {
         $detailsProduct = OrderDetail::findOrFail($id);
-        dd($detailsProduct);
+
         return view('admin.order.order_details', compact('detailsProduct'));
     }
     public function details($id)

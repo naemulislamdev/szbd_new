@@ -1,15 +1,24 @@
 @extends('web.layouts.app')
 @section('title', 'Shop')
 @section('content')
-    <section class="py-3">
+    <section>
         <div class="container">
+
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Shop</span>
+            </nav>
+            {{--  Bredcrumb End --}}
+
+
             {{-- Product Filter section --}}
             @include('web.layouts.partials.product_filter')
 
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>Shopping</h3>
+                        <h1>Shopping</h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">

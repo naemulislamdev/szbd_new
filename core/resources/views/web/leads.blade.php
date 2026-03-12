@@ -1,14 +1,20 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 
 @section('content')
-    <div class="container py-5">
+    <div class="container">
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+            <span class="breadcrumb-item active" aria-current="page">Leads</span>
+        </nav>
+        {{--  Bredcrumb End --}}
         <div class="row justify-content-center">
             <div class="col-md-8">
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
-                <div class="card shadow-lg border-0">
+                <div class="card shadow-lg mb-3">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0 text-center">Showroom Lead Form</h4>
                     </div>

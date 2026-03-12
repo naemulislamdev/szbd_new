@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Customer\Auth;
 use App\CPU\CartManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\BusinessSetting;
-use App\Model\Wishlist;
-use App\User;
+use App\Models\BusinessSetting;
+use App\Models\Wishlist;
+use App\Models\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -60,8 +60,8 @@ class SocialAuthController extends Controller
         }*/
         //redirect if website user
         $message = self::login_process($user, $user_data->getEmail(), $user_data->id);
-        Toastr::info($message);
-        return redirect()->route('home');
+
+        return redirect()->route('home')->with($message);
     }
 
     public function editPhone($id)

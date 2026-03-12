@@ -26,13 +26,14 @@ use App\Http\Controllers\Backend\PermissionModuleController;
 use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
+use App\Http\Controllers\Backend\FAQController;
 use App\Http\Controllers\Backend\GlobalSearchController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\JobApplicationController;
 use App\Http\Controllers\Backend\RoleDepartmentController;
 use App\Http\Controllers\Backend\SiteMapController;
+use App\Http\Controllers\Backend\SocialMediaController;
 use App\Http\Controllers\Backend\SystemController;
-use App\Models\RoleDepartment;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -83,6 +84,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
 
             Route::get('/get-subcategories/{category_id}', 'getSubCategories')->name('get-subcategories');
             Route::get('/get-child-categories/{subcategory_id}', 'getChildCategories')->name('get-child-categories');
+
+            // Product Sales Report Routes
+            Route::get('/sales-report', 'ProductSalesReport')->name('salesReport');
+            Route::get('/sales-report-datatables', 'reportDatatables')->name('reportDatatables');
         });
 
         //order management
@@ -444,5 +449,36 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         //sitemap generate
         Route::get('sitemap', [SiteMapController::class, 'index'])->name('sitemap');
         Route::get('sitemap-download', [SiteMapController::class, 'download'])->name('sitemap-download');
+
+        // Socail Media Routes
+        Route::controller(SocialMediaController::class)->prefix('/social-media')->as('social_media.')->group(function () {
+            Route::get('list', 'index')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
+        // Terms & condition Routes
+        Route::get('terms-condition/view', [BusinessSettingsController::class, 'terms_condition'])->name('terms-condition');
+        Route::post('terms-condition/update', [BusinessSettingsController::class, 'updateTermsCondition'])->name('update-terms-condition');
+
+        // privacy policy routes
+        Route::get('privacy-policy/view', [BusinessSettingsController::class, 'privacy_policy'])->name('privacy_policy');
+        Route::post('privacy-policy/update', [BusinessSettingsController::class, 'privacy_policy_update'])->name('privacy_policy_update');
+
+        // about-us routes
+        Route::get('about-us', [BusinessSettingsController::class, 'about_us'])->name('about-us');
+        Route::post('about-us', [BusinessSettingsController::class, 'about_usUpdate'])->name('about-update');
+
+        // FAQ Routes
+        Route::controller(FAQController::class)->prefix('/faq')->as('faq.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('status', 'status')->name('status');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'destroy')->name('delete');
+        });
     });
 });

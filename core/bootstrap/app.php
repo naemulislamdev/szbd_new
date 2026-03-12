@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'customer' => App\Http\Middleware\CustomerMiddleware::class,
             'check_permission' => App\Http\Middleware\CheckPermissionMiddleware::class,
             'track_visitor' => App\Http\Middleware\TrackVisitor::class,
+            'content_security_policy' => App\Http\Middleware\ContentSecurityPolicy::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

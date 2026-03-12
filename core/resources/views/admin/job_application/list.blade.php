@@ -70,79 +70,63 @@
 
     <!--view Modal -->
     <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered ">
             <div class="modal-content">
                 <form id="editForm" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Canditate Info</h5>
+                        <h5 class="modal-title">Application Details</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-                                <label class="form-label">Name</label>
-                                <input type="text" class="form-control" id="view_name" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input type="text" class="form-control" id="view_email" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Phone</label>
-                                <input type="text" class="form-control" id="view_phone" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Expected Salary</label>
-                                <input type="text" class="form-control" id="view_expected_salary" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Current Position</label>
-                                <input type="text" class="form-control" id="view_current_position" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Experience Level</label>
-                                <input type="text" class="form-control" id="view_experience_level" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Portfolio Link</label>
-                                <input type="text" class="form-control" id="view_portfolio_link" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Status</label>
-                                <input type="text" class="form-control" id="view_status" readonly>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Resume</label>
-                                <div id="view_resume"></div>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Message</label>
-                                <textarea class="form-control" id="view_message" rows="3" readonly></textarea>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Applied At</label>
-                                <input type="text" class="form-control" id="view_created_at" readonly>
-                            </div>
-
-                        </div>
-
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Full Name</th>
+                                    <td id="view_name"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Email</th>
+                                    <td id="view_email"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Phone</th>
+                                    <td id="view_phone"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Applyed Position</th>
+                                    <td id="view_current_position"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">CV</th>
+                                    <td id="view_resume"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Experience</th>
+                                    <td id="view_experience_level"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Portfolio</th>
+                                    <td id="view_portfolio_link"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Status</th>
+                                    <td id="view_status"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Message</th>
+                                    <td id="view_message"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Applied At</th>
+                                    <td id="view_created_at"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
                     </div>
                 </form>
             </div>
@@ -344,18 +328,26 @@
     <script>
         $(document).on('click', '.edit', function() {
             let data = $(this);
+            console.log(data.data())
 
-            $('#view_name').val(data.data('name'));
-            $('#view_email').val(data.data('email'));
-            $('#view_phone').val(data.data('phone'));
-            $('#view_expected_salary').val(data.data('expected_salary'));
-            $('#view_current_position').val(data.data('current_position'));
-            $('#view_experience_level').val(data.data('experience_level'));
-            $('#view_portfolio_link').val(data.data('portfolio_link'));
-            $('#view_status').val(data.data('status'));
-            $('#view_created_at').val(data.data('created_at'));
+            // Table এর td-তে data set করা
+            $('#view_name').text(data.data('name'));
+            $('#view_email').text(data.data('email'));
+            $('#view_phone').text(data.data('phone'));
+            $('#view_current_position').text(data.data('position'));
+            $('#view_experience_level').text(data.data('experience_level'));
+            $('#view_portfolio_link').html(
+                data.data('portfolio_link') ?
+                `<a href="${data.data('portfolio_link')}" target="_blank">${data.data('portfolio_link')}</a>` :
+                '-'
+            );
+            $('#view_status').html(
+                `<span class="badge ${data.data('status') === 'pending' ? 'bg-warning' : 'bg-success'}">${data.data('status')}</span>`
+            );
+            $('#view_created_at').text(data.data('created_at'));
+            $('#view_message').text(data.data('message') || '-');
 
-
+            // Resume button
             var resumeBaseUrl = "{{ asset('assets/storage/files/job_resume') }}";
             if (data.data('resume')) {
                 let resumeUrl = resumeBaseUrl + '/' + data.data('resume');
@@ -363,10 +355,10 @@
                     `<a href="${resumeUrl}" target="_blank" class="btn btn-sm btn-primary">View Resume</a>`
                 );
             } else {
-                $('#view_resume').html('');
+                $('#view_resume').html('-');
             }
 
-
+            // Modal show
             $('#viewModal').modal('show');
         });
     </script>

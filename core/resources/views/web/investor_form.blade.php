@@ -38,9 +38,15 @@
     }
 </style>
 @section('content')
-    <section class="py-3 career">
+    <section class=" career">
         <div class="container " style="min-height: 100vh;">
-            <div class="row align-items-center">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Investor</span>
+            </nav>
+            {{--  Bredcrumb End --}}
+            <div class="row align-items-center mt-2">
                 <div class="col-lg-5 order-2 order-lg-1">
                     <div class="card investor-card">
                         <div class="card-header py-3 bg-orange text-white">

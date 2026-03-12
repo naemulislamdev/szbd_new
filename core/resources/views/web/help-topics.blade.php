@@ -77,6 +77,15 @@
 @endpush
 
 @section('content')
+    <div class="container">
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+
+            <span class="breadcrumb-item active" aria-current="page">FAQ </span>
+        </nav>
+        {{--  Bredcrumb End --}}
+    </div>
     <!-- Page Title-->
     <div class="container rtl">
         <div class="row">

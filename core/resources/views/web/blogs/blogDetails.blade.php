@@ -1,4 +1,4 @@
-@extends('layouts.front-end.app')
+@extends('web.layouts.app')
 @section('title', $blog->title)
 @section('meta_title', $blog->meta_title ?? $blog->title)
 @section('meta_keywords', $blog->meta_keywords)
@@ -92,13 +92,14 @@
 @section('content')
     <section class="py-3 career">
         <div class="container-fluid " style="min-height: 100vh;">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-transparent">
-                    <li class="breadcrumb-item"><a style="color: #ff5d00;" href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a style="color: #ff5d00;" href="{{ route('blogs') }}">Blogs</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Blog Details</li>
-                </ol>
+
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3 ">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <a class="breadcrumb-item" href="{{ route('blogs') }}">Blogs</a>
+                <span class="breadcrumb-item active" aria-current="page">Blog Details</span>
             </nav>
+            {{--  Bredcrumb End --}}
             <div class="row">
                 <div class="col-lg-9">
                     <img class=" rounded img-thumbnail details-img" src="{{ asset('storage/blogs') }}/{{ $blog->image }}"

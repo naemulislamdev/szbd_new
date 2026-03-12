@@ -86,6 +86,8 @@
                                     @enderror
                                 </div>
 
+
+
                                 {{-- Description --}}
                                 <div class="col-md-12 my-3">
                                     <label for="summernote">Job Description</label>
@@ -103,6 +105,13 @@
                                     <input type="text" name="location" id="job_location"
                                         class="form-control @error('location') is-invalid @enderror"
                                         value="{{ $career->location }}">
+                                </div>
+                                {{-- experience --}}
+                                <div class="col-md-6">
+                                    <label for="experience">Experience</label>
+                                    <input type="text" name="experience" id="experience"
+                                        class="form-control @error('experience') is-invalid @enderror"
+                                        value="{{ $career->experience }}">
                                 </div>
 
                                 {{-- Job Type --}}

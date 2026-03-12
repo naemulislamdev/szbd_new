@@ -1,8 +1,8 @@
-@extends('layouts.frontend.app')
+@extends('web.layouts.app')
 
 @section('title', 'Track Order')
 <?php
-$order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
+$order = \App\Models\OrderDetail::where('order_id', $orderDetails->id)->get();
 ?>
 
 @push('css_or_js')
@@ -236,19 +236,14 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
 @endpush
 
 @section('content')
-
-
-
-
     <div class="container">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent px-0 mb-4">
-                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Home</a></li>
-                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Order Track</a></li>
-                <li class="breadcrumb-item active breadcrumb-active" aria-current="page">Track Result</li>
-            </ol>
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+            <a class="breadcrumb-item" href="{{ route('track-order.index') }}">Order Track</a>
+            <span class="breadcrumb-item active" aria-current="page">Track Result</span>
         </nav>
+        {{--  Bredcrumb End --}}
 
         <h2 style="color: #f26d21; text-align: center; " class="mt-0">Track Result</h2>
         <!-- Order Information Card -->
@@ -272,13 +267,13 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
                         @endif
                     </div>
                     <div class="col-md-6 track-info-row"><strong>Product Price:</strong>
-                        {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($orderDetails->order_amount)) }}
+                        {{ $orderDetails->order_amount }}
                     </div>
                     <div class="col-md-6 track-info-row"><strong>Delivery Charge:</strong>
-                        {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($orderDetails->shipping_cost)) }}
+                        {{ $orderDetails->shipping_cost }}
                     </div>
                     <div class="col-md-6 track-info-row"><strong>Total Amount:</strong>
-                        {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($orderDetails->order_amount + $orderDetails->shipping_cost)) }}
+                        {{ $orderDetails->order_amount + $orderDetails->shipping_cost }}
                     </div>
                     <div class="col-md-6 track-info-row"><strong>Payment Method:</strong> Cash On Delivery</div>
                     <div class="col-md-6 track-info-row"><strong>Payment Status:</strong>
@@ -374,7 +369,7 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            {{ \App\CPU\translate('Order No') }} - #{{ $orderDetails['id'] }}
+                            Order No- #{{ $orderDetails['id'] }}
                         </h5>
                         <button type="button" class="close" data-dismiss="modal">
                             <span>&times;</span>
@@ -392,16 +387,14 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
 
                         @foreach ($order as $product)
                             @php
-                                $productDetails = App\Model\Product::find($product->product_id);
+                                $productDetails = App\Models\Product::find($product->product_id);
                             @endphp
 
                             <div class="d-flex align-items-start border-bottom pb-3 mb-3">
 
                                 <!-- Product Image -->
                                 <a style="width: 20%" href="{{ route('product', $productDetails->slug) }}" class="mr-3">
-                                    <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productDetails->thumbnail }}"
-                                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                        style="width:80px;border-radius:6px;">
+                                    <img src="{{ asset('assets/storage/product/thumbnail') }}/{{ $productDetails['thumbnail'] }}" style="width:80px;border-radius:6px;">
                                 </a>
 
                                 <!-- Product Info -->
@@ -423,7 +416,7 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
                                     @endif
 
                                     <div class="text-primary font-weight-bold mt-1">
-                                        ৳ {{ \App\CPU\Helpers::currency_converter($product->price) }}
+                                        ৳ {{ $product->price }}
                                     </div>
                                 </div>
 
@@ -433,10 +426,10 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
                                         Quantity: {{ $product->qty }}
                                     </small>
                                     <small class="d-block text-muted">
-                                        Tax: {{ \App\CPU\Helpers::currency_converter($product->tax) }}
+                                        Tax: {{ $product->tax }}
                                     </small>
                                     <strong>
-                                        ৳ {{ \App\CPU\Helpers::currency_converter($product->price * $product->qty) }}
+                                        ৳ {{ $product->price * $product->qty }}
                                     </strong>
                                 </div>
                             </div>
@@ -454,27 +447,27 @@ $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
 
                         <div>
                             <small class="text-muted d-block">
-                                Subtotal: ৳ {{ \App\CPU\Helpers::currency_converter($sub_total) }}
+                                Subtotal: ৳ {{ $sub_total }}
                             </small>
                             <small class="text-muted d-block">
-                                Shipping: ৳{{ \App\CPU\Helpers::currency_converter($orderDetails->shipping_cost) }}
+                                Shipping: ৳{{ $orderDetails->shipping_cost }}
                             </small>
                             <small class="text-muted d-block">
-                                Tax: {{ \App\CPU\Helpers::currency_converter($total_tax) }}
+                                Tax: {{ $total_tax }}
                             </small>
                             <small class="text-muted d-block">
-                                Discount: -{{ \App\CPU\Helpers::currency_converter($total_discount_on_product) }}
+                                Discount: -{{ $total_discount_on_product }}
                             </small>
                         </div>
 
                         <div class="text-right">
                             <h5 class="mb-0">
-                                {{ \App\CPU\translate('Total') }}:
+                                 Total :
                                 <span class="text-primary">
                                     ৳
-                                    {{ \App\CPU\Helpers::currency_converter(
+                                    {{
                                         $sub_total + $total_tax + $orderDetails->shipping_cost - $total_discount_on_product - $orderDetails->discount,
-                                    ) }}
+                                     }}
                                 </span>
                             </h5>
                         </div>

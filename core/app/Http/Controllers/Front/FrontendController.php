@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\CPU\FileManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
@@ -19,7 +20,9 @@ use App\Models\EidOffer;
 use App\Models\FlashDeal;
 use App\Models\FlashDealProduct;
 use App\Models\HelpTopic;
+use App\Models\JobApplication;
 use App\Models\LandingPages;
+use App\Models\Lead;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
@@ -111,6 +114,27 @@ class FrontendController extends Controller
         return view('web.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts'));
     }
 
+    public function leads()
+    {
+        return view('web.leads');
+    }
+
+    public function leadsStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|regex:/^(01[3-9]\d{8})$/',
+            'address' => 'required|string',
+            'upazila' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
+            'division' => 'required|string|max:100',
+            'showroom_size' => 'required|string|max:100',
+            'showroom_location' => 'required|string|max:255',
+        ]);
+
+        Lead::create($request->all());
+        return back()->with('success', 'Lead submitted successfully!');
+    }
 
     //Products Search on ajax
     public function searchProducts(Request $request)
@@ -206,7 +230,62 @@ class FrontendController extends Controller
     public function careers()
     {
         $careers = Career::where('status', 1)->latest()->get();
-        return view("web.careers", compact('careers'));
+        return view("web.career.careers", compact('careers'));
+    }
+    public function CareerDetails($slug)
+    {
+        $career = Career::where("slug", $slug)->where("status", 1)->first();
+        return view("web.career.career_details", compact("career"));
+    }
+    public function showApplyForm($slug)
+    {
+        $career = Career::where("slug", $slug)->first();
+
+        return view("web.career.career_form", compact("career"));
+    }
+    public function storeApplication(Request $request)
+    {
+
+        $request->validate([
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|email|max:255|unique:job_applications,email,NULL,id,career_id,' . $request->career_id,
+            'phone'             => 'required|string|max:20|unique:job_applications,phone,NULL,id,career_id,' . $request->career_id,
+            'experience_level'  => 'required|string|max:100',
+            'portfolio_link'    => [
+                'nullable',
+                'regex:/^(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}(\/\S*)?$/'
+            ],
+            'resume'            => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+
+        $application = new JobApplication();
+        $application->career_id = $request->career_id;
+        $application->name = $request->name;
+        $application->email = $request->email;
+        $application->phone = $request->phone;
+
+        $application->expected_salary = $request->expected_salary;
+        $application->current_position = $request->current_position;
+        $application->experience_level = $request->experience_level;
+        $application->portfolio_link = $request->portfolio_link;
+        $application->message = $request->message;
+
+        if ($request->hasFile('resume')) {
+            $resumeName = FileManager::uploadFileSimple('files/job_resume', $request->file('resume'));
+
+            if ($resumeName) {
+                $application->resume = $resumeName;
+            }
+        }
+        $application->save();
+
+
+        if ($application->save()) {
+            return redirect()->back()->with("success", "Application Submitted Success!");
+        } else {
+            return redirect()->back()->with("error", "Something went wrong!");
+        }
     }
 
     //shop function

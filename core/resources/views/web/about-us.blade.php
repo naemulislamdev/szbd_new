@@ -1,6 +1,6 @@
 @extends('web.layouts.app')
 
-@section('title','About Us')
+@section('title', 'About Us')
 
 @push('css_or_js')
     <style>
@@ -20,23 +20,31 @@
         .for-padding {
             padding: 3%;
         }
-
-
     </style>
 
-    <meta property="og:image" content="{{asset('assets/storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="og:title" content="About {{$web_config['name']->value}} "/>
-    <meta property="og:url" content="{{env('APP_URL')}}">
+    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+    <meta property="og:title" content="About {{ $web_config['name']->value }} " />
+    <meta property="og:url" content="{{ env('APP_URL') }}">
     <meta property="og:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
 
-    <meta property="twitter:card" content="{{asset('assets/storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="twitter:title" content="about {{$web_config['name']->value}}"/>
-    <meta property="twitter:url" content="{{env('APP_URL')}}">
+    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+    <meta property="twitter:title" content="about {{ $web_config['name']->value }}" />
+    <meta property="twitter:url" content="{{ env('APP_URL') }}">
     <meta property="twitter:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
 @endpush
 
 @section('content')
+    <div class="container">
+        {{-- Bredcrumb start  --}}
+        <nav class="breadcrumb custom-breadcrumb mt-3">
+            <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+
+            <span class="breadcrumb-item active" aria-current="page">About Us </span>
+        </nav>
+        {{--  Bredcrumb End --}}
+    </div>
     <div class="container for-container rtl" style="text-align:left">
+
         <h2 class="text-center mt-3 headerTitle">About Our Company</h2>
         <div class="for-padding">
             {!! $about_us['value'] !!}

@@ -18,7 +18,7 @@
             <div class="mb-4">
                 <div class=" text-center">
                     <div class="section-heading-title position-relative z-30 ">
-                        <h3>{{ $discount_offers->title }}</h3>
+                        <h1>{{ $discount_offers->title }}</h1>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">

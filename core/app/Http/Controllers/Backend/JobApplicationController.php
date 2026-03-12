@@ -30,7 +30,7 @@ class JobApplicationController extends Controller
                     data-email="' . $row->email . '"
                     data-phone="' . $row->phone . '"
                     data-expected_salary="' . $row->expected_salary . '"
-                    data-current_position="' . $row->current_position . '"
+                    data-position="' . $row->career->position . '"
                     data-experience_level="' . $row->experience_level . '"
                     data-portfolio_link="' . $row->portfolio_link . '"
                     data-status="' . $row->status . '"
