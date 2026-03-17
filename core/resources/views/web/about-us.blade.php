@@ -12,9 +12,12 @@
 
         .for-container {
             width: 91%;
-            border: 1px solid #D8D8D8;
+            border: none;
             margin-top: 3%;
             margin-bottom: 3%;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+            background: #fff;
+            border-radius: 8px;
         }
 
         .for-padding {
@@ -43,9 +46,16 @@
         </nav>
         {{--  Bredcrumb End --}}
     </div>
+    <div class="section-heading-title position-relative z-30 text-center">
+        <div>
+            <h1>About Us</h1>
+        </div>
+        <div class="heading-border"></div>
+    </div>
+
     <div class="container for-container rtl" style="text-align:left">
 
-        <h2 class="text-center mt-3 headerTitle">About Our Company</h2>
+        <h2 class="text-center mt-3 headerTitle pt-3">About Our Company</h2>
         <div class="for-padding">
             {!! $about_us['value'] !!}
         </div>

@@ -11,6 +11,7 @@ use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BranchController;
 use App\Http\Controllers\Backend\CareerController;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\LandingPagesController;
 use App\Http\Controllers\Backend\DashboardController;
@@ -481,6 +482,14 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('status', 'status')->name('status');
             Route::post('update', 'update')->name('update');
             Route::post('delete', 'destroy')->name('delete');
+        });
+        // Customer Contact Message routes
+        Route::controller(ContactController::class)->prefix('/contact')->as('contact.')->group(function () {
+            Route::post('contact-store', 'store')->name('store');
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('view', 'view')->name('view');
         });
     });
 });

@@ -119,14 +119,14 @@
                                         ratio 1:1
                                     </small>
                                 </label>
-                                <input id="customFileEg1" type="file" name="image" class="form-control"
+                                <input id="customFileEg2" type="file" name="image" class="form-control"
                                     accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*">
                             </div>
 
                             <div class="col-12">
                                 <hr>
                                 <div class="text-center">
-                                    <img id="viewer" class="imgViewer"
+                                    <img id="viewer2" class="imgViewer"
                                         src="{{ asset('assets/backend/images/placeholder.jpg') }}"
                                         style="width:200px;max-height:200px;border:1px solid;border-radius:10px; object-fit:contain;">
                                 </div>
@@ -447,6 +447,23 @@
 
         $("#customFileEg1").change(function() {
             readURL(this);
+        });
+    </script>
+    <script>
+        function readURL2(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#viewer2').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#customFileEg2").change(function() {
+            readURL2(this);
         });
     </script>
     <script>

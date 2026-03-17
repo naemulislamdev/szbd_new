@@ -29,7 +29,7 @@ class BranchController extends Controller
                     data-phone="' . $row->phone . '"
                     data-email="' . $row->email . '"
                     data-map_url="' . $row->map_url . '"
-                    data-address="' . $row->address . '"
+                 data-address="' . e($row->address) . '"
                     data-bs-toggle="modal"
                     data-bs-target="#editModal">
                     <i class="la la-edit"></i>
@@ -126,13 +126,14 @@ class BranchController extends Controller
             'map_url' => 'required',
         ], [
             'name.required'   => 'Branch name is required!',
-            'email.required'   => 'Branch email is required!',
-            'phone.required'   => 'Branch phone is required!',
-            'address.required'   => 'Branch address is required!',
-            'map_url.required'   => 'Branch Map URL is required!',
+            'email.required'  => 'Branch email is required!',
+            'phone.required'  => 'Branch phone is required!',
+            'address.required' => 'Branch address is required!',
+            'map_url.required' => 'Branch Map URL is required!',
         ]);
 
-        $branch = new Branch();
+        $branch = Branch::findOrFail($request->id);
+
         $branch->user_id = auth('admin')->id();
         $branch->name = $request->name;
         $branch->email = $request->email;
@@ -141,8 +142,8 @@ class BranchController extends Controller
         $branch->map_url = $request->map_url;
         $branch->status = 1;
 
-        if ($branch->save()) {
-            return response()->json(['success' => true]);
-        }
+        $branch->save();
+
+        return response()->json(['success' => true]);
     }
 }

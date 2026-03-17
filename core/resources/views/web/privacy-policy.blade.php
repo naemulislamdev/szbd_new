@@ -23,8 +23,6 @@
         .for-container {
             width: 91%;
             border: 1px solid #D8D8D8;
-            margin-top: 3%;
-            margin-bottom: 3%;
         }
 
         .for-padding {
@@ -42,8 +40,14 @@
         </nav>
         {{--  Bredcrumb End --}}
     </div>
+    <div class="section-heading-title text-center">
+        <div>
+            <h1>Privacy Policy</h1>
+        </div>
+        <div class="heading-border"></div>
+    </div>
     <div class="container for-container rtl" style="text-align: left">
-        <h2 class="text-center mt-3 headerTitle">Privacy policy</h2>
+
         <div class="for-padding">
             {!! $privacy_policy['value'] !!}
         </div>

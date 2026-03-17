@@ -132,7 +132,7 @@
 
                     <div class="modal-body">
                         <div class="row">
-
+                            <input type="text" name="id" id="branchId">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Branch Name</label>
                                 <input required type="text" name="name" class="form-control"

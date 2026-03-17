@@ -1,6 +1,7 @@
 @extends('web.layouts.app')
 
 @section('title', 'Customer Dahboard')
+
 @push('css_or_js')
     <style>
         .headerTitle {
@@ -75,5 +76,7 @@
 @endsection
 
 @push('scripts')
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-+qdLaH1K0p3uFj2Fq6jrbC8dZv1f2G1Oq5qS6VGk0yk=" crossorigin="anonymous"></script>
     @stack('c_script')
 @endpush

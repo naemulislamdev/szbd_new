@@ -21,6 +21,8 @@
         href="{{ asset('assets/storage/company') }}/{{ $web_config['fav_icon']->value }}">
     <link rel="icon" type="image/png" sizes="32x32"
         href="{{ asset('assets/storage/company') }}/{{ $web_config['fav_icon']->value }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- bootstrap icons -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
@@ -30,6 +32,7 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/font-awesome.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/animate.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/xzoom.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/swiper-bundle.min.css" />
     <!-- Owl-carosul css cdn link -->
     <link rel="stylesheet" href="{{ asset('assets/default') }}/toastr/toastr.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/owl.carousel.min.css" />
@@ -40,6 +43,7 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/simple-lightbox.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/bs_customize.css">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/user_account.css') }}">
+
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!--<link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/style.css">-->
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/responsive.css">
@@ -787,8 +791,12 @@
     <script src="{{ asset('assets/frontend') }}/js/xzoom_setup.js"></script>
     <script src="{{ asset('assets/frontend') }}/js/spartan-multi-image-picker-min.js"></script>
     <script src="{{ asset('assets/frontend') }}/js/scrolltotop.js"></script>
-    <!--<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>-->
+
     <script src="{{ asset('assets/frontend') }}/js/sweet_alert.js"></script>
+    <script src="{{ asset('assets/frontend') }}/js/swiper-bundle.min.js"></script>
+
+    <script src="{{ asset('assets/frontend') }}/js/custome.js"></script>
+
     {{-- Toastr --}}
     <script src={{ asset('assets/default/toastr/toastr.min.js') }}></script>
     @if (Session::has('success'))
@@ -878,7 +886,7 @@
 
 
 
-    <script src="https://ai.szbdfinancing.com/static/js/product-sdk.js"></script>
+    {{-- <script src="https://ai.szbdfinancing.com/static/js/product-sdk.js"></script> --}}
     <script>
         function addWishlist(product_id) {
             $.ajaxSetup({

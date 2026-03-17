@@ -1,7 +1,9 @@
 @extends('customer.layouts.master')
 
 @section('title', 'My Order List')
-
+@push('css_or_js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endpush
 @push('css_or_js')
     <style>
         .widget-categories .accordion-heading>a:hover {
@@ -78,7 +80,7 @@
     <div class="row mb-3">
         <div class="col-md-12 mt-2 sidebar_heading">
             <h1 class="h3  mb-0 p-3 headerTitle">
-               My orders</h1>
+                My orders</h1>
         </div>
     </div>
 
@@ -116,24 +118,25 @@
                     @foreach ($orders as $order)
                         <tr>
                             <td class="bodytr font-weight-bold">
-                                ID: {{ $order['id'] }}
+                                ID: {{ $order['order_number'] }}
                             </td>
-                            <td class="bodytr orderDate"><span class="">{{ $order['created_at'] }}</span></td>
+                            <td class="bodytr orderDate"> <span>{{ $order['created_at']->format('d F Y, g:i A') }}</span>
+                            </td>
                             <td class="bodytr">
                                 @if ($order['order_status'] == 'failed' || $order['order_status'] == 'canceled')
                                     <span class="btn btn-sm btn-danger">
-                                        {{$order['order_status'] }}
+                                        {{ ucfirst($order['order_status']) }}
                                     </span>
                                 @elseif(
                                     $order['order_status'] == 'confirmed' ||
                                         $order['order_status'] == 'processing' ||
                                         $order['order_status'] == 'delivered')
                                     <span class="btn btn-sm btn-success">
-                                        {{ $order['order_status'] }}
+                                        {{ ucfirst($order['order_status']) }}
                                     </span>
                                 @else
                                     <span class="btn btn-sm btn-info">
-                                        {{ $order['order_status'] }}
+                                        {{ ucfirst($order['order_status']) }}
                                     </span>
                                 @endif
                             </td>
@@ -142,18 +145,18 @@
                             </td>
                             <td class="bodytr">
                                 <a href="{{ route('account-order-details', ['id' => $order->id]) }}"
-                                    class="btn btn-primary p-2 mb-2">
+                                    class="btn btn-primary btn-sm p-2 mb-2">
                                     <i class="fa fa-eye"></i> view
                                 </a>
+
                                 @if ($order['payment_method'] == 'cash_on_delivery' && $order['order_status'] == 'pending')
-                                    <a href="javascript:"
-                                        onclick="route_alert('{{ route('order-cancel', [$order->id]) }}','want_to_cancel_this_order?')"
-                                        class="btn btn-danger p-2 top-margin mb-2">
-                                        <i class="fa fa-trash"></i> cancel
-                                    </a>
-                                @else
-                                    <button class="btn btn-danger p-2 top-margin mb-2" onclick="cancel_message()">
-                                        <i class="fa fa-trash"></i> cancel
+                                    <button class="btn btn-danger p-2 btn-sm top-margin mb-2 cancelOrder"
+                                        data-url="{{ route('order-cancel', [$order->id]) }}">
+                                        <i class="fa fa-trash"></i> Cancel
+                                    </button>
+                                @elseif($order['order_status'] != 'canceled' && $order['order_status'] != 'pending')
+                                    <button onclick="cancel_message()" class="btn btn-sm btn-danger p-2 top-margin mb-2">
+                                        <i class="fa fa-trash"></i> Cancel
                                     </button>
                                 @endif
                                 @if ($order['order_status'] == 'confirmed' || $order['order_status'] == 'delivered')
@@ -178,13 +181,82 @@
     </div>
 @endsection
 
-@push('script')
-    <script>
-        function cancel_message() {
-            toastr.info('order can be canceled only when pending.', {
-                CloseButton: true,
-                ProgressBar: true
-            });
-        }
-    </script>
-@endpush
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    function cancel_message() {
+        toastr.info('order can be canceled only when pending.', {
+            CloseButton: true,
+            ProgressBar: true
+        });
+    }
+</script>
+
+<script>
+    $(document).on('click', '.cancelOrder', function(e) {
+        e.preventDefault();
+        var button = $(this);
+        var url = button.data('url');
+
+        // Step 1: Swal with input
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to cancel this order?",
+            input: 'text', // input type
+            inputLabel: 'Cancel Reason',
+            inputPlaceholder: 'Enter reason for cancellation',
+            inputAttributes: {
+                required: true
+            },
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, cancel it!",
+            preConfirm: (reason) => {
+                if (!reason) {
+                    Swal.showValidationMessage('Reason is required!');
+                }
+                return reason;
+            }
+        }).then((result) => {
+            if (result.value) {
+                var reason = result.value;
+
+                // Step 2: Show Processing loading
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Step 3: AJAX call with reason
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        note: reason
+                    }, // send reason to backend
+                    success: function(data) {
+                        Swal.close(); // close loading
+                        if (data.success) {
+                            toastr.success(data.success);
+                            button.closest('tr').remove(); // remove order row
+                        } else if (data.error) {
+                            toastr.error(data.error);
+                        }
+                    },
+                    error: function(err) {
+                        Swal.close(); // close loading
+                        toastr.error(err.responseJSON?.message || 'Something went wrong!');
+                    }
+                });
+            }
+        });
+    });
+</script>

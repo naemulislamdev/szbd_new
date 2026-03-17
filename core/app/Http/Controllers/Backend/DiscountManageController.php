@@ -24,7 +24,7 @@ class DiscountManageController extends Controller
     */
     public function discountFlat()
     {
-        $categories = Category::all();
+        $categories = Category::where("home_status", 1)->get();
         return view('admin.discount.flat.index', compact('categories'));
     }
     public function flatDatatables()
@@ -64,27 +64,11 @@ class DiscountManageController extends Controller
                 return $row->category ? $row->category->name : 'All Categories';
             })
             // Edit Column
-            ->editColumn('status', function ($row) {
 
-                $checked = $row->status == 1 ? 'checked' : '';
-
-                return '
-                        <div class="form-check form-switch">
-                            <input class="form-check-input status"
-                                type="checkbox"
-                                name="colors_active"
-                                data-id="' . $row->id . '"
-                                value="1"
-                                ' . $checked . '
-                                id="flexSwitch' . $row->id . '">
-                            <label class="form-check-label" for="flexSwitch' . $row->id . '"></label>
-                        </div>
-    ';
-            })
             ->rawColumns([
                 'action',
                 'created_at',
-                'status',
+
             ])
             ->toJson();
     }
@@ -101,67 +85,57 @@ class DiscountManageController extends Controller
 
     public function flatStore(Request $request)
     {
-        // Validate the request data
         $request->validate([
             'category' => 'required|string',
             'discount_amount' => 'required|numeric|min:0',
-            'discount_type' => 'required|in:flat,percent',
+            'discount_type' => 'required|string',
         ]);
 
         $discountAmount = $request->discount_amount;
         $discountType   = $request->discount_type;
 
-        // Query products depending on category
-        $products = Product::where('status', 1)->get();
-
         $foundAnyProduct = false;
 
-        // foreach ($products as $product) {
-        //     $categoryIds = json_decode($product->category_ids, true);
-        //     $ids = array_column($categoryIds, 'id'); // error ekhane
-
-        //     if ($request->category === 'all-category' || in_array($request->category, $ids)) {
-        //         $foundAnyProduct = true;
-
-        //         if ($discountType === 'flat') {
-        //             $product->discount = $discountAmount;
-        //             $product->discount_type = 'flat';
-        //         } elseif ($discountType === 'percent') {
-        //             $product->discount = $discountAmount;
-        //             $product->discount_type = 'percent';
-        //         }
-
-        //         $product->save();
-        //     }
-        // }
-
-        foreach ($products as $product) {
-
-            $categoryIds = json_decode($product->category_ids, true);
-
-            if (!is_array($categoryIds)) {
-                continue; // skip this product
-            }
-
-            $ids = array_column($categoryIds, 'id');
-
-            if ($request->category === 'all-category' || in_array($request->category, $ids)) {
+        // All products
+        if ($request->category === 'all-category') {
+            $products = Product::where('status', 1)->get();
+            foreach ($products as $product) {
                 $foundAnyProduct = true;
 
                 if ($discountType === 'flat') {
                     $product->discount = $discountAmount;
                     $product->discount_type = 'flat';
-                } elseif ($discountType === 'percent') {
+                } else {
                     $product->discount = $discountAmount;
                     $product->discount_type = 'percent';
                 }
 
                 $product->save();
             }
+        } else {
+            // Specific category products
+            $products = Product::where('status', 1)
+                ->where('category_id', $request->category)
+                ->get();
+
+            if ($products->count() > 0) {
+                $foundAnyProduct = true;
+                foreach ($products as $product) {
+                    if ($discountType === 'flat') {
+                        $product->discount = $discountAmount;
+                        $product->discount_type = 'flat';
+                    } else {
+                        $product->discount = $discountAmount;
+                        $product->discount_type = 'percent';
+                    }
+
+                    $product->save();
+                }
+            }
         }
 
         if (!$foundAnyProduct) {
-            return redirect()->back()->with('error', 'No products found for the selected category.');
+            return response()->json(['error' => 1, 'message' => 'No products found for the selected category.']);
         }
 
         // Save discount record
@@ -179,50 +153,68 @@ class DiscountManageController extends Controller
 
     public function flatUpdate(Request $request)
     {
-
-        // Validate the request data
         $request->validate([
             'category' => 'required|string',
             'discount_amount' => 'required|numeric|min:0',
-            'discount_type' => 'required|in:flat,percent',
+            'discount_type' => 'required|string',
         ]);
 
         $discountAmount = $request->discount_amount;
         $discountType   = $request->discount_type;
 
-        // Query products depending on category
-        $products = Product::where('status', 1)->get();
-
         $foundAnyProduct = false;
 
-        foreach ($products as $product) {
-            $categoryIds = json_decode($product->category_ids, true);
-            $ids = array_column($categoryIds, 'id');
+        // All products
+        if ($request->category === 'all-category') {
 
-            // Check if this product belongs to the selected category OR all-category
-            if ($request->category === 'all-category' || in_array($request->category, $ids)) {
+            $products = Product::where('status', 1)->get();
+
+            foreach ($products as $product) {
+
                 $foundAnyProduct = true;
 
                 if ($discountType === 'flat') {
                     $product->discount = $discountAmount;
                     $product->discount_type = 'flat';
-                } elseif ($discountType === 'percent') {
+                } else {
                     $product->discount = $discountAmount;
                     $product->discount_type = 'percent';
                 }
 
                 $product->save();
             }
+        } else {
+
+            // Specific category products
+            $products = Product::where('status', 1)
+                ->where('category_id', $request->category)
+                ->get();
+
+            if ($products->count() > 0) {
+
+                $foundAnyProduct = true;
+
+                foreach ($products as $product) {
+
+                    if ($discountType === 'flat') {
+                        $product->discount = $discountAmount;
+                        $product->discount_type = 'flat';
+                    } else {
+                        $product->discount = $discountAmount;
+                        $product->discount_type = 'percent';
+                    }
+
+                    $product->save();
+                }
+            }
         }
 
         if (!$foundAnyProduct) {
-            return response()->json([
-                'success' => 0,
-                'message' => 'No products found for the selected category.'
-            ], 404);
+
+            return response()->json(['error' => 1, 'message' => 'No products found for the selected category.']);
         }
 
-        // update discount record
+        // Update discount record
         $discount = FlatDiscount::findOrFail($request->id);
         $discount->category_id     = $request->category;
         $discount->discount_amount = $discountAmount;
@@ -237,24 +229,27 @@ class DiscountManageController extends Controller
     public function flatDelete(Request $request)
     {
         $flatDiscount = FlatDiscount::findOrFail($request->id);
-        $categoryId = $flatDiscount->category_id;
 
-        // Query products depending on category
-        $products = Product::where('status', 1)->get();
 
-        foreach ($products as $product) {
-            $categoryIds = json_decode($product->category_ids, true);
-            $ids = array_column($categoryIds, 'id');
+        if ($flatDiscount->category_id === 'all-category') {
+            Product::where('status', 1)
+                ->update([
+                    'discount' => 0,
+                    'discount_type' => null
+                ]);
+        } else {
 
-            if (in_array($categoryId, $ids)) {
-                // Reset discount fields
-                $product->discount = 0;
-                $product->discount_type = null;
-                $product->save();
-            }
+            Product::where('status', 1)
+                ->where('category_id', $flatDiscount->category_id)
+                ->update([
+                    'discount' => 0,
+                    'discount_type' => null
+                ]);
         }
 
+        // Delete the flat discount record
         $flatDiscount->delete();
+
 
         return redirect()->route('admin.discount.flat')->with('success', 'Flat discount deleted successfully.');
     }
@@ -360,14 +355,13 @@ class DiscountManageController extends Controller
             $type = $request->discount_types[$productId] ?? 'flat';
 
             $product = Product::find($productId);
+
             if ($product) {
                 $product->discount = $type == 'flat' ? $amount : $amount;
                 $product->discount_type = $type;
                 $product->save();
             }
         }
-
-
         // Store the batch discount
         BatchDiscount::create([
             'title' => $request->title,

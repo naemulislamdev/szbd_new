@@ -168,7 +168,7 @@
                                 <div class="dropdown">
                                     <a href="#" class="btn bt btn-light dropdown-toggle" data-bs-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false">
-                                        <i class="icofont-calendar fs-5 me-1"></i> This Month<i
+                                        <i class="lar la-calendar fs-5 me-1"></i> This Month<i
                                             class="las la-angle-down ms-1"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end">
@@ -227,7 +227,7 @@
                     <div class="card-body pt-0">
                         <div id="customers" class="apex-charts"></div>
                         <div class="bg-light py-3 px-2 mb-0 mt-3 text-center rounded">
-                            <h6 class="mb-0"><i class="icofont-calendar fs-5 me-1"></i> 01 January 2024 to
+                            <h6 class="mb-0"><i class="las la-calendar fs-5 me-1"></i> 01 January 2024 to
                                 31
                                 December 2024</h6>
                         </div>
@@ -249,7 +249,7 @@
                                 <div class="dropdown">
                                     <a href="#" class="btn bt btn-light dropdown-toggle" data-bs-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false">
-                                        <i class="icofont-calendar fs-5 me-1"></i> This Month<i
+                                        <i class="las la-calendar fs-5 me-1"></i> This Month<i
                                             class="las la-angle-down ms-1"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end">
@@ -415,7 +415,7 @@
                                 <div class="dropdown">
                                     <a href="#" class="btn bt btn-light dropdown-toggle" data-bs-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false">
-                                        <i class="icofont-calendar fs-5 me-1"></i> This Year<i
+                                        <i class="las la-calendar fs-5 me-1"></i> This Year<i
                                             class="las la-angle-down ms-1"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end">

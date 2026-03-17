@@ -53,7 +53,7 @@ Route::controller(UserProfileController::class)->middleware('customer')->group(f
     ROute::get('account-address-edit/{id}', 'address_edit')->name('address-edit');
     Route::post('account-address-update', 'address_update')->name('address-update');
     Route::post('address-delete', 'address_delete')->name('address-delete');
-    Route::get('account-oder', 'account_oder')->name('account-oder'); // user orders
+    Route::get('account-order', 'account_order')->name('account-oder'); // user orders
     Route::get('account-order-details', 'account_order_details')->name('account-order-details');
     Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
     Route::get('account-wishlist', 'account_wishlist')->name('account-wishlist'); // user wishlist
@@ -63,6 +63,6 @@ Route::controller(UserProfileController::class)->middleware('customer')->group(f
     Route::post('refund-store', 'store_refund')->name('refund-store');
     Route::get('account-tickets', 'account_tickets')->name('account-tickets'); // user support tickets
     Route::post('ticket-submit', 'ticket_submit')->name('ticket-submit'); // user support tickets submit
-    Route::get('order-cancel/{id}', 'order_cancel')->name('order-cancel');
+    Route::post('order-cancel/{id}', 'order_cancel')->name('order-cancel');
     Route::get('account-logout', 'accountLogout')->name('account-logout'); // user logout
 });

@@ -3,23 +3,19 @@
 @section('title', 'Contact Us')
 
 @push('css_or_js')
-   <!-- Open Graph -->
-<meta property="og:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
-<meta property="og:description"
-      content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-<meta property="og:image"
-      content="{{ asset('assets/storage/company/'.$web_config['web_logo']->value) }}">
-<meta property="og:url" content="{{ url()->current() }}">
-<meta property="og:type" content="website">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
+    <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+    <meta property="og:image" content="{{ asset('assets/storage/company/' . $web_config['web_logo']->value) }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
-<meta name="twitter:description"
-      content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-<meta name="twitter:image"
-      content="{{ asset('assets/storage/company/'.$web_config['web_logo']->value) }}">
-<meta name="twitter:url" content="{{ url()->current() }}">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
+    <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+    <meta name="twitter:image" content="{{ asset('assets/storage/company/' . $web_config['web_logo']->value) }}">
+    <meta name="twitter:url" content="{{ url()->current() }}">
 
 
     <style>
@@ -62,12 +58,11 @@
     </style>
 @endpush
 @section('content')
-    <div class="container rtl">
-        <div class="row">
-            <div class="col-md-12 sidebar_heading text-center mb-2">
-                <h1 class="h3  mb-0 folot-left headerTitle">Contact us</h1>
-            </div>
+    <div class="section-heading-title text-center pt-3">
+        <div>
+            <h1>Contact Us</h1>
         </div>
+        <div class="heading-border"></div>
     </div>
 
     <!-- Split section: Map + Contact form-->
@@ -102,16 +97,14 @@
                             <div class="form-group">
                                 <label for="cf-phone">Your phone</label>
                                 <input class="form-control mobile_number" type="text" name="mobile_number"
-                                    value="{{ old('mobile_number') }}"
-                                    placeholder="Contact Number" required>
+                                    value="{{ old('mobile_number') }}" placeholder="Contact Number" required>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="cf-subject">Subject:</label>
                                 <input class="form-control subject" type="text" name="subject"
-                                    value="{{ old('subject') }}" placeholder="Short title"
-                                    required>
+                                    value="{{ old('subject') }}" placeholder="Short title" required>
                             </div>
                         </div>
                         <div class="col-md-12">

@@ -70,7 +70,7 @@
                             <a href="{{ route('wholesale.crate') }}">Wholesale</a>
                         </li>
                         <li>
-                            <a href="{{ route('leads') }}">Leads</a>
+                            <a href="{{ route('leads') }}">Franchise</a>
                         </li>
                     </ul>
                 </div>

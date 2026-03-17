@@ -190,41 +190,30 @@ class OrderController extends Controller
     }
     public function status(Request $request)
     {
+
         $order = Order::with('customer')->where(['id' => $request->id])->first();
 
         $order->order_status = $request->order_status;
-        $existingNotes = json_decode($order->multiple_note, true) ?? [];
-
-        $newNotes = [];
-        foreach ($request->multiple_note as $note) {
-            $newNotes[] = [
-                'note' => $note,
-                'time' => now()->format('d M Y h:i A'),
-                'user' => auth('admin')->user()->name ?? 'System'
-            ];
-        }
-
-        $order->multiple_note = json_encode(
-            array_merge($existingNotes, $newNotes)
-        );
-        // $order->order_note = json_encode([
-        //     'note' => $request->note,
-        //     'user' => auth('admin')->user()->name,
-        //     'date' => now()->format('d M Y h:i A')
-        // ]);
+        $newNote = json_encode([
+            'note' => $request->order_note,
+            'time' => now()->format('d M Y h:i A'),
+            'employee_id' => auth('admin')->user()->id,
+            'employee_name' => auth('admin')->user()->name,
+        ]);
 
         if ($request->order_status === 'delivered') {
             $order->payment_status = 'paid';
         }
-
+        $order->order_note = $newNote;
         $order->save();
 
         return response()->json([
             'status'       => true,
             'order_status' => $order->order_status,
-            'note'    => end($newNotes)
+            'note'    => $newNote
         ]);
     }
+
     public function multipleNote(Request $request)
     {
         $request->validate([

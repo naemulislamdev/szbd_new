@@ -87,13 +87,13 @@
         {{--  Bredcrumb End --}}
     </div>
     <!-- Page Title-->
-    <div class="container rtl">
-        <div class="row">
-            <div class="col-md-12 sidebar_heading text-center mb-2">
-                <h1 class="h3  mb-0 folot-left headerTitle">Frequently Asked Question</h1>
+    <div class="container ">
+        <div class="section-heading-title position-relative z-30 text-center">
+            <div>
+                <h1>FAQ</h1>
             </div>
+            <div class="heading-border"></div>
         </div>
-        <hr>
     </div>
 
     <!-- Page Content-->

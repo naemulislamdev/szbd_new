@@ -14,6 +14,7 @@ use App\Models\Career;
 use App\Models\Category;
 use App\Models\ChildCategory;
 use App\Models\ClientReview;
+use App\Models\Contact;
 use App\Models\DealOfTheDay;
 use App\Models\DiscountOffer;
 use App\Models\EidOffer;
@@ -37,6 +38,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -384,6 +386,15 @@ class FrontendController extends Controller
             ->get();
         return view("web.blogs.blogDetails", compact("blog", "latest_blogs"));
     }
+    public function viewWishlist()
+    {
+        $wishlists = Wishlist::whereHas('wishlistProduct', function ($q) {
+            $q->whereHas('brand', function ($query) {
+                $query->where('status', 1);
+            })->where('status', 1);
+        })->where('customer_id', auth('customer')->id())->get();
+        return view('customer.wishlist', compact('wishlists'));
+    }
     public function clientReview(Request $request)
     {
         if (auth('customer')->check()) {
@@ -608,6 +619,56 @@ class FrontendController extends Controller
     public function contacts()
     {
         return view('web.contacts');
+    }
+    public function contact_store(Request $request)
+    {
+        //recaptcha validation
+        $recaptcha = Helpers::get_business_settings('recaptcha');
+        if (isset($recaptcha) && $recaptcha['status'] == 1) {
+
+            try {
+                $request->validate([
+                    'g-recaptcha-response' => [
+                        function ($attribute, $value, $fail) {
+                            $secret_key = Helpers::get_business_settings('recaptcha')['secret_key'];
+                            $response = $value;
+                            $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $response;
+                            $response = \file_get_contents($url);
+                            $response = json_decode($response);
+                            if (!$response->success) {
+                                $fail('ReCAPTCHA Failed');
+                            }
+                        },
+                    ],
+                ]);
+            } catch (\Exception $exception) {
+                return back()->withErrors('Captcha Failed')->withInput($request->input());
+            }
+        } else {
+            if (strtolower($request->default_captcha_value) != strtolower(Session('default_captcha_code'))) {
+                Session::forget('default_captcha_code');
+                return back()->withErrors('Captcha Failed')->withInput($request->input());
+            }
+        }
+
+        $request->validate([
+            'mobile_number' => 'required',
+            'subject' => 'required',
+            'message' => 'required',
+        ], [
+            'mobile_number.required' => 'Mobile Number is Empty!',
+            'subject.required' => ' Subject is Empty!',
+            'message.required' => 'Message is Empty!',
+
+        ]);
+        $contact = new Contact();
+        $contact->name = $request->name;
+        $contact->email = $request->email;
+        $contact->mobile_number = $request->mobile_number;
+        $contact->subject = $request->subject;
+        $contact->message = $request->message;
+        $contact->save();
+        return back()->with('success', 'Your Message Send Successfully');
     }
 
     public function about_us()
@@ -857,5 +918,13 @@ class FrontendController extends Controller
         }
 
         return true;
+    }
+    public function maintenance_mode()
+    {
+        $maintenance_mode = Helpers::get_business_settings('maintenance_mode') ?? 0;
+        if ($maintenance_mode) {
+            return view('web.maintenance-mode');
+        }
+        return redirect()->route('home');
     }
 }

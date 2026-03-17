@@ -625,11 +625,11 @@
                             </li>
                         @endcan
                         @can('role_department')
-                        <li class="nav-item">
-                            <a href="{{ route('admin.role_department.list') }}"
-                                class="nav-link {{ request()->routeIs('admin.role_department.list') ? 'active' : '' }}">Role
-                                Departments</a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.role_department.list') }}"
+                                    class="nav-link {{ request()->routeIs('admin.role_department.list') ? 'active' : '' }}">Role
+                                    Departments</a>
+                            </li>
                         @endcan
                     </ul><!--end nav-->
                 </div>
@@ -687,5 +687,6 @@
                 </div>
             </li><!--end nav-item-->
         @endcanAny
+
     </ul><!--end navbar-nav--->
 </div>
