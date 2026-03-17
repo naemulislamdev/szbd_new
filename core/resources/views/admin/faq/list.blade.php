@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Frequenly Asked Question</h4>
+                    <h1 class="page-title">Frequenly Asked Question</h1>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
@@ -21,6 +21,7 @@
                 </div><!--end page-title-box-->
             </div><!--end col-->
         </div><!--end row-->
+
         <div class="row">
             <div class="col-12">
                 <div class="card">

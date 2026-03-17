@@ -59,6 +59,16 @@
                         <i class="iconoir-sun-light light-mode"></i>
                     </a>
                 </li>
+                @php($unseenMsg = \App\Models\Contact::where('seen', 0)->get()->count())
+
+                <li class="topbar-item">
+                    <a class="nav-link nav-icon position-relative" href="{{ route('admin.contact.list') }}">
+                        <i class="las la-envelope"></i>
+                        <span style="top: -6px; right: -6px;"
+                            class="badge bg-primary position-absolute">{{ $unseenMsg }}</span>
+                    </a>
+
+                </li>
 
                 <li class="dropdown topbar-item">
                     <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#"

@@ -17,18 +17,35 @@ class InvestorController extends Controller
         $request->validate([
             'name'              => 'required|string|max:255|min:2',
             'mobile_number'     => 'required|string|max:11',
-            'address'           => 'nullable|string',
+            'address'           => 'required|string',
             'occupation'        => 'nullable|max:255',
-            'investment_amount' => 'nullable|numeric|min:1',
+            'investment_amount' => 'required|string|min:1',
+            'comment'           => 'required|string|min:1',
         ]);
-        Investor::create([
+
+        // DB save
+        $investor = Investor::create([
             'name'              => $request->name,
             'mobile_number'     => $request->mobile_number,
             'address'           => $request->address,
             'occupation'        => $request->occupation,
-            'investment_amount' => $request->investment_amount,
+            'investment_amount' => $request->investment_amount . " Lakh",
+            'comment'           => $request->comment,
         ]);
 
-        return redirect()->back()->with('success', 'Investor Submit successfully!');
+        // WhatsApp message
+        $message = "Investment Submission:\n
+        Name: {$request->name}
+        Phone: {$request->mobile_number}
+        Address: {$request->address}
+        Occupation: {$request->occupation}
+        Investment: {$request->investment_amount} Lakh
+        Comment: {$request->comment}";
+
+        $phone = "8801934657964";
+        $url = "https://wa.me/{$phone}?text=" . urlencode($message);
+
+        // Redirect to WhatsApp after saving
+        return redirect()->away($url);
     }
 }

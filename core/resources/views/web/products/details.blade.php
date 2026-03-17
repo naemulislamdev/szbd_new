@@ -309,7 +309,8 @@
                                                         title="{{ $product->name }}">
                                                         <img src="{{ asset("assets/storage/product/$photo") }}"
                                                             data-image="{{ asset("assets/storage/product/$photo") }}"
-                                                            class="xzoom-gallery" alt="{{ $product->name }}">
+                                                            class="xzoom-gallery"
+                                                            alt="{{ Str::limit($product->name, 100) }}">
                                                     </a>
                                                 </div>
                                             @endforeach

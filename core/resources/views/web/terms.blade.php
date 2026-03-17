@@ -41,8 +41,14 @@
         </nav>
         {{--  Bredcrumb End --}}
     </div>
+    <div class="section-heading-title text-center">
+        <div>
+            <h1>Terms & Conditon</h1>
+        </div>
+        <div class="heading-border"></div>
+    </div>
     <div class="container for-container rtl" style="text-align:left">
-        <h2 class="text-center mt-3 headerTitle">Terms and Condition</h2>
+
         <div class="for-padding">
             {!! $terms_condition['value'] !!}
         </div>

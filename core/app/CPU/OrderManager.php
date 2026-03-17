@@ -2,14 +2,14 @@
 
 namespace App\CPU;
 
-use App\Model\Admin;
-use App\Model\AdminWallet;
+use App\Models\Admin;
+use App\Models\AdminWallet;
 use App\User;
 use App\Model\CartShipping;
-use App\Model\Order;
-use App\Model\OrderDetail;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Model\OrderTransaction;
-use App\Model\Product;
+use App\Models\Product;
 use App\Model\Seller;
 use App\Model\SellerWallet;
 use App\Model\ShippingType;
@@ -23,18 +23,18 @@ class OrderManager
 {
     public static function track_order($request)
     {
-        $user_id = User::where('phone',$request['phone_number'])->first()->id;
-        $data['order'] = Order::where('id',$request['order_id'])->where(function ($query) use($user_id){
-            $query->where('customer_id',$user_id);
+        $user_id = User::where('phone', $request['phone_number'])->first()->id;
+        $data['order'] = Order::where('id', $request['order_id'])->where(function ($query) use ($user_id) {
+            $query->where('customer_id', $user_id);
         })->first();
 
-        if(isset($data['order'])){
-        $data['details'] = OrderDetail::where(['order_id' => $request['order_id']])->get();
-        $data['details']->map(function ($query) {
-            $query['variation'] = json_decode($query['variation'], true);
-            $query['product_details'] = Helpers::product_data_formatting(json_decode($query['product_details'], true));
-            return $query;
-        });
+        if (isset($data['order'])) {
+            $data['details'] = OrderDetail::where(['order_id' => $request['order_id']])->get();
+            $data['details']->map(function ($query) {
+                $query['variation'] = json_decode($query['variation'], true);
+                $query['product_details'] = Helpers::product_data_formatting(json_decode($query['product_details'], true));
+                return $query;
+            });
         }
 
 
@@ -263,7 +263,6 @@ class OrderManager
                 $coupon_code = $req->has('coupon_code') ? $req['coupon_code'] : null;
                 $discount = $req->has('coupon_code') ? Helpers::coupon_discount($req) : 0;
             }
-
         }
         $user = Helpers::get_customer_check($req);
         $shippingAddress = new ShippingAddress();
@@ -342,7 +341,6 @@ class OrderManager
             ]);
 
             DB::table('order_details')->insert($or_d);
-
         }
 
         if ($or['payment_method'] != 'cash_on_delivery') {

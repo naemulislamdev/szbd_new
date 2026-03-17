@@ -99,14 +99,25 @@ Pusti Soyabeliteran oil 5
   }
   .header-slider-section .container {
     margin: 0;
-    padding: 0;
+    padding-right: 11px;
+    padding-left: 11px;
   }
   .main-slider {
     height: 114px;
   }
-  .main-slider > a > img {
+  .swiper-pagination-bullet {
+    height: 4px;
+  }
+  .swiper-pagination-bullet-active {
+    height: 4px;
+  }
+  /* .main-slider > a > img {
     max-width: 100%;
     height: auto !important;
+  } */
+  .main-slider > a > img {
+    max-width: 100%;
+    height: 100% !important;
   }
   .grid-controls {
     width: 47%;

@@ -79,7 +79,7 @@
             <div class="row my-3">
                 <div class="col-md-12">
                     <div class="big-banner">
-                        <img src="{{ asset('assets/front-end') }}/images/product-banner/main-banner3.jpg" alt="Banner Image"
+                        <img src="{{ asset('assets/frontend') }}/images/product-banner/main-banner3.jpg" alt="Banner Image"
                             style="width: 100%;">
                     </div>
                 </div>

@@ -13,7 +13,7 @@
             <div class="row mb-4">
                 <div class="col">
                     <div class="outlets-heading border-bottom-0">
-                        <h2>Our <span style="color: #fb9b00;">Outlets</span></h2>
+                        <h1>Our <span style="color: #fb9b00;">Outlets</span></h1>
                         <p style="font-family: 'jost';" class="lead">Explore our outlet locations and drop by anytime. Our
                             team is
                             always ready
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-12">
 
-                                        <p class="text-small card-text">{{ $branch->address }}</p>
+                                        <p class="text-small card-text">{!! $branch->address !!}</p>
                                         <a class="btn btn-primary" target="_blank"
                                             href="{{ $branch->map_url ? $branch->map_url : '' }}" title="View on Google Map"
                                             style="max-width: 100%; background: #f26d21">

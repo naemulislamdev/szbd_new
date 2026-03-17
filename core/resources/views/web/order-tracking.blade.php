@@ -102,20 +102,25 @@ $order = \App\Models\OrderDetail::where('order_id', $orderDetails->id)->get();
             background: #3b82f6;
             border-color: #3b82f6;
             color: #fff;
+            transform: scale(1);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0% {
                 box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+                transform: scale(1.1)
             }
 
             70% {
                 box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+                transform: scale(1);
+
             }
 
             100% {
                 box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+                transform: scale(1.1)
             }
         }
 
@@ -245,7 +250,7 @@ $order = \App\Models\OrderDetail::where('order_id', $orderDetails->id)->get();
         </nav>
         {{--  Bredcrumb End --}}
 
-        <h2 style="color: #f26d21; text-align: center; " class="mt-0">Track Result</h2>
+        <h1 style="color: #f26d21; text-align: center; " class="mt-0 h2">Track Result</h1>
         <!-- Order Information Card -->
         <div class="card track-card">
             <div class="card-header track-card-header">Order Information</div>

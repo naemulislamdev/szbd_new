@@ -10,15 +10,29 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        .card {
+        .checkout-card {
             border: none;
+            background: #fff;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+            border-radius: 12px
         }
 
-        .table {
-            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-            border-radius: 10px;
-            margin-top: 15px;
-            border: 2px solid #f26d21;
+        .checkout-card .card-title {
+            font-weight: 600;
+        }
+
+        .checkout-card .order_number .h5 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .checkout-card .border-bottom {
+            border-bottom: 1px solid #eef0f1 !important;
+        }
+
+        .order_summery {
+            border: 1px dotted #d4d7d8;
+            border-radius: 20px;
         }
     </style>
 @endpush
@@ -26,105 +40,105 @@
 @section('content')
     <div class="container mt-5 mb-5">
         <div class="row d-flex justify-content-center">
-            <div class="col-md-10 col-lg-10">
+            <div class="col-md-7 mx-auto">
                 <div class="card">
                     @if (auth('customer')->check())
-                        <div class=" p-5">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h5 style="font-size: 20px; font-weight: 900; text-align:center;">
-                                        Your order has been placed successfully!</h5>
-                                </div>
+
+                        {{-- new card --}}
+                        @php($summary = \App\CPU\OrderManager::order_summary($order))
+                        @php($extra_discount = 0)
+                        <?php
+                        if ($order['extra_discount_type'] == 'percent') {
+                            $extra_discount = ($summary['subtotal'] / 100) * $order['extra_discount'];
+                        } else {
+                            $extra_discount = $order['extra_discount'];
+                        }
+                        ?>
+                        <div class="card checkout-card border-none">
+                            <div class="text-center">
+                                <img class="card-img-top" style="max-width: 150px; height: auto;"
+                                    src="{{ asset('assets/frontend/images/placed.gif') }}" alt="place image">
                             </div>
-
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <center>
-                                        <i style="font-size: 100px; color: #0f9d58" class="fa fa-check-circle"></i>
-                                    </center>
+                            <div class="card-body ">
+                                <div class="text-center">
+                                    <h2 style="color: #237227" class="card-title my-0 text-center">Order Confirmed!</h2>
+                                    <h5 style="font-weight: 600;">{{ auth('customer')->user()->f_name }}</h5>
                                 </div>
-                            </div>
 
-                            <span class="font-weight-bold d-block mt-4" style="font-size: 17px;text-align:center;">Hello,
-                                {{ auth('customer')->user()->f_name }}</span>
-                            <span style="text-align:center; display: block; margin-bottom: 8px;">You order has been
-                                confirmed and will be shipped according to the method you selected!</span>
-                            @php($summary = \App\CPU\OrderManager::order_summary($order))
-                            @php($extra_discount = 0)
-                            <?php
-                            if ($order['extra_discount_type'] == 'percent') {
-                                $extra_discount = ($summary['subtotal'] / 100) * $order['extra_discount'];
-                            } else {
-                                $extra_discount = $order['extra_discount'];
-                            }
-                            ?>
-                            <div class="row mb-3">
-                                <div class="col-md-7 mx-auto">
-                                    <div class="product-details" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                                        @foreach ($order->details as $key => $detail)
-                                            @php($product = json_decode($detail->product_details, true))
-                                            <tr>
-                                                <div class="row mb-2">
-                                                    <div class="col-md-12 d-flex">
-                                                        <div class="col-4 for-tab-img">
-                                                            @if ($detail['color_image'])
-                                                                <img class="d-block mr-2"
-                                                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                                                    src="{{ $detail['color_image'] }}" alt="VR Collection"
-                                                                    width="60">
-                                                            @else
-                                                                <img class="d-block mr-2"
-                                                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                                                    src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                                    alt="VR Collection" width="60">
-                                                            @endif
-                                                        </div>
-                                                        <div class="col-8 for-glaxy-name" style="vertical-align:middle;">
-
-                                                            <a href="{{ route('product', [$product['slug']]) }}">
-                                                                {{ isset($product['name']) ? Str::limit($product['name'], 40) : '' }}
-                                                            </a><br>
-                                                            @if ($detail->variant)
-                                                                <span>variant: </span>
-                                                                {{ $detail->variant }}
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </tr>
-                                        @endforeach
+                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                    <div class="order_number">
+                                        <h6 style="font-size: 16px; font-weight: 600;">Order Number</h6>
+                                        <h6 style="font-size: 14px; color: #ff5d00; font-weight: 600;">
+                                            #{{ $order->order_number }}</h6>
+                                    </div>
+                                    <div class="order_date">
+                                        <h6 style="font-size: 16px; font-weight: 600;">Date</h6>
+                                        <h6 style="font-size: 14px; font-weight: 600">
+                                            <span>{{ $order->created_at->format('d F Y') }}</span>
+                                        </h6>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <div class="col-md-8 col-lg-5">
+                                <div class="order_summery p-3 mt-3">
+                                    <div class="d-flex">
+                                        <i class="fa fa-shopping-bag text-muted" aria-hidden="true"></i>
+                                        <h6 class="ml-2" style="font-weight: 600">Order Summery</h6>
+                                    </div>
+                                    <div class="row my-3 rounded">
+                                        <div class="col-md-12 mx-auto">
+                                            <div class="product-details"
+                                                style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+                                                @foreach ($order->details as $key => $detail)
+                                                    @php($product = json_decode($detail->product_details, true))
+                                                    <tr>
+                                                        <div class="row mb-2">
+                                                            <div class="col-md-12 d-flex pl-0">
+                                                                <div class="col-2 for-tab-img">
+                                                                    @if ($detail['color_image'])
+                                                                        <img class="d-block mr-2 rounded-l"
+                                                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                                                                            src="{{ $detail['color_image'] }}"
+                                                                            alt="VR Collection" width="60">
+                                                                    @else
+                                                                        <img class="d-block mr-2"
+                                                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                                                                            src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product['thumbnail'] }}"
+                                                                            alt="VR Collection" width="60">
+                                                                    @endif
+                                                                </div>
+                                                                <div class="col-10 for-glaxy-name pt-2"
+                                                                    style="vertical-align:middle; font-weight: 600;">
+
+                                                                    <a style="font-weight: 600;" class="text-dark"
+                                                                        href="{{ route('product', [$product['slug']]) }}">
+                                                                        {{ isset($product['name']) ? Str::limit($product['name'], 50) : '' }}
+                                                                    </a><br>
+                                                                    @if ($detail->variant)
+                                                                        <span>variant: </span>
+                                                                        <span style="font-size: 20px">
+                                                                            {{ $detail->variant }}</span>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </tr>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                     <table class="table table-borderless">
                                         <tbody class="totals">
+
                                             <tr>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">Order Id</span>
+                                                        <span class="product-qty ">Quantity</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                        <span>#{{ $order->id }}</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div
-                                                        class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">Item</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                        <span>{{ $order->details->count() }}</span>
+                                                        <span>{{ $order->details[0]['qty'] }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -148,7 +162,7 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">text_fee</span>
+                                                        <span class="product-qty ">TAX Fee</span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -163,8 +177,7 @@
                                                     <td>
                                                         <div
                                                             class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                            <span class="product-qty ">Shipping
-                                                                Fee</span>
+                                                            <span class="product-qty ">Delivery Charge</span>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -180,7 +193,7 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty "> Discount on product</span>
+                                                        <span class="product-qty "> Discount on Product</span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -246,19 +259,19 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
-                            </div>
-
-                            <div class="row mt-4">
-                                <div class="col-6">
-                                    <a href="{{ route('home') }}" class="btn btn-primary w-100">
-                                        Go to shopping
-                                    </a>
-                                </div>
-                                <div class="col-6">
-                                    <a href="{{ route('account-oder') }}" class="btn btn-secondary pull-right w-100">
-                                        Check orders
-                                    </a>
+                                    <div class="d-flex  mt-4">
+                                        <div class="">
+                                            <a href="{{ route('home') }}" class="btn btn-primary">
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+                                                Back to Home
+                                            </a>
+                                        </div>
+                                        <div class="ml-3">
+                                            <a href="{{ route('account-oder') }}" class="btn btn-success ">
+                                                Check Your orders
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

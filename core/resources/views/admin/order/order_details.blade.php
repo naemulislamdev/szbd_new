@@ -41,7 +41,7 @@
                         <div class="col-sm-12 mb-2 mb-sm-0">
 
                             <div class="d-flex align-items-sm-center justify-between">
-                                <h1 class="card-title me-3">Order #{{ $order['id'] }}</h1>
+                                <h1 class="card-title me-3">Order #{{ $order['order_number'] }}</h1>
 
                                 @if ($order['payment_status'] == 'paid')
                                     <span class="badge bg-success me-3">
@@ -106,7 +106,8 @@
 
                                             <p class="pl-1 order_note">
                                                 {{ $note['note'] ?? '' }} — {{ $note['user'] ?? '' }}
-                                                ({{ $note['date'] ?? '' }})
+                                                ({{ $note['time'] ?? '' }})
+                                                ({{ $note['employee_name'] ?? '' }})
                                             </p>
                                         @endif
 
@@ -279,7 +280,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h5>Shipping Address</h5>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#editModal"><i class="la la-edit"></i></button>
+                                            data-bs-target="#editModal"><i class="la la-edit"></i></button>
                                     </div>
 
                                     @if ($order->shippingAddress)
@@ -462,7 +463,7 @@
     <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('admin.order.shipping.update', $order->shipping_address)}}" method="POST">
+                <form action="{{ route('admin.order.shipping.update', $order->shipping_address) }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Shipping Address</h5>
@@ -471,17 +472,19 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label>Name</label>
-                            <input type="text" name="contact_person_name" value="{{ $shipping_address->contact_person_name ?? '' }}" class="form-control" id="name" required>
+                            <input type="text" name="contact_person_name"
+                                value="{{ $shipping_address->contact_person_name ?? '' }}" class="form-control"
+                                id="name" required>
                         </div>
                         <div class="mb-3">
                             <label>Address</label>
-                            <input type="text" name="address" value="{{ $shipping_address->address ?? '' }}" class="form-control" id="address"
-                                required>
+                            <input type="text" name="address" value="{{ $shipping_address->address ?? '' }}"
+                                class="form-control" id="address" required>
                         </div>
                         <div class="mb-3">
                             <label>Phone</label>
-                            <input type="number" name="phone" value="{{ $shipping_address->phone ?? '' }}" class="form-control" id="phone"
-                                required>
+                            <input type="number" name="phone" value="{{ $shipping_address->phone ?? '' }}"
+                                class="form-control" id="phone" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -622,7 +625,7 @@
                     data: {
                         id: orderId,
                         order_status: status,
-                        multiple_note: [result.value]
+                        order_note: result.value
                     },
                     success: function(res) {
                         toastr.success('Order status updated successfully');

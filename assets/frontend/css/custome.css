@@ -1458,7 +1458,7 @@ footer {
   text-align: center;
   border-bottom: 2px solid #ddd;
 }
-.outlets-heading > h2 {
+.outlets-heading > h1 {
   font-size: 30px;
   font-family: var(--Charm);
 }
@@ -1767,4 +1767,17 @@ footer {
 
 .search-result-box::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+.swiper-pagination-bullet {
+  background: #999;
+  width: 8px;
+  height: 7px;
+  border-radius: 3px;
+  opacity: 1;
+}
+.swiper-pagination-bullet-active {
+  background: #ff5d00;
+  width: 18px;
+  height: 7px;
+  border-radius: 5px;
 }

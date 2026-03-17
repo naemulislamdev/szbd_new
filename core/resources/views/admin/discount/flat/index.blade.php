@@ -57,7 +57,6 @@
                                         <th>Category</th>
                                         <th>Discount Type</th>
                                         <th>Discount Amount</th>
-                                        <th> Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -86,7 +85,7 @@
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Category <span class="text-danger">*</span></label>
                                 <select id="category" required name="category" class="form-select">
-                                    <option value="">Select Category</option>
+                                    <option value="all-category">All Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -138,7 +137,7 @@
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Category <span class="text-danger">*</span></label>
                                 <select required name="category" class="form-select">
-                                    <option value="">Select Category</option>
+                                    <option value="all-category">All Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -219,10 +218,6 @@
                     },
                     {
                         data: 'discount_amount'
-                    },
-
-                    {
-                        data: 'status'
                     },
                     {
                         data: 'action',

@@ -142,7 +142,7 @@ class UserProfileController extends Controller
         }
     }
 
-    public function account_oder()
+    public function account_order()
     {
         $orders = Order::where('customer_id', auth('customer')->id())->orderBy('id', 'DESC')->paginate(15);
         return view('customer.orders', compact('orders'));
@@ -285,17 +285,43 @@ class UserProfileController extends Controller
         }
     }
 
-    public function order_cancel($id)
+    // public function order_cancel($id)
+    // {
+
+    //     $order = Order::where(['id' => $id])->first();
+    //     if ($order['payment_method'] == 'cash_on_delivery' && $order['order_status'] == 'pending') {
+    //         OrderManager::stock_update_on_order_status_change($order, 'canceled');
+    //         Order::where(['id' => $id])->update([
+    //             'order_status' => 'canceled'
+    //         ]);
+    //         return back()->with('success', 'Order canceled successfully');
+    //     }
+    //     return back()->with('error', 'Status not changable now');
+    // }
+
+    public function order_cancel(Request $request, $id)
     {
-        $order = Order::where(['id' => $id])->first();
-        if ($order['payment_method'] == 'cash_on_delivery' && $order['order_status'] == 'pending') {
-            OrderManager::stock_update_on_order_status_change($order, 'canceled');
-            Order::where(['id' => $id])->update([
-                'order_status' => 'canceled'
-            ]);
-            return back()->with('success', 'Order canceled successfully');
+        $order = Order::find($id);
+        if (!$order) {
+            return response()->json(['error' => 'Order not found']);
         }
-        return back()->with('error', 'Status not changable now');
+        if ($order->payment_method == 'cash_on_delivery' && $order->order_status == 'pending') {
+            OrderManager::stock_update_on_order_status_change($order, 'canceled');
+            $noteData = [
+                'note' => $request->note,
+                'date' => now()->format('d M Y h:i A'),
+                'user' =>  'Customer'
+            ];
+            $order->update(
+                [
+                    'order_status' => 'canceled',
+                    'order_note' => $noteData
+                ]
+            );
+
+            return response()->json(['success' => 'Order canceled successfully']);
+        }
+        return response()->json(['error' => 'Status not changeable now']);
     }
 
     public function generate_invoice($id)

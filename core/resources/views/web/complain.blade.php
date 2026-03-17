@@ -41,7 +41,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-sec p-2">
-                                    <form action="{{ route('customer.complain.store') }}" method="post" enctype="multipart/form-data">
+                                    <form action="{{ route('customer.complain.store') }}" method="post"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
                                             <label>Name <span class="text-danger">*</span></label>
@@ -57,7 +58,7 @@
                                                     <label>Phone <span class="text-danger">*</span></label>
                                                     <input type="number" name="phone" id="phone" class="form-control"
                                                         placeholder="Enter your phone">
-                                                        <span id="phoneFeedback" class="small text-danger"></span>
+                                                    <span id="phoneFeedback" class="small text-danger"></span>
                                                     @error('phone')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -93,7 +94,7 @@
     </section>
 @endsection
 @push('scripts')
-<script>
+    <script>
         document.getElementById('phone').addEventListener('input', function() {
             const phoneInput = this.value;
             const phoneFeedback = document.getElementById('phoneFeedback');

@@ -39,11 +39,16 @@
         {{-- Bredcrumb start  --}}
         <nav class="breadcrumb custom-breadcrumb mt-3">
             <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
-            <span class="breadcrumb-item active" aria-current="page">Track Your Order</span>
+            <span class="breadcrumb-item active" aria-current="page">Order Track</span>
         </nav>
         {{--  Bredcrumb End --}}
     </div>
-
+    <div class="section-heading-title position-relative z-30 text-center">
+        <div>
+            <h1>Order Track</h1>
+        </div>
+        <div class="heading-border"></div>
+    </div>
 
     <!-- Page Content-->
     <div class="container rtl"

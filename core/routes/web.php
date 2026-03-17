@@ -16,7 +16,10 @@ use App\Http\Controllers\Front\WholesaleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'track_visitor', 'content_security_policy'])->group(function () {
+
+Route::get('maintenance-mode', [FrontendController::class, 'maintenance_mode'])->name('maintenance-mode');
+
+Route::middleware(['web', 'track_visitor', 'content_security_policy', 'maintenance_mode'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
         Route::get('/', 'home')->name('home');
         Route::get('/category', 'category')->name('category');
@@ -95,7 +98,11 @@ Route::middleware(['web', 'track_visitor', 'content_security_policy'])->group(fu
         Route::get('/careers-details/{slug}', 'careerDetails')->name('career.details');
         Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
         Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
+
+        //maintaince mode
+
     });
+
 
     // Checkout routes
     Route::controller(CheckoutControl::class)->group(function () {

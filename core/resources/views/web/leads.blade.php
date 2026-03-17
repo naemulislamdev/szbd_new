@@ -5,9 +5,15 @@
         {{-- Bredcrumb start  --}}
         <nav class="breadcrumb custom-breadcrumb mt-3">
             <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
-            <span class="breadcrumb-item active" aria-current="page">Leads</span>
+            <span class="breadcrumb-item active" aria-current="page">franchise</span>
         </nav>
         {{--  Bredcrumb End --}}
+        <div class="section-heading-title position-relative z-30 text-center">
+            <div>
+                <h1>Franchise</h1>
+            </div>
+            <div class="heading-border"></div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-8">
                 @if (session('success'))
@@ -16,7 +22,7 @@
 
                 <div class="card shadow-lg mb-3">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0 text-center">Showroom Lead Form</h4>
+                        <h4 class="mb-0 text-center">Showroom Franchise Form</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('leads.store') }}" method="POST">
