@@ -23,39 +23,106 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h4 class="card-title">Products Report</h4>
-                            </div><!--end col-->
-                            <div class="col-auto">
-                                <div class="row mb-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="from_date">From Date</label>
-                                        <input type="date" id="from_date" value="{{ date('Y-m-d') }}"
-                                            class="form-control" placeholder="From Date">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="to_date">To Date</label>
-                                        <input type="date" id="to_date" value="{{ date('Y-m-d') }}"
-                                            class="form-control" placeholder="To Date">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="button" id="filter_btn" class="btn btn-primary">Filter</button>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="button" id="reset_btn" class="btn btn-secondary">Reset</button>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button class="btn btn-sm btn-primary" onclick="exportProductReport()"><i
-                                                class="las la-file-excel"></i>
-                                            Export</button>
+                        <div class="row align-items-end g-2">
+                            <div class="col-md-3">
+                                <label for="report_type">Report Type</label>
+                                <select id="report_type" class="form-control">
+                                    <option value="today" selected>Today sales</option>
+                                    <option value="yesterday">Yesterday sales</option>
+                                    <option value="last_7_days">Last 7 days sales</option>
+                                    <option value="monthly">Monthly sales</option>
+                                    <option value="custom">Custom range</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="order_status">Order Status</label>
+                                <select id="order_status" class="form-control" multiple>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed" selected>Confirmed</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="out_for_delivery">Out for delivery</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="canceled">Canceled</option>https://shoppingzonebd.com.bd/
+                                    <option value="returned">Returned</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="from_date">From Date</label>
+                                <input type="date" id="from_date" value="{{ date('Y-m-d') }}" class="form-control">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="to_date">To Date</label>
+                                <input type="date" id="to_date" value="{{ date('Y-m-d') }}" class="form-control">
+                            </div>
+
+                            <div class="col-md-1">
+                                <button type="button" id="filter_btn" class="btn btn-primary w-100">Filter</button>
+                            </div>
+
+                            <div class="col-md-1">
+                                <button type="button" id="reset_btn" class="btn btn-secondary w-100">Reset</button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-12 text-end">
+                                <button class="btn btn-sm btn-primary" onclick="exportDailySales()">
+                                    <i class="las la-file-excel"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        <!-- Summary cards -->
+                        <div class="row mb-4 mt-3">
+                            <div class="col-md-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6>Today Sales</h6>
+                                        <h4 id="today_sales">0.00</h4>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6>Yesterday Sales</h6>
+                                        <h4 id="yesterday_sales">0.00</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6>Last 7 Days Sales</h6>
+                                        <h4 id="last_7_days_sales">0.00</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6>Monthly Sales</h6>
+                                        <h4 id="monthly_sales">0.00</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                            </div><!--end col-->
-                        </div><!--end row-->
-                    </div><!--end card-header-->
-                    <div class="card-body pt-0">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border">
+                                    <div class="card-body">
+                                        <h5 class="mb-3">Top Selling Products</h5>
+                                        <div id="top_selling_products"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div id="loader" style="display:none; text-align:center; margin-bottom:10px;">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -101,6 +168,72 @@
         (function($) {
             "use strict";
 
+            $('#order_status').select2({
+                placeholder: 'Select order status',
+                allowClear: true,
+                width: '100%'
+            });
+
+            function toggleCustomDateFields() {
+                let reportType = $('#report_type').val();
+
+                if (reportType === 'custom') {
+                    $('#from_date').prop('disabled', false);
+                    $('#to_date').prop('disabled', false);
+                } else {
+                    $('#from_date').prop('disabled', true);
+                    $('#to_date').prop('disabled', true);
+                }
+            }
+
+            function loadSummaryData() {
+                $.ajax({
+                    url: "{{ route('admin.report.productReportSummary') }}",
+                    type: "GET",
+                    data: {
+                        report_type: $('#report_type').val(),
+                        from_date: $('#from_date').val(),
+                        to_date: $('#to_date').val(),
+                        order_status: $('#order_status').val()
+                    },
+                    beforeSend: function() {
+                        $('#loader').show();
+                    },
+                    success: function(res) {
+                        $('#today_sales').text(res.today_sales);
+                        $('#yesterday_sales').text(res.yesterday_sales);
+                        $('#last_7_days_sales').text(res.last_7_days_sales);
+                        $('#monthly_sales').text(res.monthly_sales);
+
+                        let html = '';
+                        if (res.top_selling_products.length > 0) {
+                            html += '<div class="table-responsive"><table class="table table-bordered">';
+                            html +=
+                                '<thead><tr><th>#</th><th>Product</th><th>Code</th><th>Qty</th><th>Amount</th></tr></thead><tbody>';
+
+                            $.each(res.top_selling_products, function(index, item) {
+                                html += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${item.name}</td>
+                                <td>${item.code ?? 'N/A'}</td>
+                                <td>${item.total_qty}</td>
+                                <td>${item.total_amount}</td>
+                            </tr>`;
+                            });
+
+                            html += '</tbody></table></div>';
+                        } else {
+                            html = '<p class="text-muted mb-0">No top selling products found.</p>';
+                        }
+
+                        $('#top_selling_products').html(html);
+                    },
+                    complete: function() {
+                        $('#loader').hide();
+                    }
+                });
+            }
+
             var table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -109,8 +242,10 @@
                 ajax: {
                     url: "{{ route('admin.report.productReportData') }}",
                     data: function(d) {
+                        d.report_type = $('#report_type').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
+                        d.order_status = $('#order_status').val();
                     },
                     beforeSend: function() {
                         $('#loader').show();
@@ -138,7 +273,7 @@
                     },
                     {
                         data: 'variation',
-                        name: 'variation',
+                        name: 'order_details.variation',
                         orderable: false,
                         searchable: false
                     },
@@ -171,18 +306,28 @@
                     },
                 ]
             });
-            // Filter button click
+
+            $('#report_type').on('change', function() {
+                toggleCustomDateFields();
+            });
+
             $('#filter_btn').on('click', function() {
                 table.ajax.reload();
+                loadSummaryData();
             });
 
-            // Reset button click
             $('#reset_btn').on('click', function() {
-                $('#from_date').val('');
-                $('#to_date').val('');
+                $('#report_type').val('today').trigger('change');
+                $('#from_date').val("{{ date('Y-m-d') }}");
+                $('#to_date').val("{{ date('Y-m-d') }}");
+                $('#order_status').val(null).trigger('change'); // first all status
+
                 table.ajax.reload();
+                loadSummaryData();
             });
 
+            toggleCustomDateFields();
+            loadSummaryData();
 
         })(jQuery);
     </script>

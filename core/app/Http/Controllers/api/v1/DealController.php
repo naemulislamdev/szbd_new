@@ -4,10 +4,10 @@ namespace App\Http\Controllers\api\v1;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\FlashDeal;
+use App\Models\FlashDeal;
 use Illuminate\Http\Request;
-use App\Model\FlashDealProduct;
-use App\Model\Product;
+use App\Models\FlashDealProduct;
+use App\Models\Product;
 
 class DealController extends Controller
 {

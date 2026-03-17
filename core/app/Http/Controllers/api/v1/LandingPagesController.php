@@ -1,20 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\api\v1;
-use App\Model\LandingPage;
-use App\Model\Product;
+use App\Models\Product;
 use App\CPU\Helpers;
-use App\Model\Translation;
-use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
-
 
 class LandingPagesController extends Controller
 {
-    
+
   public function landing_view(){
         $landPages=DB::table('landing_pages')->where(['status' => 1])->get();
         return response()->json([
@@ -30,6 +24,6 @@ class LandingPagesController extends Controller
           'Product'=>$product,
       ],200);
   }
-  
-  
+
+
 }

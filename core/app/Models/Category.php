@@ -21,11 +21,6 @@ class Category extends Model
         'priority' => 'integer'
     ];
 
-    public function translations()
-    {
-        return $this->morphMany('App\Models\Translation', 'translationable');
-    }
-
     public function subCategory()
     {
         return $this->hasMany(SubCategory::class)->orderBy('order_number', 'asc');

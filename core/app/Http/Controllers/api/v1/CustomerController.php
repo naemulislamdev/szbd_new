@@ -3,23 +3,19 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\CPU\CustomerManager;
+use App\CPU\FileManager;
 use App\CPU\Helpers;
-use App\CPU\ImageManager;
 use App\Http\Controllers\Controller;
-use App\Model\Order;
-use App\Model\OrderDetail;
-use App\Model\ShippingAddress;
-use App\Model\SupportTicket;
-use App\Model\SupportTicketConv;
-use App\Model\Wishlist;
-use App\User;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\ShippingAddress;
+use App\Models\SupportTicket;
+use App\Models\SupportTicketConv;
+use App\Models\Wishlist;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image;
-use function App\CPU\translate;
 
 class CustomerController extends Controller
 {
@@ -45,7 +41,16 @@ class CustomerController extends Controller
         $request['status'] = 'pending';
 
         try {
-            CustomerManager::create_support_ticket($request);
+
+            $support = new SupportTicket();
+            $support->customer_id = $request['customer_id'];
+            $support->subject = $request['subject'];
+            $support->type = $request['type'];
+            $support->priority = $request['priority'];
+            $support->description = $request['description'];
+            $support->status = $request['status'];
+            $support->save();
+
         } catch (\Exception $e) {
             return response()->json([
                 'errors' => [
@@ -56,20 +61,19 @@ class CustomerController extends Controller
         }
         return response()->json(['message' => 'Support ticket created successfully.'], 200);
     }
+    // AC Delete
     public function account_delete(Request $request, $id)
     {
-        if($request->user()->id == $id)
-        {
+        if ($request->user()->id == $id) {
             $user = User::find($id);
             $user->is_active = 0;
             $user->save();
 
             // ImageManager::delete('/profile/' . $user['image']);
             // $user->delete();
-           return response()->json(['message' => translate('Your_account_deleted_successfully!!')],200);
-
-        }else{
-            return response()->json(['message' =>'access_denied!!'],403);
+            return response()->json(['message' => 'Your_account_deleted_successfully!!'], 200);
+        } else {
+            return response()->json(['message' => 'access_denied!!'], 403);
         }
     }
 
@@ -110,10 +114,10 @@ class CustomerController extends Controller
             $wishlist->customer_id = $request->user()->id;
             $wishlist->product_id = $request->product_id;
             $wishlist->save();
-            return response()->json(['message' => translate('successfully added!')], 200);
+            return response()->json(['message' => 'successfully added!'], 200);
         }
 
-        return response()->json(['message' => translate('Already in your wishlist')], 409);
+        return response()->json(['message' => 'Already in your wishlist'], 409);
     }
 
     public function remove_from_wishlist(Request $request)
@@ -130,47 +134,31 @@ class CustomerController extends Controller
 
         if (!empty($wishlist)) {
             Wishlist::where(['customer_id' => $request->user()->id, 'product_id' => $request->product_id])->delete();
-            return response()->json(['message' => translate('successfully removed!')], 200);
-
+            return response()->json(['message' => 'successfully removed!'], 200);
         }
-        return response()->json(['message' => translate('No such data found!')], 404);
+        return response()->json(['message' => 'No such data found!'], 404);
     }
 
     public function wish_list(Request $request)
     {
-        $wishlist =Wishlist::
-        whereHas('wishlistProduct',function($query){
-            $query->whereHas('brand',function($q){
-                $q->where('status',1);
-            })->where('status',1);
+        $wishlist = Wishlist::whereHas('wishlistProduct', function ($query) {
+            $query->whereHas('brand', function ($q) {
+                $q->where('status', 1);
+            })->where('status', 1);
         })->with(['product'])->where('customer_id', $request->user()->id)->get();
 
         return response()->json($wishlist, 200);
     }
 
+    // address list
     public function address_list(Request $request)
     {
         return response()->json(ShippingAddress::where('customer_id', $request->user()->id)->orderby('customer_id', 'DESC')->latest()->first(), 200);
     }
 
+    // add new address
     public function add_new_address(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'contact_person_name' => 'required',
-        //     'address_type' => 'required',
-        //     'address' => 'required',
-        //     'city' => 'required',
-        //     'zip' => 'required',
-        //     'phone' => 'required',
-        //     'latitude' => 'required',
-        //     'longitude' => 'required',
-        //     'is_billing' => 'required'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => Helpers::error_processor($validator)], 403);
-        // }
-
         $address = [
             'customer_id' => $request->user()->id,
             'contact_person_name' => $request->contact_person_name,
@@ -186,7 +174,7 @@ class CustomerController extends Controller
             'updated_at' => now(),
         ];
         DB::table('shipping_addresses')->insert($address);
-        return response()->json(['message' => translate('successfully added!')], 200);
+        return response()->json(['message' => 'successfully added!'], 200);
     }
 
     public function delete_address(Request $request)
@@ -203,7 +191,7 @@ class CustomerController extends Controller
             DB::table('shipping_addresses')->where(['id' => $request['address_id'], 'customer_id' => $request->user()->id])->delete();
             return response()->json(['message' => 'successfully removed!'], 200);
         }
-        return response()->json(['message' => translate('No such data found!')], 404);
+        return response()->json(['message' =>'No such data found!'], 404);
     }
 
     public function get_order_list(Request $request)
@@ -250,9 +238,10 @@ class CustomerController extends Controller
             $query['product_details'] = Helpers::product_data_formatting(json_decode($query['product_details'], true));
             return $query;
         });
-        return response()->json(['details'=>$details,'order'=>$order], 200);
+        return response()->json(['details' => $details, 'order' => $order], 200);
     }
 
+    // AC Update
     public function update_profile(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -260,8 +249,8 @@ class CustomerController extends Controller
             'l_name' => 'required',
             'phone' => 'required',
         ], [
-            'f_name.required' => translate('First name is required!'),
-            'l_name.required' => translate('Last name is required!'),
+            'f_name.required' => 'First name is required!',
+            'l_name.required' => 'Last name is required!',
         ]);
 
         if ($validator->fails()) {
@@ -269,7 +258,7 @@ class CustomerController extends Controller
         }
 
         if ($request->has('image')) {
-            $imageName = ImageManager::update('profile/', $request->user()->image, 'png', $request->file('image'));
+            $imageName = FileManager::updateFile('profile/', $request->user()->image, $request->file('image'));
         } else {
             $imageName = $request->user()->image;
         }
@@ -281,9 +270,8 @@ class CustomerController extends Controller
         }
 
         $userDetails = [
-            'f_name' => $request->f_name,
-            'l_name' => $request->l_name,
-            'email'=>$request->email,
+            'name' => $request->f_name . ' ' . $request->l_name,
+            'email' => $request->email,
             'phone' => $request->phone,
             'image' => $imageName,
             'password' => $pass,
@@ -292,7 +280,7 @@ class CustomerController extends Controller
 
         User::where(['id' => $request->user()->id])->update($userDetails);
 
-        return response()->json(['message' => translate('successfully updated!')], 200);
+        return response()->json(['message' => 'successfully updated!'], 200);
     }
 
     public function update_cm_firebase_token(Request $request)
@@ -309,6 +297,6 @@ class CustomerController extends Controller
             'cm_firebase_token' => $request['cm_firebase_token'],
         ]);
 
-        return response()->json(['message' => translate('successfully updated!')], 200);
+        return response()->json(['message' => 'successfully updated!'], 200);
     }
 }

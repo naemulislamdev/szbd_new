@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Model\Notification;
+use App\Models\Notification;
 
 class NotificationController extends Controller
 {

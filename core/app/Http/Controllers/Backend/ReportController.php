@@ -24,6 +24,10 @@ class ReportController extends Controller
     {
         return DailySalesData::getDailySalesData($request);
     }
+    public function dailySalesSummary(Request $request)
+    {
+        return DailySalesData::getDailySalesSummary($request);
+    }
     public function dailySalesExport(Request $request)
     {
         $request->validate([
@@ -41,6 +45,10 @@ class ReportController extends Controller
     public function productReportData(Request $request)
     {
         return ProductReportData::getProductsReportData($request);
+    }
+    public function productReportSummary(Request $request)
+    {
+        return ProductReportData::getProductReportSummary($request);
     }
     public function productReportExport(Request $request)
     {

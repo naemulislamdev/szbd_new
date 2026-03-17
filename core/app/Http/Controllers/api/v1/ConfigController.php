@@ -5,11 +5,10 @@ namespace App\Http\Controllers\api\v1;
 use App\CPU\Helpers;
 use App\CPU\ProductManager;
 use App\Http\Controllers\Controller;
-use App\Model\Color;
-use App\Model\Currency;
-use App\Model\HelpTopic;
-use Illuminate\Http\Request;
-use App\Model\ShippingType;
+use App\Models\Color;
+use App\Models\Currency;
+use App\Models\HelpTopic;
+use App\Models\ShippingType;
 
 class ConfigController extends Controller
 {
@@ -30,7 +29,8 @@ class ConfigController extends Controller
         foreach ($languages as $language) {
             array_push($lang_array, [
                 'code' => $language,
-                'name' => Helpers::get_language_name($language)
+                'name' => 'test'
+                // 'name' => Helpers::get_language_name($language)
             ]);
         }
 
@@ -44,13 +44,13 @@ class ConfigController extends Controller
             'base_urls' => [
                 'product_image_url' => ProductManager::product_image_path('product'),
                 'product_thumbnail_url' => ProductManager::product_image_path('thumbnail'),
-                'brand_image_url' => asset('storage/brand'),
-                'customer_image_url' => asset('storage/profile'),
-                'banner_image_url' => asset('storage/banner'),
-                'category_image_url' => asset('storage/category'),
-                'review_image_url' => asset('storage/app/public'),
-                'seller_image_url' => asset('storage/seller'),
-                'shop_image_url' => asset('storage/shop'),
+                'brand_image_url' => asset('assets/storage/brand'),
+                'customer_image_url' => asset('assets/storage/profile'),
+                'banner_image_url' => asset('assets/storage/banner'),
+                'category_image_url' => asset('assets/storage/category'),
+                'review_image_url' => asset('assets/storage/app/public'),
+                'seller_image_url' => asset('assets/storage/seller'),
+                'shop_image_url' => asset('assets/storage/shop'),
                 'notification_image_url' => asset('storage/notification'),
             ],
             'static_urls' => [
@@ -69,7 +69,7 @@ class ConfigController extends Controller
             'maintenance_mode' => (boolean)Helpers::get_business_settings('maintenance_mode') ?? 0,
             'language' => $lang_array,
             'colors' => Color::all(),
-            'unit' => Helpers::units(),
+            // 'unit' => Helpers::units(),
             'shipping_method' => Helpers::get_business_settings('shipping_method'),
             'email_verification' => (boolean)Helpers::get_business_settings('email_verification'),
             'phone_verification' => (boolean)Helpers::get_business_settings('phone_verification'),

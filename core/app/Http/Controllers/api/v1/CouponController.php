@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Model\Coupon;
-use App\Model\Order;
+use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -19,8 +19,8 @@ class CouponController extends Controller
             $coupon = Coupon::where(['code' => $request['code']])
                 ->where('limit', '>', $couponLimit)
                 ->where('status', '=', 1)
-                ->whereDate('start_date', '<=', Carbon::parse()->toDateString())
-                ->whereDate('expire_date', '>=', Carbon::parse()->toDateString())->first();
+                ->whereDate('start_date', '<=', date('y-m-d'))
+                ->whereDate('expire_date', '>=', date('y-m-d'))->first();
             //$coupon = Coupon::where(['code' => $request['code']])->first();
         } catch (\Exception $e) {
             return response()->json(['errors' => $e], 403);
@@ -34,8 +34,8 @@ class CouponController extends Controller
 
         try {
             $coupon = Coupon::where('status', '=', 1)
-                ->whereDate('start_date', '<=', Carbon::parse()->toDateString())
-                ->whereDate('expire_date', '>=', Carbon::parse()->toDateString())->get();
+                ->whereDate('start_date', '<=', date('y-m-d'))
+                ->whereDate('expire_date', '>=', date('y-m-d'))->get();
             //$coupon = Coupon::where(['code' => $request['code']])->first();
         } catch (\Exception $e) {
             return response()->json(['errors' => $e], 403);

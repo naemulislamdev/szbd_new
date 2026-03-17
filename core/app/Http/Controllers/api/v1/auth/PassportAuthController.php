@@ -6,13 +6,10 @@ namespace App\Http\Controllers\api\v1\auth;
 use App\CPU\CartManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\User;
-use App\Model\Wishlist;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
-use function App\CPU\translate;
 
 class PassportAuthController extends Controller
 {
@@ -34,8 +31,7 @@ class PassportAuthController extends Controller
         }
         $temporary_token = Str::random(40);
         $user = User::create([
-            'f_name' => $request->f_name,
-            'l_name' => $request->l_name,
+            'name' => $request->f_name .' '. $request->l_name,
             'email' => $request->email,
             'phone' => $request->phone,
             'is_active' => 1,
@@ -110,23 +106,23 @@ class PassportAuthController extends Controller
 ], 200);
         } else {
             $errors = [];
-            array_push($errors, ['code' => 'auth-001', 'message' => translate('Customer_not_found_or_Account_has_been_suspended')]);
+            array_push($errors, ['code' => 'auth-001', 'message' => 'Customer_not_found_or_Account_has_been_suspended']);
             return response()->json([
                 'errors' => $errors
             ], 401);
         }
     }
-    
+
     public function sendOtp(Request $request){
         // dd($request);
     $otp = rand(1000,9999);
     $tToken = Str::random(40);
-    $customerCheck =User::where('phone',$request->phone)->first();
+    $customerCheck = User::where('phone',$request->phone)->first();
     if($customerCheck){
         $user = User::where('phone','=',$request->phone)->update(['otp' => $otp,'temporary_token' => $tToken]);
 
     // send otp to mobile no using sms apitemporary_token
-    
+
         // $number="0$request->mobile;";
         // $text="Your verification code is $otp ";
         // echo "?masking=Flingex&userName=Flingex&password=b57d05174707d151a9369e79af41a5c5&MsgType=TEXT&receiver=$number&message=$text";
@@ -136,11 +132,11 @@ class PassportAuthController extends Controller
         // $url = "http://66.45.237.70/api.php";
         $url = "http://188.138.41.146:7788/sendtext";
         // $url = "http://sms.dinisoftbd.com:7790/sendtext";
-        
+
         $number=$request->phone;
-       
+
         $text="Your OTP is $otp Regards sajerbela.com";
-        
+
         // $data= array(
         // 'username'=>"01977593593",
         // 'password'=>"Evertech@593",
@@ -155,7 +151,7 @@ class PassportAuthController extends Controller
         'messageContent'=>"$text"
         );
         //  dd($data);
-        
+
         $ch = curl_init(); // Initialize cURL
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
@@ -163,21 +159,21 @@ class PassportAuthController extends Controller
         $smsresult = curl_exec($ch);
         $p = explode("|",$smsresult);
         $sendstatus = $p[0];
-       
-        
+
+
         if (isset($customerCheck)) {
-         
+
 
             return response()->json(['otp' => $otp, 'message' => 'Send OTP your phone Number !','success'=>'1'
 ], 200);
         } else {
             $errors = [];
-            array_push($errors, ['code' => 'auth-001', 'message' => translate('Customer_not_found_or_Account_has_been_suspended')]);
+            array_push($errors, ['code' => 'auth-001', 'message' => 'Customer_not_found_or_Account_has_been_suspended']);
             return response()->json([
                 'errors' => $errors
             ], 401);
         }
-    
+
     }
     else{
         $customer = new User;
@@ -194,7 +190,7 @@ class PassportAuthController extends Controller
     // dd($url);
         $number=$request->phone;
         $text="Your OTP is $otp Regards sajerbela.com";
-        
+
         // $data= array(
         // 'username'=>"01977593593",
         // 'password'=>"Evertech@593",
@@ -209,7 +205,7 @@ class PassportAuthController extends Controller
         'messageContent'=>"$text"
         );
         //  dd($data);
-        
+
         $ch = curl_init(); // Initialize cURL
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
@@ -217,12 +213,12 @@ class PassportAuthController extends Controller
         $smsresult = curl_exec($ch);
         $p = explode("|",$smsresult);
         $sendstatus = $p[0];
-       
-        
-        
-        
+
+
+
+
             if (isset($customerCheck)) {
-         
+
 
             return response()->json(['otp' => $otp, 'message' => 'Send OTP your phone Number !','success'=>'1'
 ], 200);
@@ -235,14 +231,14 @@ class PassportAuthController extends Controller
         }
     }
     }
-    
+
     public function recivedOTP(Request $request){
         if($request->otp){
         $finduser =User::where('otp',$request->otp)->first();
-            
+
                $user = auth()->guard('customer')->login($finduser);
             $token = $finduser->createToken('LaravelAuthApp')->accessToken;
-            
+
          CartManager::cart_to_db();
          return response()->json(['message' => 'login successfully ','success'=>'1', "data" => compact('finduser'),'session_cart' => session('offline_cart'),'token' => $token], 200);
 
@@ -253,8 +249,8 @@ class PassportAuthController extends Controller
             return response()->json([
                 'errors' => $errors
             ], 401);
-            
+
           }
-     
+
     }
 }

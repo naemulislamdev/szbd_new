@@ -4,12 +4,11 @@ namespace App\Http\Controllers\api\v1;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\FlashDeal;
-use App\Model\FlashDealProduct;
-use App\Model\Product;
-use App\campaing_detalie;
+use App\Models\FlashDeal;
+use App\Models\FlashDealProduct;
+use App\Models\Product;
 use Carbon\Carbon;
- 
+
 
 class FlashDealController extends Controller
 {
@@ -26,7 +25,7 @@ class FlashDealController extends Controller
         }
 
     }
-    
+
      public function get_flash_deal_for_countdown()
     {
         try {
@@ -54,7 +53,7 @@ class FlashDealController extends Controller
 
         return response()->json([], 200);
     }
-    
+
       public function get_products_for_flash_deal()
     {
         $flash_deals = FlashDeal::where('deal_type','flash_deal')
@@ -72,11 +71,11 @@ class FlashDealController extends Controller
 
         return response()->json([], 200);
     }
-    
+
       public function campaing_products()
     {
         $todayDate=Carbon::today()->toDateString();
-       
+
         $data = Product::join('campaing_detalies', 'campaing_detalies.product_id', '=', 'products.id')->where('campaing_detalies.start_day', $todayDate)
               		->select(['products.*','campaing_detalies.id', 'campaing_detalies.product_id','campaing_detalies.start_day', 'campaing_detalies.end_day', 'campaing_detalies.discountCam'])->get();
         return response()->json($data,200);

@@ -392,10 +392,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::controller(ReportController::class)->prefix("/report")->as('report.')->group(function () {
             Route::get('/daily-sales', 'dailySales')->name('dailySales');
             Route::get('/daily-sales-datatable', 'dailySalesData')->name('dailySalesData');
+            Route::get('/daily-sales-summary', 'dailySalesSummary')->name('dailySalesSummary');
             Route::get('/daily-sales-export', 'dailySalesExport')->name('dailySalesExport');
             // Product Report
             Route::get('/product-report', 'productReport')->name('productReport');
             Route::get('/product-report-datatable', 'productReportData')->name('productReportData');
+            Route::get('/product-report-summary', 'productReportSummary')->name('productReportSummary');
             Route::get('/product-report-export', 'productReportExport')->name('productReportExport');
             // Product Report
             Route::get('/moderatar-report', 'moderatarReport')->name('moderatarReport');

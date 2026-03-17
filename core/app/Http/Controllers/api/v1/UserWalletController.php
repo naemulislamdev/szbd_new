@@ -4,10 +4,9 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Model\WalletTransaction;
+use App\Models\WalletTransaction;
 use App\CPU\Helpers;
 use Illuminate\Support\Facades\Validator;
-use function App\CPU\translate;
 
 class UserWalletController extends Controller
 {
@@ -31,7 +30,7 @@ class UserWalletController extends Controller
             $wallet_transactio_list = WalletTransaction::where('user_id',$user->id)
                                                     ->latest()
                                                     ->paginate($request['limit'], ['*'], 'page', $request['offset']);
-        
+
             return response()->json([
                 'limit'=>(integer)$request->limit,
                 'offset'=>(integer)$request->offset,
@@ -39,10 +38,10 @@ class UserWalletController extends Controller
                 'total_wallet_transactio'=>$wallet_transactio_list->total(),
                 'wallet_transactio_list'=>$wallet_transactio_list->items()
             ],200);
-            
+
         }else{
-            
-            return response()->json(['message' => translate('access_denied!')], 422);
+
+            return response()->json(['message' => 'access_denied!'], 422);
         }
     }
 }

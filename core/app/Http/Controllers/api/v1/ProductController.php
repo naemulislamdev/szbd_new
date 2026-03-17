@@ -61,7 +61,6 @@ class ProductController extends Controller
     {
 
         return Product::where('name', 'Like', "%$key%")->get();
-        // return response()->json($products, 200);
     }
 
     public function get_Appsearch_products(Request $request)
@@ -126,13 +125,24 @@ class ProductController extends Controller
 
     public function get_home_categories()
     {
-        $categories = Category::where('home_status', true)->priority()->get();
-        $categories->map(function ($data) {
-            $catProducts = Product::where('category_id', $data['id'])->inRandomOrder()->limit(10)->get();
-            $data['products'] = Helpers::product_data_formatting($catProducts, true);
-            return $data;
+        $categories = Category::where('home_status', true)->get();
+
+        $categories->map(function ($category) {
+
+            $products = Product::where('category_id', $category->id)
+                ->active()
+                ->inRandomOrder()
+                ->limit(10)
+                ->get();
+
+            $category->products = Helpers::product_data_formatting($products, true);
+
+            return $category;
         });
-        return response()->json($categories, 200);
+
+        return response()->json([
+            'categories' => $categories
+        ], 200);
     }
 
     public function get_related_products($id)

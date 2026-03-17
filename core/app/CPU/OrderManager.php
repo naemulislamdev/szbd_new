@@ -2,18 +2,14 @@
 
 namespace App\CPU;
 
-use App\Model\Admin;
-use App\Model\AdminWallet;
-use App\User;
-use App\Model\CartShipping;
-use App\Model\Order;
-use App\Model\OrderDetail;
-use App\Model\OrderTransaction;
-use App\Model\Product;
-use App\Model\Seller;
-use App\Model\SellerWallet;
-use App\Model\ShippingType;
-use App\Model\ShippingAddress;
+use App\Models\AdminWallet;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderTransaction;
+use App\Models\Product;
+use App\Models\SellerWallet;
+use App\Models\ShippingAddress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -24,7 +20,7 @@ class OrderManager
     public static function track_order($request)
     {
         $user_id = User::where('phone',$request['phone_number'])->first()->id;
-        $data['order'] = Order::where('id',$request['order_id'])->where(function ($query) use($user_id){
+        $data['order'] = Order::where('order_number',$request['order_id'])->where(function ($query) use($user_id){
             $query->where('customer_id',$user_id);
         })->first();
 
@@ -96,18 +92,6 @@ class OrderManager
                 if ($detail['is_stock_decreased'] == 0) {
                     $product = Product::find($detail['product_id']);
 
-                    //check stock
-                    /*foreach ($order->details as $c) {
-                        $product = Product::find($c['product_id']);
-                        $type = $detail['variant'];
-                        foreach (json_decode($product['variation'], true) as $var) {
-                            if ($type == $var['type'] && $var['qty'] < $c['qty']) {
-                                Toastr::error('Stock is insufficient!');
-                                return back();
-                            }
-                        }
-                    }*/
-
                     $type = $detail['variant'];
                     $var_store = [];
                     foreach (json_decode($product['variation'], true) as $var) {
@@ -128,131 +112,10 @@ class OrderManager
         }
     }
 
-    public static function wallet_manage_on_order_status_change($order, $received_by)
-    {
-        $order = Order::find($order['id']);
-        $order_summary = OrderManager::order_summary($order);
-        $order_amount = $order_summary['subtotal'] - $order_summary['total_discount_on_product'] - $order['discount_amount'];
-        $commission = Helpers::sales_commission($order);
-        $shipping_model = Helpers::get_business_settings('shipping_method');
-
-        if (AdminWallet::where('admin_id', 1)->first() == false) {
-            DB::table('admin_wallets')->insert([
-                'admin_id' => 1,
-                'withdrawn' => 0,
-                'commission_earned' => 0,
-                'inhouse_earning' => 0,
-                'delivery_charge_earned' => 0,
-                'pending_amount' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-        if (SellerWallet::where('seller_id', $order['seller_id'])->first() == false) {
-            DB::table('seller_wallets')->insert([
-                'seller_id' => $order['seller_id'],
-                'withdrawn' => 0,
-                'commission_given' => 0,
-                'total_earning' => 0,
-                'pending_withdraw' => 0,
-                'delivery_charge_earned' => 0,
-                'collected_cash' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($order['payment_method'] == 'cash_on_delivery') {
-            DB::table('order_transactions')->insert([
-                'transaction_id' => OrderManager::gen_unique_id(),
-                'customer_id' => $order['customer_id'],
-                'seller_id' => $order['seller_id'],
-                'seller_is' => $order['seller_is'],
-                'order_id' => $order['id'],
-                'order_amount' => $order_amount,
-                'seller_amount' => $order_amount - $commission,
-                'admin_commission' => $commission,
-                'received_by' => $received_by,
-                'status' => 'disburse',
-                'delivery_charge' => $order['shipping_cost'],
-                'tax' => $order_summary['total_tax'],
-                'delivered_by' => $received_by,
-                'payment_method' => $order['payment_method'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            $wallet = AdminWallet::where('admin_id', 1)->first();
-            $wallet->commission_earned += $commission;
-            if ($shipping_model == 'inhouse_shipping') {
-                $wallet->delivery_charge_earned += $order['shipping_cost'];
-            }
-            $wallet->save();
-
-            if ($order['seller_is'] == 'admin') {
-                $wallet = AdminWallet::where('admin_id', 1)->first();
-                $wallet->inhouse_earning += $order_amount;
-                if ($shipping_model == 'sellerwise_shipping') {
-                    $wallet->delivery_charge_earned += $order['shipping_cost'];
-                }
-                $wallet->total_tax_collected += $order_summary['total_tax'];
-                $wallet->save();
-            } else {
-                $wallet = SellerWallet::where('seller_id', $order['seller_id'])->first();
-                $wallet->commission_given += $commission;
-                $wallet->total_tax_collected += $order_summary['total_tax'];
-
-                if ($shipping_model == 'sellerwise_shipping') {
-                    $wallet->delivery_charge_earned += $order['shipping_cost'];
-                    $wallet->collected_cash += $order['order_amount']; //total order amount
-                } else {
-                    $wallet->total_earning += ($order_amount - $commission) + $order_summary['total_tax'];
-                }
-
-                $wallet->save();
-            }
-        } else {
-            $transaction = OrderTransaction::where(['order_id' => $order['id']])->first();
-            $transaction->status = 'disburse';
-            $transaction->save();
-
-            $wallet = AdminWallet::where('admin_id', 1)->first();
-            $wallet->commission_earned += $commission;
-            $wallet->pending_amount -= $order['order_amount'];
-            if ($shipping_model == 'inhouse_shipping') {
-                $wallet->delivery_charge_earned += $order['shipping_cost'];
-            }
-            $wallet->save();
-
-            if ($order['seller_is'] == 'admin') {
-                $wallet = AdminWallet::where('admin_id', 1)->first();
-                $wallet->inhouse_earning += $order_amount;
-                if ($shipping_model == 'sellerwise_shipping') {
-                    $wallet->delivery_charge_earned += $order['shipping_cost'];
-                }
-                $wallet->total_tax_collected += $order_summary['total_tax'];
-                $wallet->save();
-            } else {
-                $wallet = SellerWallet::where('seller_id', $order['seller_id'])->first();
-                $wallet->commission_given += $commission;
-
-                if ($shipping_model == 'sellerwise_shipping') {
-                    $wallet->delivery_charge_earned += $order['shipping_cost'];
-                    $wallet->total_earning += ($order_amount - $commission) + $order_summary['total_tax'] + $order['shipping_cost'];
-                } else {
-                    $wallet->total_earning += ($order_amount - $commission) + $order_summary['total_tax'];
-                }
-
-                $wallet->total_tax_collected += $order_summary['total_tax'];
-                $wallet->save();
-            }
-        }
-    }
-
     public static function generate_order($data)
     {
         $order_id = 100000 + Order::all()->count() + 1;
-        if (Order::find($order_id)) {
+        if (Order::where('order_number',$order_id)->first()) {
             $order_id = Order::orderBy('id', 'DESC')->first()->id + 1;
         }
 
@@ -276,7 +139,7 @@ class OrderManager
         $shippingAddress->save();
 
         $or = [
-            'id' => $order_id,
+            'order_number' => $order_id,
             'verification_code' => rand(100000, 999999),
             'customer_id' => $user->id,
             'customer_type' => 'customer',
