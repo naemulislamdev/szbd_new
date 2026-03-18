@@ -1793,3 +1793,31 @@ h6.subscribe-title:hover {
 .input-group .subscribe-input {
   border-radius: 50px 0 0 50px !important;
 }
+.btn-orange {
+  background-color: #ff5d00; /* primary orange */
+  color: #fff; /* text color */
+  padding: 0.5rem 1rem; /* Bootstrap-style padding */
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.25rem; /* Bootstrap-like rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-orange:hover {
+  background-color: #e65500; /* darker shade on hover */
+}
+
+.btn-orange:active {
+  background-color: #cc4a00; /* even darker on click */
+}
+
+.btn-orange:disabled {
+  background-color: #ffb99c;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
