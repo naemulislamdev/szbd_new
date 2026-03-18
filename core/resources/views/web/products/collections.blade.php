@@ -1,5 +1,8 @@
 @extends('web.layouts.app')
-@section('title', 'Trend-collections')
+@section('title', 'Trending Collection | ' . $web_config['name']->value)
+
+@section('meta_description', 'Shop our trending collection featuring the latest clothing and skincare products.')
+
 
 <style>
     @import url('https://fonts.maateen.me/solaiman-lipi/font.css');

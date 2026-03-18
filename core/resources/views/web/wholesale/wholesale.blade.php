@@ -1,4 +1,7 @@
 @extends('web.layouts.app')
+@section('title', 'Wholesale | ' . $web_config['name']->value)
+@section('meta_description', 'Check out our wholesale offers and purchase premium clothing and skincare at unbeatable
+    prices in bulk.')
 
 @section('title', 'Wholesale')
 <style>

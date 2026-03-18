@@ -1,62 +1,65 @@
 @extends('web.layouts.app')
 
-@section('title', 'Contact Us')
+@section('title', 'Contact Us | ' . $web_config['name']->value)
+@section('meta_description',
+    'Contact us for quick support, inquiries, or help with orders and services.
+    ')
 
-@push('css_or_js')
-    <!-- Open Graph -->
-    <meta property="og:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
-    <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-    <meta property="og:image" content="{{ asset('assets/storage/company/' . $web_config['web_logo']->value) }}">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:type" content="website">
+    @push('css_or_js')
+        <!-- Open Graph -->
+        <meta property="og:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
+        <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+        <meta property="og:image" content="{{ asset('assets/storage/company/' . $web_config['web_logo']->value) }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:type" content="website">
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
-    <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-    <meta name="twitter:image" content="{{ asset('assets/storage/company/' . $web_config['web_logo']->value) }}">
-    <meta name="twitter:url" content="{{ url()->current() }}">
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Contact {{ strip_tags($web_config['name']->value) }}">
+        <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+        <meta name="twitter:image" content="{{ asset('assets/storage/company/' . $web_config['web_logo']->value) }}">
+        <meta name="twitter:url" content="{{ url()->current() }}">
 
 
-    <style>
-        .headerTitle {
-            font-size: 25px;
-            font-weight: 700;
-            margin-top: 2rem;
-        }
-
-        .for-contac-image {
-            padding: 6%;
-            width: 100%;
-        }
-
-        .for-send-message {
-            padding: 26px;
-            margin-bottom: 2rem;
-            margin-top: 2rem;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-        }
-
-        @media (max-width: 600px) {
-            .sidebar_heading {
-                background: {{ $web_config['primary_color'] }}
-            }
-
+        <style>
             .headerTitle {
-
+                font-size: 25px;
                 font-weight: 700;
-                margin-top: 1rem;
+                margin-top: 2rem;
             }
 
-            .sidebar_heading h1 {
-                text-align: center;
-                color: aliceblue;
-                padding-bottom: 17px;
-                font-size: 19px;
+            .for-contac-image {
+                padding: 6%;
+                width: 100%;
             }
-        }
-    </style>
-@endpush
+
+            .for-send-message {
+                padding: 26px;
+                margin-bottom: 2rem;
+                margin-top: 2rem;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+            }
+
+            @media (max-width: 600px) {
+                .sidebar_heading {
+                    background: {{ $web_config['primary_color'] }}
+                }
+
+                .headerTitle {
+
+                    font-weight: 700;
+                    margin-top: 1rem;
+                }
+
+                .sidebar_heading h1 {
+                    text-align: center;
+                    color: aliceblue;
+                    padding-bottom: 17px;
+                    font-size: 19px;
+                }
+            }
+        </style>
+    @endpush
 @section('content')
     <div class="section-heading-title text-center pt-3">
         <div>

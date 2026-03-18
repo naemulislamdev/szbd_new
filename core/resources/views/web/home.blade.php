@@ -1,250 +1,254 @@
 @extends('web.layouts.app')
-{{-- @section('title', 'Welcome To' . ' ' . $web_config['name']->value) --}}
 
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="Premium Clothing & Original Skincare BD | {{ $web_config['name']->value }} Home" />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+@section('title', 'Home | ' . $web_config['name']->value)
 
-    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-@endpush
-<style>
-    .shop-more-btn.btn-warning {
-        background-color: #ff5d00 !important;
-        border-color: #ff5d00 !important;
-        color: #fff !important;
-    }
+@section('meta_description',
+    'Welcome to our ecommerce store. Buy premium clothing and skincare products at best
+    price.')
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="og:title" content="Premium Clothing & Original Skincare BD | {{ $web_config['name']->value }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
-    .shop-more-btn.btn-warning:hover {
-        background-color: #e37f00 !important;
-        border-color: #e37f00 !important;
-        color: #fff !important;
-    }
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @endpush
+    <style>
+        .shop-more-btn.btn-warning {
+            background-color: #ff5d00 !important;
+            border-color: #ff5d00 !important;
+            color: #fff !important;
+        }
 
-    .shop-more-btn.btn-warning:focus,
-    .shop-more-btn.btn-warning:active,
-    .shop-more-btn.btn-warning:focus-visible {
-        background-color: #e37f00 !important;
-        border-color: #e37f00 !important;
-        box-shadow: 0 0 0 0.25rem rgba(255, 145, 0, 0.4) !important;
-        color: #fff !important;
-    }
+        .shop-more-btn.btn-warning:hover {
+            background-color: #e37f00 !important;
+            border-color: #e37f00 !important;
+            color: #fff !important;
+        }
 
-    .shop-more-btn.btn-warning:disabled,
-    .shop-more-btn.btn-warning.disabled {
-        background-color: #ff5d00 !important;
-        border-color: #ff5d00 !important;
-        opacity: 0.65 !important;
-        color: #fff !important;
-    }
+        .shop-more-btn.btn-warning:focus,
+        .shop-more-btn.btn-warning:active,
+        .shop-more-btn.btn-warning:focus-visible {
+            background-color: #e37f00 !important;
+            border-color: #e37f00 !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 145, 0, 0.4) !important;
+            color: #fff !important;
+        }
 
-    .btn-primary:hover,
-    .btn-primary:active {
-        color: #fff;
-        background-color: #ff5d00 !important;
-        border-color: #ff5d00 !important;
-    }
+        .shop-more-btn.btn-warning:disabled,
+        .shop-more-btn.btn-warning.disabled {
+            background-color: #ff5d00 !important;
+            border-color: #ff5d00 !important;
+            opacity: 0.65 !important;
+            color: #fff !important;
+        }
 
-    .btn-primary:focus {
-        box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.4) !important;
-    }
+        .btn-primary:hover,
+        .btn-primary:active {
+            color: #fff;
+            background-color: #ff5d00 !important;
+            border-color: #ff5d00 !important;
+        }
 
-    section.category .owl-nav,
-    .new-arrivals-section .owl-nav {
-        display: block !important;
-    }
+        .btn-primary:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.4) !important;
+        }
 
-    .owl-nav button {
-        position: absolute;
-        top: 45%;
-        transform: translateY(-50%);
-        background: rgba(255, 94, 0, 0.862) !important;
-        color: #fff;
-        border: none;
-        outline: none;
-        border-radius: 5px;
-        width: 40px;
-        height: 50px;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.3s;
+        section.category .owl-nav,
+        .new-arrivals-section .owl-nav {
+            display: block !important;
+        }
 
-    }
+        .owl-nav button {
+            position: absolute;
+            top: 45%;
+            transform: translateY(-50%);
+            background: rgba(255, 94, 0, 0.862) !important;
+            color: #fff;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            width: 40px;
+            height: 50px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
 
-    .owl-nav button:hover {
-        background-color: #ff5d00 !important;
-        color: #fff;
-    }
+        }
 
-    .owl-nav button:focus {
-        border: none !important;
-        outline: none !important;
-        outline: none !important;
-    }
+        .owl-nav button:hover {
+            background-color: #ff5d00 !important;
+            color: #fff;
+        }
 
-    section.category .owl-nav .owl-prev,
-    .new-arrivals-section .owl-nav .owl-prev {
-        left: 0%;
-        top: 54% !important;
-    }
+        .owl-nav button:focus {
+            border: none !important;
+            outline: none !important;
+            outline: none !important;
+        }
 
-    section.category .owl-nav .owl-next,
-    .new-arrivals-section .owl-nav .owl-next {
-        right: 0;
-        top: 54%;
-    }
+        section.category .owl-nav .owl-prev,
+        .new-arrivals-section .owl-nav .owl-prev {
+            left: 0%;
+            top: 54% !important;
+        }
 
-    section.category .owl-nav button,
-    .new-arrivals-section .owl-nav button {
-        height: 40px;
-    }
+        section.category .owl-nav .owl-next,
+        .new-arrivals-section .owl-nav .owl-next {
+            right: 0;
+            top: 54%;
+        }
 
-    .category .card {
-        border-radius: 12px;
-    }
+        section.category .owl-nav button,
+        .new-arrivals-section .owl-nav button {
+            height: 40px;
+        }
 
-    .category .card-body {
-        padding: 5px 0;
-    }
+        .category .card {
+            border-radius: 12px;
+        }
 
-    .category .card img {
-        border-radius: 12px 12px 0 0;
+        .category .card-body {
+            padding: 5px 0;
+        }
 
-    }
+        .category .card img {
+            border-radius: 12px 12px 0 0;
 
-    section.category .card-title {
+        }
 
-        font-size: 16px;
-        font-weight: 600;
-    }
+        section.category .card-title {
 
-    section.category .card-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
 
-        font-size: 14px;
-        margin-top: 8px;
-        color: #000 !important;
-    }
+        section.category .card-text {
 
-    .category .category-carosel img {
-        height: 200px;
-    }
+            font-size: 14px;
+            margin-top: 8px;
+            color: #000 !important;
+        }
 
-    .owl-nav button {
-        background: rgb(255 94 0 / 54%) !important;
-    }
+        .category .category-carosel img {
+            height: 200px;
+        }
 
-    /*new arrival slider */
-    .owl-carousel {
-        position: relative;
-    }
+        .owl-nav button {
+            background: rgb(255 94 0 / 54%) !important;
+        }
 
-    .owl-nav .owl-prev {
-        left: 4px;
-    }
+        /*new arrival slider */
+        .owl-carousel {
+            position: relative;
+        }
 
-    .owl-nav .owl-next {
-        right: -4px;
-    }
+        .owl-nav .owl-prev {
+            left: 4px;
+        }
 
-    .owl-nav button.disabled {
-        background: #555 !important;
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+        .owl-nav .owl-next {
+            right: -4px;
+        }
+
+        .owl-nav button.disabled {
+            background: #555 !important;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
 
-    .new-arrivals-section .product-box>.product-image2>a>img {
-        width: 100% !important;
-        height: auto;
-        object-fit: cover;
-        display: block;
-        margin: 0 auto !important;
-    }
-
-    .section__title span {
-        position: absolute;
-        color: #f0f1f3;
-        left: 0;
-        right: 0;
-        z-index: -1;
-        font-weight: 700;
-        font-size: 3rem;
-        text-transform: uppercase;
-        line-height: 0;
-        font-family: Open Sans, sans-serif;
-    }
-
-    .btn-warning {
-        color: #fff !important;
-        background-color: #f26d21 !important;
-    }
-
-    .btn-warning:hover {
-        color: #fff;
-        background-color: #f26d21 !important;
-    }
-
-    /* Mobile Category styles*/
-    section.mobile-category .category-item img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    section.mobile-category .category-item h5 {
-        font-size: 15px;
-    }
-
-    section.mobile-category .category-item p {
-        font-size: 12px;
-        margin-top: 5px;
-    }
-
-    section.mobile-category .category-item {
-        background: #f26d21;
-        height: 170px;
-
-    }
-
-    section.mobile-category .category-item .image-box {
-        height: 120px;
-    }
-
-    section.mobile-category .category-item .image-box img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        object-position: top;
-    }
-
-    .category .category-carosel img {
-        object-fit: cover;
-        object-position: top;
-    }
-
-    section.top-banner .big-banner {
-        height: 200px;
-        width: 100%;
-    }
-
-    @media (max-width: 768px) {
-        section.top-banner .big-banner {
+        .new-arrivals-section .product-box>.product-image2>a>img {
+            width: 100% !important;
             height: auto;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto !important;
+        }
+
+        .section__title span {
+            position: absolute;
+            color: #f0f1f3;
+            left: 0;
+            right: 0;
+            z-index: -1;
+            font-weight: 700;
+            font-size: 3rem;
+            text-transform: uppercase;
+            line-height: 0;
+            font-family: Open Sans, sans-serif;
+        }
+
+        .btn-warning {
+            color: #fff !important;
+            background-color: #f26d21 !important;
+        }
+
+        .btn-warning:hover {
+            color: #fff;
+            background-color: #f26d21 !important;
+        }
+
+        /* Mobile Category styles*/
+        section.mobile-category .category-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        section.mobile-category .category-item h5 {
+            font-size: 15px;
+        }
+
+        section.mobile-category .category-item p {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        section.mobile-category .category-item {
+            background: #f26d21;
+            height: 170px;
+
+        }
+
+        section.mobile-category .category-item .image-box {
+            height: 120px;
+        }
+
+        section.mobile-category .category-item .image-box img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .category .category-carosel img {
+            object-fit: cover;
+            object-position: top;
+        }
+
+        section.top-banner .big-banner {
+            height: 200px;
             width: 100%;
         }
-    }
 
-    @media (max-width: 768px) {
-        .small-title {
-            font-size: 20px;
+        @media (max-width: 768px) {
+            section.top-banner .big-banner {
+                height: auto;
+                width: 100%;
+            }
         }
-    }
-</style>
+
+        @media (max-width: 768px) {
+            .small-title {
+                font-size: 20px;
+            }
+        }
+    </style>
 @section('content')
 
     @include('web.layouts.partials._modals')
@@ -506,35 +510,51 @@
             </div>
         </div>
     </section>
-    <!-- Start Newslater Section -->
-    <section class="newslater-section">
+    <section class="our-outlet-section">
         <div class="container">
-            <div class="row">
-                <div class="col-md-10 mx-auto">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="newslater-text">
-                                <h4>SALE 20% OFF ALL STORE</h4>
-                                <h2>Subscribe our Newsletter</h2>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="newslater-input">
-                                <form action="{{ route('subscription') }}" method="post">
-                                    @csrf
-                                    <div class="input-group mb-3 w-100">
-                                        <input type="text" class="form-control" placeholder="Your Email Address"
-                                            name="subscription_email" required>
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-dark"
-                                                id="basic-addon2">subscribe</button>
+            <div class="row align-items-center my-5">
+                <div class="col-md-8">
+                    <div class="row g-4">
+                        @foreach ([1, 1, 1, 1, 1, 1, 1, 1] as $i)
+                            <div class="col-md-4">
+                                <div>
+                                    <a href="#" class="d-flex align-items-center gy-4">
+                                        <i class="fa fa-map-marker text-muted" style="font-size: 24px"
+                                            aria-hidden="true"></i>
+                                        <div class="ml-3">
+                                            <h6 class="subscribe-title mb-0" style="font-size: 14px" class="mb-0">
+                                                GULSHAN
+                                                FLAGSHIP</h6>
+                                            <address style="font-size: 14px; line-height: 20px" class="text-muted">
+                                                Amanullah Trade Center, Plot - 06, Gulshan 2 Circle
+                                            </address>
                                         </div>
-                                    </div>
-                                </form>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <h6 style="font-size: 22px; font-weight: 500 ">Join our newsletter for latest update
+                        on discount and
+                        offer</h6>
+                    <form action="{{ route('subscription') }}" method="POST">
+                        @csrf
+                        <div class="input-group mb-3">
+
+                            <input type="email" required class="form-control subscribe-input"
+                                placeholder="Your Email Here" aria-describedby="button-addon1">
+
+                            <button class="btn btn-danger" type="submit" id="button-addon1"
+                                style="border-radius: 0 25px 25px 0 !important;">
+                                Subscribe
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </section>

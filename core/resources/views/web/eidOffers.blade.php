@@ -1,17 +1,20 @@
 @extends('web.layouts.app')
-@section('title', 'Eid Offers')
+@section('title', Str::limit($eidoffer->title, 60) . ' | ' . $web_config['name']->value)
+@section('meta_description',
+    'Celebrate Eid 2026 with exclusive deals on clothing and original skincare products.
+    ')
 
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="Premium Clothing & Original Skincare |" />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="og:title" content="Premium Clothing & Original Skincare |" />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
-    <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-@endpush
+        <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @endpush
 @section('content')
     <section>
         <div class="container mt-4">

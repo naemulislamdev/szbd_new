@@ -1,5 +1,8 @@
 @extends('web.layouts.app')
-@section('title', 'Search products')
+
+@section('title', 'Search Products | ' . $web_config['name']->value)
+
+@section('meta_description', 'Search products online and discover premium clothing and skincare items instantly.')
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo'] }}" />
     <meta property="og:title" content="Products of {{ $web_config['name'] }} " />

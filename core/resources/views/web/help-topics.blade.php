@@ -1,80 +1,82 @@
 @extends('web.layouts.app')
 
-@section('title', 'FAQ')
+@section('title', 'FAQ | ' . $web_config['name']->value)
+@section('meta_description',
+    'Get answers to frequently asked questions about our products, orders, and services.
+    ')
+    @push('css_or_js')
+        <!-- Open Graph (Facebook, WhatsApp) -->
+        <meta property="og:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
+        <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+        <meta property="og:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:type" content="website">
 
-@push('css_or_js')
-    <!-- Open Graph (Facebook, WhatsApp) -->
-    <meta property="og:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
-    <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-    <meta property="og:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:type" content="website">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
-    <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
-    <meta name="twitter:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
-    <meta name="twitter:url" content="{{ url()->current() }}">
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="FAQ of {{ strip_tags($web_config['name']->value) }}">
+        <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 100) }}">
+        <meta name="twitter:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
+        <meta name="twitter:url" content="{{ url()->current() }}">
 
 
-    <style>
-        .headerTitle {
-            font-size: 25px;
-            font-weight: 700;
-            margin-top: 2rem;
-        }
-
-        body {
-            font-family: 'Titillium Web', sans-serif
-        }
-
-        .product-qty span {
-            font-size: 14px;
-            color: #6A6A6A;
-        }
-
-        .btn-link {
-            color: #4c5056e3;
-        }
-
-        .btnF {
-            display: inline-block;
-            font-weight: normal;
-            margin-top: 4%;
-            color: #4b566b;
-            text-align: center;
-            vertical-align: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            background-color: transparent;
-            border: 1px solid transparent;
-            font-size: .9375rem;
-            transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-
-        @media (max-width: 600px) {
-            .sidebar_heading {
-                background: {{ $web_config['primary_color'] }}
-            }
-
-            .sidebar_heading h1 {
-                text-align: center;
-                color: aliceblue;
-                padding-bottom: 17px;
-                font-size: 19px;
-            }
-
+        <style>
             .headerTitle {
-
+                font-size: 25px;
                 font-weight: 700;
-                margin-top: 1rem;
+                margin-top: 2rem;
             }
-        }
-    </style>
-@endpush
+
+            body {
+                font-family: 'Titillium Web', sans-serif
+            }
+
+            .product-qty span {
+                font-size: 14px;
+                color: #6A6A6A;
+            }
+
+            .btn-link {
+                color: #4c5056e3;
+            }
+
+            .btnF {
+                display: inline-block;
+                font-weight: normal;
+                margin-top: 4%;
+                color: #4b566b;
+                text-align: center;
+                vertical-align: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-size: .9375rem;
+                transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.2s ease-in-out;
+            }
+
+            @media (max-width: 600px) {
+                .sidebar_heading {
+                    background: {{ $web_config['primary_color'] }}
+                }
+
+                .sidebar_heading h1 {
+                    text-align: center;
+                    color: aliceblue;
+                    padding-bottom: 17px;
+                    font-size: 19px;
+                }
+
+                .headerTitle {
+
+                    font-weight: 700;
+                    margin-top: 1rem;
+                }
+            }
+        </style>
+    @endpush
 
 @section('content')
     <div class="container">

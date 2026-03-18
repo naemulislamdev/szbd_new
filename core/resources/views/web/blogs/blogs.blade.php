@@ -1,98 +1,101 @@
 @extends('web.layouts.app')
-@section('title', 'Blogs')
+@section('title', 'Blogs | ' . $web_config['name']->value)
+@section('meta_description',
+    'Read our latest blogs on fashion, skincare, and helpful tips for everyday life.
+    ')
 
-<style>
-    .card-height-1 {
-        height: 480px;
-    }
+    <style>
+        .card-height-1 {
+            height: 480px;
+        }
 
-    .card-height-2 {
-        height: auto;
-    }
+        .card-height-2 {
+            height: auto;
+        }
 
-    .blog-card {
-        height: 480px;
-        border-radius: 10px;
-        background: #fff;
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-        transition: 0.5s ease-in-out;
-    }
+        .blog-card {
+            height: 480px;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+            transition: 0.5s ease-in-out;
+        }
 
-    .blog-img {
-        position: relative;
-    }
+        .blog-img {
+            position: relative;
+        }
 
-    .blog-img div {
-        border-radius: 10px 10px 0 0;
-        overflow: hidden;
-    }
+        .blog-img div {
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
 
-    .blog-img img {
-        max-width: 100%;
-        height: auto;
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
+        .blog-img img {
+            max-width: 100%;
+            height: auto;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
 
-    .blog-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #000;
-    }
+        .blog-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+        }
 
-    .blog-text {
-        font-size: 14px;
-        color: #555;
-    }
+        .blog-text {
+            font-size: 14px;
+            color: #555;
+        }
 
-    .read-more {
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 600;
-        color: #000;
-        transition: 0.3s;
-    }
+        .read-more {
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            transition: 0.3s;
+        }
 
-    .read-more:hover {
-        color: #ff5d00;
-    }
+        .read-more:hover {
+            color: #ff5d00;
+        }
 
-    .blog-card:hover .blog-img img {
-        transform: scale(1.1);
-    }
+        .blog-card:hover .blog-img img {
+            transform: scale(1.1);
+        }
 
-    .blog-card:hover .blog-title {
-        color: #ff5d00;
-    }
+        .blog-card:hover .blog-title {
+            color: #ff5d00;
+        }
 
-    .blog-card:hover .read-more {
-        color: #ff5d00;
-    }
+        .blog-card:hover .read-more {
+            color: #ff5d00;
+        }
 
-    .blog-card .category-btn {
-        border-radius: 6px;
-        background-color: #ff5d00;
-        color: #fff;
-        position: absolute;
-        right: 18px;
-        bottom: -15px;
-        padding: 3px 12px;
-        font-weight: 500;
-    }
+        .blog-card .category-btn {
+            border-radius: 6px;
+            background-color: #ff5d00;
+            color: #fff;
+            position: absolute;
+            right: 18px;
+            bottom: -15px;
+            padding: 3px 12px;
+            font-weight: 500;
+        }
 
-    .category-btn.btn:focus {
-        outline: 0;
-        box-shadow: 0 0 0 .2rem rgba(255, 93, 0, 0.25);
-    }
+        .category-btn.btn:focus {
+            outline: 0;
+            box-shadow: 0 0 0 .2rem rgba(255, 93, 0, 0.25);
+        }
 
-    .read-more svg {
-        transition: all 0.3s;
-    }
+        .read-more svg {
+            transition: all 0.3s;
+        }
 
-    .read-more:hover svg {
-        transform: translateX(5px)
-    }
-</style>
+        .read-more:hover svg {
+            transform: translateX(5px)
+        }
+    </style>
 @section('content')
     <section class="py-2 career">
         <div class="container " style="min-height: 100vh;">

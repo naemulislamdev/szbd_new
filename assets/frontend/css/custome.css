@@ -1781,3 +1781,15 @@ footer {
   height: 7px;
   border-radius: 5px;
 }
+h6.subscribe-title {
+  color: #ff5d00;
+  transition: all 0.3s ease-in-out;
+}
+
+h6.subscribe-title:hover {
+  color: #111;
+}
+
+.input-group .subscribe-input {
+  border-radius: 50px 0 0 50px !important;
+}

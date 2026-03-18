@@ -1,16 +1,19 @@
 @extends('web.layouts.app')
-@section('title', ' products')
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
-    <meta property="og:title" content="Products of {{ $web_config['name'] }} " />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+@section('title', 'Video Shopping | ' . $web_config['name']->value)
 
-    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
-    <meta property="twitter:title" content="Products of {{ $web_config['name'] }}" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-@endpush
+@section('meta_description', 'Shop premium clothing & original skincare products online at the best prices in
+    Bangladesh.')
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
+        <meta property="og:title" content="Products of {{ $web_config['name'] }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
+        <meta property="twitter:title" content="Products of {{ $web_config['name'] }}" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @endpush
 @section('content')
     <section>
         <div class="container">

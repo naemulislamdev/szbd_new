@@ -1,4 +1,6 @@
 @extends('web.layouts.app')
+@section('title', 'Franchise | ' . $web_config['name']->value)
+@section('meta_description', 'Join our franchise program and enjoy business growth with premium products and support.')
 
 @section('content')
     <div class="container">

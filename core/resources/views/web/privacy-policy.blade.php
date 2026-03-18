@@ -1,35 +1,38 @@
 @extends('web.layouts.app')
 
-@section('title', 'Privacy policy')
+@section('title', 'Privacy Policy | ' . $web_config['name']->value)
+@section('meta_description',
+    'Review our privacy policy to know how your personal information is collected and protected.
+    ')
 
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="Terms & conditions of {{ $web_config['name']->value }} " />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="og:title" content="Terms & conditions of {{ $web_config['name']->value }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
 
-    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="Terms & conditions of {{ $web_config['name']->value }}" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="twitter:title" content="Terms & conditions of {{ $web_config['name']->value }}" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
 
-    <style>
-        .headerTitle {
-            font-size: 25px;
-            font-weight: 700;
-            margin-top: 2rem;
-        }
+        <style>
+            .headerTitle {
+                font-size: 25px;
+                font-weight: 700;
+                margin-top: 2rem;
+            }
 
-        .for-container {
-            width: 91%;
-            border: 1px solid #D8D8D8;
-        }
+            .for-container {
+                width: 91%;
+                border: 1px solid #D8D8D8;
+            }
 
-        .for-padding {
-            padding: 3%;
-        }
-    </style>
-@endpush
+            .for-padding {
+                padding: 3%;
+            }
+        </style>
+    @endpush
 
 @section('content')
     <div class="container">

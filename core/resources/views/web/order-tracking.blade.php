@@ -1,6 +1,9 @@
 @extends('web.layouts.app')
 
-@section('title', 'Track Order')
+@section('title', 'Order Track Result | ' . $web_config['name']->value)
+
+@section('meta_description', 'Track your order and get instant updates on the status of your clothing and skincare products.')
+
 <?php
 $order = \App\Models\OrderDetail::where('order_id', $orderDetails->id)->get();
 ?>

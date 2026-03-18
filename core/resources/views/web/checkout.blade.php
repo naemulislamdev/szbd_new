@@ -1,197 +1,201 @@
 @extends('web.layouts.app')
 
-@section('title', 'My Shopping Cart')
 
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="{{ $web_config['name']->value }} " />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+@section('title', 'Checkout | ' . $web_config['name']->value)
+@section('meta_description',
+    'Checkout now and finalize your order for premium clothing and skincare items.
+    ')
 
-    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="{{ $web_config['name']->value }}" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/shop-cart.css" />
-    <style>
-        p,
-        span,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        th,
-        label {
-            font-family: 'SolaimanLipi', sans-serif !important;
-            font-weight: 400;
-            font-size: 18px;
-        }
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="og:title" content="{{ $web_config['name']->value }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
-        .address-title {
-            font-size: 22px;
-        }
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="twitter:title" content="{{ $web_config['name']->value }}" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+        <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/shop-cart.css" />
+        <style>
+            p,
+            span,
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            th,
+            label {
+                font-family: 'SolaimanLipi', sans-serif !important;
+                font-weight: 400;
+                font-size: 18px;
+            }
 
-        .card-header {
-            padding: 6px 0px;
-            margin-bottom: 0;
-            border-bottom: 0px solid rgba(0, 0, 0, .125);
-            background: #424242;
-            color: #ffffff;
-            text-align: center;
-        }
+            .address-title {
+                font-size: 22px;
+            }
 
-        header {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            border-bottom: 1px solid hsla(0, 0%, 100%, .14);
-            background: #fff;
-            transition: 0.5s;
-        }
+            .card-header {
+                padding: 6px 0px;
+                margin-bottom: 0;
+                border-bottom: 0px solid rgba(0, 0, 0, .125);
+                background: #424242;
+                color: #ffffff;
+                text-align: center;
+            }
 
-        .menu-area>ul>li>a {
-            text-decoration: none;
-            color: #343a40;
-        }
+            header {
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                z-index: 9999;
+                border-bottom: 1px solid hsla(0, 0%, 100%, .14);
+                background: #fff;
+                transition: 0.5s;
+            }
 
-        .menu-icon {
-            color: #504f4f;
-        }
+            .menu-area>ul>li>a {
+                text-decoration: none;
+                color: #343a40;
+            }
 
-        .header-icon>a>.fa {
-            color: #464545;
-        }
+            .menu-icon {
+                color: #504f4f;
+            }
 
-        .shipping-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+            .header-icon>a>.fa {
+                color: #464545;
+            }
 
-        .shipping-box input[type="radio"] {
-            margin-right: 10px;
-            accent-color: #33ad07;
-            /* red accent */
-        }
+            .shipping-box {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                padding: 10px 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
 
-        .shipping-box:hover {
-            border-color: #33ad07;
-            background: #fff5f5;
-        }
+            .shipping-box input[type="radio"] {
+                margin-right: 10px;
+                accent-color: #33ad07;
+                /* red accent */
+            }
 
-        .shipping-box input[type="radio"]:checked+.shipping-title {
-            font-weight: bold;
-            color: #f26d21;
-        }
+            .shipping-box:hover {
+                border-color: #33ad07;
+                background: #fff5f5;
+            }
 
-        .address-box {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 7px 10px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            position: relative;
-        }
+            .shipping-box input[type="radio"]:checked+.shipping-title {
+                font-weight: bold;
+                color: #f26d21;
+            }
 
-        .address-box.active {
-            border-color: #0d6efd;
-            background: #f5f9ff;
-        }
+            .address-box {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 7px 10px;
+                cursor: pointer;
+                margin-bottom: 10px;
+                position: relative;
+            }
 
-        .address-box input {
-            display: none;
-        }
+            .address-box.active {
+                border-color: #0d6efd;
+                background: #f5f9ff;
+            }
 
-        .address-box>h4 {
-            font-size: 14px;
-            margin: 0px;
-        }
+            .address-box input {
+                display: none;
+            }
 
-        .edit-btn {
-            position: absolute;
-            bottom: 0px;
-            right: 0px;
-        }
+            .address-box>h4 {
+                font-size: 14px;
+                margin: 0px;
+            }
 
-        .qty-btn {
-            width: 27px;
-            height: 27px;
-            line-height: 15px;
-            text-align: center;
-            font-weight: bold;
-        }
+            .edit-btn {
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+            }
 
-        .qty-input {
-            width: 50px;
-            text-align: center;
-            border: 1px solid #ddd;
-            margin: 0 5px;
-        }
-    </style>
-    <style>
-        .otp-card {
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 30px 20px;
-            background: #ffffff;
-            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-            border-radius: 10px;
-            color: #020101;
-            text-align: center;
-        }
+            .qty-btn {
+                width: 27px;
+                height: 27px;
+                line-height: 15px;
+                text-align: center;
+                font-weight: bold;
+            }
 
-        .otp-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
+            .qty-input {
+                width: 50px;
+                text-align: center;
+                border: 1px solid #ddd;
+                margin: 0 5px;
+            }
+        </style>
+        <style>
+            .otp-card {
+                max-width: 500px;
+                margin: 20px auto;
+                padding: 30px 20px;
+                background: #ffffff;
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+                border-radius: 10px;
+                color: #020101;
+                text-align: center;
+            }
 
-        .otp-subtitle {
-            font-size: 16px;
-            margin-bottom: 14px;
-        }
+            .otp-title {
+                font-size: 24px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
 
-        .otp-timer {
-            color: orange;
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
+            .otp-subtitle {
+                font-size: 16px;
+                margin-bottom: 14px;
+            }
 
-        .otp-inputs {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+            .otp-timer {
+                color: orange;
+                font-size: 18px;
+                font-weight: 700;
+                margin-bottom: 20px;
+            }
 
-        .otp-box {
-            width: 55px;
-            height: 55px;
-            text-align: center;
-            font-size: 26px;
-            border: 1px solid #555;
-            background: #fff;
-            color: #111;
-            border-radius: 4px;
-        }
+            .otp-inputs {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
 
-        .otp-box:focus {
-            outline: none;
-            border-color: orange;
-        }
-    </style>
-@endpush
+            .otp-box {
+                width: 55px;
+                height: 55px;
+                text-align: center;
+                font-size: 26px;
+                border: 1px solid #555;
+                background: #fff;
+                color: #111;
+                border-radius: 4px;
+            }
+
+            .otp-box:focus {
+                outline: none;
+                border-color: orange;
+            }
+        </style>
+    @endpush
 
 @section('content')
     {{-- @dd(session('otp')) --}}

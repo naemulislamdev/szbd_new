@@ -1,6 +1,8 @@
 @extends('web.layouts.app')
 
-@section('title', 'Track Order Result')
+@section('title', 'Order Track | ' . $web_config['name']->value)
+
+@section('meta_description', 'Enter your order ID and phone number to track your clothing or skincare order instantly.')
 
 @push('css_or_js')
     <meta property="og:type" content="website">

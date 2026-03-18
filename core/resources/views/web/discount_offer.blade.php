@@ -1,17 +1,20 @@
 @extends('web.layouts.app')
-@section('title', $discount_offers->title)
+@section('title', Str::limit($discount_offers->title, 60))
+@section('meta_description',
+    'Shop discount offers and enjoy special deals on premium clothing and skincare items.
+    ')
 
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
-    <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-@endpush
+        <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @endpush
 @section('content')
     <section>
         <div class="container mt-4">

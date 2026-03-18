@@ -1,41 +1,43 @@
 @extends('web.layouts.app')
 
-@section('title', 'Order Complete')
+@section('title', 'Order Complete | ' . $web_config['name']->value)
+@section('meta_description',
+    'Order complete! Thank you for purchasing premium clothing and skincare products.
+    ')
+    @push('css_or_js')
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
-@push('css_or_js')
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+            body {
+                font-family: 'Montserrat', sans-serif;
+            }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-        }
+            .checkout-card {
+                border: none;
+                background: #fff;
+                box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+                border-radius: 12px
+            }
 
-        .checkout-card {
-            border: none;
-            background: #fff;
-            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-            border-radius: 12px
-        }
+            .checkout-card .card-title {
+                font-weight: 600;
+            }
 
-        .checkout-card .card-title {
-            font-weight: 600;
-        }
+            .checkout-card .order_number .h5 {
+                font-size: 16px;
+                font-weight: 600;
+            }
 
-        .checkout-card .order_number .h5 {
-            font-size: 16px;
-            font-weight: 600;
-        }
+            .checkout-card .border-bottom {
+                border-bottom: 1px solid #eef0f1 !important;
+            }
 
-        .checkout-card .border-bottom {
-            border-bottom: 1px solid #eef0f1 !important;
-        }
-
-        .order_summery {
-            border: 1px dotted #d4d7d8;
-            border-radius: 20px;
-        }
-    </style>
-@endpush
+            .order_summery {
+                border: 1px dotted #d4d7d8;
+                border-radius: 20px;
+            }
+        </style>
+    @endpush
 
 @section('content')
     <div class="container mt-5 mb-5">

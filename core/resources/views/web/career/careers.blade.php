@@ -1,5 +1,8 @@
 @extends('web.layouts.app')
-@section('title', 'Careers')
+
+@section('title', 'Career | ' . $web_config['name']->value)
+
+@section('meta_description', 'Join our team and discover exciting career opportunities with learning and growth.')
 <style>
     section.career .card-title {
         color: #ff5d00;

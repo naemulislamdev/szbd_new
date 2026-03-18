@@ -1,6 +1,7 @@
 @extends('web.layouts.app')
+@section('title', Str::limit($product['name'], 60) . ' | ' . $web_config['name']->value)
+@section('meta_description', Str::limit(strip_tags($product->meta_description), 100))
 
-@section('title', $product['name'])
 
 @push('css_or_js')
     <meta name="description" content="{{ strip_tags($product->meta_description) }}">

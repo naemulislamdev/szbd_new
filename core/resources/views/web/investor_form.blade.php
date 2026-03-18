@@ -1,46 +1,49 @@
 @extends('web.layouts.app')
+@section('title', 'Investor | ' . $web_config['name']->value)
+@section('meta_description',
+    'Understand the investment options available and team up with an established brand for long-term growth potential.
 
-@section('title', 'Investor')
-<style>
-    @import url('https://fonts.maateen.me/solaiman-lipi/font.css');
+    ')
+    <style>
+        @import url('https://fonts.maateen.me/solaiman-lipi/font.css');
 
-    .bg-orange {
-        background: #ff5d00 !important;
-        color: #fff !important;
-    }
+        .bg-orange {
+            background: #ff5d00 !important;
+            color: #fff !important;
+        }
 
-    .investor-card {
-        background: #fff;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-        border: none;
-        border-radius: 10px !important;
-    }
+        .investor-card {
+            background: #fff;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+            border: none;
+            border-radius: 10px !important;
+        }
 
-    .btn.bg-orange:focus {
-        outline: 0;
-        box-shadow: 0 0 0 .2rem rgba(255, 93, 0, .25);
-    }
+        .btn.bg-orange:focus {
+            outline: 0;
+            box-shadow: 0 0 0 .2rem rgba(255, 93, 0, .25);
+        }
 
-    input.form-control {
-        padding: 8px 14px;
-    }
+        input.form-control {
+            padding: 8px 14px;
+        }
 
-    .form-control {
-        border-width: 2px;
-    }
+        .form-control {
+            border-width: 2px;
+        }
 
-    .investor-card .card-header {
-        border-radius: 10px 10px 0 0 !important;
-    }
+        .investor-card .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
 
-    .investor-card {
-        font-family: 'SolaimanLipi', sans-serif;
-    }
+        .investor-card {
+            font-family: 'SolaimanLipi', sans-serif;
+        }
 
-    .investment-options label {
-        cursor: pointer;
-    }
-</style>
+        .investment-options label {
+            cursor: pointer;
+        }
+    </style>
 @section('content')
     <section class=" career">
         <div class="container " style="min-height: 100vh;">

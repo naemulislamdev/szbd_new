@@ -1,5 +1,8 @@
 @extends('web.layouts.app')
-@section('title', 'Special Offers')
+@section('title', 'Special Offers | ' . $web_config['name']->value)
+@section('meta_description',
+    'Shop special offers and get premium clothing and skincare products at discounted prices.
+    ')
 @section('content')
     <section>
         <div class="container">

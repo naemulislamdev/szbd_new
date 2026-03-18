@@ -1,16 +1,31 @@
 @extends('web.layouts.app')
-@section('title', ' products')
-@push('css_or_js')
-    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
-    <meta property="og:title" content="Products of {{ $web_config['name'] }} " />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+@php
+    $categoryTitle = 'All Products'; // default
 
-    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
-    <meta property="twitter:title" content="Products of {{ $web_config['name'] }}" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-@endpush
+    if (!empty($data['cat']->name) && !empty($data['subCat']->name) && !empty($data['childCat']->name)) {
+        $categoryTitle = $data['cat']->name . ' | ' . $data['subCat']->name . ' | ' . $data['childCat']->name;
+    } elseif (!empty($data['cat']->name) && !empty($data['subCat']->name)) {
+        $categoryTitle = $data['cat']->name . ' | ' . $data['subCat']->name;
+    } elseif (!empty($data['cat']->name)) {
+        $categoryTitle = $data['cat']->name;
+    }
+@endphp
+
+@section('title', Str::limit($categoryTitle . ' | ' . $web_config['name']->value, 60))
+@section('meta_description', Str::limit('Explore ' . $categoryTitle . ' products and shop premium clothing and skincare
+    items.', 100))
+
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
+        <meta property="og:title" content="Products of {{ $web_config['name'] }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
+        <meta property="twitter:title" content="Products of {{ $web_config['name'] }}" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @endpush
 @section('content')
     <section class="py-3">
         <div class="container">

@@ -1,5 +1,8 @@
 @extends('web.layouts.app')
-@section('title', 'Complain')
+@section('title', 'Complain | ' . $web_config['name']->value)
+@section('meta_description',
+    'Submit your complaint and get fast assistance for any issues with orders, products, or services.
+    ')
 @section('content')
     <style>
         .complain-box {
@@ -36,7 +39,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="consult-img">
-                                    <img src="{{ asset('assets/frontend/img/complain.jpg') }}" alt="">
+                                    <img style="max-width: 100%; height: auto;"
+                                        src="{{ asset('assets/frontend/img/complain.jpg') }}" alt="">
                                 </div>
                             </div>
                             <div class="col-md-6">

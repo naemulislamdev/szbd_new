@@ -1,40 +1,44 @@
 @extends('web.layouts.app')
 
-@section('title', 'About Us')
+@section('title', 'About Us | ' . $web_config['name']->value)
+@section('meta_description',
+    'Explore our company story and commitment to authentic, high-quality clothing and skincare.
 
-@push('css_or_js')
-    <style>
-        .headerTitle {
-            font-size: 25px;
-            font-weight: 700;
-            margin-top: 2rem;
-        }
+    ')
 
-        .for-container {
-            width: 91%;
-            border: none;
-            margin-top: 3%;
-            margin-bottom: 3%;
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-            background: #fff;
-            border-radius: 8px;
-        }
+    @push('css_or_js')
+        <style>
+            .headerTitle {
+                font-size: 25px;
+                font-weight: 700;
+                margin-top: 2rem;
+            }
 
-        .for-padding {
-            padding: 3%;
-        }
-    </style>
+            .for-container {
+                width: 91%;
+                border: none;
+                margin-top: 3%;
+                margin-bottom: 3%;
+                box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                background: #fff;
+                border-radius: 8px;
+            }
 
-    <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="About {{ $web_config['name']->value }} " />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
+            .for-padding {
+                padding: 3%;
+            }
+        </style>
 
-    <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="about {{ $web_config['name']->value }}" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
-@endpush
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="og:title" content="About {{ $web_config['name']->value }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
+
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo']->value }}" />
+        <meta property="twitter:title" content="about {{ $web_config['name']->value }}" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{{ strip_tags(substr($web_config['about']->value, 0, 100)) }}">
+    @endpush
 
 @section('content')
     <div class="container">

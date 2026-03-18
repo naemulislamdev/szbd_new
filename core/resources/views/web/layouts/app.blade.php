@@ -3,12 +3,15 @@
 
 <head>
     <meta charset="utf-8">
+    {{-- meta info --}}
     <title>
-        @yield('title')
+        @yield('title', 'Premium Clothing & Original Skincare BD | ' . $web_config['name']->value)
     </title>
-    <meta name="meta_title" content="@yield('title')">
-    <meta name="keywords" content="@yield('meta_keywords')">
-    <meta name="description" content="@yield('meta_description')">
+
+    <meta name="title" content="@yield('title', 'Premium Clothing & Original Skincare BD | ' . $web_config['name']->value)">
+
+    <meta name="description" content="@yield('meta_description', Str::limit(strip_tags($web_config['about']->value), 100))">
+    {{-- meta info --}}
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#0d6efd">
     <link rel="apple-touch-icon" href="{{ asset('assets/default/icons/szbd.png') }}">
@@ -294,7 +297,6 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
-
             opacity: 0;
             transform: translateY(10px) scale(0.95);
             pointer-events: none;
