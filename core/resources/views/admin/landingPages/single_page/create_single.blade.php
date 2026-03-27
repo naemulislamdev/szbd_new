@@ -86,8 +86,12 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label for="name">Add new product<span class="text-danger">*</span></label>
-                                    <select class="form-select form-select-lg" name="product_id">
+                                    {{-- <select class="form-select form-select-lg" name="product_id">
                                         <option selected disabled>Select a product</option>
+
+
+                                    </select> --}}
+                                    <select required class="js-example-responsive form-control" name="product_id">
                                         @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
                                             <option value="{{ $product->id }}">
                                                 {{ $product['name'] }} || {{ $product['code'] }}
@@ -175,6 +179,16 @@
 
 @endsection
 @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.js-example-responsive').select2({
+                placeholder: "Select Products",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+
     <script>
         function readURL3(input) {
             if (input.files && input.files[0]) {

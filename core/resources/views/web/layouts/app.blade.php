@@ -26,13 +26,9 @@
         href="{{ asset('assets/storage/company') }}/{{ $web_config['fav_icon']->value }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- bootstrap icons -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
-        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Font Awesome cdn link -->
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/animate.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/xzoom.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/swiper-bundle.min.css" />
@@ -50,7 +46,8 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!--<link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/style.css">-->
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/responsive.css">
-
+    <!-- bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     {{-- dont touch this --}}
     @stack('css_or_js')
     <meta name="_token" content="{{ csrf_token() }}">
@@ -493,6 +490,7 @@
             bottom: 52px !important;
         }
     </style>
+
     @php
         $request = request()->route()->getName();
     @endphp

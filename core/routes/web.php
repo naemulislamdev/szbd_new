@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('maintenance-mode', [FrontendController::class, 'maintenance_mode'])->name('maintenance-mode');
 
-Route::middleware(['web', 'track_visitor', 'content_security_policy', 'maintenance_mode'])->group(function () {
+Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
         Route::get('/', 'home')->name('home');
         Route::get('/category', 'category')->name('category');

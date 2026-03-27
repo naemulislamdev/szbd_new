@@ -84,66 +84,7 @@
         </div>
     </div><!-- container -->
 
-    <!--Category Edit Modal -->
-    {{-- <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <form id="editForm" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="id" id="pageId">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Page</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Page Title</label>
-                                <input required type="text" name="title" value="" id="title"
-                                    class="form-control" placeholder="Enter Page title" required>
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Add First Display Product</label>
-                                <select class="form-select" style="overflow: hidden" name="product_id" id="productId">
-                                    <option style="max-width: 100%; height: auto;" selected disabled>Select a product
-                                    </option>
-                                    @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
-                                        <option style="max-width: 100%; height: auto;" value="{{ $product->id }}">
-                                            {{ $product['name'] }} || {{ $product['code'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">
-                                    Select Banner Slider Images
-                                    <small class="text-danger">ratio 1:1</small>
-                                </label>
-                                <input id="customFileEg2" type="file" name="images[]" multiple class="form-control"
-                                    accept=".jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*">
-                            </div>
-
-                            <div class="col-12">
-                                <hr>
-                                <div id="imagePreviewContainer2" class="d-flex flex-wrap justify-content-center gap-1">
-                                    <!-- Preview images will appear here -->
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div> --}}
 
     <!-- Category Add Modal -->
     <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"

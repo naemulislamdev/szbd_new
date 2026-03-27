@@ -4,10 +4,7 @@
 
 
 @push('styles')
-    <!-- bootstrap icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
-        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- Font Awesome cdn link -->
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/font-awesome.min.css" />
 @endpush

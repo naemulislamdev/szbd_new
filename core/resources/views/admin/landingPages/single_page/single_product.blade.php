@@ -55,6 +55,7 @@
                                         <th>SL</th>
                                         <th>Title</th>
                                         <th>Slug</th>
+                                        <th>SKU</th>
                                         <th>Product Name</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
@@ -105,14 +106,24 @@
                         data: 'title'
                     },
                     {
-                        data: 'slug'
+                        data: 'slug',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
-                        data: 'product_id'
+                        data: 'sku',
+                        name: 'products.code'
+
+                    },
+                    {
+                        data: 'product_id',
+                        name: 'products.name'
                     },
 
                     {
-                        data: 'status'
+                        data: 'status',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'action',

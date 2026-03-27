@@ -99,12 +99,14 @@
                                                                         <img class="d-block mr-2 rounded-l"
                                                                             onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                                             src="{{ $detail['color_image'] }}"
-                                                                            alt="VR Collection" width="60">
+                                                                            alt="{{ isset($product['name']) ? Str::limit($product['name'], 50) : '' }}"
+                                                                            width="60">
                                                                     @else
                                                                         <img class="d-block mr-2"
                                                                             onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                                                             src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                                            alt="VR Collection" width="60">
+                                                                            alt="{{ isset($product['name']) ? Str::limit($product['name'], 50) : '' }}"
+                                                                            width="60">
                                                                     @endif
                                                                 </div>
                                                                 <div class="col-10 for-glaxy-name pt-2"
@@ -115,10 +117,26 @@
                                                                         {{ isset($product['name']) ? Str::limit($product['name'], 50) : '' }}
                                                                     </a><br>
                                                                     @if ($detail->variant)
-                                                                        <span>variant: </span>
+                                                                        <span style="font-size: 15px;">variant: </span>
                                                                         <span style="font-size: 20px">
                                                                             {{ $detail->variant }}</span>
                                                                     @endif
+                                                                    <div>
+                                                                        <span style="font-size: 15px;">Quantity: </span>
+
+                                                                        <span style="font-size: 18px; font-weight: 800;">
+                                                                            {{ $detail->qty }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span style="font-size: 15px;">Price: </span>
+
+                                                                        <span style="font-size: 18px; font-weight: 800;">
+                                                                            {{ $detail->price }} X {{ $detail->qty }} =
+                                                                            {{ $detail->price * $detail->qty }}
+                                                                        </span>
+                                                                    </div>
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -134,13 +152,13 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-                                                        <span class="product-qty ">Quantity</span>
+                                                        <span class="product-qty ">Item</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                        <span>{{ $order->details[0]['qty'] }}</span>
+                                                        <span>{{ $order->details->count() }}</span>
                                                     </div>
                                                 </td>
                                             </tr>

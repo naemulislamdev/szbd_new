@@ -134,7 +134,7 @@ class LandingPagesController extends Controller
             }
             $images = json_encode($main_slider_images);
         }
-        dd($images);
+
         $landing_page = new LandingPages();
         $landing_page->title = $request->title;
         $landing_page->main_banner = $images;
@@ -186,8 +186,8 @@ class LandingPagesController extends Controller
         LandingPages::where('id', $request['id'])->update([
             'main_banner' => json_encode($array),
         ]);
-        Toastr::success('Main banner image removed successfully!');
-        return back();
+
+        return back()->with('success', 'Main banner image removed successfully!');
     }
 
     public function update(Request $request)
@@ -221,7 +221,7 @@ class LandingPagesController extends Controller
 
         $deal = DB::table('landing_pages')->where('id', $deal_id)->first();
 
-        return view('admin-views.landingpages.add-product', compact('deal', 'products', 'flash_deal_products'));
+        return view('admin.landingpages.add-product', compact('deal', 'products', 'flash_deal_products'));
     }
 
     public function add_product_submit(Request $request, $deal_id)
@@ -261,7 +261,7 @@ class LandingPagesController extends Controller
     {
         $flash_deal_products = DB::table('landing_pages_products')->where('landing_id', $id)->pluck('product_id');
         $deal = DB::table('landing_pages')->where('id', $id)->first();
-        return view("admin.landingpages.addMulti_product", compact("deal", "flash_deal_products"));
+        return view("admin.landingPages.addMulti_product", compact("deal", "flash_deal_products"));
     }
     public function addedProductsDatatable($id)
     {
@@ -373,27 +373,44 @@ class LandingPagesController extends Controller
     }
     public function singleProductdatatables()
     {
-        $query = ProductLandingPage::latest('id');
+        $query = ProductLandingPage::query()
+            ->select(
+                'product_landing_pages.*',
+                'products.name as product_name',
+                'products.code as sku'
+            )
+            ->leftJoin('products', 'products.id', '=', 'product_landing_pages.product_id');
 
         return DataTables::of($query)
             ->addIndexColumn()
 
+            // 🔹 Product Name
+            ->editColumn('product_name', function ($row) {
+                return $row->product_name ?? '';
+            })
+
+            // 🔹 SKU
+            ->editColumn('sku', function ($row) {
+                return $row->sku ?? '';
+            })
+
+            // 🔹 Action Buttons
             ->addColumn('action', function ($row) {
                 $route = route('admin.landingpages.single.edit', $row->id);
+
                 return '
                 <a href="' . $route . '" class="btn btn-primary btn-sm">
                     <i class="la la-edit"></i>
                 </a>
 
                 <button class="btn btn-danger btn-sm delete"
-                    style="cursor: pointer;"
-                    title="Delete"
                     data-id="' . $row->id . '">
                     <i class="la la-trash"></i>
                 </button>
             ';
             })
 
+            // 🔹 Status Toggle
             ->editColumn('status', function ($row) {
                 $checked = $row->status == 1 ? 'checked' : '';
 
@@ -403,36 +420,24 @@ class LandingPagesController extends Controller
                         type="checkbox"
                         data-id="' . $row->id . '"
                         value="1"
-                        ' . $checked . '
-                        id="flexSwitch' . $row->id . '">
+                        ' . $checked . '>
                 </div>
             ';
             })
-            ->editColumn('product_id', function ($row) {
 
-                if (!$row->product) {
-                    return '';
-                }
-
-                return Str::limit(
-                    $row->product->name . ' || ' . $row->product->code,
-                    70
-                );
-            })
-
+            // 🔹 Slug Link
             ->editColumn('slug', function ($row) {
-
                 if ($row->status == 1 && $row->slug) {
-
                     $url = url('/page/' . $row->slug);
-
                     return "<a href='{$url}' target='_blank'>{$row->slug}</a>";
                 }
 
                 return "<span class='text-muted'>Link is Deactivated</span>";
             })
 
-            ->rawColumns(['action',  'status', 'product_id', 'slug'])
+            // 🔥 IMPORTANT: Enable raw HTML
+            ->rawColumns(['action', 'status', 'slug'])
+
             ->toJson();
     }
     public function LandingPageStatus(Request $request)

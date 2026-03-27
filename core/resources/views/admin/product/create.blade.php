@@ -205,13 +205,12 @@
                                 <div class="col-md-4">
                                     <label for="name">Unit<span class="text-danger">*</span></label>
                                     <select class="form-control form-control-lg" name="unit">
-                                        {{-- @foreach (\App\CPU\Helpers::units() as $x)
-                                            <option value="{{ $x }}" {{ old('unit') == $x ? 'selected' : '' }}>
+                                        @foreach (\App\CPU\Helpers::units() as $x)
+                                            <option value="{{ $x }}"
+                                                {{ old('unit') == $x ? 'selected' : '' }}>
                                                 {{ $x }}</option>
-                                        @endforeach --}}
-                                        <option value="unit-1">unit 1</option>
-                                        <option value="unit-2">unit 2</option>
-                                        <option value="unit-3">unit 3</option>
+                                        @endforeach
+
                                     </select>
                                     @error('unit')
                                         <span class="text-danger">{{ $message }}</span>
@@ -761,11 +760,39 @@
     </script>
     <script>
         $(document).ready(function() {
+
+            function formatColor(state) {
+                if (!state.id) return state.text;
+
+                var colorCode = $(state.element).val(); // 🔥 FIX এখানে
+
+                return `
+        <span style="display:inline-flex; align-items:center;">
+            <span style="
+                width:12px;
+                height:12px;
+                background:${colorCode};
+                border:1px solid #ccc;
+                margin-right:6px;
+                display:inline-block;
+                border-radius:2px;
+            "></span>
+            ${state.text}
+        </span>
+    `;
+
+            }
+
             $('#colors-selector').select2({
                 placeholder: "Select Colors",
-                allowClear: true,
-                width: '100%'
+                width: '100%',
+                templateResult: formatColor,
+                templateSelection: formatColor,
+                escapeMarkup: function(m) {
+                    return m;
+                }
             });
+
         });
         $(document).ready(function() {
             $('#choice_attributes').select2({
