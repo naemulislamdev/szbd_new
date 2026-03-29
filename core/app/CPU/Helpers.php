@@ -240,4 +240,9 @@ class Helpers
         }
         return $err_keeper;
     }
+    public static function units()
+    {
+        $x = ['kg', 'pc', 'gms', 'ltrs'];
+        return $x;
+    }
 }

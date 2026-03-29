@@ -455,28 +455,26 @@
                                         <div class="col-6 mb-2">
                                             <h4 style="font-size: 18px; margin:0;" class="mb-2">Quantity:</h4>
 
-                                            <div class="product-quantity d-flex align-items-center">
-                                                <div
-                                                    class="input-group--style-2 pr-3 d-flex align-items-center justify-content-between">
 
-                                                    <button class="btn btn-danger btn-number" type="button"
-                                                        data-type="minus" data-field="quantity" style="padding: 10px">
-                                                        <i class="fa fa-minus "></i>
+                                            <div class="product-quantity">
+                                                <div class="input-group" style="width:160px">
+
+                                                    <button class="btn btn-danger btn-pm-qty" data-type="minus"
+                                                        data-id="{{ $product->id }}">
+                                                        <i class="fa fa-minus"></i>
                                                     </button>
 
-                                                    <input style="font-size: 20px; font-weight: 600" type="hidden"
-                                                        name="quantity"
-                                                        class="form-control bg-transparent input-number text-center cart-qty-field border-0 p-0"
-                                                        placeholder="1" value="1" min="1" max="100">
-                                                    <p class="cart-qty-field input-number">1</p>
+                                                    <input style="font-weight: 700;" type="text"
+                                                        class="form-control input-pm-number text-center"
+                                                        data-id="{{ $product->id }}" name="quantity" value="1"
+                                                        min="1" max="100">
 
-                                                    <button class="btn btn-success btn-number" type="button"
-                                                        data-type="plus" data-field="quantity" style="padding: 10px">
-                                                        <i class="fa fa-plus "></i>
+                                                    <button class="btn btn-success btn-pm-qty" data-type="plus"
+                                                        data-id="{{ $product->id }}">
+                                                        <i class="fa fa-plus"></i>
                                                     </button>
 
                                                 </div>
-
                                             </div>
 
                                         </div>

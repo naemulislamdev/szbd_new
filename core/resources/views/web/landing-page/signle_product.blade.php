@@ -398,6 +398,18 @@
             line-height: 30px;
             text-align: center;
         }
+
+        .carousel-control-next,
+        .carousel-control-prev {
+            top: 0% !important;
+        }
+
+        .carousel-control-next:focus,
+        .carousel-control-next:hover,
+        .carousel-control-prev:focus,
+        .carousel-control-prev:hover {
+            top: 48% !important;
+        }
     </style>
     <style>
         .otp-card {
@@ -598,7 +610,7 @@
                             <div class="benefit-img">
                                 {{-- <img src="{{ asset('landingpage/') }}"
                                     style="width: 100%; height:500px;" alt=""> --}}
-                                <img src="{{ asset('storage/landingpage/' . $productLandingPage->feature_img) }}"
+                                <img src="{{ asset('assets/storage/landingpage/' . $productLandingPage->feature_img) }}"
                                     style="width: 100%; " alt="">
                             </div>
                         </div>
@@ -635,14 +647,14 @@
 
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img src="{{ asset('storage/landingpage/' . $section->section_img) }}"
+                                            <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
                                     </div>
                                 @elseif ($section->section_direction == 'right')
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img src="{{ asset('storage/landingpage/' . $section->section_img) }}"
+                                            <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
                                     </div>
@@ -690,8 +702,8 @@
                                         <div class="col-md-6 mx-auto">
                                             <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control otp-phone-save check-phone"
-                                                    id="otp_phone">
+                                                <input type="number" class="form-control otp-phone-save check-phone"
+                                                    id="otp_phone" name="phone">
                                                 <button type="button" id="send_otp" class="btn btn-info btn-sm">
                                                     ওটিপি পাঠান
                                                 </button>

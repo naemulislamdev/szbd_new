@@ -513,7 +513,7 @@
     <section class="our-outlet-section">
         <div class="container">
             <div class="row align-items-center my-5">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="row g-4">
                         @foreach ($branchs as $branch)
                             <div class="col-md-4">
@@ -523,7 +523,7 @@
                                         <i class="fa fa-map-marker text-muted" style="font-size: 24px"
                                             aria-hidden="true"></i>
                                         <div class="ml-3">
-                                            <h6 class="subscribe-title mb-0" style="font-size: 18px; font-weight: 700;"
+                                            <h6 class="subscribe-title mb-0" style="font-size: 17px; font-weight: 700;"
                                                 class="mb-0">
                                                 {{ $branch->name }}</h6>
                                             <address style="font-size: 12px; line-height: 20px" class="text-muted">
@@ -536,18 +536,19 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <h6 style="font-size: 22px; font-weight: 500 ">Join our newsletter for latest update
+                <div class="col-md-5 mx-auto mt-4">
+                    <h6 style="font-size: 22px; font-weight: 500; max-width: 70%; margin: 0 auto;" class="text-center">
+                        Join our newsletter for latest update
                         on discount and
                         offer</h6>
-                    <form action="{{ route('subscription') }}" method="POST">
+                    <form action="{{ route('subscription') }}" method="POST" class="mt-3">
                         @csrf
                         <div class="input-group mb-3">
 
                             <input type="email" required class="form-control subscribe-input"
                                 placeholder="Your Email Here" aria-describedby="button-addon1">
 
-                            <button class="btn btn-danger" type="submit" id="button-addon1"
+                            <button class="btn bg-orange" type="submit" id="button-addon1"
                                 style="border-radius: 0 25px 25px 0 !important;">
                                 Subscribe
                             </button>

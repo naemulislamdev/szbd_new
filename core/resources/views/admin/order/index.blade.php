@@ -34,7 +34,7 @@
                                         <input type="date" id="from_date" class="form-control" placeholder="From Date">
                                     </div>
                                     <div class="col-md-3">
-                                         <label for="to_date">To Date</label>
+                                        <label for="to_date">To Date</label>
                                         <input type="date" id="to_date" class="form-control" placeholder="To Date">
                                     </div>
                                     <div class="col-md-2">
@@ -44,8 +44,9 @@
                                         <button type="button" id="reset_btn" class="btn btn-secondary">Reset</button>
                                     </div>
                                     <div class="col-md-2">
-                                       <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#dateExportModal"><i class="las la-file-excel"></i> Export</button>
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#dateExportModal"><i class="las la-file-excel"></i>
+                                            Export</button>
                                     </div>
                                 </div>
 
@@ -71,8 +72,10 @@
                                         <th>Phone</th>
                                         <th>Amount</th>
                                         <th>Delivery Charge</th>
+                                        <th>Coupon</th>
                                         <th>Total</th>
                                         <th>Order Status</th>
+                                        <th>Note</th>
                                         <th>Order Type</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -85,54 +88,54 @@
         </div> <!-- end row -->
     </div><!-- container -->
     {{-- Data Export Modal --}}
-   <div class="modal fade" id="dateExportModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="GET" action="{{ route('admin.order.data_export') }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Export Orders (Date Wise)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Form Date <span class="text-danger">*</span></label>
-                        <input type="date" name="from_date" class="form-control" required>
+    <div class="modal fade" id="dateExportModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="GET" action="{{ route('admin.order.data_export') }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Export Orders (Date Wise)</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">To Date <span class="text-danger">*</span></label>
-                        <input type="date" name="to_date" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status <span class="text-danger">*</span></label>
-                        <select name="status" class="form-control" required>
-                            <option value="all">all</option>
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="processing">Processing</option>
-                            <option value="out_for_delivery">Out for delivery</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="returned">Returned</option>
-                            <option value="failed">Failed</option>
-                            <option value="canceled">Canceled</option>
-                        </select>
-                    </div>
-                </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Form Date <span class="text-danger">*</span></label>
+                            <input type="date" name="from_date" class="form-control" required>
+                        </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                        <div class="mb-3">
+                            <label class="form-label">To Date <span class="text-danger">*</span></label>
+                            <input type="date" name="to_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select name="status" class="form-control" required>
+                                <option value="all">all</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="processing">Processing</option>
+                                <option value="out_for_delivery">Out for delivery</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="returned">Returned</option>
+                                <option value="failed">Failed</option>
+                                <option value="canceled">Canceled</option>
+                            </select>
+                        </div>
+                    </div>
 
-                    <button type="submit" class="btn btn-success">
-                        Export Now
-                    </button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit" class="btn btn-success">
+                            Export Now
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 @endsection
 @push('scripts')
     <script>
@@ -200,6 +203,10 @@
                         name: 'shipping_cost'
                     },
                     {
+                        data: 'coupon_code',
+                        name: 'coupon_code'
+                    },
+                    {
                         data: 'total',
                         name: 'total',
                         orderable: false,
@@ -208,6 +215,10 @@
                     {
                         data: 'order_status',
                         name: 'order_status'
+                    },
+                    {
+                        data: 'order_note',
+                        name: 'order_note'
                     },
                     {
                         data: 'order_type',

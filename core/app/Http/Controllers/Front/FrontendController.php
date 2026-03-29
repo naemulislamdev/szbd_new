@@ -113,9 +113,7 @@ class FrontendController extends Controller
         }
 
         $branchs = Branch::where('status', 1)->get();
-
-
-        return view('web.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'branchs'));
+        return view('web.home', compact('featured_products', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts'));
     }
 
     public function leads()

@@ -67,8 +67,10 @@
                                         <th>Phone</th>
                                         <th>Amount</th>
                                         <th>Delivery Charge</th>
+                                        <th>Coupon</th>
                                         <th>Total</th>
                                         <th>Order Status</th>
+                                        <th>Note</th>
                                         <th>Order Type</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -148,6 +150,10 @@
                         name: 'shipping_cost'
                     },
                     {
+                        data: 'coupon_code',
+                        name: 'coupon_code'
+                    },
+                    {
                         data: 'total',
                         name: 'total'
                     },
@@ -155,6 +161,11 @@
                         data: 'order_status',
                         name: 'order_status'
                     },
+                    {
+                        data: 'order_note',
+                        name: 'order_note'
+                    },
+
                     {
                         data: 'order_type',
                         name: 'order_type'

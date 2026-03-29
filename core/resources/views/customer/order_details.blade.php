@@ -365,7 +365,7 @@
                 $extra_discount = $order['extra_discount'];
             }
             ?>
-            @if ($order->order_note != null)
+            @if ($order->customer_note != null)
                 <div class="p-2">
 
                     <h4>Order note</h4>
@@ -379,9 +379,31 @@
             @endif
         </div>
     </div>
-
     {{-- Calculation --}}
-    <div class="row d-flex justify-content-end">
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-8 col-lg-7">
+            <div class="mt-4">
+                <div>
+                    <span class="h5">Current Order Status</span>
+
+                    <button
+                        class="btn @if ($order->order_status == 'canceled') btn-danger @else btn-primary @endif">{{ ucfirst($order->order_status) }}</button>
+                </div>
+                <div class="mt-3">
+                    <span class="h5">Status Note:</span>
+                    <span class="h5 @if ($order->order_status == 'canceled') text-danger @endif">
+                        {{ $order->order_note ? ucfirst(json_decode($order->order_note, true)['note']) ?? 'Order Placed Successfully!' : 'Order Placed Successfully!' }}
+                    </span>
+                </div>
+                @if ($order->order_status == 'canceled')
+                    <div class="text-right">
+                        <img style="max-width: 200px; height: auto;transform: rotate(-20deg);"
+                            src="{{ asset('assets/frontend/images/canceled_sill.png') }}" alt="canceled">
+                    </div>
+                @endif
+
+            </div>
+        </div>
         <div class="col-md-8 col-lg-5">
             <table class="table table-borderless">
                 <tbody class="totals">

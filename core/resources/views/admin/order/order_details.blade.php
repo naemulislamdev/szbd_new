@@ -104,11 +104,12 @@
                                                 $note = json_decode($order->order_note, true);
                                             @endphp
 
-                                            <p class="pl-1 order_note">
-                                                {{ $note['note'] ?? '' }} — {{ $note['user'] ?? '' }}
-                                                ({{ $note['time'] ?? '' }})
-                                                ({{ $note['employee_name'] ?? '' }})
-                                            </p>
+                                            <div id="statusNote">
+                                                <p class="pl-1 order_note">
+                                                    {{ $note['note'] ?? '' }} — {{ $note['user'] ?? '' }}
+                                                    ({{ $note['date'] ?? '' }})
+                                                </p>
+                                            </div>
                                         @endif
 
                                         <ul id="noteList" class="list-unstyled d-flex flex-column">
@@ -195,9 +196,8 @@
                                                         <label>Add Note</label>
                                                         <div>
                                                             <div class="input-group mb-3">
-                                                                <input autofocus required type="text"
-                                                                    class="form-control" name="multiple_note[]"
-                                                                    placeholder="Enter New note">
+                                                                <input required type="text" class="form-control"
+                                                                    name="multiple_note[]" placeholder="Enter New note">
                                                             </div>
                                                         </div>
 
@@ -594,22 +594,11 @@
                 text: warning,
                 input: 'textarea',
                 inputPlaceholder: placeholder,
-                inputAttributes: {
-                    required: true
-                },
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Change it!',
                 confirmButtonColor: '#377dff',
                 cancelButtonColor: '#6c757d',
-                preConfirm: (note) => {
-                    if (!note) {
-                        Swal.showValidationMessage('Note is required');
-                        return false;
-                    }
-                    console.log(note);
 
-                    return note;
-                }
             }).then((result) => {
 
                 $.ajaxSetup({
@@ -629,7 +618,7 @@
                     data: {
                         id: orderId,
                         order_status: status,
-                        order_note: result.value
+                        order_note: result.value ? result.value : ""
                     },
                     success: function(res) {
                         toastr.success('Order status updated successfully');
@@ -652,6 +641,7 @@
             });
         }
     </script>
+
 
     <script>
         $('#product_search').keyup(function() {

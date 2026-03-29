@@ -164,7 +164,7 @@
 
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Add First Display Product</label>
-                                <select class="form-select" style="overflow: hidden" name="product_id" id="">
+                                {{-- <select class="form-select" style="overflow: hidden" name="product_id" id="">
                                     <option style="max-width: 100%; height: auto;" selected disabled>Select a product
                                     </option>
                                     @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
@@ -172,7 +172,17 @@
                                             {{ $product['name'] }} || {{ $product['code'] }}
                                         </option>
                                     @endforeach
+                                </select> --}}
+
+                                <select required class="js-example-responsive form-control" name="product_id">
+                                    @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
+                                        <option value="{{ $product->id }}">
+                                            {{ $product['name'] }} || {{ $product['code'] }}
+                                        </option>
+                                    @endforeach
                                 </select>
+
+
                             </div>
 
                             <div class="col-md-12 mb-3">
@@ -211,6 +221,16 @@
 
 @endsection
 @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.js-example-responsive').select2({
+                placeholder: "Select Products",
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#categoryModal') // 🔥 important
+            });
+        });
+    </script>
     <script>
         $.ajaxSetup({
             headers: {
@@ -342,7 +362,7 @@
                     error: function(err) {
 
 
-                        toastr.error(err.responseJSON.message ?? 'Something went wrong!');
+                        toastr.error('Something went wrong!');
                     }
                 });
             });
@@ -372,7 +392,7 @@
                         toastr.success(res.message ?? 'Page Updated successfully');
                     },
                     error: function(err) {
-                        toastr.error(err.responseJSON.message ?? 'Something went wrong!');
+                        toastr.error('Something went wrong!');
                     }
                 });
             });
