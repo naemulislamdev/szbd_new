@@ -367,6 +367,7 @@
                                 <tr>
                                     <th>Image</th>
                                     <th>Name</th>
+                                    <th>Code</th>
                                     <th>Price</th>
                                     <th>Qty</th>
                                     <th>Variation</th>
@@ -392,6 +393,7 @@
                                             </td>
                                             <td>{{ substr($detail->product['name'], 0, 30) }}{{ strlen($detail->product['name']) > 10 ? '...' : '' }}
                                             </td>
+                                            <td>{{ $detail->product['code'] }}</td>
                                             <td>{{ $detail['price'] }}</td>
                                             <td>{{ $detail->qty }}</td>
                                             <td>{{ $detail['variant'] }}-{{ $detail['variation'] }}</td>
@@ -399,10 +401,10 @@
                                             @php($subtotal = $detail['price'] * $detail->qty - $detail['discount'])
                                             <td>{{ $subtotal }}</td>
                                             <td>
-                                                <button class="btn btn-danger btn-sm remove-item"
-                                                    data-id="{{ $detail->id }}">
+                                                <a href="javascript:;" class="btn btn-danger btn-sm remove-item"
+                                                    id="delete" data-id="{{ $detail->id }}">
                                                     <i class="la la-trash"></i>
-                                                </button>
+                                                </a>
                                             </td>
                                             <td>
                                                 {{ $detail->created_by ?? 'Customer' }}
@@ -428,7 +430,7 @@
                                 <dl class="row text-sm-right">
                                     <dt class="col-sm-6">Subtotal</dt>
                                     <dd class="col-sm-6 border-bottom">
-                                        <strong>{{ $subtotal }}</strong>
+                                        <strong>{{ $total }}</strong>
                                     </dd>
                                     <dt class="col-sm-6">Shipping</dt>
                                     <dd class="col-sm-6 border-bottom">
@@ -460,41 +462,43 @@
         </div>
         <!-- End Row -->
     </div>
-    <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="{{ route('admin.order.shipping.update', $order->shipping_address) }}" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Shipping Address</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label>Name</label>
-                            <input type="text" name="contact_person_name"
-                                value="{{ $shipping_address->contact_person_name ?? '' }}" class="form-control"
-                                id="name" required>
+    @if ($order->order_type != 'POS')
+        <div class="modal fade" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form action="{{ route('admin.order.shipping.update', $order->shipping_address) }}" method="POST">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Shipping Address</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="mb-3">
-                            <label>Address</label>
-                            <input type="text" name="address" value="{{ $shipping_address->address ?? '' }}"
-                                class="form-control" id="address" required>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label>Name</label>
+                                <input type="text" name="contact_person_name"
+                                    value="{{ $shipping_address->contact_person_name ?? '' }}" class="form-control"
+                                    id="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Address</label>
+                                <input type="text" name="address" value="{{ $shipping_address->address ?? '' }}"
+                                    class="form-control" id="address" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Phone</label>
+                                <input type="number" name="phone" value="{{ $shipping_address->phone ?? '' }}"
+                                    class="form-control" id="phone" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label>Phone</label>
-                            <input type="number" name="phone" value="{{ $shipping_address->phone ?? '' }}"
-                                class="form-control" id="phone" required>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     <!-- End Page Header -->
     <div class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true" id="variationModal">
@@ -772,11 +776,33 @@
         $(document).on('click', '.remove-item', function() {
             let detail_id = $(this).data('id');
 
-            $.post('{{ route('admin.order.remove_product') }}', {
-                _token: '{{ csrf_token() }}',
-                detail_id
-            }, function() {
-                reloadTable();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to remove this item!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.post('{{ route('admin.order.remove_product') }}', {
+                        _token: '{{ csrf_token() }}',
+                        detail_id: detail_id
+                    }, function() {
+
+                        Swal.fire(
+                            'Deleted!',
+                            'Item has been removed.',
+                            'success'
+                        );
+
+                        reloadTable();
+                    });
+
+                }
             });
         });
     </script>

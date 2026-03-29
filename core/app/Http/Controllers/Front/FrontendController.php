@@ -112,8 +112,10 @@ class FrontendController extends Controller
             }
         }
 
+        $branchs = Branch::where('status', 1)->get();
 
-        return view('web.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts'));
+
+        return view('web.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'branchs'));
     }
 
     public function leads()
@@ -779,9 +781,11 @@ class FrontendController extends Controller
             }
 
 
-            $discount = 0;
+
             if ($product->discount_type === 'flat' && $product->discount > 0) {
                 $discount = $product->discount * $rate;
+            } else {
+                $discount = $product->discount;
             }
             $bdtUnitPrice = $product->unit_price * $rate;
             $bdtPurchasePrice = $product->purchase_price * $rate;
@@ -789,7 +793,7 @@ class FrontendController extends Controller
             $product->update([
                 'unit_price'     => round($bdtUnitPrice, 2),
                 'purchase_price' => round($bdtPurchasePrice, 2),
-                'discount'       => round($discount, 2),
+                'discount'       => $discount,
                 'variation'      => json_encode($variations),
             ]);
         }
@@ -809,29 +813,37 @@ class FrontendController extends Controller
         } else {
             $rate = 1;
         }
+        DB::statement("UPDATE orders
+SET
+    order_number = id,
+    order_amount = ROUND(order_amount * $rate),
+    discount_amount = ROUND(discount_amount * $rate),
+    shipping_cost = ROUND(shipping_cost * $rate)
+");
 
-        Order::chunk(200, function ($orders) use ($rate) {
+        DB::statement("UPDATE order_details
+SET price = ROUND(price * $rate)");
 
+        // Order::chunk(200, function ($orders) use ($rate) {
 
-            foreach ($orders as $order) {
+        //     foreach ($orders as $order) {
 
-                $order->update([
-                    'order_number'     => $order->id,
-                    'order_amount'    => round($order->order_amount * $rate),
-                    'discount_amount' => round($order->discount_amount * $rate),
-                    'shipping_cost'   => round($order->shipping_cost * $rate),
-                ]);
-                // dd($order->details);
-                if (count($order->details) > 0) {
+        //         $order->update([
+        //             'order_number'     => $order->id,
+        //             'order_amount'    => round($order->order_amount * $rate),
+        //             'discount_amount' => round($order->discount_amount * $rate),
+        //             'shipping_cost'   => round($order->shipping_cost * $rate),
+        //         ]);
+        //         if (count($order->details) > 0) {
 
-                    foreach ($order->details as $detail) {
-                        $detail->update([
-                            'price' => round($detail->price * $rate),
-                        ]);
-                    }
-                }
-            }
-        });
+        //             foreach ($order->details as $detail) {
+        //                 $detail->update([
+        //                     'price' => round($detail->price * $rate),
+        //                 ]);
+        //             }
+        //         }
+        //     }
+        // });
 
         return "USD Converted Back To BDT Successfully!";
     }

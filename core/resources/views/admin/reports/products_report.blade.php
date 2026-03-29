@@ -50,12 +50,12 @@
                             </div>
 
                             <div class="col-md-2">
-                                <label for="from_date">From Date</label>
+                                <label>From Date</label>
                                 <input type="date" id="from_date" value="{{ date('Y-m-d') }}" class="form-control">
                             </div>
 
                             <div class="col-md-2">
-                                <label for="to_date">To Date</label>
+                                <label>To Date</label>
                                 <input type="date" id="to_date" value="{{ date('Y-m-d') }}" class="form-control">
                             </div>
 

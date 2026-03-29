@@ -515,18 +515,19 @@
             <div class="row align-items-center my-5">
                 <div class="col-md-8">
                     <div class="row g-4">
-                        @foreach ([1, 1, 1, 1, 1, 1, 1, 1] as $i)
+                        @foreach ($branchs as $branch)
                             <div class="col-md-4">
                                 <div>
-                                    <a href="#" class="d-flex align-items-center gy-4">
+                                    <a href="={{ $branch->map_url ? $branch->map_url : '' }}"
+                                        class="d-flex align-items-center gy-4" target="_blank">
                                         <i class="fa fa-map-marker text-muted" style="font-size: 24px"
                                             aria-hidden="true"></i>
                                         <div class="ml-3">
-                                            <h6 class="subscribe-title mb-0" style="font-size: 14px" class="mb-0">
-                                                GULSHAN
-                                                FLAGSHIP</h6>
-                                            <address style="font-size: 14px; line-height: 20px" class="text-muted">
-                                                Amanullah Trade Center, Plot - 06, Gulshan 2 Circle
+                                            <h6 class="subscribe-title mb-0" style="font-size: 18px; font-weight: 700;"
+                                                class="mb-0">
+                                                {{ $branch->name }}</h6>
+                                            <address style="font-size: 12px; line-height: 20px" class="text-muted">
+                                                {!! $branch->address !!}
                                             </address>
                                         </div>
                                     </a>

@@ -26,7 +26,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $currentRevenue = Order::where('order_status', 'delivered')
+        $currentRevenue = Order::where('order_status', 'confirmed')
             ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
             ->sum('order_amount');
 
@@ -52,7 +52,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $lastRevenue = Order::where('order_status', 'delivered')
+        $lastRevenue = Order::where('order_status', 'confirmed')
             ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
             ->sum('order_amount');
 

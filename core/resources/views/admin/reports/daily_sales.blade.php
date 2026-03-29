@@ -50,12 +50,12 @@
                             </div>
 
                             <div class="col-md-2">
-                                <label for="from_date">From Date</label>
+                                <label for="">From Date</label>
                                 <input type="date" id="from_date" value="{{ date('Y-m-d') }}" class="form-control">
                             </div>
 
                             <div class="col-md-2">
-                                <label for="to_date">To Date</label>
+                                <label for="">To Date</label>
                                 <input type="date" id="to_date" value="{{ date('Y-m-d') }}" class="form-control">
                             </div>
 
@@ -336,7 +336,7 @@
             $('#reset_btn').on('click', function() {
                 $('#report_type').val('today').trigger('change');
                 $('#from_date').val("{{ date('Y-m-d') }}");
-                $('#to_date').val("{{ date('Y-m-d') }}");
+                $('to_date').val("{{ date('Y-m-d') }}");
                 $('#order_status').val(['confirmed']).trigger('change');
 
                 table.ajax.reload();

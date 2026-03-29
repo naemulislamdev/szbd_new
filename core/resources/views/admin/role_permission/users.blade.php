@@ -297,10 +297,13 @@
                         data: 'email'
                     },
                     {
-                        data: 'branch'
+                        data: 'branch',
+                        name: 'branches.name'
                     },
                     {
-                        data: 'role'
+                        data: 'role',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'status'

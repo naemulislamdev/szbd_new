@@ -72,7 +72,8 @@ class EmplyeeController extends Controller
         app(PermissionRegistrar::class)
             ->setPermissionsTeamId(auth('admin')->user()->branch_id);
 
-        $query = Admin::query()->with('branch');
+        $query = Admin::leftJoin('branches', 'admins.branch_id', '=', 'branches.id')
+            ->select('admins.*', 'branches.name as branch_name');
         $query->latest('id');
         return DataTables::of($query)
             ->addIndexColumn()
@@ -110,7 +111,7 @@ class EmplyeeController extends Controller
             // Edit Column
 
             ->editColumn('branch', function ($row) {
-                $status = $row->branch->name ?? 'N/A';
+                $status = $row->branch_name ?? 'N/A';
                 return $status;
             })
             ->editColumn('role', function ($row) {

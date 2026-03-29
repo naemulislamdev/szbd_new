@@ -346,6 +346,20 @@ class OrderController extends Controller
             'payment_status' => 'unpaid',
         ]);
 
+        $orderItems = OrderDetail::where('order_id', $request->order_id)->get();
+        $grand_total = 0;
+        foreach ($orderItems as $item) {
+            $product_subtotal = ($item->price * $item->qty)
+                + ($item->tax * $item->qty)
+                - ($item->discount * $item->qty);
+
+            $grand_total += $product_subtotal;
+        }
+        // dd($grand_total);
+
+        $order->order_amount = $grand_total;
+        $order->save();
+
 
         return response()->json([
             'success' => true,
@@ -354,7 +368,25 @@ class OrderController extends Controller
     }
     public function removeProduct(Request $request)
     {
-        OrderDetail::where('id', $request->detail_id)->delete();
+        $orderDetail = OrderDetail::findOrFail($request->detail_id);
+        $orderId = $orderDetail->order_id;
+
+        $orderDetail->delete();
+
+        $orderItems = OrderDetail::where('order_id', $orderId)->get();
+
+        $grand_total = 0;
+        foreach ($orderItems as $item) {
+            $product_subtotal = ($item->price * $item->qty)
+                + ($item->tax * $item->qty)
+                - ($item->discount * $item->qty);
+
+            $grand_total += $product_subtotal;
+        }
+
+        $order = Order::findOrFail($orderId);
+        $order->order_amount = $grand_total;
+        $order->save();
 
         return response()->json(['success' => true]);
     }
