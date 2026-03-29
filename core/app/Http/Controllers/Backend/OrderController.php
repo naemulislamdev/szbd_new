@@ -145,7 +145,43 @@ class OrderController extends Controller
                     return ucfirst($order->order_type ?? 'Regular');
                 }
             })
+            ->editColumn('coupon_code', function (Order $order) {
+                return $order->coupon_code ? $order->coupon_code : "N/A";
+            })
+            ->editColumn('order_note', function ($row) {
+                // order_note JSON decode
+                $order_note = $row->order_note ? json_decode($row->order_note, true) : null;
 
+                // multiple_note JSON decode
+                $multipleNote = null;
+                if ($row->multiple_note) {
+                    $multipleNotesArray = json_decode($row->multiple_note, true); // array of notes
+                    if (is_array($multipleNotesArray) && count($multipleNotesArray) > 0) {
+                        $multipleNote = end($multipleNotesArray); // last note
+                    }
+                }
+
+                // Output HTML
+                if ($multipleNote) {
+                    return '<small class="pl-1 order_note">'
+                        . ($multipleNote['note'] ?? '')
+                        . ' <span class="text-muted">('
+                        . ($multipleNote['time'] ?? '')
+                        . ' -> Note by: '
+                        . ($multipleNote['user'] ?? '')
+                        . ')</span></small>';
+                } elseif ($order_note) {
+                    return '<small class="pl-1 order_note">'
+                        . ($order_note['note'] ?? '')
+                        . ' — '
+                        . ($order_note['user'] ?? '')
+                        . ' ('
+                        . ($order_note['date'] ?? '')
+                        . ')</small>';
+                } else {
+                    return '<small class="pl-1 order_note text-muted"></small>';
+                }
+            })
             ->addColumn('action', function (Order $order) {
 
                 $buttons = '
@@ -157,7 +193,6 @@ class OrderController extends Controller
             <i class="las la-receipt"></i>
         </a>
     ';
-
                 if (auth('admin')->user()->can('order_delete')) {
                     $buttons .= '
             <a href="' . route('admin.order.delete', $order->id) . '" class="btn btn-sm btn-danger">
@@ -165,7 +200,6 @@ class OrderController extends Controller
             </a>
         ';
                 }
-
                 return $buttons;
             })
             // ->filterColumn('customer_name', function ($query, $keyword) {
@@ -183,7 +217,9 @@ class OrderController extends Controller
             ->rawColumns([
                 'order_number',
                 'order_status',
-                'action'
+                'action',
+                'order_note',
+                'coupon_code'
             ])
 
             ->toJson();
@@ -196,9 +232,9 @@ class OrderController extends Controller
         $order->order_status = $request->order_status;
         $newNote = json_encode([
             'note' => $request->order_note,
-            'time' => now()->format('d M Y h:i A'),
-            'employee_id' => auth('admin')->user()->id,
-            'employee_name' => auth('admin')->user()->name,
+            'date' => now()->format('d M Y h:i A'),
+            'user_id' => auth('admin')->user()->id,
+            'user' => auth('admin')->user()->name,
         ]);
 
         if ($request->order_status === 'delivered') {
@@ -210,7 +246,7 @@ class OrderController extends Controller
         return response()->json([
             'status'       => true,
             'order_status' => $order->order_status,
-            'note'    => $newNote
+            'note'    => json_decode($newNote)
         ]);
     }
 

@@ -130,7 +130,7 @@ class LandingPagesController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
-                $main_slider_images[] = FileManager::uploadFile('landingpage/slider/', 200, $img);
+                $main_slider_images[] = FileManager::uploadFile('/deal/main-banner/', 200, $img);
             }
             $images = json_encode($main_slider_images);
         }
@@ -175,7 +175,7 @@ class LandingPagesController extends Controller
     }
     public function remove_image(Request $request)
     {
-        ImageManager::delete('/deal/main-banner/' . $request['image']);
+        FileManager::delete('/deal/main-banner/' . $request['image']);
         $landingPage = LandingPages::find($request['id']);
         $array = [];
         foreach (json_decode($landingPage['main_banner']) as $image) {
@@ -196,10 +196,22 @@ class LandingPagesController extends Controller
         $validinfo = $request->validate([
             'title' => "required"
         ]);
+
+        $main_slider_images = [];
+        $images = null;
+
         $page = LandingPages::find($request->id);
         $page->title = $request->title;
         $page->slug = Str::slug($request->title);
         $page->product_id = $request->product_id;
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $main_slider_images[] = FileManager::uploadFile('/deal/main-banner/', 200, $img);
+            }
+            $images = json_encode($main_slider_images);
+            $page->main_banner = $images;
+        }
 
         if ($page->save()) {
             return response()->json([

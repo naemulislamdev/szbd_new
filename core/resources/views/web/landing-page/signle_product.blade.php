@@ -594,14 +594,14 @@
 
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img src="{{ asset('storage/landingpage/' . $section->section_img) }}"
+                                            <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
                                     </div>
                                 @elseif ($section->section_direction == 'right')
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
-                                            <img src="{{ asset('storage/landingpage/' . $section->section_img) }}"
+                                            <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="">
                                         </div>
                                     </div>

@@ -49,7 +49,7 @@
                 ],
                 'delivered' => [
                     'permission' => 'order_delivered',
-                    'label' => 'Delivery',
+                    'label' => 'Delivered',
                     'badge' => 'success',
                     'count' => $orderCounts->delivered ?? 0,
                 ],
