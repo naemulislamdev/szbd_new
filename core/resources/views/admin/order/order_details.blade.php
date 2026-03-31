@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header d-print-none p-3" style="background: white">
+                    <div class="card-header d-print-none p-3">
                         <div class="col-sm-12 mb-2 mb-sm-0">
 
                             <div class="d-flex align-items-sm-center justify-between">
