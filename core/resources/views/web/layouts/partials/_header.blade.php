@@ -6,7 +6,7 @@
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
 
                 <a href="{{ route('home') }}">
-                    <img class="header-logo"
+                    <img class="MainLogo" class="header-logo"
                         src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                         alt="{{ $web_config['name']->value }}">
@@ -24,6 +24,7 @@
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
+                            <li><a target="_blank" href="https://www.szonebd.com/">Exclusive Zone</a></li>
                             @if ($discountOffer != null)
                                 <li><a href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
                                             style="height: 60px; width: auto;"
@@ -98,15 +99,19 @@
                             <li><a href="{{ route('offers.product') }}"><img style="height: 50px; width: auto;"
                                         src="{{ asset('assets/frontend/img/sp_offer.png') }}" alt="special image"></a>
                             </li>
-                            <li><a href="{{ route('outlets') }}">Our outlets</a></li>
-                            <li><a href="{{ route('careers') }}">Careers</a></li>
+                            {{-- <li><a href="{{ route('outlets') }}">Our outlets</a></li> --}}
+
+                            {{-- <li><a href="{{ route('careers') }}">Career</a></li> --}}
+                            <li><a target="_blank" href="https://asmishop.com/"><img style="height: 50px; width: auto;"
+                                        src="{{ asset('assets/frontend/images/asmi.gif') }}" alt=""></a>
+                            </li>
                         </ul>
                     </div>
 
                     <div class="d-flex d-lg-none">
-                        <i class="fa fa-bars menu-icon"></i>
+                        {{-- <i class="fa fa-bars menu-icon"></i> --}}
 
-                        <div class="ml-4 d-flex align-items-center flex-row">
+                        <div class="d-flex align-items-center flex-row">
                             <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                             <a href="{{ route('home') }}">
 
@@ -144,27 +149,34 @@
                         </a>
                     @endif
 
-                    <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
-                        aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    <a class="d-none d-lg-inline-block" data-bs-toggle="offcanvas" href="#searchOffcanvas"
+                        role="button" aria-controls="searchOffcanvas"><i class="bi bi-search text-orange"></i></a>
+
+                    <a class="d-inline-block d-lg-none text-orange" data-bs-toggle="offcanvas"
+                        href="#shoppingCartOffcanvas" role="button" aria-controls="shoppingCartOffcanvas"><i
+                            class="bi bi-cart-check text-orange" style="color: orange; stroke: orange;"></i><span
+                            class="badge bg-orange total_cart_count" id="total_cart_count">
+                            {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
+                        </span></a>
 
 
-                    <a class="d-none d-lg-inline-block" href="{{ route('wishlists') }}"><i class="fa fa-heart-o"
-                            aria-hidden="true"></i>
+                    <a class="d-none d-lg-inline-block" href="{{ route('wishlists') }}"><i
+                            class="fa fa-heart-o text-orange" aria-hidden="true"></i>
                         <span
-                            class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span></a>
+                            class="badge bg-orange countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span></a>
                     <a class="d-none d-lg-inline-block" data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas"
-                        role="button" aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart"
-                            aria-hidden="true"></i><span class="badge badge-danger total_cart_count"
+                        role="button" aria-controls="shoppingCartOffcanvas"><i
+                            class="bi bi-cart-check text-orange"></i><span class="badge bg-orange total_cart_count"
                             id="total_cart_count">
                             {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
                         </span></a>
 
                     @if (auth('customer')->check())
-                        <a href="{{ route('user-account') }}" class="d-none d-lg-inline-block"><i class="fa fa-user"
-                                aria-hidden="true"></i></a>
+                        <a href="{{ route('user-account') }}" class="d-none d-lg-inline-block text-orange"><i
+                                class="bi bi-person-circle text-orange"></i></a>
                     @else
                         <a href="{{ route('customer.auth.login') }}" class="d-none d-lg-inline-block"><i
-                                class="fa fa-user" aria-hidden="true"></i></a>
+                                class="bi bi-person-circle text-orange"></i></a>
                     @endif
 
 
@@ -190,6 +202,12 @@
     </div>
     <div class="mm-menu">
         <div class="accordion" id="accordionExample">
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a target="_blank" href="https://www.szonebd.com/"><i class="fa fa-ptab3 mr-2"></i>Exclusive
+                        Zone</a>
+                </div>
+            </div>
             <div class="menu-box">
                 <div class="menu-link">
                     <a href="{{ route('home') }}"><i class="fa fa-ptab3 mr-2"></i>Home</a>
@@ -276,14 +294,20 @@
                     <a href="{{ route('outlets') }}"><i class="fa fa-ptab3 mr-2"></i>Our outlets</a>
                 </div>
             </div>
+
             <div class="menu-box">
                 <div class="menu-link">
                     <a href="{{ route('careers') }}"><i class="fa fa-ptab3 mr-2"></i>Careers</a>
                 </div>
             </div>
-            {{-- <div class="menu-box mt-2 text-white">
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a target="_blank" href="https://asmishop.com/"><img style="height: 50px; width: auto;"
+                            src="{{ asset('assets/frontend/images/asmi.gif') }}" alt=""></a>
+                </div>
+            </div>
 
-            </div> --}}
+
         </div>
     </div>
     <div class="menu-link"

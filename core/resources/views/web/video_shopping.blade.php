@@ -1,7 +1,8 @@
 @extends('web.layouts.app')
 @section('title', 'Video Shopping | ' . $web_config['name']->value)
 
-@section('meta_description', 'Shop premium clothing & original skincare products online at the best prices in
+@section('meta_description',
+    'Shop premium clothing & original skincare products online at the best prices in
     Bangladesh.')
     @push('css_or_js')
         <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
@@ -32,45 +33,12 @@
                         <h1>Video Shopping</h1>
                         <div class="heading-border"></div>
                     </div>
-                    <div class="grid-controls">
-                        <button class="grid-btn" data-columns="6" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="4" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="3" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="5" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
 
-                        </button>
-                    </div>
-                    <div class="grid-controls mobile-grid-controls">
-                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category">
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
                 </div>
             </div>
 
             @if (count($videoProducts) > 0)
-                <div class="row product-grid" id="video-ajax-products">
+                <div class="row " id="video-ajax-products">
                     @include('web.products.video_ajax_products', ['products' => $videoProducts])
                 </div>
                 <div class="row">

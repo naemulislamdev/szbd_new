@@ -315,55 +315,19 @@
         </div>
     </section>
     <!------Start Product section----->
-    <section class="py-3">
+    <section class="pb-3">
         <div class="container">
             {{-- @include('web.layouts.partials.product_filter') --}}
             <div class="row mb-3 mt-3">
                 <div class="col-12">
-                    <div class="section-heading-title d-flex align-items-center justify-content-between">
-                        <h3>Feature Products</h3>
-                        <div class="grid-controls m-0 " style="margin: 0; width: auto !important;">
-                            <button class="grid-btn" data-columns="6" data-category="category1">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn" data-columns="4" data-category="category1">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn" data-columns="3" data-category="category1">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn" data-columns="5" data-category="category1">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-
-                            </button>
-
-                        </div>
-                        <div class="grid-controls mobile-grid-controls m-0">
-                            <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category1">
-                                <div class="grid-icon"></div>
-                            </button>
-                            <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category1">
-                                <div class="grid-icon"></div>
-                                <div class="grid-icon"></div>
-                            </button>
-                        </div>
+                    <div class="section-heading-title d-flex align-items-center justify-content-center">
+                        <h3>Featured Products</h3>
                     </div>
-
                 </div>
             </div>
-            @php($decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'))
+            @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings') @endphp
             @if ($featured_products->count() > 0)
-                <div class="row product-grid">
+                <div class="row">
                     <!-- Your product columns go here -->
                     @foreach ($featured_products as $product)
                         @include('web.products.product_box', ['dataCategory' => 'category1'])
@@ -377,56 +341,18 @@
                 <div class="container">
                     <div class="row mb-3">
                         <div class="col-md-12 ">
-                            <div class="section-heading-title d-flex align-items-center justify-content-between">
-                                <h3>{{ Str::limit($category['name'], 18) }}</h3>
-                                <div>
-                                    <div class="grid-controls m-0 " style="margin: 0; width: auto !important;">
-                                        <button class="grid-btn" data-columns="6"
-                                            data-category="category_{{ $category->id }}">
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                        </button>
-                                        <button class="grid-btn" data-columns="4"
-                                            data-category="category_{{ $category->id }}">
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                        </button>
-                                        <button class="grid-btn" data-columns="3"
-                                            data-category="category_{{ $category->id }}">
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                        </button>
-                                        <button class="grid-btn" data-columns="5"
-                                            data-category="category_{{ $category->id }}">
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
+                            @if (count($category->Products) > 0)
+                                <div class="section-heading-title d-flex align-items-center justify-content-center">
+                                    <h3>{{ Str::limit($category['name'], 18) }}</h3>
+                                    <div>
 
-                                        </button>
-                                    </div>
-                                    <div class="grid-controls mobile-grid-controls">
-                                        <button class="grid-btn grid-btn-mobile" data-columns="12"
-                                            data-category="category_{{ $category->id }}">
-                                            <div class="grid-icon"></div>
-                                        </button>
-                                        <button class="grid-btn grid-btn-mobile" data-columns="6"
-                                            data-category="category_{{ $category->id }}">
-                                            <div class="grid-icon"></div>
-                                            <div class="grid-icon"></div>
-                                        </button>
                                     </div>
                                 </div>
-                            </div>
-
+                            @endif
                         </div>
                     </div>
                 </div>
-                <div class="row product-grid">
+                <div class="row ">
                     <!-- Your product columns go here -->
                     @foreach ($category->Products as $key => $product)
                         @if ($key < 12)
@@ -437,7 +363,7 @@
                     @endforeach
                 </div>
             @endforeach
-            @foreach (\App\Models\Banner::where('banner_type', 'Footer Banner')->where('published', 1)->orderBy('id', 'desc')->take(3)->get() as $banner)
+            {{-- @foreach (\App\Models\Banner::where('banner_type', 'Footer Banner')->where('published', 1)->orderBy('id', 'desc')->take(3)->get() as $banner)
                 <div class="row my-3">
                     <div class="col-md-12">
                         <div class="big-banner">
@@ -449,7 +375,58 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @endforeach --}}
+        </div>
+    </section>
+    <section class="our-brand">
+        <div class="container">
+            <div class="row mb-3 mt-3">
+                <div class="col-12">
+                    <div class="section-heading-title d-flex align-items-center justify-content-center">
+                        <h3>Our Brands</h3>
+                    </div>
+                </div>
+            </div>
+
+
+            {{-- <div class="row justify-content-center align-items-center
+            ">
+                @foreach ($ourBrands as $brand)
+                    <div class="col-lg-2 text-center">
+                        <a style="text-align: center !important;" class="text-center" href="{{ $brand['link'] }}"
+                            target="_blank">
+                            <img style="max-width: 100%; max-height: 100px;"
+                                src="{{ asset('assets/frontend/images/brands/' . $brand['logo']) }}"
+                                alt="{{ $brand['name'] }}">
+                            <p class="text-orange" style="font-weight: bolder">{{ $brand['name'] }}</p>
+                        </a>
+                    </div>
+                @endforeach
+            </div> --}}
+            <div class="swiper myBrandSwiper">
+                <div class="swiper-wrapper d-flex align-items-center">
+
+                    @foreach ($ourBrands as $brand)
+                        <div class="swiper-slide text-center align-items-center">
+                            <a href="{{ $brand['link'] }}" target="_blank">
+                                <img style="max-width: 100%; max-height: 100px;"
+                                    src="{{ asset('assets/frontend/images/brands/' . $brand['logo']) }}"
+                                    alt="{{ $brand['name'] }}">
+                                <p class="text-orange" style="font-weight: bolder">
+                                    {{ $brand['name'] }}
+                                </p>
+                            </a>
+                        </div>
+                    @endforeach
+
+                </div>
+
+                <!-- 🔥 MUST add these -->
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+
         </div>
     </section>
 
@@ -537,7 +514,7 @@
                     </div>
                 </div>
                 <div class="col-md-5 mx-auto mt-4">
-                    <h6 style="font-size: 22px; font-weight: 500; max-width: 70%; margin: 0 auto;" class="text-center">
+                    <h6 style="font-size: 22px; font-weight: 500;  margin: 0 auto; " class="text-center newslater-title">
                         Join our newsletter for latest update
                         on discount and
                         offer</h6>

@@ -86,7 +86,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card mb-3">
+                <div class="card mb-3 ">
                     <div class="card-header">
                         <h2 class="address-title mb-0">আপনার ঠিকানা</h2>
                     </div>
@@ -124,8 +124,8 @@
                                             </div>
 
                                             <div class="otp-inputs" id="otpBoxesWrap">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box" autofocus>
+                                                <input type="text" inputmode="numeric" maxlength="1" class="otp-box"
+                                                    autofocus>
                                                 <input type="text" inputmode="numeric" maxlength="1"
                                                     class="otp-box">
                                                 <input type="text" inputmode="numeric" maxlength="1"
@@ -137,8 +137,8 @@
                                             <input type="hidden" id="otp" autocomplete="one-time-code">
 
                                             <div class="mt-3 d-flex gap-2 justify-content-center">
-                                                <button type="button" class="btn btn-success"
-                                                    id="verify_otp">ভেরিফাই করুন</button>
+                                                <button type="button" class="btn btn-success" id="verify_otp">ভেরিফাই
+                                                    করুন</button>
                                                 <button type="button" class="btn btn-secondary d-none"
                                                     id="resend_otp">আবার ওটিপি পাঠান</button>
                                             </div>
@@ -150,8 +150,9 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('product.checkout') }}" method="POST" id="userInfoForm"
-                            class="checkoutForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }}">
+                        <form style="position: relative" action="{{ route('product.checkout') }}" method="POST"
+                            id="userInfoForm"
+                            class="checkoutForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }} ">
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
@@ -189,26 +190,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-4">
+                            <div class="row mb-4 ">
                                 <div class="col-md-12">
                                     @if ($customer && $shippingAddresses->count() > 0)
-                                        @foreach ($shippingAddresses as $key => $address)
-                                            <div class="address-box {{ $key == 0 ? 'active' : '' }}">
-                                                <input type="radio" id="address_{{ $address->id }}"
-                                                    name="address_type" value="{{ $address->id }}"
-                                                    {{ $key == 0 ? 'checked' : '' }}
-                                                    onclick="selectAddress(false,this)">
-                                                <label for="address_{{ $address->id }}">
-                                                    <strong>Name: {{ $address->contact_person_name }}</strong>
-                                                    <br>
-                                                    📞 Phone: {{ $address->phone }}<br>
-                                                    🏠 Address: {{ $address->address }}
-                                                </label>
-                                                <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
-                                                    onclick="openEditModal({{ $address }})">✏️</button>
-                                            </div>
-                                        @endforeach
-
+                                        <div class="checkout-card">
+                                            @foreach ($shippingAddresses as $key => $address)
+                                                <div class=" address-box {{ $key == 0 ? 'active' : '' }} mr-2">
+                                                    <input type="radio" id="address_{{ $address->id }}"
+                                                        name="address_type" value="{{ $address->id }}"
+                                                        {{ $key == 0 ? 'checked' : '' }}
+                                                        onclick="selectAddress(false,this)">
+                                                    <label for="address_{{ $address->id }}">
+                                                        <strong>Name: {{ $address->contact_person_name }}</strong>
+                                                        <br>
+                                                        📞 Phone: {{ $address->phone }}<br>
+                                                        🏠 Address: {{ $address->address }}
+                                                    </label>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary edit-btn"
+                                                        onclick="openEditModal({{ $address }})">✏️</button>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                         <label class="address-box">
                                             <input type="radio" name="address_type" value="new"
                                                 onclick="selectAddress(true,this)">
@@ -261,7 +264,9 @@
                                 </div>
 
                             </div>
-                            <button type="submit" class="btn btn-primary float-right">অর্ডার করুন</button>
+                            <div class="sticky-btn ">
+                                <button type="submit" class="btn btn-primary float-right w-100">অর্ডার করুন</button>
+                            </div>
                         </form>
                     </div>
                 </div>

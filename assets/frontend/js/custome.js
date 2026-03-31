@@ -321,3 +321,39 @@ new Swiper(".rightPromo", {
     clickable: true,
   },
 });
+
+var myBrandSwiper = new Swiper(".myBrandSwiper", {
+  slidesPerView: 2,
+  spaceBetween: 10,
+  loop: true,
+
+  autoplay: {
+    delay: 2000,
+    disableOnInteraction: false,
+  },
+
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true,
+  },
+
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+
+  breakpoints: {
+    576: {
+      slidesPerView: 2,
+    },
+    768: {
+      slidesPerView: 3,
+    },
+    992: {
+      slidesPerView: 4,
+    },
+    1200: {
+      slidesPerView: 4,
+    },
+  },
+});

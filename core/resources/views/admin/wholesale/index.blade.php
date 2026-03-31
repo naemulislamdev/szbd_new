@@ -8,6 +8,7 @@
         }
     </style>
 @endpush
+
 @section('content')
     <div class="container-fluid">
         <div class="row align-items-center">

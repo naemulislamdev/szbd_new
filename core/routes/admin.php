@@ -52,6 +52,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('business-overview', 'business_overview')->name('business-overview');
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
             Route::get('/dashboard/monthly-income',  'monthlyIncome')->name('monthly.income');
+            Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+            Route::post('order-stats', 'order_stats')->name('order-stats');
         });
         Route::controller(AdminProfileController::class)->prefix('/profile')->group(function () {
             Route::get('/', 'profile')->name('profile');

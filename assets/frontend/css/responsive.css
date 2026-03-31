@@ -57,6 +57,16 @@ Pusti Soyabeliteran oil 5
 
 */
 @media (max-width: 768px) {
+  .badge {
+    padding: 3px 6px !important;
+    font-size: 11px !important;
+  }
+  .badge {
+    top: -4px;
+  }
+  .newslater-title {
+    max-width: 100%;
+  }
   .navbar {
     float: left;
   }

@@ -46,23 +46,23 @@ Route::prefix('/customer')->as('customer.')->group(function () {
 });
 //profile Route
 Route::controller(UserProfileController::class)->middleware('customer')->group(function () {
-    Route::get('user-account', 'user_account')->name('user-account'); // user profile
-    Route::post('user-account-update', 'user_update')->name('user-update'); // user profile update
-    Route::get('account-address', 'account_address')->name('account-address'); // user address
-    Route::post('account-address-store', 'address_store')->name('address-store'); // user address store
+    Route::get('user-account', 'user_account')->name('user-account');
+    Route::post('user-account-update', 'user_update')->name('user-update');
+    Route::get('account-address', 'account_address')->name('account-address');
+    Route::post('account-address-store', 'address_store')->name('address-store');
     ROute::get('account-address-edit/{id}', 'address_edit')->name('address-edit');
     Route::post('account-address-update', 'address_update')->name('address-update');
     Route::post('address-delete', 'address_delete')->name('address-delete');
-    Route::get('account-order', 'account_order')->name('account-oder'); // user orders
+    Route::get('account-order', 'account_order')->name('account-oder');
     Route::get('account-order-details', 'account_order_details')->name('account-order-details');
     Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
-    Route::get('account-wishlist', 'account_wishlist')->name('account-wishlist'); // user wishlist
+    Route::get('account-wishlist', 'account_wishlist')->name('account-wishlist');
     Route::get('refund-request/{id}', 'refund_request')->name('refund-request');
     Route::get('refund-details/{id}', 'refund_details')->name('refund-details');
     Route::get('submit-review/{id}', 'submit_review')->name('submit-review');
     Route::post('refund-store', 'store_refund')->name('refund-store');
-    Route::get('account-tickets', 'account_tickets')->name('account-tickets'); // user support tickets
-    Route::post('ticket-submit', 'ticket_submit')->name('ticket-submit'); // user support tickets submit
+    Route::get('account-tickets', 'account_tickets')->name('account-tickets');
+    Route::post('ticket-submit', 'ticket_submit')->name('ticket-submit');
     Route::post('order-cancel/{id}', 'order_cancel')->name('order-cancel');
-    Route::get('account-logout', 'accountLogout')->name('account-logout'); // user logout
+    Route::get('account-logout', 'accountLogout')->name('account-logout');
 });

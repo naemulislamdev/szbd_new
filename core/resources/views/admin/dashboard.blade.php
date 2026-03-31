@@ -156,6 +156,91 @@
             <!--end col-->
         </div>
         <!--end row-->
+        <div class="row">
+            {{--  Order Reports Overview start --}}
+            <div class="col-md-12">
+                <div class="card mb-3"
+                    style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+                    <div class="card-body">
+                        <div>
+
+                            <h4 class="d-flex align-items-center" style="color:rgb(13, 13, 13)"><img style="height: 40px"
+                                    src="{{ asset('assets/backend/images/chart-line-up.gif') }}" alt="order line up">Order
+                                Reports
+                            </h4>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Form Date</label>
+                                    <input type="date" value="{{ date('Y-m-d') }}" class="form-control" id="from_date"
+                                        name="from_date">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>To Date</label>
+                                    <input type="date" value="{{ date('Y-m-d') }}" class="form-control"
+                                        id="to_date" name="to_date">
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="margin-top: 20px">
+                                <button class="btn btn-primary" onclick="dashboard_order_report_filter()">
+                                    Filter
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="row gx-2 gx-lg-3 mt-4" id="orderStatus">
+                            @include('admin.dashboard-order_report', [
+                                'results' => $results,
+                            ])
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{--  Order Reports Overview end --}}
+            {{-- Order Report Statics Start --}}
+            <div class="col-md-12">
+                <div class="card mb-3"
+                    style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+                    <div class="card-body">
+                        <div class="row flex-between gx-2 gx-lg-3 mb-2">
+                            <div>
+                                <h4><i style="font-size: 30px" class="tio-chart-bar-4"></i>Dashboard
+                                    Order Statistics
+                                </h4>
+                            </div>
+                            <div class="col-12 col-md-4" style="width: 20vw">
+                                <select class="custom-select form-select" name="statistics_type"
+                                    onchange="order_stats_update(this.value)">
+                                    <option value="overall"
+                                        {{ session()->has('statistics_type') && session('statistics_type') == 'overall' ? 'selected' : '' }}>
+                                        Overall_statistics
+                                    </option>
+                                    <option value="today"
+                                        {{ session()->has('statistics_type') && session('statistics_type') == 'today' ? 'selected' : '' }}>
+                                        Todays Statistics
+                                    </option>
+                                    <option value="this_month"
+                                        {{ session()->has('statistics_type') && session('statistics_type') == 'this_month' ? 'selected' : '' }}>
+                                        This Months Statistics
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row gx-2 gx-lg-3" id="order_stats">
+                            @include('admin.dashboard-order-stats', [
+                                'data' => $data,
+                            ])
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {{-- Order Report Statics End --}}
+
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-8">
                 <div class="card">
@@ -605,5 +690,81 @@
             });
 
         });
+    </script>
+    <script>
+        function dashboard_order_report_filter() {
+            let from_date = $('#from_date').val();
+            let to_date = $('#to_date').val();
+
+            $.ajax({
+                url: "{{ route('admin.dashboard.order.report.filter') }}",
+                type: "GET",
+                data: {
+                    from_date: from_date,
+                    to_date: to_date
+                },
+                beforeSend: function() {
+                    $('#orderStatus').html(`<div id="loader" style=" text-align:center; margin-bottom:10px;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>`);
+                },
+                success: function(response) {
+                    $('#orderStatus').html(response.view);
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    </script>
+    <script>
+        function order_stats_update(type) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.post({
+                url: '{{ route('admin.dashboard.order-stats') }}',
+                data: {
+                    statistics_type: type
+                },
+                beforeSend: function() {
+                    $('#loading').show()
+                },
+                success: function(data) {
+                    $('#order_stats').html(data.view)
+                },
+                complete: function() {
+                    $('#loading').hide()
+                }
+            });
+        }
+
+        function business_overview_stats_update(type) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.post({
+                url: '{{ route('admin.dashboard.business-overview') }}',
+                data: {
+                    business_overview: type
+                },
+                beforeSend: function() {
+                    $('#loading').show()
+                },
+                success: function(data) {
+                    console.log(data.view)
+                    $('#business-overview-board').html(data.view)
+                },
+                complete: function() {
+                    $('#loading').hide()
+                }
+            });
+        }
     </script>
 @endpush

@@ -492,7 +492,7 @@
     } else {
         $extra_discount = $order['extra_discount'];
     }
-
+    
     ?>
     @php($shipping = $order['shipping_cost'])
     <div class="content-position-y" style=" display:block; height:auto !important;margin-top: 40px">
@@ -547,7 +547,7 @@
                             <tr class="bg-primary">
                                 <th class="text-left"><b class="text-white">Total</b></th>
                                 <td class="text-white">
-                                    {{ $order->order_amount }}
+                                    {{ $order->order_amount + $shipping }}
                                 </td>
                             </tr>
                         </tbody>

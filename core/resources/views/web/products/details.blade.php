@@ -876,43 +876,10 @@
                         <h3>Related products</h3>
                         <div class="heading-border"></div>
                     </div>
-                    <div class="grid-controls">
-                        <button class="grid-btn" data-columns="6" data-category="category3">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="4" data-category="category3">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="3" data-category="category3">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="5" data-category="category3">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
 
-                        </button>
-                    </div>
-                    <div class="grid-controls mobile-grid-controls">
-                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category3">
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category3">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
                 </div>
             </div>
-            <div class="row product-grid">
+            <div class="row ">
                 <!-- Your product columns go here -->
                 @if ($relatedProducts->isNotEmpty())
                     @foreach ($relatedProducts as $product)
