@@ -184,7 +184,7 @@ class OrderController extends Controller
             ->addColumn('action', function (Order $order) {
 
                 $buttons = '
-        <a href="' . route('admin.order.details', $order->id) . '" class="btn btn-sm btn-info">
+        <a href="' . route('admin.order.details', $order->id) . '" class="btn btn-sm btn-info mb-2">
             <i class="las la-eye"></i>
         </a>
 
