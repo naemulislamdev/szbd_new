@@ -8,7 +8,9 @@
     }
 </style>
 @php
-    $banner = \App\Models\Banner::inRandomOrder()->where(['published' => 1, 'banner_type' => 'Popup Banner'])->first();
+    $banner = \App\Models\Banner::inRandomOrder()
+        ->where(['published' => 1, 'banner_type' => 'Popup Banner'])
+        ->first();
 @endphp
 
 @if (isset($banner))
@@ -23,7 +25,7 @@
                 <div class="modal-body" style="padding: 3px!important; cursor: pointer"
                     onclick="location.href='{{ $banner['url'] }}'">
                     <img class="d-block w-100" onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                        src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}" alt="">
+                        src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}" alt="popup modal image">
                 </div>
             </div>
         </div>

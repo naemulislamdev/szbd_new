@@ -142,7 +142,8 @@
         }
 
         .product-box {
-            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+            border-radius: 4px;
         }
 
         .product-column.five-col {
@@ -315,7 +316,7 @@
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            display: flex;
+            display: flex !important;
             align-items: center;
             justify-content: center;
             color: #fff;
@@ -323,8 +324,6 @@
             text-decoration: none;
             transition: transform 0.2s;
         }
-
-
 
         .chat-item:hover {
             transform: scale(1.1);
@@ -474,7 +473,7 @@
         }
 
         #topcontrol {
-            bottom: 52px !important;
+            bottom: 65px !important;
         }
     </style>
 
@@ -715,52 +714,6 @@
     <!-- Page Content-->
     @yield('content')
 
-    {{-- Bottom Social Bar --}}
-    {{-- <div style="position: fixed; left: 0; bottom: -2px; width: 100%; height: auto; z-index: 9999; box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;"
-        class="bottom-bar bg-white shadow py-1 rounded-top d-block d-md-none">
-        <div class="container">
-            <div class="d-flex justify-content-around align-items-center">
-                <div class="position-relative">
-                    <a style="height: 45px; width: 45px;" title="WhatsApp"
-                        href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F" target="_blank"
-                        class=" ">
-                        <i class="bi bi-whatsapp"></i>
-                    </a>
-                </div>
-                <div class="position-relative">
-                    <a style="height: 45px; width: 45px;" title="Messenger" href="https://m.me/shoppingzonebd300"
-                        target="_blank" class=" ">
-                        <i class="bi bi-messenger"></i>
-                    </a>
-                </div>
-
-                <a class="mr-2" href="{{ route('wishlists') }}"><i class="fa fa-heart-o" aria-hidden="true"></i>
-                    <span style="right: 185px; top: -6px"
-                        class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span>
-                </a>
-
-
-                <a class="mr-2  " data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas" role="button"
-                    aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart" aria-hidden="true"></i>
-
-                    <span style="right: 102px; top: -4px;" class="badge badge-danger total_cart_count"
-                        id="total_cart_count">
-                        {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
-                    </span>
-                </a>
-
-
-                @if (auth('customer')->check())
-                    <a href="{{ route('user-account') }}" class="  bg-primary"><i class="fa fa-user"
-                            aria-hidden="true"></i></a>
-                @else
-                    <a href="{{ route('customer.auth.login') }}" class="  bg-primary"><i class="fa fa-user"
-                            aria-hidden="true"></i></a>
-                @endif
-
-            </div>
-        </div>
-    </div> --}}
     <div class="bottom_social_section d-block d-lg-none">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
@@ -777,8 +730,10 @@
                     <span style="font-size: 22px;"
                         class="btn text-white border-none py-0 bg-transparent payment-2btn"><i
                             class="bi bi-chat-text"></i>
+                        <br>
+                        <small>Message</small>
                     </span>
-                    <div class="d-flex justify-content-between align-items-center gap-1 px-3 py-2 payment-hover-item">
+                    <div class="d-flex justify-content-between align-items-center gap-1 px-3 py-3 payment-hover-item">
                         <a title="WhatsApp"
                             href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
                             target="_blank" class="socialMedia">
@@ -789,8 +744,8 @@
                             <i class="bi bi-messenger"></i>
                         </a>
                         <div class="triangle"></div>
-                    </div> <br>
-                    <small>Message</small>
+                    </div>
+
                 </div>
 
                 {{-- <a class="text-center" href="{{ route('wishlists') }}"><i class="fa fa-heart-o"
@@ -897,6 +852,15 @@
 
             $('.grid-btn[data-columns="5"]').trigger('click');
 
+        });
+    </script>
+    <script>
+        $(document).on('click', '.payment-2btn', function(e) {
+            e.stopPropagation(); // prevent bubbling
+            $(this).closest('.paymentTwo-box').toggleClass('active');
+        });
+        $(document).on('click', function() {
+            $('.paymentTwo-box').removeClass('active');
         });
     </script>
     <script>

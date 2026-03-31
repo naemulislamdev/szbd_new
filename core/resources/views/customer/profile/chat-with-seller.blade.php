@@ -108,13 +108,13 @@
         }
 
         /* a{
-                    color: #030303;
-                    cursor: pointer;
-                }
-                a:hover{
-                    color: #4884ea;
-                    cursor: pointer;
-                } */
+                        color: #030303;
+                        cursor: pointer;
+                    }
+                    a:hover{
+                        color: #4884ea;
+                        cursor: pointer;
+                    } */
         .divider-role {
             border-bottom: 1px solid whitesmoke;
         }
@@ -393,17 +393,17 @@
         }
 
         /* @media(max-width:992px)
-                {
-                    .price_sidebar {
-                    padding: 20px;
-                    max-width: 230px;
-                }
-                .chatSel{
-                    max-width: 262px;
-                    display: flex;
-                    margin-top: 1rem;
-                }
-                } */
+                    {
+                        .price_sidebar {
+                        padding: 20px;
+                        max-width: 230px;
+                    }
+                    .chatSel{
+                        max-width: 262px;
+                        display: flex;
+                        margin-top: 1rem;
+                    }
+                    } */
     </style>
 @endpush
 
@@ -605,7 +605,7 @@
                                     $(".msg_history").append(`
                     <div class="incoming_msg" style="display: flex;" id="incoming_msg">
                       <div class="incoming_msg_img" id="">
-                        <img src="${img_path}" alt="">
+                        <img src="${img_path}" alt="sellar chat">
                       </div>
                       <div class="received_msg">
                         <div class="received_withd_msg">

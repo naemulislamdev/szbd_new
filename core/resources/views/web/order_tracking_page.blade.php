@@ -64,7 +64,8 @@
                         <div style="margin: 0 auto; padding: 15px;">
                             <div class="text-center">
                                 <img style="width: 100px; border-radius: 50%"
-                                    src="{{ asset('assets/frontend/img/track-result/track.png') }}" alt="">
+                                    src="{{ asset('assets/frontend/img/track-result/track.png') }}"
+                                    alt="Shopping Zone BD Track image">
 
                                 <h2 style="padding: 20px; text-align: center; color:#fff;">
                                     Track Your Order</h2>

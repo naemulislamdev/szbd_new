@@ -60,13 +60,13 @@
                         <div class="col-md-6">
                             <div class="login-image">
                                 <img src="{{ asset('assets/frontend/img/login-img.jpg') }}" style="width: 100%;"
-                                    alt="">
+                                    alt="Shopping Zone BD Login image">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="card border-none">
                                 <div class="card-body">
-                                    <h2 class="h4 mb-1">Login</h2>
+                                    <h1 class="h4 mb-1">Login</h1>
                                     <p>Don't have an account yet? <a href="{{ route('customer.auth.sign-up') }}">Create
                                             account</a></p>
 

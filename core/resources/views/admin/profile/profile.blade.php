@@ -45,7 +45,8 @@
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative">
                                         <img src="{{ asset('assets/storage/profile/' . auth('admin')->user()->image) }}"
-                                            alt="" class="rounded-circle img-fluid" style="width: 65px;">
+                                            alt="Shopping Zone BD Customer Profile" class="rounded-circle img-fluid"
+                                            style="width: 65px;">
                                     </div>
                                     <div class="flex-grow-1 text-truncate ms-3 align-self-end">
                                         <h5 class="m-0 fs-3 fw-bold text-white">{{ auth('admin')->user()->name }}</h5>
@@ -76,7 +77,8 @@
             </div> <!--end col-->
             <div class="col-lg-8">
                 <div class="bg-primary-subtle p-2 border-dashed border-primary rounded mb-3">
-                    <img src="assets/images/extra/party.gif" alt="" class="d-inline-block me-1" height="30">
+                    <img src="assets/images/extra/party.gif" alt="Best Performer Shopping Zone BD"
+                        class="d-inline-block me-1" height="30">
                     <span class="text-primary fw-semibold">Rosa Dodson's</span><span class="text-primary fw-normal"> best
                         performance from last year</span>
                 </div>

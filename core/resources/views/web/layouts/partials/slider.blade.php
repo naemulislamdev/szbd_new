@@ -55,7 +55,7 @@
                                         <img class="d-block w-100 rounded-0 rounded-lg"
                                             onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                             src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}"
-                                            alt="">
+                                            alt="Main Banner Image">
                                     </a>
                                 </div>
                             </div>

@@ -319,17 +319,20 @@ new Swiper(".rightPromo", {
   pagination: {
     el: ".rightPromo .swiper-pagination",
     clickable: true,
+    pauseOnMouseEnter: true,
   },
 });
 
+// Our Brand Slider
 var myBrandSwiper = new Swiper(".myBrandSwiper", {
-  slidesPerView: 2,
+  slidesPerView: 1,
   spaceBetween: 10,
   loop: true,
-
+  autoplayHoverPause: true,
   autoplay: {
     delay: 2000,
     disableOnInteraction: false,
+    pauseOnMouseEnter: true,
   },
 
   pagination: {
@@ -338,22 +341,22 @@ var myBrandSwiper = new Swiper(".myBrandSwiper", {
   },
 
   navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
+    nextEl: ".myBrandSwiper .swiper-button-next",
+    prevEl: ".myBrandSwiper .swiper-button-prev",
   },
 
   breakpoints: {
     576: {
-      slidesPerView: 2,
+      slidesPerView: 1,
     },
     768: {
-      slidesPerView: 3,
+      slidesPerView: 2,
     },
     992: {
       slidesPerView: 4,
     },
     1200: {
-      slidesPerView: 4,
+      slidesPerView: 5,
     },
   },
 });

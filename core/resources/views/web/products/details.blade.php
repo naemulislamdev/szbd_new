@@ -1,10 +1,11 @@
 @extends('web.layouts.app')
-@section('title', Str::limit($product['name'], 60) . ' | ' . $web_config['name']->value)
-@section('meta_description', Str::limit(strip_tags($product->meta_description), 100))
+@section('title', \Illuminate\Support\Str::limit(!empty($meta_title) ? $meta_title : $product['name'], 57) . ' | ' .
+    $web_config['name']->value)
+@section('meta_description', Str::limit(strip_tags($product->meta_description), 155))
 
 
 @push('css_or_js')
-    <meta name="description" content="{{ strip_tags($product->meta_description) }}">
+    <meta name="description" content="{{ Str::limit(strip_tags($product->meta_description), 155) }}">
     <meta name="keywords" content="@foreach (explode(' ', $product['name']) as $keyword) {{ $keyword . ' , ' }} @endforeach">
     @if ($product->added_by == 'seller')
         <meta name="author" content="{{ $product->seller->shop ? $product->seller->shop->name : $product->seller->f_name }}">
@@ -306,9 +307,10 @@
                                         @if ($product->images != null)
                                             @foreach (json_decode($product->images) as $key => $photo)
                                                 <div class="item">
-                                                    <a href="{{ asset("assets/storage/product/$photo") }}"
+                                                    <a class="d-block" href="{{ asset("assets/storage/product/$photo") }}"
                                                         title="{{ $product->name }}">
-                                                        <img src="{{ asset("assets/storage/product/$photo") }}"
+                                                        <img style="object-fit: contain"
+                                                            src="{{ asset("assets/storage/product/$photo") }}"
                                                             data-image="{{ asset("assets/storage/product/$photo") }}"
                                                             class="xzoom-gallery"
                                                             alt="{{ Str::limit($product->name, 100) }}">
@@ -326,8 +328,9 @@
                     <div class="row">
                         <div class="col-md-7 mb-3">
                             <div class="p-details">
-                                <h1 class="product-name mb-2">{{ $product->name }}</h1>
-
+                                <h1 class="product-name mb-2">
+                                    {{ \Illuminate\Support\Str::limit($product->name, 57) }}
+                                </h1>
                                 <div>
                                     <span class="product-price">
                                         ৳ {{ $product->unit_price }}
@@ -840,7 +843,7 @@
                                 </div>
                                 <div class="pay-method mb-3">
                                     <span>Payment</span>
-                                    <img src="{{ asset('assets/frontend/images/payment/payment.png') }}" alt="">
+                                    <img src="{{ asset('assets/frontend/images/payment/payment.png') }}" alt="payment">
                                 </div>
                             </div>
                             @if ($product->video_shopping == 0 && $product->video_url == '')

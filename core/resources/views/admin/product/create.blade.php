@@ -107,16 +107,18 @@
                     @csrf
                     <div class="card">
                         <div class="card-body pt-0">
-                            <div class="form-floating my-3">
-                                <input type="text" class="form-control mb-1  @error('name') is-invalid @enderror "
-                                    name="name" id="name" placeholder="Product Name" value="{{ old('name') }}"
-                                    autofocus>
-                                <label for="name">Enter product Name</label>
-                                @error('name')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <div class="my-2">
+                                <label>Product Name <small>(Max 60 characters)</small></label>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control mb-1  @error('name') is-invalid @enderror "
+                                        name="name" id="name" placeholder="Product Name" value="{{ old('name') }}"
+                                        autofocus>
+                                    <label for="name">Enter product Name</label>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
-
                             <div class="mb-3">
                                 <label for="description">Enter Description</label>
                                 <textarea class="form-control mb-1  @error('description') is-invalid @enderror" name="description" class="editor"
@@ -428,7 +430,7 @@
                         <div class="card-body pt-0">
                             <div class="row">
                                 <div class="col-md-12 mb-4">
-                                    <label class="control-label">Meta Title</label>
+                                    <label class="control-label">Meta Title <small>(Max 60 characters)</small></label>
                                     <input type="text" name="meta_title" placeholder="" class="form-control">
                                     @error('meta_title')
                                         <span class="text-danger">{{ $message }}</span>
@@ -437,7 +439,8 @@
 
 
                                 <div class="col-md-8 mb-4">
-                                    <label class="control-label">Meta Description</label>
+                                    <label class="control-label">Meta Description <small>(Max 150
+                                            characters)</small></label>
                                     <textarea rows="10" type="text" id="metaDesc" name="meta_description" class="form-control"></textarea>
                                     @error('meta_description')
                                         <span class="text-danger">{{ $message }}</span>

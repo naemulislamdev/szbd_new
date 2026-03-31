@@ -139,7 +139,7 @@ class FrontendController extends Controller
                 'link' => 'https://www.facebook.com/styledifferent.bd/',
             ],
             [
-                'name' => 'ShoppingzoneBd',
+                'name' => 'Shoppingzone BD Co.',
                 'logo' => 'szbd-circle.png',
                 'link' => 'https://www.facebook.com/shoppingzonebd.co/',
             ],

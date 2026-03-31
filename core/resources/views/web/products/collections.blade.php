@@ -210,7 +210,7 @@
                             <div class="main-slider  ">
                                 <a href="#" style="display: block !important;">
                                     <img class="d-block w-100 rounded-0 rounded-lg"
-                                        src="{{ asset('assets/storage/deal/main-banner/') }}/{{ $banner }}" alt="">
+                                        src="{{ asset('assets/storage/deal/main-banner/') }}/{{ $banner }}" alt="Landing page banner">
                                 </a>
                             </div>
                         </div>
