@@ -87,7 +87,8 @@
                             <div class="main-banner">
                                 <img class="d-block w-100"
                                     onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                    src="{{ asset('storage/deal/main-banner') }}/{{ $banner }}" alt="">
+                                    src="{{ asset('storage/deal/main-banner') }}/{{ $banner }}"
+                                    alt="Shopping Zone BD Main Banner">
                             </div>
                         </div>
                     @endforeach
@@ -112,7 +113,8 @@
                 <div class="left-banner">
                     {{-- <h4>Special Offer</h4>
                     <p>Get up to 50% off on selected items. Hurry, offer ends soon!</p> --}}
-                    <img src="{{ asset('storage/deal') }}/{{ $landing_page->left_side_banner }}" alt="">
+                    <img src="{{ asset('storage/deal') }}/{{ $landing_page->left_side_banner }}"
+                        alt="Shopping Zone BD  left side banner">
                 </div>
             </div>
 
@@ -217,7 +219,7 @@
                                                     <div class="product-modal-box d-flex align-items-center mb-3">
                                                         <div class="img mr-3">
                                                             <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                                alt="" style="width: 80px;">
+                                                                alt="Shopping Zone BD product image" style="width: 80px;">
                                                         </div>
                                                         <div class="p-name">
                                                             <h5 class="title">{{ Str::limit($product['name'], 23) }}</h5>
@@ -327,7 +329,7 @@
             <div class="col">
                 <div class="middle-banner">
                     <img style="width: 100%;" src="{{ asset('storage/deal') }}/{{ $landing_page->mid_banner }}"
-                        alt="">
+                        alt="Shopping Zone BD Banner">
                 </div>
             </div>
         </div>
@@ -433,7 +435,7 @@
                                                     <div class="product-modal-box d-flex align-items-center mb-3">
                                                         <div class="img mr-3">
                                                             <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                                alt="" style="width: 80px;">
+                                                                alt="Shopping Zone BD Product image" style="width: 80px;">
                                                         </div>
                                                         <div class="p-name">
                                                             <h5 class="title">{{ Str::limit($product['name'], 23) }}</h5>
@@ -542,7 +544,8 @@
                     <div class="left-banner">
                         {{-- <h4>Special Offer</h4>
                     <p>Get up to 50% off on selected items. Hurry, offer ends soon!</p> --}}
-                        <img src="{{ asset('storage/deal') }}/{{ $landing_page->right_side_banner }}" alt="">
+                        <img src="{{ asset('storage/deal') }}/{{ $landing_page->right_side_banner }}"
+                            alt="Shopping Zone BD right side banner">
                     </div>
                 </div>
             </div>

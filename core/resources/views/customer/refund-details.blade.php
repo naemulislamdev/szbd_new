@@ -113,9 +113,9 @@
                         }
                         $refund_amount = 0;
                         $subtotal = $order_details->price * $order_details->qty - $order_details->discount + $order_details->tax;
-                        
+
                         $coupon_discount = ($order->discount_amount * $subtotal) / $total_product_price;
-                        
+
                         $refund_amount = $subtotal - $coupon_discount;
                         ?>
 
@@ -207,7 +207,7 @@
                                                         <a href="{{ asset('storage/refund') }}/{{ $photo }}"
                                                             data-lightbox="mygallery">
                                                             <img src="{{ asset('storage/refund') }}/{{ $photo }}"
-                                                                alt="">
+                                                                alt="Shopping Zone BD Refund">
                                                         </a>
                                                     @endforeach
                                                 </div>

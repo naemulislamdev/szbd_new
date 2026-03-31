@@ -238,7 +238,7 @@
                                                     data-lightbox="mygallery">
                                                     <img style="width: 60px;height:60px;padding:10px; "
                                                         src="{{ asset('storage/review') }}/{{ $img }}"
-                                                        alt="">
+                                                        alt="Shopping Zone BD Review">
                                                 </a>
                                             @endforeach
                                         </div>

@@ -380,48 +380,31 @@
     </section>
     <section class="our-brand">
         <div class="container">
-            <div class="row mb-3 mt-3">
+            <div class="row mb-3">
                 <div class="col-12">
                     <div class="section-heading-title d-flex align-items-center justify-content-center">
                         <h3>Our Brands</h3>
                     </div>
                 </div>
             </div>
-
-
-            {{-- <div class="row justify-content-center align-items-center
-            ">
-                @foreach ($ourBrands as $brand)
-                    <div class="col-lg-2 text-center">
-                        <a style="text-align: center !important;" class="text-center" href="{{ $brand['link'] }}"
-                            target="_blank">
-                            <img style="max-width: 100%; max-height: 100px;"
-                                src="{{ asset('assets/frontend/images/brands/' . $brand['logo']) }}"
-                                alt="{{ $brand['name'] }}">
-                            <p class="text-orange" style="font-weight: bolder">{{ $brand['name'] }}</p>
-                        </a>
-                    </div>
-                @endforeach
-            </div> --}}
             <div class="swiper myBrandSwiper">
-                <div class="swiper-wrapper d-flex align-items-center">
+                <div class="swiper-wrapper">
 
                     @foreach ($ourBrands as $brand)
-                        <div class="swiper-slide text-center align-items-center">
-                            <a href="{{ $brand['link'] }}" target="_blank">
-                                <img style="max-width: 100%; max-height: 100px;"
-                                    src="{{ asset('assets/frontend/images/brands/' . $brand['logo']) }}"
-                                    alt="{{ $brand['name'] }}">
-                                <p class="text-orange" style="font-weight: bolder">
-                                    {{ $brand['name'] }}
-                                </p>
+                        <div class="swiper-slide">
+                            <a title="{{ $brand['name'] }}" href="{{ $brand['link'] }}" target="_blank"
+                                class="brand-card">
+                                <div class="brand-img">
+                                    <img src="{{ asset('assets/frontend/images/brands/' . $brand['logo']) }}"
+                                        alt="{{ $brand['name'] }}">
+                                </div>
+                                <p class="brand-name">{{ $brand['name'] }}</p>
                             </a>
                         </div>
                     @endforeach
 
                 </div>
 
-                <!-- 🔥 MUST add these -->
                 <div class="swiper-pagination"></div>
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
@@ -460,13 +443,13 @@
                                 <div class="customer-review-box text-center">
                                     @if ($review->gender == 'male')
                                         <img src="{{ asset('assets/frontend') }}/images/slider/customer-review/smale.png"
-                                            alt="">
+                                            alt="Shopping Zone BD customer Review">
                                     @elseif($review->gender == 'female')
                                         <img src="{{ asset('assets/frontend') }}/images/slider/customer-review/sfemale.png"
-                                            alt="">
+                                            alt="Shopping Zone BD customer Review">
                                     @else
                                         <img src="{{ asset('assets/frontend') }}/images/slider/customer-review/img1.jpg"
-                                            alt="">
+                                            alt="Shopping Zone BD customer Review">
                                     @endif
                                     <div class="customer-name mt-2">
                                         <h3>{{ htmlspecialchars($review['name']) }}</h3>

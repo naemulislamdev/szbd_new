@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header d-print-none p-3" style="background: white">
+                    <div class="card-header d-print-none p-3">
                         <div class="col-sm-12 mb-2 mb-sm-0">
 
                             <div class="d-flex align-items-sm-center justify-between">
@@ -571,7 +571,6 @@
             })
         });
     </script>
-
     <script>
         function orderStatusChange(status, orderId) {
 
@@ -627,7 +626,7 @@
                             $('#noteList').append(`
                             <li style='text-align: left; text-wrap: wrap; line-height: 20px' class="badge bg-primary d-inline-block  mb-2 py-2">
                                 ${res.note.note}
-                                <span class="">(${res.note.time}- Note by: ${res.note.user})</span>
+                                <span class="">(${res.note.date}- Note by: ${res.note.user})</span>
                             </li>
                         `);
                             form[0].reset();

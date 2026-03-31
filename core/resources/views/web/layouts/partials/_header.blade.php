@@ -1,5 +1,4 @@
-<header id="header" class="py-2"
-    style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+<header id="header" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
     <div class="container">
         <div class="row main_row align-items-lg-center">
             <div class="col-md-2 d-none d-lg-flex align-items-center flex-row gap-5">
@@ -103,7 +102,7 @@
 
                             {{-- <li><a href="{{ route('careers') }}">Career</a></li> --}}
                             <li><a target="_blank" href="https://asmishop.com/"><img style="height: 50px; width: auto;"
-                                        src="{{ asset('assets/frontend/images/asmi.gif') }}" alt=""></a>
+                                        src="{{ asset('assets/frontend/images/asmi.gif') }}" alt="Asmi Supershop"></a>
                             </li>
                         </ul>
                     </div>
@@ -194,7 +193,7 @@
         <a href="{{ route('home') }}" class="col-9">
             <img style="max-width: 100%; height: auto;"
                 src="{{ asset('assets/storage/company') . '/' . $web_config['mob_logo']->value }}"
-                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="">
+                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="Shopping zone BD">
         </a>
         <div class="mm-cross-icon col-3 text-right">
             <i class="fa fa-times mm-ci"></i>
@@ -303,7 +302,7 @@
             <div class="menu-box">
                 <div class="menu-link">
                     <a target="_blank" href="https://asmishop.com/"><img style="height: 50px; width: auto;"
-                            src="{{ asset('assets/frontend/images/asmi.gif') }}" alt=""></a>
+                            src="{{ asset('assets/frontend/images/asmi.gif') }}" alt="Asmi Super Shop"></a>
                 </div>
             </div>
 

@@ -40,7 +40,8 @@
                             <div class="col-md-6">
                                 <div class="consult-img">
                                     <img style="max-width: 100%; height: auto;"
-                                        src="{{ asset('assets/frontend/img/complain.jpg') }}" alt="">
+                                        src="{{ asset('assets/frontend/img/complain.jpg') }}"
+                                        alt="Shopping Zone BD customer complain">
                                 </div>
                             </div>
                             <div class="col-md-6">

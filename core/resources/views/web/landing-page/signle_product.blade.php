@@ -492,7 +492,7 @@
                                         <div class="slider-img">
                                             <img class="d-block w-100"
                                                 src="{{ asset('assets/storage/landingpage/slider') }}/{{ $image }}"
-                                                alt="">
+                                                alt="Shopping Zone BD Banner Image">
                                         </div>
                                     </div>
                                 @endforeach
@@ -608,10 +608,9 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="benefit-img">
-                                {{-- <img src="{{ asset('landingpage/') }}"
-                                    style="width: 100%; height:500px;" alt=""> --}}
+
                                 <img src="{{ asset('assets/storage/landingpage/' . $productLandingPage->feature_img) }}"
-                                    style="width: 100%; " alt="">
+                                    style="width: 100%; " alt="Shopping Zone BD feature image">
                             </div>
                         </div>
                     </div>
@@ -648,14 +647,14 @@
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
                                             <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
-                                                style="width: 100%; height:560px;" alt="">
+                                                style="width: 100%; height:560px;" alt="feature image">
                                         </div>
                                     </div>
                                 @elseif ($section->section_direction == 'right')
                                     <div class="col-md-6 mb-3">
                                         <div class="benefit-img">
                                             <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
-                                                style="width: 100%; height:560px;" alt="">
+                                                style="width: 100%; height:560px;" alt="feature image">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">

@@ -27,6 +27,7 @@ class ProductRequest extends FormRequest
         }
         $images = 'nullable|max:3072';
         $image = 'nullable|max:20480';
+
         $code = 'required|min:3|max:30|unique:products,code';
         if (request()->route()->id) {
             $images = 'nullable';
@@ -37,7 +38,7 @@ class ProductRequest extends FormRequest
 
         return [
             'added_by' => 'nullable|string|max:255',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:60',
             'description' => 'required|string',
             'short_description' => 'nullable|string',
             'category_id' => 'required',
@@ -55,8 +56,8 @@ class ProductRequest extends FormRequest
             'discount_type' => $discount_type,
             'shipping_cost' => 'required|numeric|min:0',
             'minimum_order_qty' => 'required|numeric|min:1',
-            'meta_title' => 'nullable',
-            'meta_description' => 'nullable',
+            'meta_title' => 'nullable|max:60',
+            'meta_description' => 'nullable|max:160',
         ];
     }
     public function messages()

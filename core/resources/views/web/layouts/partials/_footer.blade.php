@@ -119,7 +119,7 @@
             <div class="col">
                 <div class="text-center footer-pay-logo">
                     <img style="max-width: 100%" src="{{ asset('assets/frontend') }}/images/payment/SSLComerz.png"
-                        alt="sslcommerz">
+                        alt="sslcommerz payment methods">
                 </div>
 
             </div>

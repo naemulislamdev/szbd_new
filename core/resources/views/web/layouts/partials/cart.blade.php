@@ -8,7 +8,7 @@
                     <img src="{{ $cartItem['color_image'] }}" alt="Product image">
                 @else
                     <img src="{{ asset('assets/storage/product/thumbnail') }}/{{ $cartItem['thumbnail'] }}"
-                        alt="">
+                        alt="Product image">
                 @endif
             </div>
             <div class="header-cart-p-details">
