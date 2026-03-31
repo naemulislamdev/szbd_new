@@ -19,7 +19,7 @@
 
 <section class="header-slider-section ">
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-lg-center">
             <div class="@if ($left_promo_offers->count() > 0) col-2 pr-0 @endif ">
                 @if ($left_promo_offers->count() > 0)
                     <div class="swiper leftPromo h-100">

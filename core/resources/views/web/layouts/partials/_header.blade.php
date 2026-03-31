@@ -114,7 +114,7 @@
                             <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                             <a href="{{ route('home') }}">
 
-                                <img style="max-width: 100%;"
+                                <img class="smLogo"
                                     src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
                                     onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     alt="{{ $web_config['name']->value }}">
