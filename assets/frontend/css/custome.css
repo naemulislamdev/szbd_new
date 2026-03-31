@@ -11,6 +11,27 @@
   padding: 0;
   margin: 0;
 }
+.MainLogo {
+  width: 170px;
+  max-width: 170px;
+}
+.bg-orange {
+  background-color: #ff5d00;
+  color: #fff;
+}
+.text-orange {
+  color: #ff5d00 !important;
+}
+
+.badge {
+  padding: 3px 6px !important;
+  font-size: 12px !important;
+}
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
   content: "»";
@@ -425,8 +446,8 @@ header.scrolled {
 .badge {
   border-radius: 50%;
   position: absolute;
-  top: -9px;
-  right: -20px;
+  top: -7px;
+  right: -13px;
 }
 .offcanvas-title {
   font-size: 17px;
@@ -980,7 +1001,7 @@ header.scrolled {
   height: 450px;
 }
 .product-image2-col-2 {
-  height: 270px;
+  height: 300px;
 }
 .product-box-col-4 {
   height: 817px;
@@ -1827,4 +1848,110 @@ h6.subscribe-title:hover {
   position: absolute;
   top: 31%;
   left: 24%;
+}
+.newslater-title {
+  max-width: 70%;
+}
+/* Bottom Social Section */
+.bottom_social_section {
+  background: #ff5d00;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+}
+.bottom_social_section a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.bottom_social_section button {
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #fff;
+  outline: none;
+  padding: 0;
+  font-size: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.bottom_social_section small {
+  font-size: 12px;
+  color: #fff;
+}
+.bottom_social_section a {
+  color: #fff;
+  font-size: 22px;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+.paymentTwo-box:hover .payment-hover-item {
+  transform: scale(1);
+  opacity: 1;
+}
+.payment-hover-item {
+  position: absolute;
+  width: 100px;
+  background: #ff5d00;
+  z-index: 999;
+  left: 0;
+  top: -52px;
+  transform: scale(0.6);
+  border-radius: 5px;
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+.triangle {
+  position: absolute;
+  width: 0px;
+  left: 18%;
+  bottom: -6px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0 6px 8px 6px;
+  border-color: transparent transparent #ff5d00 transparent;
+  transform: rotate(180deg);
+}
+.socialMedia {
+  transition: transform 0.2s;
+}
+.socialMedia:hover {
+  transform: scale(1.1);
+}
+.checkout-card {
+  height: 300px;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+.sticky-btn {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding: 10px;
+  height: 80px;
+}
+/* scrollbar width */
+.checkout-card::-webkit-scrollbar {
+  width: 6px;
+  margin-left: 10px;
+}
+
+.checkout-card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.checkout-card::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.checkout-card::-webkit-scrollbar-thumb:hover {
+  background: #e65300;
+}
+.myBrandSwiper {
+  max-height: 200px;
 }

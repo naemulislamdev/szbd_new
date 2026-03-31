@@ -78,13 +78,37 @@
             <div class="col-md-3">
                 <div class="footer-title">
                     <h3>Download Our App</h3>
-                    <div class="download-icon mb-3">
-                        <a target="_blank"
-                            href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android"><img
-                                src="{{ asset('assets/frontend') }}/images/logo/google_app.png"
-                                alt="Google play store logo"></a>
-                        <a href="#"><img src="{{ asset('assets/frontend') }}/images/logo/apple_app.png"
-                                alt="Apple app store logo"></a>
+                    <div class="download-icon mb-3 border p-3" style="border-radius: 12px;">
+                        <h6 class="fs-1 text-white mb-2">Shopping Zone BD</h6>
+                        <div class="d-flex justify-content-between align-items-center" style="gap: 10px">
+                            <a target="_blank"
+                                href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android">
+
+                                <img style="max-width: 100%"
+                                    src="{{ asset('assets/frontend') }}/images/logo/google_app.png"
+                                    alt="Google play store logo">
+                            </a>
+                            <a href="#"><img style="max-width: 100%"
+                                    src="{{ asset('assets/frontend') }}/images/logo/apple_app.png"
+                                    alt="Apple app store logo"></a>
+                        </div>
+
+                    </div>
+                    <div class="download-icon border p-3" style="border-radius: 12px;">
+                        <h6 class="fs-1 text-white mb-2">Asmi Shop</h6>
+                        <div class="d-flex justify-content-between align-items-center" style="gap: 10px">
+                            <a target="_blank"
+                                href="https://play.google.com/store/apps/details?id=com.asmishop.android">
+
+                                <img style="max-width: 100%"
+                                    src="{{ asset('assets/frontend') }}/images/logo/google_app.png"
+                                    alt="Google play store logo">
+                            </a>
+                            <a target="_blank" href="https://apps.apple.com/app/asmi-shop/id6751156113"><img
+                                    style="max-width: 100%"
+                                    src="{{ asset('assets/frontend') }}/images/logo/apple_app.png"
+                                    alt="Apple app store logo"></a>
+                        </div>
 
                     </div>
 
@@ -94,7 +118,8 @@
         <div class="row my-2">
             <div class="col">
                 <div class="text-center footer-pay-logo">
-                    <img src="{{ asset('assets/frontend') }}/images/payment/SSLCommerz02.png" alt="">
+                    <img style="max-width: 100%" src="{{ asset('assets/frontend') }}/images/payment/SSLComerz.png"
+                        alt="sslcommerz">
                 </div>
 
             </div>

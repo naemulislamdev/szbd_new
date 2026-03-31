@@ -166,6 +166,7 @@
     <!-- Javascript  -->
     <!-- vendor js -->
     @include('admin.layouts.partials.foot_js')
+
     <script>
         $(document).on('submit', '#szbd_request_form', function(e) {
             e.preventDefault();

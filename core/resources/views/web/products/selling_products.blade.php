@@ -21,44 +21,12 @@
                         <h1>Our Special Offers</h1>
                         <div class="heading-border"></div>
                     </div>
-                    <div class="grid-controls">
-                        <button class="grid-btn" data-columns="6" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="4" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="3" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="5" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
 
-                        </button>
-                    </div>
-                    <div class="grid-controls mobile-grid-controls">
-                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category">
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
+
                 </div>
             </div>
             @if (count($selling_products) > 0)
-                <div class="row product-grid" id="selling-ajax-products">
+                <div class="row" id="selling-ajax-products">
                     @include('web.products.selling_ajax_products', ['products' => $selling_products])
                 </div>
                 <div class="row">

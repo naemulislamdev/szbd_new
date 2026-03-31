@@ -54,6 +54,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/dashboard/monthly-income',  'monthlyIncome')->name('monthly.income');
             // top selling products report
             Route::get('/top-selling-products', [DashboardController::class, 'topSellingProducts'])->name('top_selling_products');
+            Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+            Route::post('order-stats', 'order_stats')->name('order-stats');
         });
         Route::controller(AdminProfileController::class)->prefix('/profile')->group(function () {
             Route::get('/', 'profile')->name('profile');

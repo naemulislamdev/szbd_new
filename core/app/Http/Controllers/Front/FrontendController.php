@@ -112,9 +112,40 @@ class FrontendController extends Controller
                 }
             }
         }
-
+        $ourBrands = [
+            [
+                'name' => 'Asmi Supershop',
+                'logo' => 'asmi.png',
+                'link' => 'https://asmishop.com/',
+            ],
+            [
+                'name' => 'Shopping Zone BD',
+                'logo' => 'szbd-circle.png',
+                'link' => 'https://www.facebook.com/shoppingzonebd300',
+            ],
+            [
+                'name' => 'Purple',
+                'logo' => 'purple.png',
+                'link' => 'https://www.facebook.com/purple.10000/',
+            ],
+            [
+                'name' => 'Shopping Zone BD LTD',
+                'logo' => 'szbd_long.webp',
+                'link' => 'https://www.facebook.com/shoppingzonebd30/',
+            ],
+            [
+                'name' => 'Style Different',
+                'logo' => 'style-defrent.png',
+                'link' => 'https://www.facebook.com/styledifferent.bd/',
+            ],
+            [
+                'name' => 'ShoppingzoneBd',
+                'logo' => 'szbd-circle.png',
+                'link' => 'https://www.facebook.com/shoppingzonebd.co/',
+            ],
+        ];
         $branchs = Branch::where('status', 1)->get();
-        return view('web.home', compact('featured_products', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts'));
+        return view('web.home', compact('featured_products', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'ourBrands'));
     }
 
     public function leads()

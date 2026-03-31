@@ -27,6 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Font Awesome cdn link -->
+
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/font-awesome.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/animate.min.css" />
@@ -306,6 +307,10 @@
             pointer-events: auto;
         }
 
+        .chat-wrapper a {
+            display: block;
+        }
+
         .chat-item {
             width: 52px;
             height: 52px;
@@ -319,18 +324,7 @@
             transition: transform 0.2s;
         }
 
-        .social-item {
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            color: #fff;
-            font-size: 22px;
-            text-decoration: none;
-            transition: transform 0.2s;
-        }
+
 
         .chat-item:hover {
             transform: scale(1.1);
@@ -458,13 +452,6 @@
             border-radius: 12px;
         }
 
-        .social-item {
-            margin-right: .5rem !important;
-            padding: 13px;
-            color: #fff !important;
-            border-radius: 100%;
-
-        }
 
 
         @media (max-width: 768px) {
@@ -729,34 +716,32 @@
     @yield('content')
 
     {{-- Bottom Social Bar --}}
-    <div style="position: fixed; left: 0; bottom: -2px; width: 100%; height: auto; z-index: 9999; box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;"
+    {{-- <div style="position: fixed; left: 0; bottom: -2px; width: 100%; height: auto; z-index: 9999; box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;"
         class="bottom-bar bg-white shadow py-1 rounded-top d-block d-md-none">
         <div class="container">
             <div class="d-flex justify-content-around align-items-center">
                 <div class="position-relative">
                     <a style="height: 45px; width: 45px;" title="WhatsApp"
                         href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F" target="_blank"
-                        class="chat-item whatsapp">
+                        class=" ">
                         <i class="bi bi-whatsapp"></i>
                     </a>
                 </div>
                 <div class="position-relative">
                     <a style="height: 45px; width: 45px;" title="Messenger" href="https://m.me/shoppingzonebd300"
-                        target="_blank" class="chat-item messenger">
+                        target="_blank" class=" ">
                         <i class="bi bi-messenger"></i>
                     </a>
                 </div>
 
-                <a class="mr-2  bg-primary social-item" href="{{ route('wishlists') }}"><i class="fa fa-heart-o"
-                        aria-hidden="true"></i>
+                <a class="mr-2" href="{{ route('wishlists') }}"><i class="fa fa-heart-o" aria-hidden="true"></i>
                     <span style="right: 185px; top: -6px"
                         class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span>
                 </a>
 
 
-                <a class="mr-2 social-item  bg-primary" data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas"
-                    role="button" aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart"
-                        aria-hidden="true"></i>
+                <a class="mr-2  " data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas" role="button"
+                    aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart" aria-hidden="true"></i>
 
                     <span style="right: 102px; top: -4px;" class="badge badge-danger total_cart_count"
                         id="total_cart_count">
@@ -766,13 +751,72 @@
 
 
                 @if (auth('customer')->check())
-                    <a href="{{ route('user-account') }}" class=" social-item bg-primary"><i class="fa fa-user"
+                    <a href="{{ route('user-account') }}" class="  bg-primary"><i class="fa fa-user"
                             aria-hidden="true"></i></a>
                 @else
-                    <a href="{{ route('customer.auth.login') }}" class=" social-item bg-primary"><i
-                            class="fa fa-user" aria-hidden="true"></i></a>
+                    <a href="{{ route('customer.auth.login') }}" class="  bg-primary"><i class="fa fa-user"
+                            aria-hidden="true"></i></a>
                 @endif
 
+            </div>
+        </div>
+    </div> --}}
+    <div class="bottom_social_section d-block d-lg-none">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="btn text-center">
+                    <i class="bi bi-list text-white menu-icon"></i>
+                    <small class="text-white">Menu</small>
+                </button>
+                <a href="{{ route('home') }}"class="btn text-center">
+                    <i class="bi bi-house-door"></i>
+                    <small>Home</small>
+                </a>
+
+                <div class="d-inline-block position-relative paymentTwo-box text-center">
+                    <span style="font-size: 22px;"
+                        class="btn text-white border-none py-0 bg-transparent payment-2btn"><i
+                            class="bi bi-chat-text"></i>
+                    </span>
+                    <div class="d-flex justify-content-between align-items-center gap-1 px-3 py-2 payment-hover-item">
+                        <a title="WhatsApp"
+                            href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
+                            target="_blank" class="socialMedia">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <a title="Messenger" href="https://m.me/shoppingzonebd300" target="_blank"
+                            class="socialMedia">
+                            <i class="bi bi-messenger"></i>
+                        </a>
+                        <div class="triangle"></div>
+                    </div> <br>
+                    <small>Message</small>
+                </div>
+
+                {{-- <a class="text-center" href="{{ route('wishlists') }}"><i class="fa fa-heart-o"
+                        aria-hidden="true"></i>
+                    <span style="right: 185px; top: -6px"
+                        class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span>
+
+                    <small>WishList</small>
+                </a> --}}
+
+                <a class="text-center" data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
+                    aria-controls="searchOffcanvas"><i class="bi bi-search"></i>
+                    <small>Search</small>
+                </a>
+
+                @if (auth('customer')->check())
+                    <a href="{{ route('user-account') }}" class="text-center"><i class="bi bi-person-circle"
+                            aria-hidden="true"></i>
+                        <small>Account</small>
+                    </a>
+                @else
+                    <a href="{{ route('customer.auth.login') }}" class="text-center"><i class="bi bi-person-circle"
+                            aria-hidden="true"></i>
+                        <small>Account</small>
+                    </a>
+                @endif
             </div>
         </div>
     </div>

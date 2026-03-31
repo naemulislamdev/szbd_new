@@ -24,42 +24,10 @@
                         <h1>{{ $discount_offers->title }}</h1>
                         <div class="heading-border"></div>
                     </div>
-                    <div class="grid-controls">
-                        <button class="grid-btn" data-columns="6" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="4" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="3" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn" data-columns="5" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
-                    <div class="grid-controls mobile-grid-controls">
-                        <button class="grid-btn grid-btn-mobile" data-columns="12" data-category="category1">
-                            <div class="grid-icon"></div>
-                        </button>
-                        <button class="grid-btn grid-btn-mobile" data-columns="6" data-category="category1">
-                            <div class="grid-icon"></div>
-                            <div class="grid-icon"></div>
-                        </button>
-                    </div>
+
                 </div>
             </div>
-            <div class="row product-grid">
+            <div class="row ">
                 @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'); @endphp
                 <!-- Your product columns go here -->
                 @if ($discount_offers->product_ids != null)
