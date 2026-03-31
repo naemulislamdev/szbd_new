@@ -546,7 +546,7 @@
                         <div class="input-group mb-3">
 
                             <input type="email" required class="form-control subscribe-input"
-                                placeholder="Your Email Here" aria-describedby="button-addon1">
+                                placeholder="Your Email Here" name="email" aria-describedby="button-addon1">
 
                             <button class="btn bg-orange" type="submit" id="button-addon1"
                                 style="border-radius: 0 25px 25px 0 !important;">
@@ -554,6 +554,9 @@
                             </button>
 
                         </div>
+                        @error('email')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </form>
                 </div>
 

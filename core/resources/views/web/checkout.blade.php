@@ -205,7 +205,7 @@
     <!-- Button trigger modal -->
     <!-- Modal -->
     <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered d-block">
             <form method="POST" action="{{ route('address.update') }}">
                 @csrf
                 <input type="hidden" name="id" id="edit_id">
@@ -217,8 +217,11 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <label>Name</label>
                         <input type="text" name="name" id="edit_name" class="form-control mb-2">
+                        <label>Phone</label>
                         <input type="number" name="phone" id="edit_phone" class="form-control mb-2">
+                        <label>Address</label>
                         <textarea name="address" id="edit_address" class="form-control"></textarea>
                     </div>
                     <div class="modal-footer">

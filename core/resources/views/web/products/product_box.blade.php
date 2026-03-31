@@ -1,3 +1,16 @@
+@php
+    $colors = is_array($product->colors)
+        ? $product->colors
+        : json_decode($product->colors ?? '[]', true);
+
+    $colorVariants = is_array($product->color_variant)
+        ? $product->color_variant
+        : json_decode($product->color_variant ?? '[]', true);
+    $choiceOptions = is_array($product->choice_options)
+        ? $product->choice_options
+        : json_decode($product->choice_options ?? '[]', true);
+@endphp
+
 <div class="{{ $classBox ?? 'col-md-3' }} col-sm-6 product-column" data-category="{{ $dataCategory ?? '' }}">
     <div class="product-box product-box-col-2" data-category="{{ $dataCategory ?? '' }}">
         <input type="hidden" name="quantity" value="{{ $product->minimum_order_qty ?? 1 }}"
@@ -45,24 +58,12 @@
                         <span>৳ {{ $product->unit_price }}</span>
                     @endif
                 </div>
-                <button type="button" style="cursor: pointer;" class="btn btn-primary btn btn-primary align-self-center"
-                    onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
+                <button type="button" style="cursor: pointer;" class="btn btn-primary btn btn-primary align-self-center" @if (!empty($colorVariants) || count($choiceOptions) > 0) data-toggle="modal" data-target="#addToCartModal_{{ $product->id }}" @else
+                    onclick="buy_now('form-{{ $product->id }}')" @endif>অর্ডার করুন</button>
             </div>
         </div>
     </div>
 </div>
-@php
-    $colors = is_array($product->colors)
-        ? $product->colors
-        : json_decode($product->colors ?? '[]', true);
-
-    $colorVariants = is_array($product->color_variant)
-        ? $product->color_variant
-        : json_decode($product->color_variant ?? '[]', true);
-    $choiceOptions = is_array($product->choice_options)
-        ? $product->choice_options
-        : json_decode($product->choice_options ?? '[]', true);
-@endphp
 
 <!-- AddToCart Modal -->
 <div class="modal fade addToCartModalCls" id="addToCartModal_{{ $product->id }}" tabindex="-1" role="dialog"
@@ -187,12 +188,11 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start">
-                    <a href="{{ route('product', $product->slug) }}" class="btn btn-secondary btn-sm"> <i
-                            class="fa fa-eye    "></i> View Details</a>
                     <button type="button" class="btn btn-danger btn-sm"
                         onclick="addToCart('form-{{ $product->id }}')"> <i class="fa fa-cart-plus"
-                            aria-hidden="true"></i> Add
-                        To Cart</button>
+                            aria-hidden="true"></i> কার্টে যোগ করুন</button>
+                        <button type="button" style="cursor: pointer;" class="btn btn-primary btn btn-primary align-self-center"
+                    onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
                 </div>
             </div>
         </form>

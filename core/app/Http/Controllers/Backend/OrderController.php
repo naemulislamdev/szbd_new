@@ -9,7 +9,6 @@ use App\Models\OrderDetail;
 use App\Models\OrderHistory;
 use App\Models\Product;
 use App\Models\ShippingAddress;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;

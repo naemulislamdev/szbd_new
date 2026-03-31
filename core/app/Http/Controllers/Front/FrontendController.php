@@ -31,6 +31,7 @@ use App\Models\ProductLandingPage;
 use App\Models\Review;
 use App\Models\ShippingAddress;
 use App\Models\SubCategory;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Wishlist;
@@ -884,6 +885,19 @@ SET price = ROUND(price * $rate)");
         } else {
             return "<h2>This Offer coming very soon !</h2>";
         }
+    }
+
+    public function subscription(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:subscriptions,email',
+        ]);
+
+        Subscription::create([
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Subscribed successfully!');
     }
 
     public function sendOtp()

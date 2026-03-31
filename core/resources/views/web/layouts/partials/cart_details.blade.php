@@ -46,8 +46,13 @@
                                                 </a>
                                             </div>
                                         </td>
-                                        <td><a
-                                                href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a>
+                                        <td style="text-align: left;">
+                                            <a href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a><br>
+                                            @if (!empty($cartItem['variations']))
+                                                @foreach ($cartItem['variations'] as $vKey => $variation)
+                                                    <span style="font-size: 14px;">{{ $vKey }} : {{ $variation }}</span>
+                                                @endforeach
+                                            @endif
                                         </td>
                                         <td class="price-col">
                                             {{ $cartItem['price'] - $cartItem['discount'] }}
@@ -102,7 +107,7 @@
                                     <div class="col-md-6 mx-auto">
                                         <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control otp-phone-save check-phone"
+                                            <input type="text" name="otp_phone" class="form-control otp-phone-save check-phone @error('otp_phone') is-invalid @enderror"
                                                 id="otp_phone">
                                             <button type="button" id="send_otp" class="btn btn-info btn-sm">
                                                 ওটিপি পাঠান
@@ -124,8 +129,8 @@
                                             </div>
 
                                             <div class="otp-inputs" id="otpBoxesWrap">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box" autofocus>
+                                                <input type="text" inputmode="numeric" maxlength="1" class="otp-box"
+                                                    autofocus>
                                                 <input type="text" inputmode="numeric" maxlength="1"
                                                     class="otp-box">
                                                 <input type="text" inputmode="numeric" maxlength="1"
@@ -137,8 +142,8 @@
                                             <input type="hidden" id="otp" autocomplete="one-time-code">
 
                                             <div class="mt-3 d-flex gap-2 justify-content-center">
-                                                <button type="button" class="btn btn-success"
-                                                    id="verify_otp">ভেরিফাই করুন</button>
+                                                <button type="button" class="btn btn-success" id="verify_otp">ভেরিফাই
+                                                    করুন</button>
                                                 <button type="button" class="btn btn-secondary d-none"
                                                     id="resend_otp">আবার ওটিপি পাঠান</button>
                                             </div>

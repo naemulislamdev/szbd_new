@@ -92,7 +92,7 @@ class RolePermissionController extends Controller
     }
     public function create()
     {
-        $modules = AdminModule::all();
+        $modules = AdminModule::orderBy('serial_number', 'ASC')->get();
         $roleDepartments = RoleDepartment::where('status', 1)->get();
         return view('admin.role_permission.roles.create', compact('modules', 'roleDepartments'));
     }

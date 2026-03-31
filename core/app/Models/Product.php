@@ -69,15 +69,6 @@ class Product extends Model
         return $query->where('featured_status', 1);
     }
 
-    public function shop()
-    {
-        return $this->belongsTo(Shop::class, 'seller_id');
-    }
-
-    public function seller()
-    {
-        return $this->belongsTo(Seller::class, 'user_id');
-    }
 
     public function rating()
     {
