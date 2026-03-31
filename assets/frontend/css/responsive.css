@@ -3,11 +3,19 @@
     padding: 5px 5px;
     margin: 0px 0px;
   }
+
+  header .container .main_row {
+    justify-content: space-between !important;
+  }
   .header-icon > a {
-    margin-right: 22px;
+    margin-right: 10px;
+    margin-top: 15px;
   }
 }
 @media all and (max-width: 1200px) {
+  header {
+    padding: 10px;
+  }
 }
 
 @media all and (max-width: 1080px) {
@@ -30,7 +38,7 @@
     margin-top: 0;
   }
   .main-slider {
-    height: 85vh;
+    height: 16vh;
   }
 }
 
@@ -47,7 +55,12 @@
 }
 
 @media (max-width: 992px) {
-  /*Slider Sectoin*/
+  .myBrandSwiper .brand-card {
+    width: 265px;
+  }
+  .smLogo {
+    max-width: 70% !important;
+  }
 }
 
 /*
@@ -71,9 +84,7 @@ Pusti Soyabeliteran oil 5
     right: 0px;
     top: 47%;
   }
-  .myBrandSwiper .brand-card {
-    width: 250px;
-  }
+
   .badge {
     padding: 3px 6px !important;
     font-size: 11px !important;
@@ -117,7 +128,7 @@ Pusti Soyabeliteran oil 5
     font-size: 50px;
   }
   .header-slider-section .carousel-item {
-    height: 35vh;
+    height: 21vh;
   }
 
   .header-slider-section .carousel-control-prev,
@@ -130,8 +141,9 @@ Pusti Soyabeliteran oil 5
     padding-left: 11px;
   }
   .main-slider {
-    height: 114px;
+    height: 180px;
   }
+
   .swiper-pagination-bullet {
     height: 4px;
   }
@@ -160,6 +172,7 @@ Pusti Soyabeliteran oil 5
   header .main_row {
     flex-wrap: nowrap;
     align-items: center;
+    justify-content: space-between;
   }
   header {
     padding: 10px 0;
@@ -170,8 +183,69 @@ Pusti Soyabeliteran oil 5
   .product-box-col-sm-6 {
     height: 465px;
   }
+  .header-slider-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .header-icon > a {
+    margin-right: 5px !important;
+    margin-top: 5px;
+  }
 }
+
+/* mobile */
 @media (max-width: 570px) {
+  .header {
+    padding: 5px 0;
+  }
+  .header-slider-section .carousel-control-next-icon,
+  .header-slider-section .carousel-control-prev-icon {
+    position: absolute;
+    top: 21%;
+  }
+  .header-slider-section .carousel-control-prev,
+  .header-slider-section .carousel-control-next {
+    width: 33px;
+    height: 33px;
+    top: 47%;
+  }
+
+  .header-slider-section .carousel-item {
+    /* height: auto; */
+    height: 13vh;
+  }
+  .main-slider {
+    height: 100% !important;
+  }
+  .smLogo {
+    max-width: 100% !important;
+  }
+  .product-column.five-col {
+    height: 470px !important;
+  }
+  .product-column.five-col .product-image2-col-2 {
+    height: 330px !important;
+  }
+  .customer-review-box > img,
+  .customer-review-box > img,
+  .product-column {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+    margin-bottom: 18px;
+  }
+  .product-column.five-col .product-image2-col-2 {
+    overflow: hidden;
+  }
+  .header-slider-section .carousel-item {
+    height: 35vh;
+  }
+  .main-slider {
+    height: 114px;
+  }
+  .myBrandSwiper .brand-card {
+    width: 250px;
+  }
   .grid-controls {
     display: none;
   }
@@ -181,8 +255,7 @@ Pusti Soyabeliteran oil 5
     width: 20%;
   }
   .header-slider-section .carousel-item {
-    height: auto;
-    /*height: 23vh;*/
+    height: 100%;
   }
   header .main_row {
     flex-wrap: nowrap;
@@ -191,6 +264,9 @@ Pusti Soyabeliteran oil 5
 }
 
 @media (max-width: 480px) {
+  .product-column.five-col .product-image2-col-2 {
+    overflow: hidden;
+  }
   .header-slider-section {
     margin-top: 0px;
     text-align: center;
@@ -272,6 +348,10 @@ Pusti Soyabeliteran oil 5
 }
 
 @media (max-width: 320px) {
+  .header-icon > a {
+    margin-right: 0 !important;
+    margin-top: 27px !important;
+  }
   .header-slider-section .carousel-item > .slider-content-box {
     width: 88%;
   }
@@ -288,9 +368,14 @@ Pusti Soyabeliteran oil 5
     width: 20%;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .five-col {
     flex: 0 0 20%;
     max-width: 20%;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .mcat-box {
+    height: 235px;
   }
 }

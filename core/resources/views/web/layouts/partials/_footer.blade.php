@@ -1,7 +1,7 @@
 <footer class="py-4">
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="footer-title">
                     <h3>{{ \App\CPU\Helpers::get_business_settings('company_name') }}</h3>
                     @php $social_media = \App\Models\SocialMedia::where('active_status', 1)->get(); @endphp
@@ -32,7 +32,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="footer-title">
                     <h3>About Us</h3>
                     <ul>
@@ -48,7 +48,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="footer-title">
                     <h3>My Account</h3>
                     <ul>
@@ -75,7 +75,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="footer-title">
                     <h3>Download Our App</h3>
                     <div class="download-icon mb-3 border p-3" style="border-radius: 12px;">
@@ -131,7 +131,7 @@
 <section class="copyright-section">
     <div class="container">
         <div class="row py-3">
-            <div class="col-md-12">
+            <div class="col-lg-12">
                 <div class="copyright-text text-center">
                     <p class="mb-0 pb-0">
                         Copyright © 2026 - Shopping Zone BD All Rights Reserved. Design & Developed By

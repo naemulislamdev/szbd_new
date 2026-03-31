@@ -476,7 +476,7 @@
                 <div class="col-md-12">
                     <div class="row g-4">
                         @foreach ($branchs as $branch)
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div>
                                     <a href="={{ $branch->map_url ? $branch->map_url : '' }}"
                                         class="d-flex align-items-center gy-4" target="_blank">
@@ -496,7 +496,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="col-md-5 mx-auto mt-4">
+                <div class="col-lg-5 mx-auto mt-4">
                     <h6 style="font-size: 22px; font-weight: 500;  margin: 0 auto; " class="text-center newslater-title">
                         Join our newsletter for latest update
                         on discount and

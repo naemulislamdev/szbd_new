@@ -207,7 +207,6 @@ a:hover {
   z-index: 999;
 }
 .topbar-section {
-  padding: 5px 0;
   background-color: #ff5d00;
 }
 .topbar-contact {
@@ -709,10 +708,11 @@ header.scrolled {
   margin-bottom: 19px;
 }
 .customer-review-box > img,
+.customer-review-box > img,
 .product-column {
-  padding-right: 10px !important;
-  padding-left: 10px !important;
-  margin-bottom: 19px;
+  padding-right: 14px !important;
+  padding-left: 14px !important;
+  margin-bottom: 27px;
 }
 .col-sm-12 {
   width: 100% !important;

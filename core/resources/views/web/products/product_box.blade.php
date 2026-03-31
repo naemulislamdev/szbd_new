@@ -11,7 +11,7 @@
         : json_decode($product->choice_options ?? '[]', true);
 @endphp
 
-<div class="{{ $classBox ?? 'five-col' }} col-sm-6 product-column" data-category="{{ $dataCategory ?? '' }}">
+<div class="{{ $classBox ?? 'five-col' }} col-6 col-sm-4 product-column" data-category="{{ $dataCategory ?? '' }}">
     <div class="product-box product-box-col-2" data-category="{{ $dataCategory ?? '' }}">
         <input type="hidden" name="quantity" value="{{ $product->minimum_order_qty ?? 1 }}"
             min="{{ $product->minimum_order_qty ?? 1 }}" max="100">
