@@ -1,4 +1,4 @@
-@foreach($choice_options as $key=>$choice)
+@foreach($choice_options as $key=> $choice)
     <div class="row">
         <div class="col-md-3">
             <input type="hidden" name="choice_no[]" value="{{$choice_no[$key]??''}}">

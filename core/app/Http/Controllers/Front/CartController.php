@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\CPU\Helpers;
 use App\Models\Color;
+use App\Models\EidOffer;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -90,7 +91,7 @@ class CartController extends Controller
                 $color_image_path = $colorRow['image'];
             }
         }
-    //dd($product->choice_options);
+        //dd($product->choice_options);
         // ---------------------------
         // SIZE / OTHER OPTIONS
         // ---------------------------
@@ -152,8 +153,32 @@ class CartController extends Controller
         // ---------------------------
         $tax = ($price * $product->tax) / 100;
 
+        $pormotionOffer = EidOffer::where('slug', 'buy-2-get-1')->where('status', 1)->first();
+        $qty = (int) $request->quantity;
+
+        // default
+        $unitFinalPrice = $price;
+        $totalPrice     = $price * $qty;
+        $freeItems      = 0;
+
+        if ($pormotionOffer) {
+
+            // ✅ free items
+            $freeItems = floor($qty / 3);
+
+            // ✅ payable qty
+            $payableQty = $qty - $freeItems;
+
+            // ✅ total price
+            $totalPrice = $price * $payableQty;
+
+            // ✅ unit price (for UI)
+            $unitFinalPrice = $totalPrice / $qty;
+        }
+
+
         $data['quantity']           = $request->quantity;
-        $data['price']              = $price;
+        $data['price']              = $unitFinalPrice;
         $data['tax']                = $tax;
         $data['discount']           = Helpers::get_product_discount($product, $price);
         $data['shipping_cost']      = 0;

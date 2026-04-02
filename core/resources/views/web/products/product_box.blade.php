@@ -94,7 +94,7 @@
                                  }}</span>
                         </div>
                     </div>
-                @if (!empty($colors) && count($colors) > 0)
+                @if (!empty($colors))
     <div class="row mb-4 mt-3">
         <div class="col-12 mb-3">
             <h4 style="font-size: 18px;">Color</h4>

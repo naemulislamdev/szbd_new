@@ -206,7 +206,7 @@
     <!-- Modal -->
     <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered d-block">
-            <form method="POST" action="{{ route('address.update') }}">
+            <form method="POST" action="{{ route('address.update') }}" id="addressUpdate">
                 @csrf
                 <input type="hidden" name="id" id="edit_id">
                 <div class="modal-content">
@@ -225,7 +225,7 @@
                         <textarea name="address" id="edit_address" class="form-control"></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary">Update</button>
+                        <button class="btn btn-primary" type="submit">Update</button>
                     </div>
                 </div>
             </form>
@@ -235,6 +235,27 @@
 @endsection
 
 @push('scripts')
+<script>
+    $('#addressUpdate').on('submit', function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(res) {
+                if (res.status === 'success') {
+                    $('#editAddressModal').modal('hide');
+                    toastr.success('Address updated successfully');
+                    location.reload();
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+</script>
     <script>
         $(document).ready(function() {
 
@@ -289,7 +310,7 @@
             document.querySelectorAll('.check-phone').forEach(function(input) {
 
                 const container = input.closest('.col-md-6');
-                const feedback = container.querySelector('.phone-feedback');
+                const feedback = container.querySelector('#phoneFeedback');
 
                 input.addEventListener('input', function() {
 
@@ -393,6 +414,7 @@
             $('#editAddressModal').modal('show');
         }
     </script>
+
 
     <script>
         let otpCountdownInterval = null;

@@ -10,30 +10,30 @@ use Illuminate\Support\Str;
 
 class ProductService
 {
-    public static function store($request)
+    public static function store($r)
     {
         $product = new Product();
 
-        self::basicInfo($product, $request);
-        self::categoryInfo($product, $request);
-        self::priceInfo($product, $request);
-        self::variationInfo($product, $request);
-        self::mediaInfo($product, $request);
-        self::seoInfo($product, $request);
+        self::basicInfo($product, $r);
+        self::categoryInfo($product, $r);
+        self::priceInfo($product, $r);
+        self::variationInfoStore($product, $r);
+        self::mediaInfo($product, $r);
+        self::seoInfo($product, $r);
 
         $product->save();
 
         return $product;
     }
-    public static function update($request, $id)
+    public static function update($r, $id)
     {
         $product = Product::findOrFail($id);
-        self::basicInfo($product, $request);
-        self::categoryInfo($product, $request);
-        self::priceInfo($product, $request);
-        self::variationInfo($product, $request);
-        self::mediaInfoUpdate($product, $request);
-        self::seoInfoUpdate($product, $request);
+        self::basicInfo($product, $r);
+        self::categoryInfo($product, $r);
+        self::priceInfo($product, $r);
+        self::variationInfoUpdate($product, $r);
+        self::mediaInfoUpdate($product, $r);
+        self::seoInfoUpdate($product, $r);
 
         $product->save();
 
@@ -60,7 +60,7 @@ class ProductService
         } else {
             $p->video_shopping = false;
         }
-        $p->request_status = 1;
+        $p->status = 1;
         $p->multiply_qty = $r->multiplyQTY == 'on' ? 1 : 0;
     }
 
@@ -92,7 +92,7 @@ class ProductService
         $p->discount_type = $r->discount_type;
     }
 
-    private static function variationInfo($p, $r)
+    private static function variationInfoStore($p, $r)
     {
         if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
             $p->colors = json_encode($r->colors);
@@ -100,7 +100,6 @@ class ProductService
             $colors = [];
             $p->colors = json_encode($colors);
         }
-
         $choice_options = [];
         if ($r->has('choice')) {
             foreach ($r->choice_no as $key => $no) {
@@ -134,35 +133,27 @@ class ProductService
         $stock_count = 0;
         if (count($combinations[0]) > 0) {
             foreach ($combinations as $key => $combination) {
-
                 $str = '';
-                $i = 0;
-
-                foreach ($combination as $item) {
-
-                    if ($i == 0 && $r->has('colors_active') && $r->has('colors')) {
-                        // color code → color name
-                        $color = Color::where('code', $item)->first();
-                        if ($color) {
-                            $str .= str_replace(' ', '', $color->name);
-                        }
-                    } else {
+                foreach ($combination as $k => $item) {
+                    if ($k > 0) {
                         $str .= '-' . str_replace(' ', '', $item);
+                    } else {
+                        if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
+                            $color_name = Color::where('code', $item)->first()->name;
+                            //$str .= $color_name;
+                        } else {
+                            $str .= str_replace(' ', '', $item);
+                        }
                     }
-
-                    $i++;
                 }
-
-                $itemArr = [];
-                $itemArr['type']  = $str;
-                $itemArr['price'] = abs($r['price_' . $str] ?? 0);
-                $itemArr['sku']   = $r['sku_' . $str] ?? '';
-                $itemArr['qty']   = abs($r['qty_' . $str] ?? 0);
-
-                $variations[] = $itemArr;
-                $stock_count += $itemArr['qty'];
+                $item = [];
+                $item['type'] = $str;
+                $item['price'] = abs($r['price_' . str_replace('.', '_', $str)]);
+                $item['sku'] = $r['sku_' . str_replace('.', '_', $str)];
+                $item['qty'] = abs($r['qty_' . str_replace('.', '_', $str)]);
+                array_push($variations, $item);
+                $stock_count += $item['qty'];
             }
-
             if ($r->colors) {
                 foreach ($r->colors as $key => $color) {
                     $colorName = Color::where('code', $color)->first();
@@ -178,12 +169,96 @@ class ProductService
         } else {
             $stock_count = (int)$r['current_stock'];
         }
-
         $p->color_variant = json_encode($colorVariations);
-        $p->variation = json_encode($variations);
-        $p->attributes = json_encode($r->choice_attributes ?? []);
+        $p->variation     =  json_encode($variations);
+        $p->attributes    = json_encode($r->choice_attributes);
+
         $p->current_stock = abs($stock_count);
-        $p->minimum_order_qty = $r->minimum_order_qty;
+        $p->minimum_order_qty = $r->minimum_order_qty ?? 1;
+    }
+    private static function variationInfoUpdate($p, $r)
+    {
+        if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
+            $p->colors = json_encode($r->colors);
+        } else {
+            $colors = [];
+            $p->colors = json_encode($colors);
+        }
+        $choice_options = [];
+
+        if ($r->has('choice')) {
+            foreach ($r->choice_no as $key => $no) {
+                $str = 'choice_options_' . $no;
+                $item['name'] = 'choice_' . $no;
+                $item['title'] = $r->choice[$key];
+                $item['options'] = explode(',', implode('|', [$r[$str]]));
+                array_push($choice_options, $item);
+            }
+        }
+        $p->choice_options = json_encode($choice_options);
+        $variations = [];
+        //combinations start
+        $options = [];
+        if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
+            $colors_active = 1;
+            array_push($options, $r->colors);
+        }
+        if ($r->has('choice_no')) {
+            foreach ($r->choice_no as $key => $no) {
+                $name = 'choice_options_' . $no;
+                $my_str = implode('|', $r[$name]);
+                array_push($options, explode(',', $my_str));
+            }
+        }
+        //Generates the combinations of customer choice options
+        $combinations = Helpers::combinations($options);
+        $variations = [];
+        $colorVariations = [];
+        $stock_count = 0;
+        if (count($combinations[0]) > 0) {
+            foreach ($combinations as $key => $combination) {
+                $str = '';
+                foreach ($combination as $k => $item) {
+                    if ($k > 0) {
+                        $str .= '-' . str_replace(' ', '', $item);
+                    } else {
+                        if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
+                            $color_name = Color::where('code', $item)->first()->name;
+                            $str .= $color_name;
+                        } else {
+                            $str .= str_replace(' ', '', $item);
+                        }
+                    }
+                }
+                $item = [];
+                $item['type'] = $str;
+                $item['price'] = abs($r['price_' . str_replace('.', '_', $str)]);
+                $item['sku'] = $r['sku_' . str_replace('.', '_', $str)];
+                $item['qty'] = abs($r['qty_' . str_replace('.', '_', $str)]);
+                array_push($variations, $item);
+                $stock_count += $item['qty'];
+            }
+            if ($r->colors) {
+                foreach ($r->colors as $key => $color) {
+                    $colorName = Color::where('code', $color)->first();
+                    $imageValu = $r->color_image[$key];
+
+                    $ColorV = [];
+                    $ColorV['color'] = $colorName->name;
+                    $ColorV['code'] = $colorName->code;
+                    $ColorV['image'] = $imageValu;
+                    array_push($colorVariations, $ColorV);
+                }
+            }
+        } else {
+            $stock_count = (int)$r['current_stock'];
+        }
+        $p->color_variant = json_encode($colorVariations);
+        $p->variation     =  json_encode($variations);
+        $p->attributes    = json_encode($r->choice_attributes);
+
+        $p->current_stock = abs($stock_count);
+        $p->minimum_order_qty = $r->minimum_order_qty ?? 1;
     }
 
     private static function mediaInfo($p, $r)

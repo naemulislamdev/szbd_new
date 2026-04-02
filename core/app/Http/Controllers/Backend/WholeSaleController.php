@@ -54,7 +54,8 @@ class WholeSaleController extends Controller
 
 
             ->addColumn('action', function ($row) {
-                return '
+            if (auth('admin')->user()->can('Wholesale_view')) {
+                $button = '
         <button
         data-id="' . $row->id . '"
         data-name="' . $row->name . '"
@@ -71,7 +72,10 @@ class WholeSaleController extends Controller
          class="btn btn-primary btn-sm viewBtn" title="View" style="cursor: pointer;">
             <i class="la la-eye"></i>
         </button>
-
+        ';
+            }
+            if (auth('admin')->user()->can('Wholesale_delete')) {
+                $button .= '
         <button class="btn btn-danger btn-sm delete"
                 style="cursor: pointer;"
                 title="Delete"
@@ -79,6 +83,8 @@ class WholeSaleController extends Controller
             <i class="la la-trash"></i>
         </button>
     ';
+            }
+                return $button;
             })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y h:i A');

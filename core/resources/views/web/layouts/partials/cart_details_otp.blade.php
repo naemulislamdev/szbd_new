@@ -46,8 +46,13 @@
                                                 </a>
                                             </div>
                                         </td>
-                                        <td><a
-                                                href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a>
+                                        <td style="text-align: left;">
+                                            <a href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a><br>
+                                            @if (!empty($cartItem['variations']))
+                                                @foreach ($cartItem['variations'] as $vKey => $variation)
+                                                    <span style="font-size: 14px;">{{ $vKey }} : {{ $variation }}</span>
+                                                @endforeach
+                                            @endif
                                         </td>
                                         <td class="price-col">
                                             {{ $cartItem['price'] - $cartItem['discount'] }}
@@ -86,7 +91,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card mb-3">
+                <div class="card mb-3 ">
                     <div class="card-header">
                         <h2 class="address-title mb-0">আপনার ঠিকানা</h2>
                     </div>
@@ -94,12 +99,15 @@
                         @if (!$customer && !session('otp_verified'))
                             <input type="hidden" name="session_id" id="session_id" value="{{ session()->getId() }}">
 
-                            <div id="otpSection">
+                            <div id="otpWrapper">
+                                <input type="hidden" id="otp_expires_at" value="{{ session('otp_expires_at', '') }}">
+                                <input type="hidden" id="session_phone" value="{{ session('otp_phone', '') }}">
+
                                 <div class="row {{ session()->has('otp_phone') ? 'd-none' : '' }}" id="phoneRow">
                                     <div class="col-md-6 mx-auto">
                                         <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control otp-phone-save check-phone"
+                                            <input type="text" name="otp_phone" class="form-control otp-phone-save check-phone @error('otp_phone') is-invalid @enderror"
                                                 id="otp_phone">
                                             <button type="button" id="send_otp" class="btn btn-info btn-sm">
                                                 ওটিপি পাঠান
@@ -109,35 +117,47 @@
                                     </div>
                                 </div>
 
-                                <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpInputRow">
+                                <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpRow">
                                     <div class="col-md-6 mx-auto">
-                                        <label>ওটিপি দিন</label>
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" id="otp" maxlength="4">
-                                            <button type="button" class="btn btn-success btn-sm" id="verify_otp">
-                                                Verify OTP
-                                            </button>
-                                        </div>
+                                        <div class="otp-card">
+                                            <h2 class="otp-title">OTP Verification</h2>
+                                            <p class="otp-subtitle">আপনার মোবাইলে পাঠানো ৪ সংখ্যার কোডটি দিন</p>
 
-                                        <div class="mt-2">
-                                            <button type="button" class="btn btn-warning btn-sm d-none"
-                                                id="resend_otp">
-                                                আবার OTP পাঠান
-                                            </button>
-                                        </div>
+                                            <div class="otp-timer" id="otpTimer"></div>
+                                            <div class="otp-expired text-danger d-none" id="otpExpiredMsg">
+                                                OTP এর সময় শেষ। আবার OTP পাঠান।
+                                            </div>
 
-                                        <div class="mt-2">
-                                            <small id="otpTimer" class="text-primary d-none"></small>
-                                            <small id="otpExpiredMsg" class="text-danger d-none">OTP এর সময় শেষ। আবার
-                                                OTP পাঠান।</small>
+                                            <div class="otp-inputs" id="otpBoxesWrap">
+                                                <input type="text" inputmode="numeric" maxlength="1" class="otp-box"
+                                                    autofocus>
+                                                <input type="text" inputmode="numeric" maxlength="1"
+                                                    class="otp-box">
+                                                <input type="text" inputmode="numeric" maxlength="1"
+                                                    class="otp-box">
+                                                <input type="text" inputmode="numeric" maxlength="1"
+                                                    class="otp-box">
+                                            </div>
+
+                                            <input type="hidden" id="otp" autocomplete="one-time-code">
+
+                                            <div class="mt-3 d-flex gap-2 justify-content-center">
+                                                <button type="button" class="btn btn-success" id="verify_otp">ভেরিফাই
+                                                    করুন</button>
+                                                <button type="button" class="btn btn-secondary d-none"
+                                                    id="resend_otp">আবার ওটিপি পাঠান</button>
+                                            </div>
+
+                                            <div id="otpMessage" class="mt-2 small"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endif
 
-                        <form action="{{ route('product.checkout') }}" method="POST" id="userInfoForm"
-                            class="checkoutForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }}">
+                        <form style="position: relative" action="{{ route('product.checkout') }}" method="POST"
+                            id="userInfoForm"
+                            class="checkoutForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }} ">
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
@@ -175,26 +195,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-4">
+                            <div class="row mb-4 ">
                                 <div class="col-md-12">
                                     @if ($customer && $shippingAddresses->count() > 0)
-                                        @foreach ($shippingAddresses as $key => $address)
-                                            <div class="address-box {{ $key == 0 ? 'active' : '' }}">
-                                                <input type="radio" id="address_{{ $address->id }}"
-                                                    name="address_type" value="{{ $address->id }}"
-                                                    {{ $key == 0 ? 'checked' : '' }}
-                                                    onclick="selectAddress(false,this)">
-                                                <label for="address_{{ $address->id }}">
-                                                    <strong>Name: {{ $address->contact_person_name }}</strong>
-                                                    <br>
-                                                    📞 Phone: {{ $address->phone }}<br>
-                                                    🏠 Address: {{ $address->address }}
-                                                </label>
-                                                <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
-                                                    onclick="openEditModal({{ $address }})">✏️</button>
-                                            </div>
-                                        @endforeach
-
+                                        <div class="checkout-card">
+                                            @foreach ($shippingAddresses as $key => $address)
+                                                <div class=" address-box {{ $key == 0 ? 'active' : '' }} mr-2">
+                                                    <input type="radio" id="address_{{ $address->id }}"
+                                                        name="address_type" value="{{ $address->id }}"
+                                                        {{ $key == 0 ? 'checked' : '' }}
+                                                        onclick="selectAddress(false,this)">
+                                                    <label for="address_{{ $address->id }}">
+                                                        <strong>Name: {{ $address->contact_person_name }}</strong>
+                                                        <br>
+                                                        📞 Phone: {{ $address->phone }}<br>
+                                                        🏠 Address: {{ $address->address }}
+                                                    </label>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary edit-btn"
+                                                        onclick="openEditModal({{ $address }})">✏️</button>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                         <label class="address-box">
                                             <input type="radio" name="address_type" value="new"
                                                 onclick="selectAddress(true,this)">
@@ -247,7 +269,9 @@
                                 </div>
 
                             </div>
-                            <button type="submit" class="btn btn-primary float-right">অর্ডার করুন</button>
+                            <div class="sticky-btn ">
+                                <button type="submit" class="btn btn-primary float-right w-100">অর্ডার করুন</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -329,159 +353,6 @@
                     @endforeach
                 ]
             }
-        });
-    </script>
-
-     <script>
-        let otpCountdownInterval = null;
-        let otpRemainingSeconds = 300; // 5 minutes
-        let otpTimerStarted = false;
-
-        function startOtpTimer(seconds = 300) {
-            otpRemainingSeconds = seconds;
-            otpTimerStarted = true;
-
-            $('#otpTimer').removeClass('d-none');
-            $('#otpExpiredMsg').addClass('d-none');
-            $('#verify_otp').removeClass('d-none').prop('disabled', false);
-            $('#resend_otp').addClass('d-none');
-
-            if (otpCountdownInterval) {
-                clearInterval(otpCountdownInterval);
-            }
-
-            updateOtpTimerText();
-
-            otpCountdownInterval = setInterval(function() {
-                otpRemainingSeconds--;
-
-                if (otpRemainingSeconds <= 0) {
-                    clearInterval(otpCountdownInterval);
-                    otpCountdownInterval = null;
-                    otpTimerStarted = false;
-
-                    $('#otpTimer').addClass('d-none');
-                    $('#verify_otp').addClass('d-none').prop('disabled', true);
-                    $('#otpExpiredMsg').removeClass('d-none').text('OTP এর সময় শেষ। আবার OTP পাঠান।');
-                    $('#resend_otp').removeClass('d-none');
-                    return;
-                }
-
-                updateOtpTimerText();
-            }, 1000);
-        }
-
-        function updateOtpTimerText() {
-            let minutes = Math.floor(otpRemainingSeconds / 60);
-            let seconds = otpRemainingSeconds % 60;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-
-            $('#otpTimer').text('OTP এর মেয়াদ শেষ হবে: ' + minutes + ':' + seconds);
-        }
-
-        function setSendOtpLoading(state) {
-            if (state) {
-                $('#send_otp')
-                    .prop('disabled', true)
-                    .html(
-                        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> OTP পাঠানো হচ্ছে...'
-                        );
-            } else {
-                $('#send_otp')
-                    .prop('disabled', false)
-                    .html('ওটিপি পাঠান');
-            }
-        }
-
-        // Page load এ timer auto start হবে না
-        $(document).ready(function() {
-            if (!otpTimerStarted) {
-                $('#otpTimer').addClass('d-none').text('');
-            }
-        });
-
-        // Send OTP
-        $('#send_otp').on('click', function() {
-            let phone = $('#otp_phone').val();
-
-            if (!phone) {
-                $('.phone-feedback').text('ফোন নাম্বার দিন').removeClass('text-success').addClass('text-danger');
-                return;
-            }
-
-            setSendOtpLoading(true);
-
-            $.post("{{ route('send.otp') }}", {
-                _token: "{{ csrf_token() }}",
-                phone: phone
-            }, function(res) {
-                if (res.status === 'success') {
-                    $('#phoneRow').hide();
-                    $('#otpInputRow').removeClass('d-none');
-                    $('.phone-feedback').text(res.message).removeClass('text-danger').addClass(
-                        'text-success');
-
-                    startOtpTimer(300);
-                } else {
-                    $('.phone-feedback').text(res.message).removeClass('text-success').addClass(
-                        'text-danger');
-                }
-            }).fail(function(xhr) {
-                let msg = xhr.responseJSON?.message ?? 'OTP পাঠানো যায়নি';
-                $('.phone-feedback').text(msg).removeClass('text-success').addClass('text-danger');
-            }).always(function() {
-                setSendOtpLoading(false);
-            });
-        });
-
-        // Verify OTP
-        $('#verify_otp').on('click', function() {
-            $.post("{{ route('verify.otp') }}", {
-                _token: "{{ csrf_token() }}",
-                phone: $('#otp_phone').val(),
-                otp: $('#otp').val()
-            }, function(res) {
-                if (res.status === 'success') {
-                    if (otpCountdownInterval) {
-                        clearInterval(otpCountdownInterval);
-                    }
-
-                    $('#otpSection').hide();
-                    $('.checkoutForm').removeClass('d-none');
-                }
-            }).fail(function(xhr) {
-                let msg = xhr.responseJSON?.message ?? 'OTP verify হয়নি';
-                $('#otpExpiredMsg').removeClass('d-none').text(msg);
-            });
-        });
-
-        // Resend OTP
-        $('#resend_otp').on('click', function() {
-            let phone = $('#otp_phone').val();
-
-            $(this)
-                .prop('disabled', true)
-                .html(
-                    '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> OTP পাঠানো হচ্ছে...'
-                    );
-
-            $.post("{{ route('send.otp') }}", {
-                _token: "{{ csrf_token() }}",
-                phone: phone
-            }, function(res) {
-                if (res.status === 'success') {
-                    $('#otp').val('');
-                    $('#otpExpiredMsg').addClass('d-none').text('OTP এর সময় শেষ। আবার OTP পাঠান।');
-                    startOtpTimer(300);
-                }
-            }).fail(function(xhr) {
-                let msg = xhr.responseJSON?.message ?? 'OTP আবার পাঠানো যায়নি';
-                $('#otpExpiredMsg').removeClass('d-none').text(msg);
-            }).always(function() {
-                $('#resend_otp')
-                    .prop('disabled', false)
-                    .html('আবার OTP পাঠান');
-            });
         });
     </script>
 @endif

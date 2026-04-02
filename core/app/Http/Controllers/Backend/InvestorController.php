@@ -26,7 +26,8 @@ class InvestorController extends Controller
             ->addIndexColumn()
 
             ->addColumn('action', function ($row) {
-                return '
+                if (auth('admin')->user()->can('Investor_view')) {
+                    $button =  '
         <button
         data-id="' . $row->id . '"
         data-name="' . $row->name . '"
@@ -39,9 +40,13 @@ class InvestorController extends Controller
         data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
             data-bs-toggle="modal"
                data-bs-target="#viewInvestorModal"
-         class="btn btn-primary btn-sm viewBtn" title="View" style="cursor: pointer;">
+         class="btn btn-primary btn-sm viewBtn mb-2" title="View" style="cursor: pointer;">
             <i class="la la-eye"></i>
         </button>
+        ';
+                }
+                if (auth('admin')->user()->can('Investor_delete')) {
+                    $button .= '
 
         <button class="btn btn-danger btn-sm delete"
                 style="cursor: pointer;"
@@ -50,6 +55,8 @@ class InvestorController extends Controller
             <i class="la la-trash"></i>
         </button>
     ';
+                }
+                return $button;
             })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y h:i A');

@@ -232,7 +232,7 @@
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" value="{{ old('colors_active') }}"
                                                 name="colors_active" type="checkbox" id="flexSwitchCheckDefault"
-                                                value="1">
+                                                value="1" {{ !empty($product->colors) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="flexSwitchCheckDefault">
                                             </label>
                                         </div>
@@ -242,33 +242,46 @@
                                         </button>
                                     </div>
                                     @php
-                                        $productColors = $product->colors ? json_decode($product->colors, true) : [];
+                                        $productColors = is_array($product->colors)
+                                            ? $product->colors
+                                            : json_decode($product->colors ?? '[]', true);
                                     @endphp
 
                                     <select class="form-select form-select-lg" name="colors[]" multiple
-                                        id="colors-selector" disabled="true">
-                                        @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
+                                        id="colors-selector">
+                                        @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $color)
                                             <option value="{{ $color->code }}"
-                                                {{ in_array($color->code, $productColors) ? 'selected' : '' }}>
-                                                {{ $color['name'] }}
+                                                {{ in_array($color->code, $productColors ?? []) ? 'selected' : '' }}>
+                                                {{ $color->name }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 @php
-                                    $productAttributes = $product->attributes
-                                        ? json_decode($product->attributes, true)
-                                        : [];
+                                    $productAttributes = is_array($product->attributes)
+                                        ? $product->attributes
+                                        : json_decode($product->attributes ?? '[]', true);
+
+                                    $choiceOptions = is_array($product->choice_options)
+                                        ? $product->choice_options
+                                        : (json_decode($product->choice_options ?? '[]', true) ?:
+                                        []);
+
+                                    $colorVariants = is_array($product->color_variant)
+                                        ? $product->color_variant
+                                        : json_decode($product->color_variant ?? '[]', true);
                                 @endphp
+
                                 <div class="col-md-6 pt-3">
                                     <label for="attributes" style="padding-bottom: 3px">
                                         Attributes :
                                     </label>
+
                                     <select class="form-select form-select-lg" name="choice_attributes[]"
                                         id="choice_attributes" multiple>
                                         @foreach (\App\Models\Attribute::orderBy('name', 'asc')->get() as $a)
                                             <option value="{{ $a->id }}"
-                                                {{ in_array($a->id, $productAttributes) ? 'selected' : '' }}>
+                                                {{ in_array($a->id, $productAttributes ?? []) ? 'selected' : '' }}>
                                                 {{ $a->name }}
                                             </option>
                                         @endforeach
@@ -276,26 +289,26 @@
                                 </div>
                             </div>
                             <div class="row mt-3">
-                                @if ($product['attributes'] != null)
+
+                                @if (!empty($product->attributes))
                                     <div class="col-md-12 mt-2 mb-2">
                                         <div class="customer_choice_options" id="customer_choice_options">
                                             @include('admin.product.partials._choices', [
-                                                'choice_no' => json_decode($product['attributes']),
-                                                'choice_options' => json_decode($product['choice_options'], true),
+                                                'choice_no' => $product->attributes,
+                                                'choice_options' => $choiceOptions,
                                             ])
                                         </div>
                                     </div>
                                 @endif
-                                @if ($product['color_variant'] == null)
-                                    <div class="col-12 pt-4 color_combination" id="color_combination">
-                                    </div>
-                                @else
-                                    <div class="col-12 pt-4 color_combination" id="color_combination">
+
+                                <div class="col-12 pt-4 color_combination" id="color_combination">
+                                    @if (!empty($colorVariants))
                                         @include('admin.product.partials._edit_color_combinations', [
-                                            'combinations' => json_decode($product['color_variant'], true),
+                                            'combinations' => $colorVariants,
                                         ])
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -799,11 +812,46 @@
     </script>
     <script>
         $(document).ready(function() {
+
+            function formatColor(state) {
+                if (!state.id) return state.text;
+
+                var colorCode = $(state.element).val(); // 🔥 FIX এখানে
+
+                return `
+        <span style="display:inline-flex; align-items:center;">
+            <span style="
+                width:12px;
+                height:12px;
+                background:${colorCode};
+                border:1px solid #ccc;
+                margin-right:6px;
+                display:inline-block;
+                border-radius:2px;
+            "></span>
+            ${state.text}
+        </span>
+    `;
+
+            }
+
             $('#colors-selector').select2({
                 placeholder: "Select Colors",
-                allowClear: true,
-                width: '100%'
+                width: '100%',
+                templateResult: formatColor,
+                templateSelection: formatColor,
+                escapeMarkup: function(m) {
+                    return m;
+                }
             });
+
+        });
+        $('input[name="colors_active"]').on('change', function() {
+            if (!$('input[name="colors_active"]').is(':checked')) {
+                $('#colors-selector').prop('disabled', true);
+            } else {
+                $('#colors-selector').prop('disabled', false);
+            }
         });
         $(document).ready(function() {
             $('#choice_attributes').select2({

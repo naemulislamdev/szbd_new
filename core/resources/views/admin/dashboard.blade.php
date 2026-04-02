@@ -17,7 +17,7 @@
                 </div><!--end page-title-box-->
             </div><!--end col-->
         </div><!--end row-->
-        @can('dashboard_view', 'order_report_view')
+        @can('dashboard_view')
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-3">
                     <div class="card">

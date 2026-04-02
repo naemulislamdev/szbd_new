@@ -253,6 +253,37 @@ class CheckoutControl extends Controller
         ]);
     }
 
+    public function customerAddressUpdate(Request $request)
+    {
+
+        $request->validate([
+            'id' => 'required|exists:shipping_addresses,id',
+            'name' => 'required|string',
+            'phone' => 'required|regex:/^(01[3-9]\d{8})$/',
+            'address' => 'required|string|max:200',
+        ]);
+
+        $address = ShippingAddress::findOrFail($request->id);
+
+        if ($address->customer_id != auth('customer')->id()) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $address->update([
+            'contact_person_name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Address updated successfully'
+        ]);
+    }
+
     public function productCheckout(Request $request)
     {
         if (!session()->has('cart') || count(session('cart')) == 0) {
@@ -400,7 +431,7 @@ class CheckoutControl extends Controller
         if ($request->address_type === 'new' || !auth('customer')->check()) {
             $rules += [
                 'name' => 'required|string',
-                'phone' => 'nullable|regex:/^(01[3-9]\d{8})$/',
+                'phone' => 'required|regex:/^(01[3-9]\d{8})$/',
                 'address' => 'required|string|max:200',
                 'customer_note' => 'nullable|string|max:200',
             ];
@@ -429,7 +460,7 @@ class CheckoutControl extends Controller
                 $shippingAddress = ShippingAddress::create([
                     'customer_id' => auth('customer')->id(),
                     'contact_person_name' => $request->name,
-                    'phone' => session()->has('otp_phone') ? session('otp_phone') : $request->phone,
+                    'phone' => $request->phone,
                     'address' => $request->address,
                 ]);
             } else {

@@ -140,7 +140,7 @@ class Helpers
             return auth('customer')->user();
         }
 
-        $phoneNumber = session('otp_phone') ?? ($request?->phone ?? null);
+        $phoneNumber = session('otp_phone') ?? $request->phone;
 
 
 

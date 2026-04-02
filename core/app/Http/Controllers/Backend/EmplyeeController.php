@@ -85,6 +85,7 @@ class EmplyeeController extends Controller
         data-name="' . $row->name . '"
         data-mobile="' . $row->phone . '"
         data-email="' . $row->email . '"
+        data-role="' . $row->getRoleNames()->join(', ') . '"
         data-branch="' . ($row->branch ? $row->branch->id : '') . '"
         data-date="' . $row->created_at->format('d M Y h:i A') . '"
         data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
@@ -228,9 +229,9 @@ class EmplyeeController extends Controller
                 ->where('guard_name', 'admin')
                 ->first();
 
-            $admin->assignRole($role);
+            $admin->syncRoles([$role]);
             $permissions = $role->permissions;
-            $admin->givePermissionTo($permissions);
+            $admin->syncPermissions($permissions);
 
             DB::commit();
 

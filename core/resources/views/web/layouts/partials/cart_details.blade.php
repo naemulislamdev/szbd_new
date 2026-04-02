@@ -96,68 +96,9 @@
                         <h2 class="address-title mb-0">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-                        @if (!$customer && !session('otp_verified'))
-                            <input type="hidden" name="session_id" id="session_id" value="{{ session()->getId() }}">
-
-                            <div id="otpWrapper">
-                                <input type="hidden" id="otp_expires_at" value="{{ session('otp_expires_at', '') }}">
-                                <input type="hidden" id="session_phone" value="{{ session('otp_phone', '') }}">
-
-                                <div class="row {{ session()->has('otp_phone') ? 'd-none' : '' }}" id="phoneRow">
-                                    <div class="col-md-6 mx-auto">
-                                        <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
-                                        <div class="input-group mb-3">
-                                            <input type="text" name="otp_phone" class="form-control otp-phone-save check-phone @error('otp_phone') is-invalid @enderror"
-                                                id="otp_phone">
-                                            <button type="button" id="send_otp" class="btn btn-info btn-sm">
-                                                ওটিপি পাঠান
-                                            </button>
-                                        </div>
-                                        <span class="phone-feedback small"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row {{ session()->has('otp') ? '' : 'd-none' }}" id="otpRow">
-                                    <div class="col-md-6 mx-auto">
-                                        <div class="otp-card">
-                                            <h2 class="otp-title">OTP Verification</h2>
-                                            <p class="otp-subtitle">আপনার মোবাইলে পাঠানো ৪ সংখ্যার কোডটি দিন</p>
-
-                                            <div class="otp-timer" id="otpTimer"></div>
-                                            <div class="otp-expired text-danger d-none" id="otpExpiredMsg">
-                                                OTP এর সময় শেষ। আবার OTP পাঠান।
-                                            </div>
-
-                                            <div class="otp-inputs" id="otpBoxesWrap">
-                                                <input type="text" inputmode="numeric" maxlength="1" class="otp-box"
-                                                    autofocus>
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box">
-                                                <input type="text" inputmode="numeric" maxlength="1"
-                                                    class="otp-box">
-                                            </div>
-
-                                            <input type="hidden" id="otp" autocomplete="one-time-code">
-
-                                            <div class="mt-3 d-flex gap-2 justify-content-center">
-                                                <button type="button" class="btn btn-success" id="verify_otp">ভেরিফাই
-                                                    করুন</button>
-                                                <button type="button" class="btn btn-secondary d-none"
-                                                    id="resend_otp">আবার ওটিপি পাঠান</button>
-                                            </div>
-
-                                            <div id="otpMessage" class="mt-2 small"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
 
                         <form style="position: relative" action="{{ route('product.checkout') }}" method="POST"
-                            id="userInfoForm"
-                            class="checkoutForm {{ !$customer && !session('otp_verified') ? 'd-none' : '' }} ">
+                            id="userInfoForm">
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
@@ -244,10 +185,8 @@
                                     <div class="col-md-6 mb-3">
                                         <div class="form-group">
                                             <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control auto-save check-phone"
-                                                id="phone" name="phone" placeholder="ফোন নম্বর লিখুন"
-                                                value="{{ session('otp_phone') }}"
-                                                {{ session()->has('otp_phone') ? 'readonly' : '' }}>
+                                            <input type="number" class="form-control auto-save check-phone" value="{{ old('phone') }}"
+                                                id="phone" name="phone" placeholder="ফোন নম্বর লিখুন">
                                             <span id="phoneFeedback" class="small text-danger"></span>
                                             @error('phone')
                                                 <span class="text-danger">{{ $message }}</span>
