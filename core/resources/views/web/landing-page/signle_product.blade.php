@@ -698,11 +698,13 @@
                                     <input type="hidden" id="session_phone" value="{{ session('otp_phone', '') }}">
 
                                     <div class="row {{ session()->has('otp_phone') ? 'd-none' : '' }}" id="phoneRow">
-                                        <div class="col-md-6 mx-auto">
-                                            <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
+                                        <div class="col-lg-8 mx-auto">
+                                            <label>অর্ডার করার জন্য আপনার ফোন নম্বর দিয়ে ভেরিফাই করুন। <span
+                                                    class="text-danger">*</span></label>
                                             <div class="input-group mb-3">
                                                 <input type="number" class="form-control otp-phone-save check-phone"
-                                                    id="otp_phone" name="phone">
+                                                    id="otp_phone" name="phone"
+                                                    placeholder="ফোন নম্বর লিখুন (01XXXXXXXXX)">
                                                 <button type="button" id="send_otp" class="btn btn-info btn-sm">
                                                     ওটিপি পাঠান
                                                 </button>

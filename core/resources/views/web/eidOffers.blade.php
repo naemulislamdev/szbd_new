@@ -1,7 +1,7 @@
 @extends('web.layouts.app')
 @section('title', Str::limit($eidoffer->title, 60) . ' | ' . $web_config['name']->value)
 @section('meta_description',
-    'Celebrate Eid 2026 with exclusive deals on clothing and original skincare products.
+    'Celebrate with exclusive deals on clothing and original skincare products.
     ')
 
     @push('css_or_js')
@@ -19,7 +19,7 @@
     <section>
         <div class="container mt-4">
             {{-- Bredcrumb start  --}}
-            <nav class="breadcrumb custom-breadcrumb mt-3">
+            <nav class="breadcrumb custom-breadcrumb mt-3 bg-white">
                 <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
                 <span class="breadcrumb-item active" aria-current="page">{{ $eidoffer->title }}</span>
             </nav>

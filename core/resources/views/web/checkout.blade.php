@@ -205,7 +205,7 @@
     <!-- Button trigger modal -->
     <!-- Modal -->
     <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered d-block">
+        <div class="modal-dialog modal-dialog-centered d-block mt-5 z-10">
             <form method="POST" action="{{ route('address.update') }}">
                 @csrf
                 <input type="hidden" name="id" id="edit_id">

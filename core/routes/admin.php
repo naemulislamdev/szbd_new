@@ -125,6 +125,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('delete/{userinfo}', 'delete')->name('delete');
             Route::post('/status-update', 'updateStatus')->name('status.update');
             Route::get('bulk-export', 'dateWiseExport')->name('data_export');
+            Route::post("multiple-note", 'multipleNote')->name("multiple_note");
         });
 
         Route::controller(CategoryController::class)->as('category.')->group(function () {
@@ -325,17 +326,17 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('discount-offers/remove-product', 'discountOffersRemoveProduct')->name('discount-offers.remove.product');
 
             // Eid Offer Routes
-            Route::get('eid-offers', 'eidOffers')->name('eid.offers');
-            Route::get('eid-offers-datatables', 'eidOffersDatatables')->name('eid.offers.datatables');
-            Route::get('eid-offers/create', 'eidOffersCreate')->name('eid-offers.create');
-            Route::post('eid-offers/store', 'eidOffersStore')->name('eid-offers.store');
-            Route::get('eid-offers/edit/{id}', 'eidOffersEdit')->name('eid-offers.edit');
-            Route::post('eid-offers/update/{id}', 'eidOffersUpdate')->name('eid-offers.update');
-            Route::post('eid-offers/delete', 'eidOffersDelete')->name('eid-offers.delete');
-            Route::post('eid-offers/status/', 'eidOffersStatus')->name('eid-offers.status');
-            Route::get('eid-offers/product/{id}', 'eidOffersProduct')->name('eid-offers.product');
-            Route::get('eid-offers-products-datatables/{productIds}', 'eidOffersProductsDatatables')->name('eid-offers.products.datatables');
-            Route::post('eid-offers/remove-product', 'eidOffersRemoveProduct')->name('eid-offers.remove.product');
+            Route::get('offers', 'eidOffers')->name('eid.offers');
+            Route::get('offers-datatables', 'eidOffersDatatables')->name('eid.offers.datatables');
+            Route::get('offers/create', 'eidOffersCreate')->name('eid-offers.create');
+            Route::post('offers/store', 'eidOffersStore')->name('eid-offers.store');
+            Route::get('offers/edit/{id}', 'eidOffersEdit')->name('eid-offers.edit');
+            Route::post('offers/update/{id}', 'eidOffersUpdate')->name('eid-offers.update');
+            Route::post('offers/delete', 'eidOffersDelete')->name('eid-offers.delete');
+            Route::post('offers/status/', 'eidOffersStatus')->name('eid-offers.status');
+            Route::get('offers/product/{id}', 'eidOffersProduct')->name('eid-offers.product');
+            Route::get('offers-products-datatables/{productIds}', 'eidOffersProductsDatatables')->name('eid-offers.products.datatables');
+            Route::post('offers/remove-product', 'eidOffersRemoveProduct')->name('eid-offers.remove.product');
         });
         // Website Configuration Routes
         Route::controller(BusinessSettingsController::class)->prefix('/web-config')->as('web_config.')->group(function () {

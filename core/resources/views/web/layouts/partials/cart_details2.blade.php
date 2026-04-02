@@ -96,11 +96,12 @@
 
                             <div id="otpSection">
                                 <div class="row {{ session()->has('otp_phone') ? 'd-none' : '' }}" id="phoneRow">
-                                    <div class="col-md-6 mx-auto">
-                                        <label>আপনার ফোন নাম্বার দিন <span class="text-danger">*</span></label>
+                                    <div class="col-lg-8 mx-auto">
+                                        <label>অর্ডার করার জন্য আপনার ফোন নম্বর দিয়ে ভেরিফাই করুন।<span
+                                                class="text-danger">*</span></label>
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control otp-phone-save check-phone"
-                                                id="otp_phone">
+                                                id="otp_phone" placeholder="ফোন নম্বর লিখুন (01XXXXXXXXX)">
                                             <button type="button" id="send_otp" class="btn btn-info btn-sm">
                                                 ওটিপি পাঠান
                                             </button>
@@ -332,7 +333,7 @@
         });
     </script>
 
-     <script>
+    <script>
         let otpCountdownInterval = null;
         let otpRemainingSeconds = 300; // 5 minutes
         let otpTimerStarted = false;
@@ -385,7 +386,7 @@
                     .prop('disabled', true)
                     .html(
                         '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> OTP পাঠানো হচ্ছে...'
-                        );
+                    );
             } else {
                 $('#send_otp')
                     .prop('disabled', false)
@@ -463,7 +464,7 @@
                 .prop('disabled', true)
                 .html(
                     '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> OTP পাঠানো হচ্ছে...'
-                    );
+                );
 
             $.post("{{ route('send.otp') }}", {
                 _token: "{{ csrf_token() }}",

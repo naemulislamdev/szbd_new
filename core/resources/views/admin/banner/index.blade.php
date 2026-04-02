@@ -103,6 +103,8 @@
                                         Main Section Banner</option>
                                     <option value="promo_offer">Promo Offer
                                     </option>
+                                    <option value="coupon_slider">Coupon Slider
+                                    </option>
                                 </select>
                             </div>
 
@@ -144,8 +146,8 @@
     </div>
 
     <!-- Banner Add Modal -->
-    <div class="modal fade" id="bannerModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="bannerModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="bannerModal" data-bs-backdrop="static" tabindex="-1"
+        aria-labelledby="bannerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form id="bannerForm" enctype="multipart/form-data">
@@ -178,6 +180,7 @@
                                         Main Section Banner</option>
                                     <option value="promo_offer">Promo Offer
                                     </option>
+                                    <option value="coupon_slider">Coupon Slider</option>
                                 </select>
                             </div>
 

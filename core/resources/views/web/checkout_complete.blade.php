@@ -40,9 +40,9 @@
     @endpush
 
 @section('content')
-    <div class="container mt-5 mb-5">
+    <div class="container mt-5 mb-5 px-0 px-lg-2">
         <div class="row d-flex justify-content-center">
-            <div class="col-md-7 mx-auto">
+            <div class="col-lg-7 mx-auto">
                 <div class="card">
                     @if (auth('customer')->check())
 
@@ -56,7 +56,7 @@
                             $extra_discount = $order['extra_discount'];
                         }
                         ?>
-                        <div class="card checkout-card border-none">
+                        <div class="card checkout-card border-none" style="max-height: 100%">
                             <div class="text-center">
                                 <img class="card-img-top" style="max-width: 150px; height: auto;"
                                     src="{{ asset('assets/frontend/images/placed.gif') }}" alt="place image">
@@ -86,14 +86,14 @@
                                         <h6 class="ml-2" style="font-weight: 600">Order Summery</h6>
                                     </div>
                                     <div class="row my-3 rounded">
-                                        <div class="col-md-12 mx-auto">
+                                        <div class="col-md-12 mx-auto px-0 px-md-2">
                                             <div class="product-details"
                                                 style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                                 @foreach ($order->details as $key => $detail)
                                                     @php($product = json_decode($detail->product_details, true))
                                                     <tr>
                                                         <div class="row mb-2">
-                                                            <div class="col-md-12 d-flex pl-0">
+                                                            <div class="col-md-12 d-flex ">
                                                                 <div class="col-2 for-tab-img">
                                                                     @if ($detail['color_image'])
                                                                         <img class="d-block mr-2 rounded-l"
@@ -109,7 +109,7 @@
                                                                             width="60">
                                                                     @endif
                                                                 </div>
-                                                                <div class="col-10 for-glaxy-name pt-2"
+                                                                <div class="col-10 for-glaxy-name pt-2 ml-2 ml-md-0 "
                                                                     style="vertical-align:middle; font-weight: 600;">
 
                                                                     <a style="font-weight: 600;" class="text-dark"
@@ -279,14 +279,14 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div class="d-flex  mt-4">
+                                    <div class="d-flex checkout-complete-button  mt-4 ">
                                         <div class="">
-                                            <a href="{{ route('home') }}" class="btn btn-primary">
+                                            <a href="{{ route('home') }}" class="btn btn-primary mb-3 mb-md-0">
                                                 <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
                                                 Back to Home
                                             </a>
                                         </div>
-                                        <div class="ml-3">
+                                        <div class="ml-md-3">
                                             <a href="{{ route('account-oder') }}" class="btn btn-success ">
                                                 Check Your orders
                                             </a>

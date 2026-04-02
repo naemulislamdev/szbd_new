@@ -145,7 +145,7 @@
                 'all' => [
                     'permission' => 'userinfo_all',
                     'label' => 'All User Info',
-                    'badge' => 'dark',
+                    'badge' => 'primary',
                     'count' => $userInfoCounts->total ?? 0,
                 ],
                 'pending' => [
@@ -441,8 +441,8 @@
                         @can('discount_eid_offers')
                             <li class="nav-item">
                                 <a href="{{ route('admin.discount.eid.offers') }}"
-                                    class="nav-link {{ request()->routeIs('admin.discount.eid.offers') ? 'active' : '' }}">Eid
-                                    Offers ✨🌙</a>
+                                    class="nav-link {{ request()->routeIs('admin.discount.eid.offers') ? 'active' : '' }}">Offers
+                                    & Promotions</a>
                             </li>
                         @endcan
                     </ul><!--end nav-->
@@ -538,7 +538,7 @@
                 </a>
             </li><!--end nav-item-->
         @endcan
-        @canAny(['daily_sales', 'product_report', 'top_sales', 'porfit_report'])
+        @canAny(['daily_sales', 'product_report', 'top_sales', 'porfit_report', 'track_visitor_report'])
             <li class="nav-item">
                 <a class="nav-link" href="#reportsDropdown" data-bs-toggle="collapse" role="button"
                     aria-expanded="false" aria-controls="reportsDropdown">

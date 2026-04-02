@@ -519,10 +519,8 @@
     </div>
 @endif
 
-
-
                     @if (count($first_product->choice_options) > 0)
-                        @foreach ($choiceOptions as $key => $choice)
+                        @foreach ($first_product->choice_options as $key => $choice)
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <h4 style="font-size: 18px; margin:0;">{{ $choice['title'] }}

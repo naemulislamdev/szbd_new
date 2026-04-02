@@ -6,6 +6,7 @@ use App\CPU\FileManager;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Branch;
 use App\Models\Brand;
@@ -47,7 +48,7 @@ class FrontendController extends Controller
 {
     public function home()
     {
-        $home_categories = Category::where('home_status', true)->get();
+        $home_categories = Category::where('home_status', true)->orderBy('order_number', 'asc')->get();
 
         //feature products finding based on selling
         $featured_products = Product::with(['reviews'])->active()
@@ -145,7 +146,12 @@ class FrontendController extends Controller
             ],
         ];
         $branchs = Branch::where('status', 1)->get();
-        return view('web.home', compact('featured_products', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'ourBrands'));
+        $couponSlider = Banner::where('published', 1)
+            ->where('banner_type', "coupon_slider")
+            ->get();
+
+
+        return view('web.home', compact('couponSlider', 'featured_products', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'ourBrands'));
     }
 
     public function leads()
@@ -905,7 +911,7 @@ SET price = ROUND(price * $rate)");
         if ($eidoffer) {
             return view('web.eidOffers', compact('eidoffer'));
         } else {
-            return "<h2>Eid offer ✨🌙 coming very soon !</h2>";
+            return "<h2>Offer coming very soon !</h2>";
         }
     }
     public function discountOffers($slug)

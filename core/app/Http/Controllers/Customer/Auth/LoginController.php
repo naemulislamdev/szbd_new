@@ -40,7 +40,7 @@ class LoginController extends Controller
                             $response = \file_get_contents($url);
                             $response = json_decode($response);
                             if (!$response->success) {
-                                $fail(\App\CPU\translate('ReCAPTCHA Failed'));
+                                $fail('ReCAPTCHA Failed');
                             }
                         },
                     ],
@@ -50,7 +50,7 @@ class LoginController extends Controller
         } else {
             if (strtolower($request->default_captcha_value) != strtolower(Session('default_captcha_code'))) {
                 Session::forget('default_captcha_code');
-                return back()->withErrors(\App\CPU\translate('Captcha Failed'));
+                return back()->withErrors("Captcha Failed");
             }
         }
 
@@ -84,7 +84,7 @@ class LoginController extends Controller
     {
         auth()->guard('customer')->logout();
         session()->forget('wish_list');
-        Toastr::info('Come back soon, ' . '!');
-        return redirect()->route('home');
+
+        return redirect()->route('home')->with('warning', 'Come back soon, ' . '!');
     }
 }

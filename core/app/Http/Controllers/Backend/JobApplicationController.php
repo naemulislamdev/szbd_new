@@ -13,7 +13,7 @@ class JobApplicationController extends Controller
 {
     public function index()
     {
-        return view('admin.Job_application.list');
+        return view('admin.job_application.list');
     }
     public function datatables()
     {

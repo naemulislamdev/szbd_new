@@ -8,6 +8,15 @@
   width: 6px; /* vertical scrollbar */
   height: 6px; /* horizontal scrollbar */
 }
+[data-bs-theme="dark"] .swal2-popup {
+  background: #1e1e2f !important;
+  color: #fff !important;
+}
+
+[data-bs-theme="light"] .swal2-popup {
+  background: #ffffff !important;
+  color: #000 !important;
+}
 
 /* Scrollbar track */
 ::-webkit-scrollbar-track {

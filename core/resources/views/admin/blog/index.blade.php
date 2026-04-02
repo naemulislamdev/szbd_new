@@ -160,7 +160,7 @@
                             }
                         });
                         $.ajax({
-                            url: "{{ route('admin.blog.categoryDelete') }}",
+                            url: "{{ route('admin.blog.delete') }}",
                             method: 'POST',
                             data: {
                                 id: id

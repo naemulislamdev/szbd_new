@@ -61,15 +61,25 @@
   .smLogo {
     max-width: 70% !important;
   }
+  .section-heading-title > h3 {
+    font-size: 18px;
+  }
 }
 
 /*
 
-Pusti Soyabeliteran oil 5
-8941153500073
 
 */
 @media (max-width: 768px) {
+  .checkout-complete-button {
+    flex-direction: column;
+  }
+  .checkout-complete-button a {
+    width: 100%;
+  }
+  .section-heading-title > h3 {
+    font-size: 16px;
+  }
   .myBrandSwiper {
     padding: 10px 0;
   }

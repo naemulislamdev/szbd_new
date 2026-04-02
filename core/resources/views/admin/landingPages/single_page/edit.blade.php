@@ -103,7 +103,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label for="name">Add new product<span class="text-danger">*</span></label>
-                                    <select class="form-select form-select-lg" name="product_id">
+                                    <select class="addNewProduct form-select-lg" name="product_id">
                                         <option selected disabled>Select a product</option>
                                         @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
                                             <option {{ $landingPage->product_id == $product->id ? 'selected' : '' }}
@@ -278,6 +278,15 @@
 
 @endsection
 @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.addNewProduct').select2({
+                placeholder: "Select Products",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
     <script>
         $(document).on("change", ".section-image-input", function(event) {
 

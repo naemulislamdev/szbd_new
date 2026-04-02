@@ -360,3 +360,40 @@ var myBrandSwiper = new Swiper(".myBrandSwiper", {
     },
   },
 });
+
+//
+new Swiper(".CouponSlider", {
+  loop: true,
+  spaceBetween: 15,
+
+  autoplay: {
+    delay: 2500,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+  },
+
+  pagination: {
+    el: ".CouponSlider .swiper-pagination",
+    clickable: true,
+  },
+
+  navigation: {
+    nextEl: ".CouponSlider .swiper-button-next",
+    prevEl: ".CouponSlider .swiper-button-prev",
+  },
+
+  breakpoints: {
+    0: {
+      slidesPerView: 1, // 📱 mobile
+    },
+    576: {
+      slidesPerView: 2, // 📲 small tablet
+    },
+    768: {
+      slidesPerView: 2, // 📲 tablet
+    },
+    992: {
+      slidesPerView: 4, // 💻 desktop
+    },
+  },
+});

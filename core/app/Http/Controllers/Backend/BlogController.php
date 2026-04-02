@@ -277,4 +277,10 @@ class BlogController extends Controller
 
         return redirect()->Route("admin.blog.list")->with('success', 'Blog Updated successfully');
     }
+    public function delete(Request $request)
+    {
+        $blog = Blog::find($request->id);
+        $blog->delete();
+        return response()->json();
+    }
 }
