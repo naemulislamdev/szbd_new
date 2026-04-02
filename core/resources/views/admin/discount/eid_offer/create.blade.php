@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Eid Offer create')
+@section('title', 'Offers & Promotions create')
 
 @push('styles')
 @endpush
@@ -8,13 +8,13 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Create Eid New Offer </h4>
+                    <h4 class="page-title">Create Offers & Promotions </h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb   mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.eid.offers') }}">Eid Offers</a>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.eid.offers') }}">Offers & Promotions</a>
                             </li>
-                            <li class="breadcrumb-item active">Create Eid Offer</li>
+                            <li class="breadcrumb-item active">Create Offers & Promotions</li>
                         </ol>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                                                     (ratio') 1:1 </small>
                                                 <div class="custom-file mt-2" style="text-align: left">
                                                     <input type="file" name="image" id="customFileEg1"
-                                                        class="custom-file-input" accept="image/*"
+                                                        class="custom-file-input" 
                                                         onchange="previewImage(event)">
                                                 </div>
                                                 @error('image')

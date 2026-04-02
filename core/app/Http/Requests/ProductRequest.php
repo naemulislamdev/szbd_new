@@ -56,8 +56,7 @@ class ProductRequest extends FormRequest
             'discount_type' => $discount_type,
             'shipping_cost' => 'required|numeric|min:0',
             'minimum_order_qty' => 'required|numeric|min:1',
-            'meta_title' => 'nullable|max:60',
-            'meta_description' => 'nullable|max:160',
+
         ];
     }
     public function messages()

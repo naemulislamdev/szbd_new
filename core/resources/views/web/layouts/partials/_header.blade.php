@@ -1,7 +1,7 @@
 <header id="header" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
     <div class="container">
         <div class="row main_row align-items-lg-center">
-            <div class="col-md-2 d-none d-lg-flex align-items-center flex-row gap-5">
+            <div class="col-lg-2 d-none d-lg-flex align-items-center flex-row gap-5">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
 
                 <a href="{{ route('home') }}">
@@ -12,7 +12,7 @@
                 </a>
 
             </div>
-            <div class="col-md-8 pr-0">
+            <div class="col-lg-8 pr-0">
                 @php $categories = \App\Models\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
                 @php
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
@@ -101,7 +101,7 @@
                             {{-- <li><a href="{{ route('outlets') }}">Our outlets</a></li> --}}
 
                             {{-- <li><a href="{{ route('careers') }}">Career</a></li> --}}
-                            <li><a target="_blank" href="https://asmishop.com/"><img style="height: 50px; width: auto;"
+                            <li><a target="_blank" href="https://asmishop.com/"><img style="height: 30px; width: auto;"
                                         src="{{ asset('assets/frontend/images/asmi.gif') }}" alt="Asmi Supershop"></a>
                             </li>
                         </ul>
@@ -124,8 +124,8 @@
                     </div>
                 </nav>
             </div>
-            <div class="col-md-2 ms-auto">
-                <div class="header-icon ms-5 align-items-center">
+            <div class="col-lg-2 ms-lg-auto">
+                <div class="header-icon align-items-center">
                     @if ($discountOffer != null)
                         <a class="d-block d-lg-none"
                             href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img

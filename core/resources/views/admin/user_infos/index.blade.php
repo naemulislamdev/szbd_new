@@ -24,10 +24,10 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row align-items-center">
-                            <div class="col">
+                            <div class="col-lg-4">
                                 <h4 class="card-title">User Info</h4>
                             </div><!--end col-->
-                            <div class="col-auto">
+                            <div class="col-lg-8">
                                 <div class="row mb-3 align-items-center justify-content-center">
                                     <div class="col-md-3">
                                         <label>From Date</label>
@@ -232,48 +232,6 @@
                     .getAttribute('content')
             }
         });
-
-        $(document).on('change', '.order-status-select', function() {
-
-            let select = $(this);
-            let orderId = select.data('id');
-            let oldValue = select.data('current');
-            let newValue = select.val();
-
-            Swal.fire({
-                title: 'Are you sure Change this?',
-                input: 'text',
-                inputPlaceholder: 'Write status note',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Change it!',
-                cancelButtonText: 'Cancel',
-
-                preConfirm: (note) => {
-                    if (!note) {
-                        Swal.showValidationMessage('Status note is required');
-                        return false;
-                    }
-                    return note;
-                }
-
-            }).then((result) => {
-                $.post("{{ route('admin.userinfo.status.update') }}", {
-                        id: orderId,
-                        status: newValue,
-                        note: result.value
-                    })
-                    .done(function(res) {
-                        Swal.fire('Updated!', res.message, 'success');
-
-                        select.data('current', newValue);
-                        $('#szbd-datatable').DataTable().ajax.reload(null, false);
-                    })
-                    .fail(function() {
-                        Swal.fire('Error!', 'Something went wrong', 'error');
-                        select.val(oldValue);
-                    });
-            });
-        });
     </script>
     <script>
         $(document).on('click', '.viewBtn', function() {
@@ -313,5 +271,193 @@
                 }
             });
         });
+    </script>
+    <script>
+        $(document).on('submit', '#orderNoteForm', function(e) {
+            console.log('submit');
+
+            e.preventDefault();
+
+            let form = $(this);
+
+            // trim input
+            let noteInput = form.find('input[name="multiple_note[]"]');
+            let trimmedValue = noteInput.val().trim();
+
+            if (trimmedValue === '') {
+                toastr.warning("Note cannot be empty !");
+                return;
+            }
+
+            noteInput.val(trimmedValue);
+
+            $.ajax({
+                url: "{{ route('admin.userinfo.multiple_note') }}",
+                type: "POST",
+                data: form.serialize(),
+                success: function(res) {
+
+                    if (res.status) {
+
+                        $('#noteList').append(`
+                    <li style="text-align:left; line-height:20px"
+                        class="badge bg-primary text-dark d-inline-block mb-2 py-2">
+                        ${res.note.note}
+                        <span class="text-dark">
+                            (${res.note.time} - Note by: ${res.note.user})
+                        </span>
+                    </li>
+                `);
+
+                        form[0].reset();
+                        toastr.success('Note added Successfully !');
+                    }
+                },
+                error: function() {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+    </script>
+    <script>
+        function order_status(status, id) {
+            var orderStatus = status ? status : 'pending';
+            console.log(status);
+            console.log(id);
+
+
+            if (status === 'confirmed') {
+                Swal.fire({
+                    title: 'Are you sure Change this?!',
+                    text: "'Think before you completed.",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
+                            <input type="hidden" name="order_status" value=" ${status}">
+                        <input type="hidden" name="id" value="${id}">
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="note"
+                                id="note"
+                                placeholder="For  ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.userinfo.status.update') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                $(`.note_${id}`).html(data.note);
+                                toastr.success('Status Change successfully');
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else if (status === 'canceled') {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
+
+                              <input type="hidden" name="order_status" value=" ${status}">
+                        <input type="hidden" name="id" value="${id}">
+
+                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.userinfo.status.update') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                $(`.note_${id}`).html(data.note);
+                                toastr.success('Status Change successfully');
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                            <br />
+                            <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
+                                 <input type="hidden" name="order_status" value=" ${status}">
+                        <input type="hidden" name="id" value="${id}">
+
+                                <input
+                                    required
+                                    class="form-control wedding-input-text wizard-input-pad"
+                                    type="text"
+                                    name="note"
+                                    id="note"
+                                    placeholder="For ${status}  note"
+                                >
+                            </form>
+                        `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.userinfo.status.update') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                $(`.note_${id}`).html(data.note);
+                                toastr.success('Status Change successfully');
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            }
+
+        };
     </script>
 @endpush

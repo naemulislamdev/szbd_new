@@ -158,174 +158,178 @@
             </div>
         @endcan
         <!--end row-->
-        <div class="row">
-            {{--  Order Reports Overview start --}}
-            <div class="col-md-12">
-                <div class="card mb-3"
-                    style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                    <div class="card-body">
-                        <div>
-
-                            <h4 class="d-flex align-items-center" style="color:rgb(13, 13, 13)"><img style="height: 40px"
-                                    src="{{ asset('assets/backend/images/chart-line-up.gif') }}" alt="order line up">Order
-                                Reports
-                            </h4>
-                        </div>
-                        <div class="row ">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Form Date</label>
-                                    <input type="date" value="{{ date('Y-m-d') }}" class="form-control" id="from_date"
-                                        name="from_date">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>To Date</label>
-                                    <input type="date" value="{{ date('Y-m-d') }}" class="form-control"
-                                        id="to_date" name="to_date">
-                                </div>
-                            </div>
-                            <div class="col-md-4" style="margin-top: 20px">
-                                <button class="btn btn-primary" onclick="dashboard_order_report_filter()">
-                                    Filter
-                                </button>
-                            </div>
-
-                        </div>
-                        <div class="row gx-2 gx-lg-3 mt-4" id="orderStatus">
-                            @include('admin.dashboard-order_report', [
-                                'results' => $results,
-                            ])
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{--  Order Reports Overview end --}}
-            {{-- Order Report Statics Start --}}
-            <div class="col-md-12">
-                <div class="card mb-3"
-                    style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                    <div class="card-body">
-                        <div class="row flex-between gx-2 gx-lg-3 mb-2">
+        @can('dashboard_view', 'order_report_view')
+            <div class="row">
+                {{--  Order Reports Overview start --}}
+                <div class="col-md-12">
+                    <div class="card mb-3"
+                        style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+                        <div class="card-body">
                             <div>
-                                <h4><i style="font-size: 30px" class="tio-chart-bar-4"></i>Dashboard
-                                    Order Statistics
+
+                                <h4 class="d-flex align-items-center" style="color:rgb(13, 13, 13)"><img style="height: 40px"
+                                        src="{{ asset('assets/backend/images/chart-line-up.gif') }}" alt="order line up">Order
+                                    Reports
                                 </h4>
                             </div>
-                            <div class="col-12 col-md-4" style="width: 20vw">
-                                <select class="custom-select form-select" name="statistics_type"
-                                    onchange="order_stats_update(this.value)">
-                                    <option value="overall"
-                                        {{ session()->has('statistics_type') && session('statistics_type') == 'overall' ? 'selected' : '' }}>
-                                        Overall_statistics
-                                    </option>
-                                    <option value="today"
-                                        {{ session()->has('statistics_type') && session('statistics_type') == 'today' ? 'selected' : '' }}>
-                                        Todays Statistics
-                                    </option>
-                                    <option value="this_month"
-                                        {{ session()->has('statistics_type') && session('statistics_type') == 'this_month' ? 'selected' : '' }}>
-                                        This Months Statistics
-                                    </option>
-                                </select>
+                            <div class="row ">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Form Date</label>
+                                        <input type="date" value="{{ date('Y-m-d') }}" class="form-control" id="from_date"
+                                            name="from_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>To Date</label>
+                                        <input type="date" value="{{ date('Y-m-d') }}" class="form-control"
+                                            id="to_date" name="to_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="margin-top: 20px">
+                                    <button class="btn btn-primary" onclick="dashboard_order_report_filter()">
+                                        Filter
+                                    </button>
+                                </div>
+
                             </div>
-                        </div>
-                        <div class="row gx-2 gx-lg-3" id="order_stats">
-                            @include('admin.dashboard-order-stats', [
-                                'data' => $data,
-                            ])
+                            <div class="row gx-2 gx-lg-3 mt-4" id="orderStatus">
+                                @include('admin.dashboard-order_report', [
+                                    'results' => $results,
+                                ])
+                            </div>
                         </div>
                     </div>
                 </div>
+                {{--  Order Reports Overview end --}}
+                {{-- Order Report Statics Start --}}
+                <div class="col-md-12">
+                    <div class="card mb-3"
+                        style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+                        <div class="card-body">
+                            <div class="row flex-between gx-2 gx-lg-3 mb-2">
+                                <div>
+                                    <h4><i style="font-size: 30px" class="tio-chart-bar-4"></i>Dashboard
+                                        Order Statistics
+                                    </h4>
+                                </div>
+                                <div class="col-12 col-md-4" style="width: 20vw">
+                                    <select class="custom-select form-select" name="statistics_type"
+                                        onchange="order_stats_update(this.value)">
+                                        <option value="overall"
+                                            {{ session()->has('statistics_type') && session('statistics_type') == 'overall' ? 'selected' : '' }}>
+                                            Overall_statistics
+                                        </option>
+                                        <option value="today"
+                                            {{ session()->has('statistics_type') && session('statistics_type') == 'today' ? 'selected' : '' }}>
+                                            Todays Statistics
+                                        </option>
+                                        <option value="this_month"
+                                            {{ session()->has('statistics_type') && session('statistics_type') == 'this_month' ? 'selected' : '' }}>
+                                            This Months Statistics
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row gx-2 gx-lg-3" id="order_stats">
+                                @include('admin.dashboard-order-stats', [
+                                    'data' => $data,
+                                ])
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {{-- Order Report Statics End --}}
 
             </div>
-            {{-- Order Report Statics End --}}
+        @endcan
+        @can('dashboard_view', 'order_report_view')
+            <div class="row justify-content-center">
+                @can('monthly_income_view')
+                    <div class="col-md-6 col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h4 class="card-title">Monthly Avg. Income</h4>
+                                    </div><!--end col-->
+                                    <div class="col-auto">
+                                        <div class="dropdown">
+                                            <a href="#" class="btn bt btn-light dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                <i class="lar la-calendar fs-5 me-1"></i> This Month<i
+                                                    class="las la-angle-down ms-1"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item income-filter" data-filter="today">Today</a>
+                                                <a class="dropdown-item income-filter" data-filter="last_week">Last Week</a>
+                                                <a class="dropdown-item income-filter" data-filter="last_month">Last Month</a>
+                                                <a class="dropdown-item income-filter" data-filter="this_year">This Year</a>
+                                                <a class="dropdown-item income-filter" data-filter="this_month">This Month</a>
+                                            </div>
 
-        </div>
-        <div class="row justify-content-center">
-            @can('monthly_income_view')
-                <div class="col-md-6 col-lg-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h4 class="card-title">Monthly Avg. Income</h4>
-                                </div><!--end col-->
-                                <div class="col-auto">
-                                    <div class="dropdown">
-                                        <a href="#" class="btn bt btn-light dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <i class="lar la-calendar fs-5 me-1"></i> This Month<i
-                                                class="las la-angle-down ms-1"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item income-filter" data-filter="today">Today</a>
-                                            <a class="dropdown-item income-filter" data-filter="last_week">Last Week</a>
-                                            <a class="dropdown-item income-filter" data-filter="last_month">Last Month</a>
-                                            <a class="dropdown-item income-filter" data-filter="this_year">This Year</a>
-                                            <a class="dropdown-item income-filter" data-filter="this_month">This Month</a>
                                         </div>
-
-                                    </div>
-                                </div><!--end col-->
-                            </div> <!--end row-->
-                        </div><!--end card-header-->
-                        <div class="card-body pt-0">
-                            <div id="monthly_income" class="apex-charts"></div>
-                        </div>
-                        <!--end card-body-->
-                    </div>
-                    <!--end card-->
-                </div>
-            @endcan
-            <!--end col-->
-            @can('customer_view')
-                <div class="col-md-6 col-lg-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h4 class="card-title">Customers</h4>
-                                </div><!--end col-->
-                                <div class="col-auto">
-                                    <div class="img-group d-flex">
-                                        <a class="user-avatar position-relative d-inline-block" href="#">
-                                            <img src="{{ asset('assets/backend/users/avatar-1.jpg') }}" alt="avatar"
-                                                class="thumb-md shadow-sm rounded-circle">
-                                        </a>
-                                        <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
-                                            <img src="{{ asset('assets/backend/users/avatar-2.jpg') }}" alt="avatar"
-                                                class="thumb-md shadow-sm rounded-circle">
-                                        </a>
-                                        <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
-                                            <img src="{{ asset('assets/backend/users/avatar-3.jpg') }}" alt="avatar"
-                                                class="thumb-md shadow-sm rounded-circle">
-                                        </a>
-                                        <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
-                                            <img src="{{ asset('assets/backend/users/avatar-4.jpg') }}" alt="avatar"
-                                                class="thumb-md shadow-sm rounded-circle">
-                                        </a>
-                                        <a href="" class="user-avatar position-relative d-inline-block ms-1">
-                                            <span
-                                                class="thumb-md shadow-sm justify-content-center d-flex align-items-center bg-info-subtle rounded-circle fw-semibold fs-6">+6</span>
-                                        </a>
-                                    </div>
-                                </div><!--end col-->
-                            </div> <!--end row-->
-                        </div>
-                        <div class="card-body pt-0">
-                            <div id="customers" class="apex-charts"></div>
-                            <div class="bg-light py-3 px-2 mb-0 mt-3 text-center rounded">
-                                <h6 class="mb-0"><i class="las la-calendar fs-5 me-1"></i> 01 January 2024 to
-                                    31
-                                    December 2024</h6>
+                                    </div><!--end col-->
+                                </div> <!--end row-->
+                            </div><!--end card-header-->
+                            <div class="card-body pt-0">
+                                <div id="monthly_income" class="apex-charts"></div>
                             </div>
-                        </div><!--end card-body-->
-                    </div><!--end card-->
-                </div> <!--end col-->
-            @endcan
-        </div>
+                            <!--end card-body-->
+                        </div>
+                        <!--end card-->
+                    </div>
+                @endcan
+                <!--end col-->
+                @can('customer_view')
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h4 class="card-title">Customers</h4>
+                                    </div><!--end col-->
+                                    <div class="col-auto">
+                                        <div class="img-group d-flex">
+                                            <a class="user-avatar position-relative d-inline-block" href="#">
+                                                <img src="{{ asset('assets/backend/users/avatar-1.jpg') }}" alt="avatar"
+                                                    class="thumb-md shadow-sm rounded-circle">
+                                            </a>
+                                            <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
+                                                <img src="{{ asset('assets/backend/users/avatar-2.jpg') }}" alt="avatar"
+                                                    class="thumb-md shadow-sm rounded-circle">
+                                            </a>
+                                            <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
+                                                <img src="{{ asset('assets/backend/users/avatar-3.jpg') }}" alt="avatar"
+                                                    class="thumb-md shadow-sm rounded-circle">
+                                            </a>
+                                            <a class="user-avatar position-relative d-inline-block ms-n2" href="#">
+                                                <img src="{{ asset('assets/backend/users/avatar-4.jpg') }}" alt="avatar"
+                                                    class="thumb-md shadow-sm rounded-circle">
+                                            </a>
+                                            <a href="" class="user-avatar position-relative d-inline-block ms-1">
+                                                <span
+                                                    class="thumb-md shadow-sm justify-content-center d-flex align-items-center bg-info-subtle rounded-circle fw-semibold fs-6">+6</span>
+                                            </a>
+                                        </div>
+                                    </div><!--end col-->
+                                </div> <!--end row-->
+                            </div>
+                            <div class="card-body pt-0">
+                                <div id="customers" class="apex-charts"></div>
+                                <div class="bg-light py-3 px-2 mb-0 mt-3 text-center rounded">
+                                    <h6 class="mb-0"><i class="las la-calendar fs-5 me-1"></i> 01 January 2024 to
+                                        31
+                                        December 2024</h6>
+                                </div>
+                            </div><!--end card-body-->
+                        </div><!--end card-->
+                    </div> <!--end col-->
+                @endcan
+            </div>
+        @endcan
         <!--end row-->
         @can('top_selling_view', 'popular_products_view')
             <div class="row justify-content-center">

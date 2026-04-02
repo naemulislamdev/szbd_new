@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Eid Offer Products')
+@section('title', 'Offers & Promotions Products')
 
 @push('styles')
 @endpush
@@ -8,17 +8,17 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Eid Offers Products</h4>
+                    <h4 class="page-title">Offers & Promotions Products</h4>
                     <div class="">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a>
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.eid.offers') }}">Eid
-                                    Offers</a>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.eid.offers') }}">Offers &
+                                    Promotions</a>
                             </li><!--end nav-item-->
 
                             </li><!--end nav-item-->
-                            <li class="breadcrumb-item active">Eid Offer Products</li>
+                            <li class="breadcrumb-item active">Offers & Promotions Products</li>
                         </ol>
                     </div>
                 </div><!--end page-title-box-->
@@ -30,7 +30,7 @@
                     <div class="card-header pb-0">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h4 class="card-title">All Eid Offer Products</h4>
+                                <h4 class="card-title">All Offers & Promotions Products</h4>
                             </div><!--end col-->
 
                         </div><!--end row-->
@@ -152,7 +152,7 @@
                             },
                             success: function() {
                                 toastr.success(
-                                    'Product removed from Eid Offer successfully.'
+                                    'Product removed from Offers & Promotions successfully.'
                                 );
                                 table.ajax.reload();
 

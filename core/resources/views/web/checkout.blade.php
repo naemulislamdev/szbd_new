@@ -238,7 +238,7 @@
 <script>
     $('#addressUpdate').on('submit', function(e) {
         e.preventDefault();
-        
+
         $.ajax({
             url: $(this).attr('action'),
             method: 'POST',

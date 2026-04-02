@@ -1,103 +1,103 @@
-<div class="container-fluid text-left">
+<div class="container-fluid text-left text-dark">
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Name</div>
-        <div class="col-7">: {{ $item->name }}</div>
+        <div class="col-5 font-weight-bold text-start">Name</div>
+        <div class="col-7 text-start">: {{ $item->name }}</div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Email</div>
-        <div class="col-7">: {{ $item->email ?? 'N/A' }}</div>
+        <div class="col-5 font-weight-bold text-start">Email</div>
+        <div class="col-7 text-start">: {{ $item->email ?? 'N/A' }}</div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Phone</div>
-        <div class="col-7">: {{ $item->phone }}</div>
+        <div class="col-5 font-weight-bold text-start">Phone</div>
+        <div class="col-7 text-start">: {{ $item->phone }}</div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Address</div>
-        <div class="col-7">: {{ $item->address ?? 'N/A' }}</div>
+        <div class="col-5 font-weight-bold text-start">Address</div>
+        <div class="col-7 text-start">: {{ $item->address ?? 'N/A' }}</div>
     </div>
 
     <hr>
 
     <div class="col-12 row mb-3 px-0">
-        <div class="col-5 font-weight-bold">Date</div>
-        <div class="col-7">
+        <div class="col-5 font-weight-bold text-start">Date</div>
+        <div class="col-7 text-start">
             :
             {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y g.i A') }}
         </div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Status</div>
-        <div class="col-7">
+        <div class="col-5 font-weight-bold text-start">Status</div>
+        <div class="col-7 text-start">
             :
             {!! $item->status == 1
-                ? '<span class="badge badge-success">Seen</span>'
-                : '<span class="badge badge-primary">Unseen</span>' !!}
+                ? '<span class="badge bg-success">Seen</span>'
+                : '<span class="badge bg-primary">Unseen</span>' !!}
         </div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Order Process</div>
-        <div class="col-7">
+        <div class="col-5 font-weight-bold text-start">Order Process</div>
+        <div class="col-7 text-start">
             :
             @if ($item->order_process === 'pending')
-                <span class="badge badge-warning">Pending</span>
+                <span class="badge bg-warning">Pending</span>
             @elseif ($item->order_process === 'completed')
-                <span class="badge badge-success">Confirmed</span>
+                <span class="badge bg-success">Confirmed</span>
             @else
-                <span class="badge badge-secondary">{{ ucfirst($item->order_process) }}</span>
+                <span class="badge bg-secondary">{{ ucfirst($item->order_process) }}</span>
             @endif
         </div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Order Status</div>
-        <div class="col-7">: {{ ucfirst($item->order_status) }}</div>
+        <div class="col-5 font-weight-bold text-start">Order Status</div>
+        <div class="col-7 text-start">: {{ ucfirst($item->order_status) }}</div>
     </div>
 
 
     <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Order Status Note</div>
-        <div class="col-7">: {{ $item->order_note ?? 'N/A' }}</div>
+        <div class="col-5 font-weight-bold text-start">Order Status Note</div>
+        <div class="col-7 text-start">: {{ $item->order_note ?? 'N/A' }}</div>
     </div>
 
- @if ($item->confirmed_by)
-    @php
-        $confirmed = json_decode($item->confirmed_by);
-    @endphp
+    @if ($item->confirmed_by)
+        @php
+            $confirmed = json_decode($item->confirmed_by);
+        @endphp
 
-    @if ($confirmed)
-        <div class="row mb-2">
-            <div class="col-5 font-weight-bold">Order Status Confirmed By</div>
-            <div class="col-7">
-                : <span class="badge badge-success">
-                    {{ $confirmed->user ?? 'Unknown' }} => Date: {{ $confirmed->time ?? 'N/A' }}
-                </span>
+        @if ($confirmed)
+            <div class="row mb-2">
+                <div class="col-5 font-weight-bold text-start">Order Status Confirmed By</div>
+                <div class="col-7 text-start">
+                    : <span class="badge bg-success">
+                        {{ $confirmed->user ?? 'Unknown' }} => Date: {{ $confirmed->time ?? 'N/A' }}
+                    </span>
+                </div>
             </div>
-        </div>
+        @endif
     @endif
-@endif
 
-@if ($item->canceled_by)
-    @php
-        $canceled = json_decode($item->canceled_by);
-    @endphp
+    @if ($item->canceled_by)
+        @php
+            $canceled = json_decode($item->canceled_by);
+        @endphp
 
-    @if ($canceled)
-        <div class="row mb-2">
-            <div class="col-5 font-weight-bold">Order Status Canceled By</div>
-            <div class="col-7">
-                : <span class="badge badge-danger">
-                    {{ $canceled->user ?? 'Unknown' }} => Date: {{ $canceled->time ?? 'N/A' }}
-                </span>
+        @if ($canceled)
+            <div class="row mb-2">
+                <div class="col-5 font-weight-bold text-start">Order Status Canceled By</div>
+                <div class="col-7 text-start">
+                    : <span class="badge bg-danger">
+                        {{ $canceled->user ?? 'Unknown' }} => Date: {{ $canceled->time ?? 'N/A' }}
+                    </span>
+                </div>
             </div>
-        </div>
+        @endif
     @endif
-@endif
 
 
 
@@ -163,9 +163,9 @@
                     @if ($item->multiple_note)
                         @foreach (json_decode($item->multiple_note, true) as $note)
                             <li style="text-align: left;  text-wrap: wrap; line-height: 20px"
-                                class="badge badge-soft-primary mb-2 py-2">
+                                class="badge bg-primary mb-2 py-2 text-dark">
                                 {{ $note['note'] }}
-                                <span class="text-muted">({{ $note['time'] }} -> Note by:
+                                <span class="text-dark">({{ $note['time'] }} -> Note by:
                                     {{ $note['user'] }})</span>
                             </li>
                         @endforeach

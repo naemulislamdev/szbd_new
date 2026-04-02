@@ -47,10 +47,12 @@
                                             </div>
                                         </td>
                                         <td style="text-align: left;">
-                                            <a href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a><br>
+                                            <a
+                                                href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a><br>
                                             @if (!empty($cartItem['variations']))
                                                 @foreach ($cartItem['variations'] as $vKey => $variation)
-                                                    <span style="font-size: 14px;">{{ $vKey }} : {{ $variation }}</span>
+                                                    <span style="font-size: 14px;">{{ $vKey }} :
+                                                        {{ $variation }}</span>
                                                 @endforeach
                                             @endif
                                         </td>
@@ -96,7 +98,6 @@
                         <h2 class="address-title mb-0">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-
                         <form style="position: relative" action="{{ route('product.checkout') }}" method="POST"
                             id="userInfoForm">
                             @csrf

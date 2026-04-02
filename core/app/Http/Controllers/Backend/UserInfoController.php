@@ -16,10 +16,12 @@ class UserInfoController extends Controller
 {
     public function all(Request $request)
     {
+
         $views = [
             'pending'         => 'admin.user_infos.pending',
             'confirmed'       => 'admin.user_infos.confirmed',
             'canceled'        => 'admin.user_infos.canceled',
+
         ];
         $view = $views[$request->status] ?? 'admin.user_infos.index';
         return view($view);
@@ -137,7 +139,7 @@ class UserInfoController extends Controller
                 ];
 
                 $html = '<select
-        class="form-select form-select-sm order-status-select"
+        class="form-select form-select-sm "  onchange="order_status(this.value, ' . $row->id . ')"
         data-id="' . $row->id . '"
         data-current="' . $row->order_status . '">';
 
@@ -153,7 +155,7 @@ class UserInfoController extends Controller
             ->editColumn(
                 'order_note',
                 fn($row) =>
-                $row->order_note ?? 'N/A'
+                "<span class=note_" . $row->id . ">" . $row->order_note . "</span>" ?? 'N/A'
             )
 
             ->rawColumns([
@@ -161,26 +163,23 @@ class UserInfoController extends Controller
                 'status',
                 'order_process',
                 'order_status',
-                'action'
+                'action',
+                'order_note'
             ])
             ->toJson();
     }
     public function updateStatus(Request $request)
     {
-        $request->validate([
-            'id'     => 'required|exists:user_infos,id',
-            'status' => 'required|string',
-            'note'   => 'required|string'
-        ]);
 
         $order = UserInfo::findOrFail($request->id);
 
-        $order->order_status = $request->status;
+        $order->order_status = $request->order_status;
         $order->order_note   = $request->note;
         $order->save();
 
         return response()->json([
-            'message' => 'Order status updated successfully'
+            'message' => 'Order status updated successfully',
+            'note' => $request->note
         ]);
     }
 
@@ -240,5 +239,40 @@ class UserInfoController extends Controller
         $headings = ['Date', 'Customer Name', 'Customer Phone', 'Customer Address', 'Status'];
 
         return Excel::download(new DataExport($headings, $data), 'userinfo' . $request->from_date . '_to_' . $request->to_date . '.xlsx');
+    }
+    public function multipleNote(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'multiple_note' => 'required|array'
+        ]);
+
+        $userinfo = UserInfo::findOrFail($request->id);
+
+        // existing notes
+        $existingNotes = json_decode($userinfo->multiple_note, true) ?? [];
+
+        // new notes with date & time
+        $newNotes = [];
+
+        foreach ($request->multiple_note as $note) {
+            $newNotes[] = [
+                'note' => $note,
+                'time' => now()->format('d M Y h:i A'),
+                'user' => auth('admin')->user()->name
+            ];
+        }
+
+        // merge old + new
+        $mergedNotes = array_merge($existingNotes, $newNotes);
+
+        // save as json
+        $userinfo->multiple_note = json_encode($mergedNotes);
+        $userinfo->save();
+
+        return response()->json([
+            'status' => true,
+            'note' => end($newNotes) // last added note frontend এ পাঠানো
+        ]);
     }
 }

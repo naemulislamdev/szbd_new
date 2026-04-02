@@ -260,13 +260,14 @@
     ?>
 
     {{-- Category Section Start --}}
-    <section class="category d-none d-lg-block">
+    {{-- <section class="category d-none d-lg-block">
         <div class="container px-0">
-            <div class="section-heading-title position-relative z-30 text-center">
-                <div>
-                    <h1>Categories</h1>
+            <div class="row mb-3 mt-3">
+                <div class="col-12">
+                    <div class="section-heading-title d-flex align-items-center justify-content-center">
+                        <h3>Categories</h3>
+                    </div>
                 </div>
-                <div class="heading-border"></div>
             </div>
             <div class="owl-carousel category-carosel ">
                 @foreach ($categories as $category)
@@ -275,7 +276,6 @@
                             <img src='{{ asset("assets/storage/category/$category->icon") }}' alt="{{ $category->name }}">
                             <div class="card-body text-center">
                                 <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
-                                {{-- <p class="card-text text-white p-0 m-0">{{ $category->Products->count() }} Products</p> --}}
                             </div>
                         </a>
                     </div>
@@ -283,17 +283,14 @@
 
             </div>
         </div>
-    </section>
+    </section> --}}
     {{-- mobile category --}}
-    <section class="mobile-category d-block d-lg-none">
+    {{-- <section class="mobile-category d-block d-lg-none">
         <div class="container">
-            <div>
-                <div class=" text-center">
-                    <div class=" position-relative z-30 ">
-                        <div class="text-center">
-                            <h2>Categories</h2>
-                        </div>
-                        <div class="heading-border"></div>
+            <div class="row mb-3 mt-3">
+                <div class="col-12">
+                    <div class="section-heading-title d-flex align-items-center justify-content-center">
+                        <h3>Categories</h3>
                     </div>
                 </div>
             </div>
@@ -313,7 +310,34 @@
                 @endforeach
             </div>
         </div>
+    </section> --}}
+
+    {{-- Coupon Slider Start --}}
+    <section class="coupon-slider">
+        <div class="container ">
+            <h4 class="text-center font-weight-bold mb-4">AVAILABLE COUPONS</h4>
+
+            <div class="swiper CouponSlider" style="height: 115px">
+                <div class="swiper-wrapper">
+
+                    @foreach ($couponSlider as $slider)
+                        <!-- Slide item -->
+                        <div class="swiper-slide">
+                            <a href="#">
+                                <img src="{{ asset('assets/storage/banner/' . $slider->photo) }}"
+                                    class="img-fluid coupon-img" alt="">
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
     </section>
+    {{-- Coupon Slider End --}}
     <!------Start Product section----->
     <section class="pb-3">
         <div class="container">

@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Eid Offer')
+@section('title', 'Edit Offers & Promotions')
 
 @push('styles')
 @endpush
@@ -8,13 +8,14 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                    <h4 class="page-title">Edit Eid Offer</h4>
+                    <h4 class="page-title">Edit Offers & Promotions</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb   mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.eid.offers') }}">Eid Offers</a>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.eid.offers') }}">Offers &
+                                    Promotions</a>
                             </li>
-                            <li class="breadcrumb-item active">Edit Eid Offer</li>
+                            <li class="breadcrumb-item active">Edit Offers & Promotions</li>
                         </ol>
                     </div>
                 </div>
@@ -48,8 +49,7 @@
                                                         (ratio') 1:1 </small>
                                                     <div class="custom-file" style="text-align: left">
                                                         <input type="file" name="image" id="customFileEg"
-                                                            class="custom-file-input" accept="image/*"
-                                                            onchange="previewImage(event)">
+                                                            class="custom-file-input" onchange="previewImage(event)">
                                                     </div>
                                                     @error('image')
                                                         <span class="text-danger">{{ $message }}</span>

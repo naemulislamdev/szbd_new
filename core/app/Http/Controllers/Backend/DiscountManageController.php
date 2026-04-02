@@ -942,7 +942,7 @@ class DiscountManageController extends Controller
         }
         EidOffer::create($data);
 
-        return redirect()->route('admin.discount.eid.offers')->with('success', 'Eid Offer created successfully.');
+        return redirect()->route('admin.discount.eid.offers')->with('success', 'Offers & Promotions created successfully.');
     }
     public function eidOffersStatus(Request $request)
     {
@@ -1044,7 +1044,7 @@ class DiscountManageController extends Controller
         }
 
         $eidoffer->update($data);
-        return redirect()->route('admin.discount.eid.offers')->with('success', 'Eid Offer updated successfully.');
+        return redirect()->route('admin.discount.eid.offers')->with('success', 'Offers & Promotions updated successfully.');
     }
     public function eidOffersDelete(Request $request)
     {
