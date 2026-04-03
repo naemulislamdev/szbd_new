@@ -37,7 +37,8 @@ This document outlines the critical fixes and optimizations implemented to stabi
 - **[PassportAuthController.php](core/app/Http/Controllers/api/v1/auth/PassportAuthController.php)**:
   - **Change**: Moved hardcoded SMS API keys to environment variables (`env()`). 
   - **Change**: Removed the plain-text `otp` field from API responses to prevent interception.
-  - **Rationale**: Security hardening and ensuring credentials are not leaked in source control.
+  - **Change**: Fixed new-user registration by ensuring a hashed password is set during OTP verification.
+  - **Rationale**: Security hardening and ensuring credentials are not leaked in source control. Previously, new users were created without a password, leading to broken account states.
 
 ---
 
