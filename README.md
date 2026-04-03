@@ -72,4 +72,5 @@ php artisan route:cache
 ---
 
 ## 👨‍💻 Contributors
-Implemented by **Antigravity (AI)** in collaboration with the development team to restore production stability.
+- **Tahmid Alavi Ishmam**  
+  *Senior Software Dev, Parkiosk LTD. Hongkong*
