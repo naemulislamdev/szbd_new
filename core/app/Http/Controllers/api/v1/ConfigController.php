@@ -69,7 +69,7 @@ class ConfigController extends Controller
             'maintenance_mode' => (boolean)Helpers::get_business_settings('maintenance_mode') ?? 0,
             'language' => $lang_array,
             'colors' => Color::all(),
-            // 'unit' => Helpers::units(),
+            'unit' => ['kg', 'pc', 'gms', 'ltrs'],
             'shipping_method' => Helpers::get_business_settings('shipping_method'),
             'email_verification' => (boolean)Helpers::get_business_settings('email_verification'),
             'phone_verification' => (boolean)Helpers::get_business_settings('phone_verification'),
