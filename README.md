@@ -71,7 +71,3 @@ php artisan route:cache
 ```
 
 ---
-
-## 👨‍💻 Contributors
-- **Tahmid Alavi Ishmam**  
-  *Senior Software Dev, Parkiosk LTD. Hongkong*
