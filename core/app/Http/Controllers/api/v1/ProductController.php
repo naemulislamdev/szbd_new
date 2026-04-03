@@ -248,6 +248,25 @@ class ProductController extends Controller
         return response()->json($methods, 200);
     }
 
+    public function get_home_categories(Request $request)
+    {
+        $categories = Category::where('home_status', 1)
+            ->orderBy('priority', 'ASC')
+            ->get();
+
+        $categories->each(function ($category) {
+            $products = Product::active()
+                ->with(['rating'])
+                ->where('category_id', $category->id)
+                ->latest()
+                ->take(10)
+                ->get();
+            $category->products = Helpers::product_data_formatting($products, true);
+        });
+
+        return response()->json($categories, 200);
+    }
+
     public function get_discounted_product(Request $request)
     {
         $products = ProductManager::get_discounted_product($request['limit'], $request['offset']);

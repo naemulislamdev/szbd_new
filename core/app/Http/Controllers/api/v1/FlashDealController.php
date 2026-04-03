@@ -58,6 +58,11 @@ class FlashDealController extends Controller
     {
         $flash_deals = FlashDeal::where('deal_type','flash_deal')
                 ->where(['status' => 1])->first();
+
+        if (!$flash_deals) {
+            return response()->json([], 200);
+        }
+
         $p_ids = FlashDealProduct::with(['product'])
                                     ->whereHas('product',function($q){
                                         $q->active();

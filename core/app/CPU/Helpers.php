@@ -192,26 +192,45 @@ class Helpers
         try {
             $variation = [];
             // $data['category_ids'] = json_decode($data['category_ids']);
-            $data['images'] = is_string($data['images']) ? json_decode($data['images']) : $data['images'];
-            $colors_decoded = is_string($data['colors']) ? json_decode($data['colors']) : $data['colors'];
-            $data['colors'] = Color::whereIn('code', $colors_decoded)->get(['name', 'code']);
+
+            // images — must always be an array, never null (Flutter uses .cast<String>())
+            $images_raw = $data['images'] ?? '[]';
+            $data['images'] = (is_string($images_raw) ? json_decode($images_raw) : $images_raw) ?? [];
+
+            // colors — must always be an array, never null
+            $colors_raw = $data['colors'] ?? '[]';
+            $colors_decoded = (is_string($colors_raw) ? json_decode($colors_raw) : $colors_raw) ?? [];
+            $data['colors'] = is_array($colors_decoded) && count($colors_decoded) > 0
+                ? Color::whereIn('code', $colors_decoded)->get(['name', 'code'])
+                : [];
+
+            // attributes — must always be an int array (Flutter uses .cast<int>())
             $attributes = [];
-            $attr_decoded = is_string($data['attributes']) ? json_decode($data['attributes']) : $data['attributes'];
-            if ($attr_decoded != null) {
+            $attr_raw = $data['attributes'] ?? '[]';
+            $attr_decoded = (is_string($attr_raw) ? json_decode($attr_raw) : $attr_raw) ?? [];
+            if (is_array($attr_decoded)) {
                 foreach ($attr_decoded as $attribute) {
                     $attributes[] = (int)$attribute;
                 }
             }
             $data['attributes'] = $attributes;
-            $data['choice_options'] = is_string($data['choice_options']) ? json_decode($data['choice_options']) : $data['choice_options'];
-            $var_decoded = is_string($data['variation']) ? json_decode($data['variation'], true) : $data['variation'];
-            foreach ($var_decoded as $var) {
-                $variation[] = [
-                    'type' => $var['type'],
-                    'price' => (float)$var['price'],
-                    'sku' => $var['sku'],
-                    'qty' => (int)$var['qty'],
-                ];
+
+            // choice_options — must always be an array (inner options uses .cast<String>())
+            $choice_raw = $data['choice_options'] ?? '[]';
+            $data['choice_options'] = (is_string($choice_raw) ? json_decode($choice_raw) : $choice_raw) ?? [];
+
+            // variation — must always be an array
+            $var_raw = $data['variation'] ?? '[]';
+            $var_decoded = (is_string($var_raw) ? json_decode($var_raw, true) : $var_raw) ?? [];
+            if (is_array($var_decoded)) {
+                foreach ($var_decoded as $var) {
+                    $variation[] = [
+                        'type' => $var['type'] ?? '',
+                        'price' => (float)($var['price'] ?? 0),
+                        'sku' => $var['sku'] ?? '',
+                        'qty' => (int)($var['qty'] ?? 0),
+                    ];
+                }
             }
             $data['variation'] = $variation;
         } catch (\Exception $exception) {

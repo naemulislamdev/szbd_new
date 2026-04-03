@@ -14,7 +14,10 @@ class ConfigController extends Controller
 {
     public function configuration()
     {
-        $currency = Currency::all();
+        $currency = Currency::all()->map(function($c) {
+            $c->exchange_rate = (double)($c->exchange_rate ?? 1);
+            return $c;
+        });
         $social_login = [];
         foreach (Helpers::get_business_settings('social_login') as $social) {
             $config = [
