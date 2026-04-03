@@ -140,7 +140,7 @@ class Helpers
             return auth('customer')->user();
         }
 
-        $phoneNumber = session('otp_phone') ?? $request->phone;
+        $phoneNumber = session('otp_phone') ?? $request?->phone;
 
 
 
@@ -192,17 +192,20 @@ class Helpers
         try {
             $variation = [];
             // $data['category_ids'] = json_decode($data['category_ids']);
-            $data['images'] = json_decode($data['images']);
-            $data['colors'] = Color::whereIn('code', json_decode($data['colors']))->get(['name', 'code']);
+            $data['images'] = is_string($data['images']) ? json_decode($data['images']) : $data['images'];
+            $colors_decoded = is_string($data['colors']) ? json_decode($data['colors']) : $data['colors'];
+            $data['colors'] = Color::whereIn('code', $colors_decoded)->get(['name', 'code']);
             $attributes = [];
-            if (json_decode($data['attributes']) != null) {
-                foreach (json_decode($data['attributes']) as $attribute) {
+            $attr_decoded = is_string($data['attributes']) ? json_decode($data['attributes']) : $data['attributes'];
+            if ($attr_decoded != null) {
+                foreach ($attr_decoded as $attribute) {
                     $attributes[] = (int)$attribute;
                 }
             }
             $data['attributes'] = $attributes;
-            $data['choice_options'] = json_decode($data['choice_options']);
-            foreach (json_decode($data['variation'], true) as $var) {
+            $data['choice_options'] = is_string($data['choice_options']) ? json_decode($data['choice_options']) : $data['choice_options'];
+            $var_decoded = is_string($data['variation']) ? json_decode($data['variation'], true) : $data['variation'];
+            foreach ($var_decoded as $var) {
                 $variation[] = [
                     'type' => $var['type'],
                     'price' => (float)$var['price'],
