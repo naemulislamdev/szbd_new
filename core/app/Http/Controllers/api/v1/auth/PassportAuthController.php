@@ -217,7 +217,7 @@ class PassportAuthController extends Controller
 
 
 
-            if (isset($customerCheck)) {
+            if (isset($customer)) {
 
 
             return response()->json(['otp' => $otp, 'message' => 'Send OTP your phone Number !','success'=>'1'
