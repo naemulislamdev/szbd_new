@@ -9,6 +9,15 @@
             background-size: cover;
             height: 180px;
         }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 18px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+        }
     </style>
 @endpush
 @section('content')
@@ -233,24 +242,38 @@
                                 <form action="{{ route('admin.profile.password') }}" method="POST">
                                     @csrf
                                     <div class="form-group mb-3 row">
-                                        <label class="col-xl-3 col-lg-3 text-end mb-lg-0 align-self-center form-label">New
-                                            Password</label>
-                                        <div class="col-lg-9 col-xl-8">
-                                            <input class="form-control" type="password" name="password"
+                                        <label class="col-xl-3 col-lg-3 text-end mb-lg-0 align-self-center form-label">
+                                            New Password
+                                        </label>
+                                        <div class="col-lg-9 col-xl-8 position-relative">
+
+                                            <input id="password" class="form-control" type="password" name="password"
                                                 placeholder="New Password">
+
+                                            <span class="toggle-password" toggle="#password">
+                                                <i class="bi bi-eye"></i>
+                                            </span>
+
                                             @error('password')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
+
                                     <div class="form-group mb-3 row">
-                                        <label
-                                            class="col-xl-3 col-lg-3 text-end mb-lg-0 align-self-center form-label">Confirm
-                                            Password</label>
-                                        <div class="col-lg-9 col-xl-8">
-                                            <input class="form-control" type="password" name="confirm_password"
-                                                placeholder="Re-Password">
-                                            @error('confirm_password')
+                                        <label class="col-xl-3 col-lg-3 text-end mb-lg-0 align-self-center form-label">
+                                            Confirm Password
+                                        </label>
+                                        <div class="col-lg-9 col-xl-8 position-relative">
+
+                                            <input id="confirm_password" class="form-control" type="password"
+                                                name="password_confirmation" placeholder="Confirm Password">
+
+                                            <span class="toggle-password" toggle="#confirm_password">
+                                                <i class="bi bi-eye"></i>
+                                            </span>
+
+                                            @error('password_confirmation')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>

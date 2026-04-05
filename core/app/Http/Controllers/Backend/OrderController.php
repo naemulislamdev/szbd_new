@@ -66,7 +66,8 @@ class OrderController extends Controller
             $query->where('order_status', $status);
         }
 
-        $query->latest('id');
+        $query->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc');
 
         return DataTables::eloquent($query)
 
@@ -225,12 +226,11 @@ class OrderController extends Controller
     }
     public function status(Request $request)
     {
-
         $order = Order::with('customer')->where(['id' => $request->id])->first();
 
         $order->order_status = $request->order_status;
         $newNote = json_encode([
-            'note' => $request->order_note,
+            'note' => $request->note,
             'date' => now()->format('d M Y h:i A'),
             'user_id' => auth('admin')->user()->id,
             'user' => auth('admin')->user()->name,
@@ -470,19 +470,38 @@ class OrderController extends Controller
         $data = [];
         foreach ($orders as $item) {
             // $customer = User::find($item->customer_id);
+            $noteData = json_decode($item->order_note);
+
+            $noteText = 'N/A';
+
+            if ($noteData) {
+                $note = $noteData->note ?? 'No note';
+                $user = $noteData->user ?? 'Unknown';
+                $date = $noteData->date ?? '';
+
+                $noteText = "{$note} — {$user} ({$date})";
+            }
+
             $data[] = [
-                $item->created_at->format('d M Y'),
-                $item->Order_id,
+                $item->created_at->format('d M Y, h:i A'),
+                $item->order_number ? $item->order_number : $item->id,
                 $item->customer->name != null ? $item->customer->name :  $item->customer->f_name . ' ' . $item->customer->l_name ?? 'Guest',
                 $item->customer->phone ?? 'N/A',
                 $item->customer->email ?? 'N/A',
                 $item->customer->address ?? 'N/A',
                 $item->order_amount,
+                $item->shipping_cost,
+                $item->coupon_code,
+                $item->order_amount + $item->shipping_cost,
+                $noteText,
+                $item->order_type == "default_type" ? "Web" : ucfirst(
+                    $order->order_type ?? 'Regular'
+                ),
                 $item->order_status,
             ];
         }
 
-        $headings = ['Date', 'Order id', 'Customer Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Amount', 'Status'];
+        $headings = ['Date', 'Order Number', 'Customer Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Amount', 'Delivery Charge', 'Coupon', 'Total Amount', 'Order Note', 'order Type', 'Status'];
 
         return Excel::download(new DataExport($headings, $data), 'orders_' . $request->from_date . '_to_' . $request->to_date . '.xlsx');
     }

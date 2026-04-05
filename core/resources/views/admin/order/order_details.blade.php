@@ -137,39 +137,43 @@
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
-                                                        <label>Order Status</label>
-                                                        <select name="order_status"
-                                                            onchange="orderStatusChange(this.value, {{ $order->id }})"
-                                                            class="form-control">
+                                                        <label>Change Order Status</label>
 
-                                                            <option value="pending"
-                                                                {{ $order->order_status == 'pending' ? 'selected' : '' }}>
-                                                                Pending
-                                                            </option>
-                                                            <option value="confirmed"
-                                                                {{ $order->order_status == 'confirmed' ? 'selected' : '' }}>
-                                                                Confirmed</option>
-                                                            <option value="processing"
-                                                                {{ $order->order_status == 'processing' ? 'selected' : '' }}>
-                                                                Processing </option>
-                                                            <option class="text-capitalize" value="out_for_delivery"
-                                                                {{ $order->order_status == 'out_for_delivery' ? 'selected' : '' }}>
-                                                                out_for_delivery
-                                                            </option>
-                                                            <option value="delivered"
-                                                                {{ $order->order_status == 'delivered' ? 'selected' : '' }}>
-                                                                Delivered </option>
-                                                            <option value="returned"
-                                                                {{ $order->order_status == 'returned' ? 'selected' : '' }}>
-                                                                Returned</option>
-                                                            <option value="failed"
-                                                                {{ $order->order_status == 'failed' ? 'selected' : '' }}>
-                                                                Failed
-                                                            </option>
-                                                            <option value="canceled"
-                                                                {{ $order->order_status == 'canceled' ? 'selected' : '' }}>
-                                                                Canceled </option>
-                                                        </select>
+                                                        <div class="">
+                                                            <div class="">
+                                                                <select name="order_status"
+                                                                    onchange="order_status(this.value)"
+                                                                    class="status form-select"
+                                                                    data-id="{{ $order['id'] }}">
+
+                                                                    <option value="pending"
+                                                                        {{ $order->order_status == 'pending' ? 'selected' : '' }}>
+                                                                        Pending</option>
+                                                                    <option value="confirmed"
+                                                                        {{ $order->order_status == 'confirmed' ? 'selected' : '' }}>
+                                                                        Confirmed</option>
+                                                                    <option value="processing"
+                                                                        {{ $order->order_status == 'processing' ? 'selected' : '' }}>
+                                                                        Processing</option>
+                                                                    <option class="text-capitalize" value="out_for_delivery"
+                                                                        {{ $order->order_status == 'out_for_delivery' ? 'selected' : '' }}>
+                                                                        out_for_delivery
+                                                                    </option>
+                                                                    <option value="delivered"
+                                                                        {{ $order->order_status == 'delivered' ? 'selected' : '' }}>
+                                                                        Delivered </option>
+                                                                    <option value="returned"
+                                                                        {{ $order->order_status == 'returned' ? 'selected' : '' }}>
+                                                                        Returned</option>
+                                                                    <option value="failed"
+                                                                        {{ $order->order_status == 'failed' ? 'selected' : '' }}>
+                                                                        Failed </option>
+                                                                    <option value="canceled"
+                                                                        {{ $order->order_status == 'canceled' ? 'selected' : '' }}>
+                                                                        Canceled </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
@@ -189,23 +193,29 @@
 
                                                     </select>
                                                 </div>
-                                                <div class="col-12 mt-5">
+                                                <div class="col-12 mt-3">
                                                     <form id="orderNoteForm" style="padding-top: 20px;">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $order['id'] }}">
-                                                        <label>Add Note</label>
-                                                        <div>
-                                                            <div class="input-group mb-3">
-                                                                <input required type="text" class="form-control"
-                                                                    name="multiple_note[]" placeholder="Enter New note">
-                                                            </div>
-                                                        </div>
+                                                        <label>Add Multiple Note</label>
+                                                        <div class="input-group">
 
-                                                        @error('multiple_note')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                        <div class="d-flex justify-content-end">
-                                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                                            <!-- Input Group -->
+                                                            <div id="noteWrapper" class="flex-grow-1">
+                                                                <div class="input-group">
+
+                                                                    <input style="border-radius: 4px 0 0 4px" required
+                                                                        type="text" class="form-control rounded-r-none"
+                                                                        name="multiple_note[]" placeholder="Enter new note">
+
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Submit Button -->
+                                                            <button type="submit" class="btn btn-primary">
+                                                                Submit
+                                                            </button>
+
                                                         </div>
                                                     </form>
                                                 </div>
@@ -571,72 +581,130 @@
         });
     </script>
     <script>
-        function orderStatusChange(status, orderId) {
+        function order_status(status) {
+            var orderStatus = status ? status : 'pending';
 
-            let title = 'Are you sure?';
-            let warning = "You won't be able to revert this!";
-            let placeholder = 'Write note';
 
             if (status === 'delivered') {
-                title = 'Order already delivered!';
-                warning = 'Changing this may cause transaction miscalculation.';
-                placeholder = 'Delivered note';
-            }
+                Swal.fire({
+                    title: 'Order is already delivered, and transaction amount has been disbursed, changing status can be the reason of miscalculation',
+                    text: "Think before you proceed.",
+                    html: '<br /> <form class="form-horizontal" action="{{ route('admin.order.status') }}" method="post"><input type="hidden" name="order_status" value="' +
+                        status +
+                        '"> <input type="hidden" name="id" value="{{ $order['id'] }}"> <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For delivered note"> </form>',
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.order.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(res) {
+                                if (res.status && res.note) {
+                                    $('#statusNote').html(`
+                                    <p class="pl-1 order_note">
+                                        ${res.note.note} — ${res.note.user}
+                                        (${res.note.date})
+                                    </p>
+                                `);
+                                }
 
-            if (status === 'canceled') {
-                placeholder = 'Cancel note';
-            }
-
-            Swal.fire({
-                title: title,
-                text: warning,
-                input: 'textarea',
-                inputPlaceholder: placeholder,
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Change it!',
-                confirmButtonColor: '#377dff',
-                cancelButtonColor: '#6c757d',
-
-            }).then((result) => {
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': document
-                            .querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content')
+                                toastr.success('Status Changed Successfully');
+                            },
+                            error: function(data) {
+                                toastr.warning('Should Write Canceled Reason !');
+                            }
+                        });
                     }
                 });
+            } else if (status === 'canceled') {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: '<br /> <form class="form-horizontal" action="{{ route('admin.order.status') }}" method="post"><input type="hidden" name="order_status" value="canceled"> <input type="hidden" name="id" value="{{ $order['id'] }}"> <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For cancel note"> </form>',
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.order.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(res) {
+                                if (res.status && res.note) {
+                                    $('#statusNote').html(`
+                                    <p class="pl-1 order_note">
+                                        ${res.note.note} — ${res.note.user}
+                                        (${res.note.date})
+                                    </p>
+                                `);
+                                }
 
-                $.ajax({
-                    url: "{{ route('admin.order.status') }}",
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                    },
-                    data: {
-                        id: orderId,
-                        order_status: status,
-                        order_note: result.value ? result.value : ""
-                    },
-                    success: function(res) {
-                        toastr.success('Order status updated successfully');
-                        if (res.status) {
-                            // frontend update
-                            $('#noteList').append(`
-                            <li style='text-align: left; text-wrap: wrap; line-height: 20px' class="badge bg-primary d-inline-block  mb-2 py-2">
-                                ${res.note.note}
-                                <span class="">(${res.note.date}- Note by: ${res.note.user})</span>
-                            </li>
-                        `);
-                            form[0].reset();
-                        }
-
-                    },
-                    error: function() {
-                        toastr.error('Something went wrong');
+                                toastr.success('Status Changed Successfully');
+                            },
+                            error: function(data) {
+                                toastr.warning('Should Write Canceled Reason !');
+                            }
+                        });
                     }
                 });
-            });
+            } else {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: '<br /> <form class="form-horizontal" action="{{ route('admin.order.status') }}" method="post"><input type="hidden" name="order_status" value="' +
+                        status +
+                        '"> <input type="hidden" name="id" value="{{ $order['id'] }}"> <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For ' +
+                        status + ' note"> </form>',
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.order.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(res) {
+                                if (res.status && res.note) {
+                                    $('#statusNote').html(`
+                                    <p class="pl-1 order_note">
+                                        ${res.note.note} — ${res.note.user}
+                                        (${res.note.date})
+                                    </p>
+                                `);
+                                }
+
+                                toastr.success('Status Changed Successfully');
+                            },
+                            error: function(data) {
+                                toastr.warning('Should Write Canceled Reason !');
+                            }
+                        });
+                    }
+                });
+            }
         }
     </script>
 

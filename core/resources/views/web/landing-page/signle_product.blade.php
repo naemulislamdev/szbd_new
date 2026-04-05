@@ -124,6 +124,57 @@
             width: 100px;
         }
 
+        .shipping-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .shipping-box input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #33ad07;
+            /* red accent */
+        }
+
+        .shipping-box:hover {
+            border-color: #33ad07;
+            background: #fff5f5;
+        }
+
+        .address-box {
+            border: 3px solid #ddd;
+            border-radius: 8px;
+            padding: 7px 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .address-box.active {
+            border-color: #2F6B3F;
+            background: #f5f9ff;
+        }
+
+        .address-box input {
+            display: none;
+        }
+
+        .address-box>h4 {
+            font-size: 14px;
+            margin: 0px;
+        }
+
+        .edit-btn {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+        }
+
         .p-dtls-box>table>tbody>tr {
             display: flex;
             justify-content: space-between;
@@ -688,12 +739,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <form action="{{ route('sproduct.checkout') }}" method="POST" id=""
+                            <form action="{{ route('sproduct.checkout') }}" method="POST" id="userInfoForm"
                                 class="userInfoForm">
                                 @csrf
                                 <input type="hidden" name="session_id" value="{{ session()->getId() }}">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 px-0 px-lg-2">
                                         <div class="order-box">
                                             <div class="card-body">
                                                 <div class="row mb-3">
@@ -705,31 +756,41 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         @if ($customer && $shippingAddresses->count() > 0)
-                                                            @foreach ($shippingAddresses as $key => $address)
-                                                                <div class="address-box {{ $key == 0 ? 'active' : '' }}">
-                                                                    <input type="radio"
-                                                                        id="address_{{ $address->id }}"
-                                                                        name="address_type" value="{{ $address->id }}"
-                                                                        {{ $key == 0 ? 'checked' : '' }}
-                                                                        onclick="selectAddress(false,this)">
-                                                                    <label for="address_{{ $address->id }}">
-                                                                        <strong>Name:
-                                                                            {{ $address->contact_person_name }}</strong>
-                                                                        <br>
-                                                                        📞 Phone: {{ $address->phone }}<br>
-                                                                        🏠 Address: {{ $address->address }}
+                                                            <label>পূর্বের অর্ডারকৃত নাম ও ঠিকানা সিলেক্ট করুন অথবা নতুন
+                                                                ঠিকানা দিন
+                                                                <span>*</span></label>
+                                                            <div style="max-height: 400px; overflow-y: auto;">
+                                                                @foreach ($shippingAddresses as $key => $address)
+                                                                    <label for="address_{{ $address->id }}"
+                                                                        class=" d-block address-box {{ $key == 0 ? 'active' : '' }} mr-2">
+                                                                        <input type="radio"
+                                                                            id="address_{{ $address->id }}"
+                                                                            name="address_type"
+                                                                            value="{{ $address->id }}"
+                                                                            {{ $key == 0 ? 'checked' : '' }}
+                                                                            onclick="selectAddress(false,this)">
+                                                                        <div>
+                                                                            <strong>Name:
+                                                                                {{ $address->contact_person_name }}</strong>
+                                                                            <br>
+                                                                            📞 Phone: {{ $address->phone }}<br>
+                                                                            🏠 Address: {{ $address->address }}
+                                                                        </div>
+                                                                        <button type="button" style="border-width: 2px;"
+                                                                            class="btn btn-sm btn-dark edit-btn"
+                                                                            onclick="openEditModal({{ $address }})">✏️
+                                                                            Edit</button>
                                                                     </label>
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-outline-primary edit-btn"
-                                                                        onclick="openEditModal({{ $address }})">✏️</button>
-                                                                </div>
-                                                            @endforeach
+                                                                @endforeach
+                                                            </div>
 
-                                                            <label class="address-box">
-                                                                <input type="radio" name="address_type" value="new"
-                                                                    onclick="selectAddress(true,this)">
-                                                                ➕ নতুন ঠিকানা যোগ করুন
-                                                            </label>
+                                                            <div class="pt-3">
+                                                                <label class="address-box btn btn-success">
+                                                                    <input type="radio" name="address_type"
+                                                                        value="new" onclick="selectAddress(true,this)">
+                                                                    <i class="fa fa-plus"></i> নতুন ঠিকানা যোগ করুন
+                                                                </label>
+                                                            </div>
                                                         @endif
                                                     </div>
                                                     <div id="newAddressForm"
@@ -890,24 +951,26 @@
                                                                         <div class="col-12 mb-3">
                                                                             <h4 style="font-size: 18px;">Color</h4>
                                                                         </div>
+
                                                                         @if ($productLandingPage->product->color_variant != null)
                                                                             <div class="col-12 mb-3">
                                                                                 <div class="d-flex">
-                                                                                    @foreach (json_decode($productLandingPage->product->color_variant) as $key => $color)
+
+                                                                                    @foreach (is_array($productLandingPage->product->color_variant) ? $productLandingPage->product->color_variant : json_decode($productLandingPage->product->color_variant, true) as $key => $color)
                                                                                         <div
                                                                                             class="v-color-box position-relative">
                                                                                             <input type="radio"
                                                                                                 id="{{ $productLandingPage->product->id }}-color-{{ $key }}"
                                                                                                 name="color"
-                                                                                                value="{{ $color->code }}"
+                                                                                                value="{{ $color['code'] }}"
                                                                                                 @if ($key == 0) checked @endif>
                                                                                             <label
                                                                                                 for="{{ $productLandingPage->product->id }}-color-{{ $key }}"
                                                                                                 class="color-label"
-                                                                                                style="background-color: {{ $color->code }}; overflow: hidden;">
-                                                                                                <img src="{{ asset($color->image) }}"
-                                                                                                    data-image="{{ asset($color->image) }}"
-                                                                                                    alt="{{ $color->color }}"
+                                                                                                style="background-color: {{ $color['code'] }}; overflow: hidden;">
+                                                                                                <img src="{{ asset($color['image']) }}"
+                                                                                                    data-image="{{ asset($color['image']) }}"
+                                                                                                    alt="{{ $color['color'] }}"
                                                                                                     style="max-width:100%; height:auto;">
                                                                                             </label>
 
@@ -915,7 +978,7 @@
                                                                                                 style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
                                                                                             right: -11px;
                                                                                             top: -34px;
-                                                                                            background: {{ $color->code }}"></span>
+                                                                                            background: {{ $color['code'] }}"></span>
 
                                                                                         </div>
                                                                                     @endforeach
@@ -1008,7 +1071,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <form>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -1022,8 +1085,71 @@
             </div>
         </div>
     </section>
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered d-block">
+            <form method="POST" action="{{ route('address.update') }}" id="addressUpdate">
+                @csrf
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Address</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label>Name</label>
+                        <input type="text" name="name" id="edit_name" class="form-control mb-2">
+                        <label>Phone</label>
+                        <input type="number" name="phone" id="edit_phone" class="form-control mb-2">
+                        <label>Address</label>
+                        <textarea name="address" id="edit_address" class="form-control"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 @push('scripts')
+    <script>
+        $('#addressUpdate').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(res) {
+                    if (res.status === 'success') {
+                        $('#editAddressModal').modal('hide');
+                        toastr.success('Address updated successfully');
+                        location.reload();
+                    }
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+    </script>
+    <script>
+        function openEditModal(address) {
+            event.stopPropagation();
+
+            document.getElementById('edit_id').value = address.id;
+            document.getElementById('edit_name').value = address.contact_person_name;
+            document.getElementById('edit_phone').value = address.phone;
+            document.getElementById('edit_address').value = address.address;
+
+            $('#editAddressModal').modal('show');
+        }
+    </script>
     @php
         $price = $productLandingPage->product;
         $cleanPrice = floatval(str_replace(',', '', $price));
@@ -1130,7 +1256,9 @@
             });
 
             function saveUserData() {
-                let formData = $(".userInfoForm").serialize();
+                let formData = $("#userInfoForm").serialize();
+                console.log(formData);
+
 
                 $.ajax({
                     url: "{{ route('save.user.info') }}",
