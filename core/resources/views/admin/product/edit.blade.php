@@ -294,7 +294,7 @@
                                     <div class="col-md-12 mt-2 mb-2">
                                         <div class="customer_choice_options" id="customer_choice_options">
                                             @include('admin.product.partials._choices', [
-                                                'choice_no' => $product->attributes,
+                                                'choice_no' => $productAttributes,
                                                 'choice_options' => $choiceOptions,
                                             ])
                                         </div>
@@ -394,7 +394,7 @@
                                 </div>
                                 <div class="col-md-3" id="minimum_order_qty">
                                     <label class="control-label">
-                                        minimum_order_quantity <span class="text-danger">*</span></label>
+                                        Minimum order quantity <span class="text-danger">*</span></label>
                                     <input type="number" min="1" value="{{ $product->minimum_order_qty }}"
                                         step="1" placeholder="minimum_order_quantity" name="minimum_order_qty"
                                         class="form-control form-control-lg   @error('minimum_order_qty') is-invalid @enderror">
@@ -403,14 +403,14 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-3" id="shipping_cost">
-                                    <label class="control-label">shipping_cost</label>
+                                    <label class="control-label">Shipping cost</label>
                                     <input type="number" min="0" value="{{ $product->shipping_cost }}"
                                         step="1" placeholder="shipping_cost" name="shipping_cost"
                                         class="form-control form-control-lg">
                                 </div>
                                 <div class="col-md-3 d-flex flex-column mt-3" id="shipping_cost_multy">
                                     <div>
-                                        <label class="control-label">shipping_cost_multiply_with_quantity
+                                        <label class="control-label">Shipping cost multiply with quantity
                                         </label>
 
                                     </div>

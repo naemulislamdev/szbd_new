@@ -340,6 +340,47 @@ class CheckoutControl extends Controller
             $coupon_code = session('coupon_code');
 
             $shippingMethod = ShippingMethod::findOrFail($request->shipping_area);
+            $promoProducts = ['HG1999D', 'HG1999E', 'HG1999G', 'HG1999BL', 'HG1999BK', 'HG1999S', 'HG1999BN', 'HG1999R', 'HG1999BY'];
+            $promoQty = 0;
+            $promoItems = [];
+
+            $cart = session('cart', []);
+
+            foreach ($cart as $item) {
+
+                $sku = $item['code'];
+
+                if (in_array($sku, $promoProducts)) {
+                    $promoQty += $item['quantity'];
+                    $promoItems[] = $item;
+                }
+            }
+
+            // ✅ calculate discount
+            $promoDiscount = 0;
+
+            if ($promoQty >= 3) {
+
+                $freeItems = floor($promoQty / 3);
+
+                $prices = [];
+
+                foreach ($promoItems as $item) {
+                    for ($i = 0; $i < $item['quantity']; $i++) {
+                        $prices[] = $item['price'];
+                    }
+                }
+
+                sort($prices); // lowest price first
+
+                for ($i = 0; $i < $freeItems; $i++) {
+                    $promoDiscount += $prices[$i];
+                }
+            }
+
+            $cartTotal = Helpers::cart_grand_total($cart);
+
+            $finalAmount = $cartTotal - $discount - $promoDiscount;
 
             $order_id = DB::table('orders')->insertGetId([
                 'order_number' => rand(100000, 999999),
@@ -353,7 +394,7 @@ class CheckoutControl extends Controller
                 'coupon_code' => $coupon_code,
                 'discount_amount' => $discount,
                 'discount_type' => $discount ? 'coupon_discount' : null,
-                'order_amount' => Helpers::cart_grand_total(session('cart')) - $discount,
+                'order_amount' => $finalAmount,
                 'shipping_address' => $shippingAddress->id,
                 'shipping_address_data' => json_encode($shippingAddress),
                 'shipping_method_id' => $request->shipping_area,

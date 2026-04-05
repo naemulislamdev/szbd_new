@@ -91,8 +91,10 @@ class UserInfoController extends Controller
                 if (isset($productDetails['product_id'])) {
 
                     $product = Product::find($productDetails['product_id']);
+                    $productPrice = $product->unit_price ?? "";
 
                     $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+                    $html .= '<strong>Product Price:</strong> ' . ($productPrice ?? 'N/A') . '<br>';
 
                     if (!empty($productDetails['color'])) {
                         $colorName = Color::where('code', $productDetails['color'])->value('name');
@@ -106,9 +108,11 @@ class UserInfoController extends Controller
                     foreach ($productDetails as $item) {
 
                         $product = Product::find($item['id'] ?? null);
+                        $productPrice = $product->unit_price ?? "";
 
                         $html .= '<div class="mb-1">';
                         $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+                        $html .= '<strong>Product Price:</strong> ' . ($productPrice ?? 'N/A') . '<br>';
 
                         if (!empty($item['color'])) {
                             $colorName = Color::where('code', $item['color'])->value('name');
@@ -225,18 +229,93 @@ class UserInfoController extends Controller
         $userinfos = $query->latest()->cursor();
 
         $data = [];
+        $totalPrice = 0;
+
         foreach ($userinfos as $item) {
-            // $customer = User::find($item->customer_id);
+            $productCode = '';
+            $productPrice = 0;
+            $product_details = json_decode($item->product_details, true);
+
+            if (is_array($product_details)) {
+
+                if (isset($product_details[0]) && is_array($product_details[0])) {
+
+                    $codes = [];
+
+                    foreach ($product_details as $pd) {
+                        $product = Product::find($pd['id'] ?? null);
+
+                        if ($product) {
+                            $codes[] = $product->code ?? '';
+                            $productPrice += $product->unit_price ?? 0; // ⭐ sum per row
+                        }
+                    }
+
+                    $productCode = implode(', ', $codes);
+                } else {
+
+                    $product = Product::find($product_details['product_id'] ?? null);
+
+                    if ($product) {
+                        $productCode = $product->code ?? '';
+                        $productPrice = $product->unit_price ?? 0;
+                    }
+                }
+            }
+
+            $totalPrice += $productPrice;
+
             $data[] = [
-                $item->created_at->format('d M Y'),
-                $item->name ?? 'Guest',
-                $item->phone ?? 'N/A',
-                $item->address ?? 'N/A',
-                $item->order_status,
+                'Date'          => Carbon::parse($item->created_at)->format('d F Y'),
+                'Time'          => Carbon::parse($item->created_at)->format('h:i A'),
+                'Name'          => $item->name ?? '',
+                'Email'         => $item->email ?? '',
+                'Phone'         => $item->phone ?? '',
+                'Address'       => $item->address ?? '',
+                'Product Code'  => $productCode,
+                'Product Price' => $productPrice,
+                'Type'          => ucfirst($item->type ?? ''),
+                'Status'        => $item->status == 0 ? 'Unseen' : 'Seen',
+                'Order Process' => $item->order_process == 'pending'
+                    ? 'Pending'
+                    : ($item->order_process == 'completed' ? 'Confirmed' : ucfirst($item->order_process)),
+                'Order Status'  => ucfirst($item->order_status ?? ''),
+                'Order Note'    => $item->order_note ?? 'N/A',
             ];
         }
 
-        $headings = ['Date', 'Customer Name', 'Customer Phone', 'Customer Address', 'Status'];
+        // ⭐ Add Total Row
+        $data[] = [
+            'Date'          => '',
+            'Time'          => '',
+            'Name'          => '',
+            'Email'         => '',
+            'Phone'         => '',
+            'Address'       => '',
+            'Product Code'  => 'Total',
+            'Product Price' => $totalPrice,
+            'Type'          => '',
+            'Status'        => '',
+            'Order Process' => '',
+            'Order Status'  => '',
+            'Order Note'    => '',
+        ];
+
+        $headings = [
+            'Date',
+            'Time',
+            'Name',
+            'Email',
+            'Phone',
+            'Address',
+            'Product Code',
+            'Product Price',
+            'Type',
+            'Status',
+            'Order Process',
+            'Order Status',
+            'Order Note'
+        ];
 
         return Excel::download(new DataExport($headings, $data), 'userinfo' . $request->from_date . '_to_' . $request->to_date . '.xlsx');
     }

@@ -401,8 +401,7 @@
                                             @php($subtotal = $detail['price'] * $detail->qty - $detail['discount'])
                                             <td>{{ $subtotal }}</td>
                                             <td>
-                                                <a href="javascript:;" class="btn btn-danger btn-sm remove-item"
-                                                    id="delete" data-id="{{ $detail->id }}">
+                                                <a href="javascript:;" class="btn btn-danger btn-sm remove-item" data-id="{{ $detail->id }}">
                                                     <i class="la la-trash"></i>
                                                 </a>
                                             </td>

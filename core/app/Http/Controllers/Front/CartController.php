@@ -75,45 +75,48 @@ class CartController extends Controller
         $data['id'] = $product->id;
 
         // ---------------------------
-        // COLOR HANDLE
+        // COLOR HANDLE (ONLY UI, NOT IN VARIANT)
         // ---------------------------
         $color_image_path = null;
 
         if ($request->filled('color')) {
+
             $data['color'] = $request->color;
 
-            $colorRow = collect($product->color_variant ?? [])
-                ->firstWhere('code', $request->color);
+            $colorVariants = is_array($product->color_variant)
+                ? $product->color_variant
+                : json_decode($product->color_variant ?? '[]', true);
+
+            $colorRow = collect($colorVariants)->firstWhere('code', $request->color);
 
             if ($colorRow) {
                 $variations['Color'] = $colorRow['color'];
-                $variantStr = $colorRow['color'];
                 $color_image_path = $colorRow['image'];
             }
         }
-        //dd($product->choice_options);
+
         // ---------------------------
         // SIZE / OTHER OPTIONS
         // ---------------------------
-        foreach ($product->choice_options ?? [] as $choice) {
-            if ($request->filled($choice['name'])) {
-                $data[$choice['name']] = $request[$choice['name']];
-                $variations[$choice['title']] = $request[$choice['name']];
+        $choiceOptions = is_array($product->choice_options)
+            ? $product->choice_options
+            : json_decode($product->choice_options ?? '[]', true);
 
+        foreach ($choiceOptions as $choice) {
+
+            if ($request->filled($choice['name'])) {
+
+                $value = $request[$choice['name']];
+
+                $data[$choice['name']] = $value;
+                $variations[$choice['title']] = $value;
+
+                // ✅ ONLY SIZE (no color)
                 $variantStr .= $variantStr
-                    ? '-' . str_replace(' ', '', $request[$choice['name']])
-                    : str_replace(' ', '', $request[$choice['name']]);
+                    ? '-' . str_replace(' ', '', $value)
+                    : str_replace(' ', '', $value);
             }
         }
-        // foreach (json_decode(Product::find($request->id)->choice_options) as $key => $choice) {
-        //     $data[$choice->name] = $request[$choice->name];
-        //     $variations[$choice->title] = $request[$choice->name];
-        //     if ($str != null) {
-        //         $str .= '-' . str_replace(' ', '', $request[$choice->name]);
-        //     } else {
-        //         $str .= str_replace(' ', '', $request[$choice->name]);
-        //     }
-        // }
 
         $data['variant']    = $variantStr;
         $data['variations'] = $variations;
@@ -132,15 +135,18 @@ class CartController extends Controller
         // ---------------------------
         // VARIATION PRICE & STOCK
         // ---------------------------
+        $variationsData = json_decode($product->variation ?? '[]', true);
+
         if ($variantStr) {
-            $count = count(json_decode($product->variation));
-            for ($i = 0; $i < $count; $i++) {
-                if (json_decode($product->variation)[$i]->type == $variantStr) {
-                    $price = json_decode($product->variation)[$i]->price;
-                    if (json_decode($product->variation)[$i]->qty < $request['quantity']) {
-                        return response()->json([
-                            'data' => 0
-                        ]);
+
+            foreach ($variationsData as $var) {
+
+                if (($var['type'] ?? '') == $variantStr) {
+
+                    $price = $var['price'] ?? 0;
+
+                    if (($var['qty'] ?? 0) < $request->quantity) {
+                        return response()->json(['data' => 0]);
                     }
                 }
             }
@@ -149,36 +155,15 @@ class CartController extends Controller
         }
 
         // ---------------------------
-        // FINAL CART DATA
+        // SAFETY (price fallback)
         // ---------------------------
+        if ($price <= 0) {
+            $price = $product->unit_price;
+        }
         $tax = ($price * $product->tax) / 100;
 
-        $pormotionOffer = EidOffer::where('slug', 'buy-2-get-1')->where('status', 1)->first();
-        $qty = (int) $request->quantity;
-
-        // default
-        $unitFinalPrice = $price;
-        $totalPrice     = $price * $qty;
-        $freeItems      = 0;
-
-        if ($pormotionOffer) {
-
-            // ✅ free items
-            $freeItems = floor($qty / 3);
-
-            // ✅ payable qty
-            $payableQty = $qty - $freeItems;
-
-            // ✅ total price
-            $totalPrice = $price * $payableQty;
-
-            // ✅ unit price (for UI)
-            $unitFinalPrice = $totalPrice / $qty;
-        }
-
-
         $data['quantity']           = $request->quantity;
-        $data['price']              = $unitFinalPrice;
+        $data['price']              = $price;
         $data['tax']                = $tax;
         $data['discount']           = Helpers::get_product_discount($product, $price);
         $data['shipping_cost']      = 0;
@@ -187,6 +172,7 @@ class CartController extends Controller
         $data['name']               = $product->name;
         $data['thumbnail']          = $product->thumbnail;
         $data['color_image']        = $color_image_path;
+        $data['code']               = $product->code;
 
         // ---------------------------
         // PUSH TO SESSION

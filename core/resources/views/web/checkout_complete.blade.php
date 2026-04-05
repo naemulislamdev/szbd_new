@@ -173,7 +173,7 @@
                                                 <td>
                                                     <div
                                                         class="text-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}">
-                                                        <span>{{ $summary['subtotal'] }}</span>
+                                                        <span>{{ $order['order_amount'] }}</span>
                                                     </div>
                                                 </td>
                                             </tr>

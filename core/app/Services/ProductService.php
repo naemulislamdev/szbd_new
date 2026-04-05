@@ -94,6 +94,7 @@ class ProductService
 
     private static function variationInfoStore($p, $r)
     {
+        //dd($r->all());
         if ($r->has('colors_active') && $r->has('colors') && count($r->colors) > 0) {
             $p->colors = json_encode($r->colors);
         } else {
@@ -191,7 +192,7 @@ class ProductService
                 $str = 'choice_options_' . $no;
                 $item['name'] = 'choice_' . $no;
                 $item['title'] = $r->choice[$key];
-                $item['options'] = explode(',', implode('|', [$r[$str]]));
+                $item['options'] = explode(',', $r[$str][0]);
                 array_push($choice_options, $item);
             }
         }
