@@ -154,6 +154,7 @@ class CartController extends Controller
         $tax = ($price * $product->tax) / 100;
 
         $pormotionOffer = EidOffer::where('slug', 'buy-2-get-1')->where('status', 1)->first();
+
         $qty = (int) $request->quantity;
 
         // default
@@ -161,18 +162,18 @@ class CartController extends Controller
         $totalPrice     = $price * $qty;
         $freeItems      = 0;
 
-        if ($pormotionOffer) {
+        $promoProducts = ['HG1999D', 'HG1999E', 'HG1999G', 'HG1999BL', 'HG1999BK', 'HG1999S', 'HG1999BN', 'HG1999R', 'HG1999BY'];
 
-            // ✅ free items
+        // 🔥 detect SKU
+        $currentSku = $product->code;
+
+        // ✅ apply only for selected products
+        if ($pormotionOffer && in_array($currentSku, $promoProducts)) {
+
             $freeItems = floor($qty / 3);
-
-            // ✅ payable qty
             $payableQty = $qty - $freeItems;
 
-            // ✅ total price
             $totalPrice = $price * $payableQty;
-
-            // ✅ unit price (for UI)
             $unitFinalPrice = $totalPrice / $qty;
         }
 

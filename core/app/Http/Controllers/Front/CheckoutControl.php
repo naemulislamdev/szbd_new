@@ -630,8 +630,4 @@ class CheckoutControl extends Controller
         }
         return view('web.checkout_complete', compact('order'));
     }
-    public function customerAddressUpdate(Request $request)
-    {
-        dd($request->all());
-    }
 }

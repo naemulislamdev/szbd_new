@@ -144,7 +144,7 @@ class BusinessSettingsController extends Controller
         $loader_gif = BusinessSetting::where(['type' => 'loader_gif'])->first();
         if ($request->has('loader_gif')) {
 
-            $loader_gif = FileManager::updateFile('company/', 'assets/storage/company' . $loader_gif['value'], $request->file('loader_gif'));
+            $loader_gif = FileManager::updateOriginalFile('company/', 'assets/storage/company' . $loader_gif['value'], $request->file('loader_gif'));
             BusinessSetting::updateOrInsert(['type' => 'loader_gif'], [
                 'value' => $loader_gif,
             ]);

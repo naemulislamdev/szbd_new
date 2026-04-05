@@ -26,36 +26,38 @@ class InvestorController extends Controller
             ->addIndexColumn()
 
             ->addColumn('action', function ($row) {
+
+                $button = ''; // ✅ always initialize
+
                 if (auth('admin')->user()->can('Investor_view')) {
-                    $button =  '
+                    $button .= '
         <button
-        data-id="' . $row->id . '"
-        data-name="' . $row->name . '"
-        data-mobile="' . $row->mobile_number . '"
-        data-address="' . $row->address . '"
-        data-occupation="' . $row->occupation . '"
-        data-investment-amount="' . $row->investment_amount . '"
-        data-remark="' . $row->remark . '"
-        data-date="' . $row->created_at->format('d M Y h:i A') . '"
-        data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
+            data-id="' . $row->id . '"
+            data-name="' . $row->name . '"
+            data-mobile="' . $row->mobile_number . '"
+            data-address="' . $row->address . '"
+            data-occupation="' . $row->occupation . '"
+            data-investment-amount="' . $row->investment_amount . '"
+            data-remark="' . $row->remark . '"
+            data-date="' . $row->created_at->format('d M Y h:i A') . '"
+            data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"
             data-bs-toggle="modal"
-               data-bs-target="#viewInvestorModal"
-         class="btn btn-primary btn-sm viewBtn mb-2" title="View" style="cursor: pointer;">
+            data-bs-target="#viewInvestorModal"
+            class="btn btn-primary btn-sm viewBtn mb-2"
+            title="View">
             <i class="la la-eye"></i>
-        </button>
-        ';
+        </button>';
                 }
+
                 if (auth('admin')->user()->can('Investor_delete')) {
                     $button .= '
-
         <button class="btn btn-danger btn-sm delete"
-                style="cursor: pointer;"
-                title="Delete"
-                data-id="' . $row->id . '">
+            title="Delete"
+            data-id="' . $row->id . '">
             <i class="la la-trash"></i>
-        </button>
-    ';
+        </button>';
                 }
+
                 return $button;
             })
             ->editColumn('created_at', function ($row) {

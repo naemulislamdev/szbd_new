@@ -391,7 +391,8 @@ class LandingPagesController extends Controller
                 'products.name as product_name',
                 'products.code as sku'
             )
-            ->leftJoin('products', 'products.id', '=', 'product_landing_pages.product_id');
+            ->leftJoin('products', 'products.id', '=', 'product_landing_pages.product_id')
+            ->latest('product_landing_pages.id');
 
         return DataTables::of($query)
             ->addIndexColumn()

@@ -648,7 +648,7 @@ class DiscountManageController extends Controller
         DiscountOffer::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
-            'image' => FileManager::uploadFile('offer/', 300, $request->file('image'), $request->title),
+            'image' => FileManager::uploadOriginalFile('offer/', 300, $request->file('image'), $request->title),
             'discount_amount' => json_encode($request->discount_amounts),
             'discount_type' => json_encode($request->discount_types),
             'product_ids' => json_encode($request->product_ids),
@@ -938,7 +938,7 @@ class DiscountManageController extends Controller
         // Store the eid offer
         if ($request->hasFile('image')) {
 
-            $data['image'] = FileManager::uploadFile('eidOffer/', 300, $request->file('image'), $request->title);
+            $data['image'] = FileManager::uploadOriginalFile('eidOffer/', 300, $request->file('image'), $request->title);
         }
         EidOffer::create($data);
 
@@ -1040,7 +1040,7 @@ class DiscountManageController extends Controller
             'product_ids' => json_encode($request->product_ids),
         ];
         if ($request->hasFile('image')) {
-            $data['image'] = FileManager::updateFile('eidOffer/', $eidoffer->image, $request->file('image'), $request->title);
+            $data['image'] = FileManager::updateOriginalFile('eidOffer/', $eidoffer->image, $request->file('image'), $request->title);
         }
 
         $eidoffer->update($data);

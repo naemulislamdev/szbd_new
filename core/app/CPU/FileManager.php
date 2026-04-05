@@ -123,4 +123,72 @@ class FileManager
 
         return $fileName;
     }
+    public static function uploadOriginalFile(
+        string $dir,
+        int $targetSizeKB,
+        $image = null,
+        $alt_text = null
+    ) {
+        if (!$image instanceof \Illuminate\Http\UploadedFile) {
+            return null;
+        }
+
+        if (!$image->isValid()) {
+            return null;
+        }
+
+        if (!str_starts_with($image->getMimeType(), 'image/')) {
+            return null;
+        }
+
+        $fullPath = 'assets/storage/' . $dir;
+
+        if (!is_dir($fullPath)) {
+            mkdir($fullPath, 0777, true);
+        }
+
+        // 🔥 original extension nibo
+        $extension = $image->getClientOriginalExtension();
+
+        $imageName = $alt_text
+            ? Str::slug($alt_text) . '.' . $extension
+            : Carbon::now()->format('YmdHis') . '-' . uniqid() . '.' . $extension;
+
+        $manager = new ImageManager(
+            new \Intervention\Image\Drivers\Gd\Driver()
+        );
+
+        $img = $manager->read($image->getPathname());
+
+        $quality = 80;
+        $temp = tempnam(sys_get_temp_dir(), 'img_');
+
+        do {
+            // 🔥 WebpEncoder remove, default encode use
+            $encoded = $img->encodeByExtension($extension, quality: $quality);
+
+            file_put_contents($temp, (string) $encoded);
+            $size = filesize($temp);
+            $quality -= 5;
+        } while ($size > ($targetSizeKB * 1024) && $quality > 20);
+
+        file_put_contents($fullPath . $imageName, file_get_contents($temp));
+        @unlink($temp);
+
+        return $imageName;
+    }
+    public static function updateOriginalFile(
+        string $dir,
+        $old_image,
+        $image = null,
+        $alt_text = null
+    ) {
+        $fullPath = 'assets/storage/' . $dir . $old_image;
+
+        if ($old_image && file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+
+        return self::uploadOriginalFile($dir, 300, $image, $alt_text);
+    }
 }

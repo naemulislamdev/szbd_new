@@ -23,7 +23,7 @@
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
-                            <li><a target="_blank" href="https://www.szonebd.com/">Exclusive Zone</a></li>
+                            {{-- <li><a target="_blank" href="https://www.szonebd.com/">Exclusive Zone</a></li> --}}
                             @if ($discountOffer != null)
                                 <li><a href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
                                             style="height: 60px; width: auto;"
@@ -203,8 +203,8 @@
         <div class="accordion" id="accordionExample">
             <div class="menu-box">
                 <div class="menu-link">
-                    <a target="_blank" href="https://www.szonebd.com/"><i class="fa fa-ptab3 mr-2"></i>Exclusive
-                        Zone</a>
+                    {{-- <a target="_blank" href="https://www.szonebd.com/"><i class="fa fa-ptab3 mr-2"></i>Exclusive
+                        Zone</a> --}}
                 </div>
             </div>
             <div class="menu-box">

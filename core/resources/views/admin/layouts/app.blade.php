@@ -11,7 +11,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/backend/img/favicon.ico') }}">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- App css -->
     @include('admin.layouts.partials.head_css')
@@ -220,6 +220,24 @@
                             firstInput.focus();
                         }
                     }
+                }
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll(".toggle-password").forEach(function(element) {
+            element.addEventListener("click", function() {
+                let input = document.querySelector(this.getAttribute("toggle"));
+                let icon = this.querySelector("i");
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+                } else {
+                    input.type = "password";
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
                 }
             });
         });
