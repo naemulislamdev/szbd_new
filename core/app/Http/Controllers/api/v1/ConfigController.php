@@ -18,6 +18,16 @@ class ConfigController extends Controller
             $c->exchange_rate = (double)($c->exchange_rate ?? 1);
             return $c;
         });
+
+        // Sort currencies so that the system default currency (BDT, id=2)
+        // appears at BOTH index 0 and index 1. The Flutter app's PriceConverter
+        // reads exchange_rate from currencyList[0] and symbol from currencyList[1].
+        $defaultCurrencyId = (int)Helpers::get_business_settings('system_default_currency');
+        $defaultCurrency = $currency->firstWhere('id', $defaultCurrencyId);
+        if ($defaultCurrency) {
+            $others = $currency->where('id', '!=', $defaultCurrencyId)->values();
+            $currency = collect([$defaultCurrency, $defaultCurrency])->merge($others);
+        }
         $social_login = [];
         foreach (Helpers::get_business_settings('social_login') as $social) {
             $config = [

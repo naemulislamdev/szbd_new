@@ -226,13 +226,20 @@ class Helpers
                 foreach ($var_decoded as $var) {
                     $variation[] = [
                         'type' => $var['type'] ?? '',
-                        'price' => (float)($var['price'] ?? 0),
+                        'price' => round((float)($var['price'] ?? 0), 2),
                         'sku' => $var['sku'] ?? '',
                         'qty' => (int)($var['qty'] ?? 0),
                     ];
                 }
             }
             $data['variation'] = $variation;
+
+            // Ensure price fields are always floats for Flutter type safety
+            $data['unit_price'] = round((float)($data['unit_price'] ?? 0), 2);
+            $data['purchase_price'] = round((float)($data['purchase_price'] ?? 0), 2);
+            $data['discount'] = round((float)($data['discount'] ?? 0), 2);
+            $data['tax'] = round((float)($data['tax'] ?? 0), 2);
+            $data['shipping_cost'] = round((float)($data['shipping_cost'] ?? 0), 2);
         } catch (\Exception $exception) {
             info($exception);
         }
