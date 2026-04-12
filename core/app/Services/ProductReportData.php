@@ -13,16 +13,17 @@ class ProductReportData
 {
     public static function getProductsReportData($request)
     {
+        // 1️⃣ Determine date range
         [$from_date, $to_date] = self::getProductReportDateRange($request);
 
-        $from_date_sql = $from_date->format('Y-m-d H:i:s');
-        $to_date_sql   = $to_date->format('Y-m-d H:i:s');
-
+        // 2️⃣ Order statuses filter
         $statuses = $request->order_status ?? [];
 
-        $query = Product::leftJoin('order_details', 'order_details.product_id', '=', 'products.id')
+        // 3️⃣ Base query
+        $query = Product::query()
+            ->leftJoin('order_details', 'order_details.product_id', '=', 'products.id')
             ->leftJoin('orders', 'orders.id', '=', 'order_details.order_id')
-            ->select(
+            ->select([
                 'products.id',
                 'products.thumbnail',
                 'products.name',
@@ -34,54 +35,35 @@ class ProductReportData
                 'products.color_variant',
                 DB::raw('COALESCE(order_details.variation, "N/A") as variation'),
 
+                // ✅ Aggregates
                 DB::raw("
-                    COALESCE(SUM(
+                    SUM(
                         CASE
-                            WHEN orders.created_at BETWEEN '{$from_date_sql}' AND '{$to_date_sql}'
-                            AND orders.order_status = 'confirmed'
+                            WHEN orders.order_status = 'confirmed'
                             THEN order_details.qty
                             ELSE 0
                         END
-                    ), 0) as sales_qty
+                    ) AS sales_qty
                 "),
-
                 DB::raw("
-                    COALESCE(SUM(
+                    SUM(
                         CASE
-                            WHEN orders.created_at BETWEEN '{$from_date_sql}' AND '{$to_date_sql}'
-                            AND orders.order_status = 'confirmed'
+                            WHEN orders.order_status = 'confirmed'
                             THEN (order_details.price - products.purchase_price) * order_details.qty
                             ELSE 0
                         END
-                    ), 0) as profit
+                    ) AS profit
                 "),
-
                 DB::raw("
-                    COALESCE(SUM(
+                    SUM(
                         CASE
-                            WHEN orders.created_at BETWEEN '{$from_date_sql}' AND '{$to_date_sql}'
-                            AND orders.order_status = 'returned'
+                            WHEN orders.order_status = 'returned'
                             THEN order_details.qty
                             ELSE 0
                         END
-                    ), 0) as return_qty
+                    ) AS return_qty
                 ")
-            )
-
-            // selected status wise row filtering
-            ->when(!empty($statuses), function ($q) use ($statuses, $from_date, $to_date) {
-                $q->where(function ($sub) use ($statuses, $from_date, $to_date) {
-                    $sub->whereExists(function ($exists) use ($statuses, $from_date, $to_date) {
-                        $exists->select(DB::raw(1))
-                            ->from('order_details as od2')
-                            ->join('orders as o2', 'o2.id', '=', 'od2.order_id')
-                            ->whereColumn('od2.product_id', 'products.id')
-                            ->whereBetween('o2.created_at', [$from_date, $to_date])
-                            ->whereIn('o2.order_status', $statuses);
-                    });
-                });
-            })
-
+            ])
             ->groupBy(
                 'products.id',
                 'products.thumbnail',
@@ -95,40 +77,41 @@ class ProductReportData
                 'order_details.variation'
             );
 
+        // 4️⃣ Optional filter by selected order statuses
+        if (!empty($statuses)) {
+            $query->whereIn('orders.order_status', $statuses)
+                ->whereBetween('orders.created_at', [$from_date, $to_date]);
+        }
+
+        // 5️⃣ DataTables
         return DataTables::of($query)
             ->addIndexColumn()
 
+            // Thumbnail
             ->editColumn('thumbnail', function ($row) {
                 return '<img src="' . asset('assets/storage/product/thumbnail/' . $row->thumbnail) . '" width="45">';
             })
 
+            // Variation (Size & Color)
             ->editColumn('variation', function ($row) {
-                $colorVariants = is_array($row->color_variant)
-                    ? $row->color_variant
-                    : json_decode($row->color_variant ?? '[]', true);
+            $colorVariants = is_array($row->color_variant)
+                ? $row->color_variant
+                : json_decode($row->color_variant ?? '[]', true);
 
-                $choiceOptions = is_array($row->choice_options)
-                    ? $row->choice_options
-                    : json_decode($row->choice_options ?? '[]', true);
+            $choiceOptions = is_array($row->choice_options)
+                ? $row->choice_options
+                : json_decode($row->choice_options ?? '[]', true);
 
                 $sizes = [];
                 $colors = [];
 
                 if (!empty($choiceOptions)) {
                     foreach ($choiceOptions as $choice) {
-                        if (
-                            isset($choice['title']) &&
-                            strtolower($choice['title']) === 'size' &&
-                            !empty($choice['options'])
-                        ) {
-                            $sizes = array_map('trim', $choice['options']);
+                        if (isset($choice['title']) && strtolower($choice['title']) === 'size') {
+                            $sizes = array_map('trim', $choice['options'] ?? []);
                         }
                     }
                 }
-
-                $sizeText = !empty($sizes)
-                    ? 'Size: ' . implode(', ', $sizes)
-                    : 'Size: Free';
 
                 if (!empty($colorVariants)) {
                     foreach ($colorVariants as $color) {
@@ -138,9 +121,8 @@ class ProductReportData
                     }
                 }
 
-                $colorText = !empty($colors)
-                    ? '<br><small class="text-muted">Color: ' . implode(', ', $colors) . '</small>'
-                    : '';
+                $sizeText  = !empty($sizes)  ? 'Size: ' . implode(', ', $sizes) : 'Size: Free';
+                $colorText = !empty($colors) ? '<br><small class="text-muted">Color: ' . implode(', ', $colors) . '</small>' : '';
 
                 return $sizeText . $colorText;
             })
@@ -148,11 +130,9 @@ class ProductReportData
             ->editColumn('purchase_price', function ($row) {
                 return '৳ ' . number_format($row->purchase_price, 2);
             })
-
             ->editColumn('unit_price', function ($row) {
                 return '৳ ' . number_format($row->unit_price, 2);
             })
-
             ->editColumn('profit', function ($row) {
                 return '৳ ' . number_format($row->profit, 2);
             })

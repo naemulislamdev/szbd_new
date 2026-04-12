@@ -99,7 +99,7 @@ class Product extends Model
         if (strpos(url()->current(), '/admin') || strpos(url()->current(), '/seller')) {
             return $name;
         }
-        return $this->translations[0]->value ?? $name;
+        return (isset($this->translations) && count($this->translations) > 0) ? $this->translations[0]->value : $name;
     }
 
     public function getDetailsAttribute($detail)
@@ -107,6 +107,6 @@ class Product extends Model
         if (strpos(url()->current(), '/admin') || strpos(url()->current(), '/seller')) {
             return $detail;
         }
-        return $this->translations[1]->value ?? $detail;
+        return (isset($this->translations) && count($this->translations) > 1) ? $this->translations[1]->value : $detail;
     }
 }

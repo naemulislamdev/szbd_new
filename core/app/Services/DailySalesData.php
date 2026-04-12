@@ -23,6 +23,8 @@ class DailySalesData
                 'products.thumbnail',
                 'products.name',
                 'products.code',
+                'products.choice_options',
+                'products.color_variant',
                 'order_details.variation',
                 DB::raw('SUM(order_details.qty) as total_qty'),
                 DB::raw('SUM(order_details.price * order_details.qty) as total_amount')
@@ -35,6 +37,8 @@ class DailySalesData
                 'products.thumbnail',
                 'products.name',
                 'products.code',
+                'products.choice_options',
+                'products.color_variant',
                 'order_details.variation'
             );
 
@@ -46,7 +50,27 @@ class DailySalesData
             })
 
             ->editColumn('variation', function ($row) {
-                return $row->variation ?? 'N/A';
+
+                $variation = json_decode($row->variation, true);
+
+                // ✅ ensure array
+                if (!is_array($variation)) {
+                    return 'N/A';
+                }
+
+                $output = [];
+
+                // Size
+                if (!empty($variation['Size'])) {
+                    $output[] = 'Size: ' . $variation['Size'];
+                }
+
+                // Color
+                if (!empty($variation['color'])) {
+                    $output[] = 'Color: ' . $variation['color'];
+                }
+
+                return implode('<br>', $output);
             })
 
             ->editColumn('total_amount', function ($row) {
@@ -85,36 +109,11 @@ class DailySalesData
             $statuses
         );
 
-        [$from_date, $to_date] = self::getDateRange($request);
-
-        $topSellingProducts = DB::table('order_details')
-            ->join('orders', 'orders.id', '=', 'order_details.order_id')
-            ->join('products', 'products.id', '=', 'order_details.product_id')
-            ->select(
-                'products.name',
-                'products.code',
-                DB::raw('SUM(order_details.qty) as total_qty'),
-                DB::raw('SUM(order_details.price * order_details.qty) as total_amount')
-            )
-            ->whereBetween('orders.created_at', [$from_date, $to_date])
-            ->when(!empty($statuses), function ($q) use ($statuses) {
-                $q->whereIn('orders.order_status', $statuses);
-            })
-            ->groupBy('products.name', 'products.code')
-            ->orderByDesc('total_qty')
-            ->limit(5)
-            ->get()
-            ->map(function ($item) {
-                $item->total_amount = number_format($item->total_amount, 2);
-                return $item;
-            });
-
         return response()->json([
             'today_sales' => number_format($todaySales, 2),
             'yesterday_sales' => number_format($yesterdaySales, 2),
             'last_7_days_sales' => number_format($last7DaysSales, 2),
             'monthly_sales' => number_format($monthlySales, 2),
-            'top_selling_products' => $topSellingProducts,
         ]);
     }
     public static function getDateRange($request)

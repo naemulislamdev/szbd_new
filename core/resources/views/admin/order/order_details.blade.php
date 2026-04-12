@@ -261,7 +261,7 @@
                                         <div class="media-body">
                                             <h4 class="text-body text-hover-primary">{{ $order->customer['f_name'] }}</h4>
                                             <h5>Total: <span
-                                                    class="badge bg-success rounded-circle ml-1">{{ \App\Models\Order::where('customer_id', $order['customer_id'])->count() }}</span>
+                                                    class="badge bg-success rounded-circle ml-1">{{ $order->customer->orders()->count() }}</span>
                                                 orders</h5>
                                         </div>
                                     </div>

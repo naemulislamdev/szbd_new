@@ -42,7 +42,7 @@ class DashboardController extends Controller
             ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
             ->count();
 
-        $currentDeliveredCount = Order::where('order_status', 'delivered')
+        $currentDeliveredCount = Order::where('order_status', 'confirmed')
             ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
             ->count();
 
@@ -463,5 +463,29 @@ class DashboardController extends Controller
         return response()->json([
             'view' => view('admin.dashboard-order-stats', compact('data'))->render()
         ], 200);
+    }
+
+    public function variantProducts()
+    {
+        // no need
+        $products = Product::where('status', 1)->get();
+
+        $data = [];
+
+        foreach ($products as $product) {
+
+            $productColors = is_array($product->colors)
+                ? $product->colors
+                : json_decode($product->colors ?? '[]', true);
+
+            if (!empty($productColors)) {
+                $data[] = [
+                    'product_name' => $product->name,
+                    'product_code' => $product->code,
+                ];
+            }
+        }
+
+        return $data;
     }
 }

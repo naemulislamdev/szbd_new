@@ -46,7 +46,7 @@ Route::prefix('api/v1')->group(function () {
         Route::post('register', [PassportAuthController::class, 'register']);
         Route::post('login', [PassportAuthController::class, 'login']);
         Route::post('sendOtp', [PassportAuthController::class, 'sendOtp'])->name('sendOtp');
-        Route::get('recivedotp', [PassportAuthController::class, 'recivedOTP'])->name('recivedotp');
+        Route::any('recivedotp', [PassportAuthController::class, 'recivedOTP'])->name('recivedotp');
 
         Route::post('check-phone', [PhoneVerificationController::class, 'check_phone']);
         Route::post('verify-phone', [PhoneVerificationController::class, 'verify_phone']);
@@ -176,7 +176,8 @@ Route::prefix('api/v1')->group(function () {
         Route::get('info', [CustomerController::class, 'info']);
         Route::put('update-profile', [CustomerController::class, 'update_profile']);
         Route::put('cm-firebase-token', [CustomerController::class, 'update_cm_firebase_token']);
-        Route::get('account-delete/{id}', [CustomerController::class, 'account_delete']);
+        Route::delete('account-delete/{id}', [CustomerController::class, 'account_delete']);
+        Route::get('account-delete/{id}', [CustomerController::class, 'account_delete']); // legacy GET support
 
         Route::controller(CustomerController::class)->prefix('address')->group(function () {
             Route::get('list', 'address_list');
@@ -206,20 +207,12 @@ Route::prefix('api/v1')->group(function () {
             Route::post('refund-store', [OrderController::class, 'store_refund']);
             Route::get('refund-details', [OrderController::class, 'refund_details']);
         });
-        Route::prefix('order')->group(function () {
-            Route::get('list', [CustomerController::class, 'get_order_list']);
-            Route::get('list-last', [CustomerController::class, 'get_order_list_last']);
-            Route::get('details', [CustomerController::class, 'get_order_details']);
-            Route::post('place', [OrderController::class, 'place_order']);
-            Route::get('refund', [OrderController::class, 'refund_request']);
-            Route::post('refund-store', [OrderController::class, 'store_refund']);
-            Route::get('refund-details', [OrderController::class, 'refund_details']);
-        });
+        // REMOVED: Duplicate order routes without auth middleware (was a security hole)
         // Chatting
         Route::controller(ChatController::class)->prefix('chat')->group(function () {
             Route::get('/', 'chat_with_seller');
             Route::get('messages', 'messages');
-            Route::get('send-message', 'messages_store');
+            Route::any('send-message', 'messages_store');
         });
 
         //wallet
@@ -248,7 +241,7 @@ Route::prefix('api/v1')->group(function () {
     });
 
     Route::middleware(['auth:api'])->prefix('coupon')->group(function () {
-        Route::get('apply', [CouponController::class, 'apply']);
+        Route::any('apply', [CouponController::class, 'apply']);
     });
     Route::get('coupon-list', [CouponController::class, 'couponList']);
 

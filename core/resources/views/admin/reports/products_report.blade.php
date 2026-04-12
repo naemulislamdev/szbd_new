@@ -27,7 +27,7 @@
                             <div class="col-md-3">
                                 <label for="report_type">Report Type</label>
                                 <select id="report_type" class="form-control">
-                                    <option value="today" selected>Today sales</option>
+                                    <option value="today">Today sales</option>
                                     <option value="yesterday">Yesterday sales</option>
                                     <option value="last_7_days">Last 7 days sales</option>
                                     <option value="monthly">Monthly sales</option>
@@ -39,7 +39,7 @@
                                 <label for="order_status">Order Status</label>
                                 <select id="order_status" class="form-control" multiple>
                                     <option value="pending">Pending</option>
-                                    <option value="confirmed" selected>Confirmed</option>
+                                    <option value="confirmed">Confirmed</option>
                                     <option value="processing">Processing</option>
                                     <option value="out_for_delivery">Out for delivery</option>
                                     <option value="delivered">Delivered</option>

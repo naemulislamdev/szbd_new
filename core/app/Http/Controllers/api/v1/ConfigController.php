@@ -14,7 +14,10 @@ class ConfigController extends Controller
 {
     public function configuration()
     {
-        $currency = Currency::all();
+        $currency = Currency::all()->map(function($c) {
+            $c->exchange_rate = (double)($c->exchange_rate ?? 1);
+            return $c;
+        });
         $social_login = [];
         foreach (Helpers::get_business_settings('social_login') as $social) {
             $config = [
@@ -69,7 +72,7 @@ class ConfigController extends Controller
             'maintenance_mode' => (boolean)Helpers::get_business_settings('maintenance_mode') ?? 0,
             'language' => $lang_array,
             'colors' => Color::all(),
-            // 'unit' => Helpers::units(),
+            'unit' => ['kg', 'pc', 'gms', 'ltrs'],
             'shipping_method' => Helpers::get_business_settings('shipping_method'),
             'email_verification' => (boolean)Helpers::get_business_settings('email_verification'),
             'phone_verification' => (boolean)Helpers::get_business_settings('phone_verification'),

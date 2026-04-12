@@ -399,6 +399,7 @@ class CheckoutControl extends Controller
                 'shipping_address_data' => json_encode($shippingAddress),
                 'shipping_method_id' => $request->shipping_area,
                 'shipping_cost' => $shippingMethod->cost,
+                'order_source' => 'Main Page',
                 'created_at' => now(),
             ]);
 
@@ -415,6 +416,7 @@ class CheckoutControl extends Controller
                     'order_id' => $order_id,
                     'product_id' => $c['id'],
                     'product_details' => json_encode($product),
+                    'color_image' => $c['color_image'] ?? null,
                     'qty' => $c['quantity'],
                     'price' => $c['price'],
                     'tax' => $c['tax'] * $c['quantity'],
@@ -585,7 +587,7 @@ class CheckoutControl extends Controller
                 'shipping_address_data' => json_encode($shippingAddress),
                 'shipping_method_id' => $request->shipping_method,
                 'shipping_cost' => $shippingMethod->cost,
-
+                'order_source' => 'Landing Page',
                 'created_at' => now()
             ];
 

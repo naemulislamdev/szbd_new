@@ -53,9 +53,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
             Route::get('/dashboard/monthly-income',  'monthlyIncome')->name('monthly.income');
             // top selling products report
-            Route::get('/top-selling-products', [DashboardController::class, 'topSellingProducts'])->name('top_selling_products');
+            Route::get('/top-selling-products', 'topSellingProducts')->name('top_selling_products');
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
-            Route::post('order-stats', 'order_stats')->name('order-stats');
+            Route::post('order-stats', 'torder_stats')->name('order-stats');
+            Route::get('variant-products', 'variantProducts')->name('variant-products');
         });
         Route::controller(AdminProfileController::class)->prefix('/profile')->group(function () {
             Route::get('/', 'profile')->name('profile');
@@ -102,6 +103,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
             Route::post("multiple-note", 'multipleNote')->name("multiple_note");
             Route::get('details/{id}', 'details')->name('details');
+            Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('shipping-address/{id}', 'updateAddress')->name('shipping.update');
             Route::get('delete/{id}', 'delete')->name('delete');
 
@@ -194,7 +196,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get("multiple-prouct-added-datatable/{id}", 'addedProductsDatatable')->name("addedProductDatatable");
             Route::post('multiple-product/delete-added-product', 'delete_added_product')->name('multiple.delete-added-product');
             Route::post('multiple-product/store-multiple-product', 'multipleProductsAddedStore')->name('multiple.products.store');
-
 
             // Single Product Landing page routes
             Route::get('/single-product/view', 'singleIndex')->name('single.index');
@@ -412,6 +413,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/moderatar-id-update', 'moderationIdUpdate');
             //Top Selling Product Report
             Route::get('/top-selling-products', 'topSellingReport')->name('topSellingProducts');
+            Route::get('/top-selling-products-data', 'topSellingProductsDataTable')
+                ->name('topSellingProductsData');
             // profit report
             Route::get('/profit', 'profitReport')->name('profitReport');
             Route::get('/profit-report-data', 'profitReportData')->name('profitReportData');

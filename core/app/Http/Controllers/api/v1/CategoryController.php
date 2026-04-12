@@ -55,6 +55,11 @@ class CategoryController extends Controller
     public function get_products_slug($slug)
     {
         $categoryInfo = Category::where('slug', $slug)->first();
+
+        if (!$categoryInfo) {
+            return response()->json([], 200);
+        }
+
         $id = $categoryInfo->id;
         $products =  Product::active()
             ->where('category_id', $id)->get();

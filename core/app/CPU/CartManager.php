@@ -3,6 +3,8 @@
 namespace App\CPU;
 
 use App\Models\Cart;
+use App\Models\Product;
+use Illuminate\Support\Str;
 
 class CartManager
 {
@@ -100,5 +102,77 @@ class CartManager
                 'message' => 'successfully_added!'
             ];
         }
+    }
+
+    public static function add_to_cart($request)
+    {
+        $user = Helpers::get_customer_check($request);
+        $product = Product::find($request->id);
+
+        if (!$product) {
+            return ['status' => 0, 'message' => 'product_not_found'];
+        }
+
+        $db_cart = Cart::where(['customer_id' => $user->id, 'product_id' => $product->id])->first();
+
+        if (isset($db_cart)) {
+            $db_cart->quantity = $db_cart->quantity + $request->quantity;
+            $db_cart->save();
+            return ['status' => 1, 'message' => 'successfully_updated!'];
+        }
+
+        $data = [
+            'customer_id' => $user->id,
+            'cart_group_id' => Str::random(5),
+            'product_id' => $product->id,
+            'color' => $request->color ?? '',
+            'choices' => json_encode([]),
+            'variations' => json_encode([]),
+            'variant' => $request->variant ?? '',
+            'quantity' => $request->quantity,
+            'price' => $product->unit_price,
+            'tax' => $product->tax ?? 0,
+            'discount' => Helpers::get_product_discount($product, $product->unit_price),
+            'slug' => $product->slug,
+            'name' => $product->name,
+            'thumbnail' => $product->thumbnail,
+            'seller_id' => $product->user_id ?? 1,
+            'seller_is' => $product->added_by ?? 'admin',
+            'shop_info' => '',
+            'shipping_cost' => 0,
+            'shipping_type' => 'flat',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        Cart::insert($data);
+        return ['status' => 1, 'message' => 'successfully_added!'];
+    }
+
+    public static function update_cart_qty($request)
+    {
+        $user = Helpers::get_customer_check($request);
+        $cart = Cart::where(['id' => $request->key, 'customer_id' => $user->id])->first();
+        if ($cart) {
+            $cart->quantity = $request->quantity;
+            $cart->save();
+        }
+        return ['status' => 1, 'message' => 'successfully_updated!'];
+    }
+
+    public static function cart_grand_total($cart)
+    {
+        $total = 0;
+        foreach ($cart as $item) {
+            $qty = $item['quantity'] ?? $item['qty'] ?? 1;
+            $total += ($item['price'] * $qty) + ($item['tax'] * $qty) - ($item['discount'] * $qty);
+        }
+        return $total;
+    }
+
+    public static function get_shipping_cost($shipping_method_id)
+    {
+        $method = \App\Models\ShippingMethod::find($shipping_method_id);
+        return $method ? $method->cost : 0;
     }
 }
