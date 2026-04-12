@@ -19,4 +19,16 @@ class ChildCategory extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    /**
+     * Return an empty childes relationship so that the API always
+     * serialises "childes": [] instead of omitting the key entirely.
+     * The Flutter app force-unwraps this field with `childes!`.
+     */
+    public function childes()
+    {
+        // Self-referencing with a foreign key that will never match,
+        // guaranteeing an empty collection every time.
+        return $this->hasMany(ChildCategory::class, 'sub_category_id');
+    }
 }

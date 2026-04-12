@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function get_categories()
     {
         try {
-            $categories = Category::with(['childes'])->get();
+            $categories = Category::with(['childes.childes'])->get();
             return response()->json($categories, 200);
         } catch (\Exception $e) {
             return response()->json([], 200);
@@ -55,6 +55,11 @@ class CategoryController extends Controller
     public function get_products_slug($slug)
     {
         $categoryInfo = Category::where('slug', $slug)->first();
+
+        if (!$categoryInfo) {
+            return response()->json([], 200);
+        }
+
         $id = $categoryInfo->id;
         $products =  Product::active()
             ->where('category_id', $id)->get();

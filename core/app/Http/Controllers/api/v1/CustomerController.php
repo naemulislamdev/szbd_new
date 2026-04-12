@@ -153,7 +153,7 @@ class CustomerController extends Controller
     // address list
     public function address_list(Request $request)
     {
-        return response()->json(ShippingAddress::where('customer_id', $request->user()->id)->orderby('customer_id', 'DESC')->latest()->first(), 200);
+        return response()->json(ShippingAddress::where('customer_id', $request->user()->id)->orderBy('id', 'DESC')->get(), 200);
     }
 
     // add new address
@@ -167,6 +167,8 @@ class CustomerController extends Controller
             'city' => $request->city,
             'zip' => $request->zip,
             'phone' => $request->phone,
+            'state' => $request->state,
+            'country' => $request->country,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'is_billing' => $request->is_billing,

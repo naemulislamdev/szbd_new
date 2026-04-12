@@ -18,7 +18,7 @@ class CartController extends Controller
     public function cart(Request $request)
     {
         $user = Helpers::get_customer_check($request);
-        $cart = Cart::with('product:id,current_stock,minimum_order_qty,variation')
+        $cart = Cart::with('product:id,current_stock,minimum_order_qty,variation')->withCount('reviews')
             ->where(['customer_id' => $user->id])
             ->get();
 
@@ -169,7 +169,7 @@ class CartController extends Controller
         // }
 
         $user = Helpers::get_customer($request);
-        Cart::where(['id' => $request->id, 'customer_id' => $request->customer_id])->delete();
+        Cart::where(['id' => $request->id, 'customer_id' => $user->id])->delete();
         return response()->json(translate('successfully_removed'));
     }
 

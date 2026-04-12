@@ -130,41 +130,32 @@ class PassportAuthController extends Controller
         // dd($url);
         //  http://188.138.41.146:7788/sendtext?apikey=3d280e4da66f9c17&secretkey=b171edf5&callerID=Sajerbela&toUser=01739921850&messageContent=MESSAGE
         // $url = "http://66.45.237.70/api.php";
-        $url = "http://188.138.41.146:7788/sendtext";
-        // $url = "http://sms.dinisoftbd.com:7790/sendtext";
+        $url = env('SMS_API_URL', 'http://188.138.41.146:7788/sendtext');
 
         $number=$request->phone;
 
         $text="Your OTP is $otp Regards sajerbela.com";
 
-        // $data= array(
-        // 'username'=>"01977593593",
-        // 'password'=>"Evertech@593",
-        // 'number'=>"$number",
-        // 'message'=>"$text"
-        // );
         $data= array(
-        'apikey'=>"3d280e4da66f9c17",
-        'secretkey'=>"b171edf5",
-        'callerID'=>"sajerbela",
+        'apikey'=> env('SMS_API_KEY', ''),
+        'secretkey'=> env('SMS_SECRET_KEY', ''),
+        'callerID'=> env('SMS_CALLER_ID', 'sajerbela'),
         'toUser'=>"$number",
         'messageContent'=>"$text"
         );
-        //  dd($data);
 
-        $ch = curl_init(); // Initialize cURL
+        $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $smsresult = curl_exec($ch);
-        $p = explode("|",$smsresult);
-        $sendstatus = $p[0];
+        curl_close($ch);
 
 
         if (isset($customerCheck)) {
 
 
-            return response()->json(['otp' => $otp, 'message' => 'Send OTP your phone Number !','success'=>'1'
+            return response()->json(['message' => 'OTP sent to your phone number!','success'=>'1'
 ], 200);
         } else {
             $errors = [];
@@ -178,53 +169,41 @@ class PassportAuthController extends Controller
     else{
         $customer = new User;
         $customer->f_name=$request->phone."F";
-        // $customer->l_name=$request->phone."L";
         $customer->email=$request->phone."@sajerbela.com";
         $customer->phone=$request->phone;
         $customer->otp=$otp;
+        $customer->password = bcrypt($request->phone);
         $customer->temporary_token = $tToken;
         $customer->save();
-        // $url = "http://66.45.237.70/api.php";
-        //  $url = "http://188.138.41.146:7788/sendtext";
-         $url = "http://sms.dinisoftbd.com:7790/sendtext";
-    // dd($url);
+
+        $url = env('SMS_API_URL', 'http://sms.dinisoftbd.com:7790/sendtext');
         $number=$request->phone;
         $text="Your OTP is $otp Regards sajerbela.com";
 
-        // $data= array(
-        // 'username'=>"01977593593",
-        // 'password'=>"Evertech@593",
-        // 'number'=>"$number",
-        // 'message'=>"$text"
-        // );
-          $data= array(
-        'apikey'=>"3d280e4da66f9c17",
-        'secretkey'=>"b171edf5",
-        'callerID'=>"sajerbela",
+        $data= array(
+        'apikey'=> env('SMS_API_KEY', ''),
+        'secretkey'=> env('SMS_SECRET_KEY', ''),
+        'callerID'=> env('SMS_CALLER_ID', 'sajerbela'),
         'toUser'=>"$number",
         'messageContent'=>"$text"
         );
-        //  dd($data);
 
-        $ch = curl_init(); // Initialize cURL
+        $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $smsresult = curl_exec($ch);
-        $p = explode("|",$smsresult);
-        $sendstatus = $p[0];
+        curl_close($ch);
 
 
+            if (isset($customer)) {
 
 
-            if (isset($customerCheck)) {
-
-
-            return response()->json(['otp' => $otp, 'message' => 'Send OTP your phone Number !','success'=>'1'
+            return response()->json(['message' => 'OTP sent to your phone number!','success'=>'1'
 ], 200);
         } else {
             $errors = [];
-            array_push($errors, ['code' => 'auth-001', 'message' => translate('Customer_not_found_or_Account_has_been_suspended')]);
+            array_push($errors, ['code' => 'auth-001', 'message' => 'Customer_not_found_or_Account_has_been_suspended']);
             return response()->json([
                 'errors' => $errors
             ], 401);
@@ -234,23 +213,30 @@ class PassportAuthController extends Controller
 
     public function recivedOTP(Request $request){
         if($request->otp){
-        $finduser =User::where('otp',$request->otp)->first();
+            $finduser = User::where('otp',$request->otp)->first();
 
-               $user = auth()->guard('customer')->login($finduser);
+            if (!$finduser) {
+                return response()->json([
+                    'errors' => [['code' => 'auth-001', 'message' => 'Invalid OTP.']]
+                ], 401);
+            }
+
+            auth()->guard('customer')->login($finduser);
             $token = $finduser->createToken('LaravelAuthApp')->accessToken;
 
-         CartManager::cart_to_db();
-         return response()->json(['message' => 'login successfully ','success'=>'1', "data" => compact('finduser'),'session_cart' => session('offline_cart'),'token' => $token], 200);
+            // Clear OTP after successful verification
+            $finduser->otp = null;
+            $finduser->save();
 
-          }
-          else{
-                $errors = [];
-            array_push($errors, ['code' => 'auth-001', 'message' => 'Unauthorized t.']);
+            CartManager::cart_to_db();
+            return response()->json(['message' => 'login successfully','success'=>'1', 'token' => $token], 200);
+
+        } else {
+            $errors = [];
+            array_push($errors, ['code' => 'auth-001', 'message' => 'OTP is required.']);
             return response()->json([
                 'errors' => $errors
             ], 401);
-
-          }
-
+        }
     }
 }
