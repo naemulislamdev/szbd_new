@@ -38,7 +38,7 @@ class ProductRequest extends FormRequest
 
         return [
             'added_by' => 'nullable|string|max:255',
-            'name' => 'required|string|max:60',
+            'name' => 'required|string|max:255',
             'description' => 'required|string',
             'short_description' => 'nullable|string',
             'category_id' => 'required',

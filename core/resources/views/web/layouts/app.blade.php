@@ -474,6 +474,8 @@
 
         #topcontrol {
             bottom: 65px !important;
+            z-index: 1;
+
         }
     </style>
 
@@ -794,10 +796,16 @@
     <script src="{{ asset('assets/frontend') }}/js/sweet_alert.js"></script>
     <script src="{{ asset('assets/frontend') }}/js/swiper-bundle.min.js"></script>
 
-    <script src="{{ asset('assets/frontend') }}/js/custome.js"></script>
+
 
     {{-- Toastr --}}
     <script src={{ asset('assets/default/toastr/toastr.min.js') }}></script>
+    <script>
+        toastr.options = {
+            "timeOut": "500", // 2 second por auto hide
+            "extendedTimeOut": "1000" // hover korle extra 1 sec thakbe
+        };
+    </script>
     @if (Session::has('success'))
         <script>
             toastr.success("{{ Session::get('success') }}")
@@ -820,7 +828,7 @@
     @endif
 
     <!-- multi social toggle and drag and drop-->
-    <script src="{{ asset('assets/frontend') }}/js/custome.js"></script>
+    <script src="{{ asset('assets/frontend/js/custome.js') }}?v={{ time() }}"></script>
 
     <script>
         var mainurl = "{{ url('/') }}";
@@ -899,7 +907,7 @@
         function addWishlist(product_id) {
             $.ajaxSetup({
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
             $.ajax({
@@ -952,7 +960,7 @@
         function removeWishlist(product_id) {
             $.ajaxSetup({
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
             $.ajax({
@@ -992,7 +1000,7 @@
 
             $.ajaxSetup({
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
 
@@ -1476,6 +1484,8 @@
     </script>
 
     @stack('scripts')
+
+
 </body>
 
 </html>

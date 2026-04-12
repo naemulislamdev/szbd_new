@@ -548,6 +548,10 @@ class DiscountManageController extends Controller
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y');
             })
+            ->editColumn('title', function ($row) {
+                $url = url('offers/' . $row->slug);
+                return "<a class='text-primary' href='{$url}' target='_blank'>{$row->title}</a>";
+            })
 
             ->addColumn('action', function ($row) {
 
@@ -566,17 +570,12 @@ class DiscountManageController extends Controller
             })
 
             ->editColumn('image', function ($row) {
-                return '<img src="' . asset('assets/storage/offer/', $row->image) . '" alt="' . $row->title . '" width="80">';
-            })
-            ->editColumn('image', function ($row) {
                 $image = $row->image
                     ? asset('assets/storage/offer/' . $row->image)
                     : '';
 
                 return '<img src="' . $image . '" alt="' . $row->title . '" width="80">';
             })
-
-
             ->editColumn('total_products', function ($row) {
 
                 $productIds = json_decode($row->product_ids, true);
@@ -586,6 +585,7 @@ class DiscountManageController extends Controller
                 Total Products: <span class="badge bg-success">' . $total . '</span>
             </a>';
             })
+
             // Edit Column
             ->editColumn('status', function ($row) {
 
@@ -604,12 +604,15 @@ class DiscountManageController extends Controller
                         </div>
     ';
             })
+
             ->rawColumns([
                 'action',
                 'created_at',
                 'status',
                 'total_products',
                 'image',
+                'title'
+
             ])
             ->toJson();
     }
@@ -766,13 +769,58 @@ class DiscountManageController extends Controller
     {
         $request->validate([
             'id' => 'required|exists:discount_offers,id',
+            'status' => 'required|in:0,1',
         ]);
 
         $discountOffer = DiscountOffer::findOrFail($request->id);
-        $discountOffer->status = !$discountOffer->status;
+
+        $productIds = json_decode($discountOffer->product_ids, true);
+
+        // =========================
+        //  OFF STATUS (REMOVE DISCOUNT)
+        // =========================
+        if ((int)$request->status === 0) {
+
+            Product::whereIn('id', $productIds)->update([
+                'discount' => 0,
+                'discount_type' => null,
+            ]);
+
+            $discountOffer->status = 0;
+            $discountOffer->save();
+
+            return response()->json([
+                'success' => true,
+                'status' => 0,
+                'message' => 'Discount turned OFF successfully'
+            ]);
+        }
+
+        // =========================
+        // ON STATUS (APPLY DISCOUNT)
+        // =========================
+        $amounts = json_decode($discountOffer->discount_amount, true);
+        $types = json_decode($discountOffer->discount_type, true);
+
+        foreach ($productIds as $productId) {
+
+            $amount = $amounts[$productId] ?? 0;
+            $type = $types[$productId] ?? 'flat';
+
+            Product::where('id', $productId)->update([
+                'discount' => $amount,
+                'discount_type' => $type,
+            ]);
+        }
+
+        $discountOffer->status = 1;
         $discountOffer->save();
 
-        return response()->json(['success' => true, 'status' => $discountOffer->status]);
+        return response()->json([
+            'success' => true,
+            'status' => 1,
+            'message' => 'Discount turned ON successfully'
+        ]);
     }
     public function offersProductsDatatables($productIds)
     {
@@ -851,7 +899,10 @@ class DiscountManageController extends Controller
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d M Y');
             })
-
+            ->addColumn('url', function ($row) {
+                $url = url('/offers-promotions/' . $row->slug);
+                return "<a href='{$url}' target='_blank'>{$row->title}</a>";
+            })
             ->addColumn('action', function ($row) {
 
                 return '
@@ -910,6 +961,7 @@ class DiscountManageController extends Controller
                 'status',
                 'total_products',
                 'image',
+                'url'
             ])
             ->toJson();
     }
@@ -959,16 +1011,12 @@ class DiscountManageController extends Controller
     }
     public function eidOffersProductsDatatables($productIds)
     {
-
-        // JSON string → PHP array
         $productIds = json_decode($productIds, true);
 
-        // যদি empty বা invalid হয় → empty datatable return
         if (!is_array($productIds) || empty($productIds)) {
             return DataTables::of(collect())->toJson();
         }
 
-        // শুধু যেসব id আছে সেগুলোই আনবে
         $query = Product::whereIn('id', $productIds)
             ->latest('id');
 
@@ -989,6 +1037,10 @@ class DiscountManageController extends Controller
                     <i class="la la-trash"></i>
                 </button>
             ';
+            })
+            ->addColumn('url', function ($row) {
+                $link = $row->status == 1 ? "link" : "Link is Deactivated";
+                return $link;
             })
 
             ->rawColumns(['action', 'name', 'code', 'price'])

@@ -131,9 +131,11 @@
                                                                     <div>
                                                                         <span style="font-size: 15px;">Price: </span>
 
+                                                                        {{-- @dd($detail) --}}
                                                                         <span style="font-size: 18px; font-weight: 800;">
-                                                                            {{ $detail->price }} X {{ $detail->qty }} =
-                                                                            {{ $detail->price * $detail->qty }}
+                                                                            {{ $detail->price - $detail->discount }} X
+                                                                            {{ $detail->qty }} =
+                                                                            {{ ($detail->price - $detail->discount) * $detail->qty }}
                                                                         </span>
                                                                     </div>
 

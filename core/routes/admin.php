@@ -32,9 +32,11 @@ use App\Http\Controllers\Backend\GlobalSearchController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\JobApplicationController;
 use App\Http\Controllers\Backend\RoleDepartmentController;
+use App\Http\Controllers\Backend\ShippingMethodController;
 use App\Http\Controllers\Backend\SiteMapController;
 use App\Http\Controllers\Backend\SocialMediaController;
 use App\Http\Controllers\Backend\SystemController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -495,6 +497,15 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/datatables', 'datatables')->name('datatables');
             Route::post('delete', 'destroy')->name('delete');
             Route::post('view', 'view')->name('view');
+        });
+        // Shipping Methods and Cost
+        Route::controller(ShippingMethodController::class)->prefix('/shipping_method')->as('shipping_method.')->group(function () {
+            Route::get('/list', 'list')->name('index');
+            Route::post('/store', 'store')->name('store');
+            Route::post('/update', 'update')->name('update');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
         });
     });
 });

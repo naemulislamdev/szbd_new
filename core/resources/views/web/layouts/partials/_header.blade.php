@@ -18,7 +18,7 @@
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
                 @endphp
                 @php
-                    $eidoffers = \App\Models\EidOffer::where('status', 1)->first();
+                    $eidoffers = \App\Models\EidOffer::where('status', 1)->latest('id')->get();
                 @endphp
                 <nav class="navbar">
                     <div class="menu-area">
@@ -33,16 +33,20 @@
                             @endif
                             {{-- Eid offers --}}
                             @if ($eidoffers != null)
-                                <li><a href="{{ route('eid.offers', ['slug' => $eidoffers->slug ?? '']) }}">
-                                        @if ($eidoffers->image)
-                                            <img style="height: 60px; width: auto;"
-                                                src="{{ asset('assets/storage/eidOffer') }}/{{ $eidoffers['image'] }}"
-                                                alt="offer image">
-                                        @else
-                                            {{ $eidoffers->title }}
-                                        @endif
-                                    </a>
-                                </li>
+                                @foreach ($eidoffers as $eidOffer)
+                                    @if ($eidOffer->slug != 'special-buy-2-get-1' && $eidOffer->slug != 'premium-beef-garlic-pickle')
+                                        <li><a href="{{ route('eid.offers', ['slug' => $eidOffer->slug ?? '']) }}">
+                                                @if ($eidOffer->image)
+                                                    <img style="height: 60px; width: auto;"
+                                                        src="{{ asset('assets/storage/eidOffer') }}/{{ $eidOffer['image'] }}"
+                                                        alt="offer image">
+                                                @else
+                                                    {{ $eidOffer->title }}
+                                                @endif
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
                             @endif
                             <li><a href="{{ route('home') }}">Home</a></li>
 
@@ -109,13 +113,16 @@
 
                     <div class="d-flex d-lg-none">
                         {{-- <i class="fa fa-bars menu-icon"></i> --}}
+                        <?php
+                        $company_mobile_logo = \App\Models\BusinessSetting::where('type', 'company_mobile_logo')->first()->value;
+                        ?>
 
                         <div class="d-flex align-items-center flex-row">
                             <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                             <a href="{{ route('home') }}">
 
                                 <img class="smLogo"
-                                    src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
+                                    src="{{ asset('assets/storage/company') . '/' . $company_mobile_logo }}"
                                     onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
                                     alt="{{ $web_config['name']->value }}">
                             </a>
@@ -136,16 +143,20 @@
 
                     {{-- Eid offers --}}
                     @if ($eidoffers != null)
-                        <a class="text-dark d-block d-lg-none"
-                            href="{{ route('eid.offers', ['slug' => $eidoffers->slug ?? '']) }}">
-                            @if ($eidoffers->image)
-                                <img style="height: 60px; width: auto;"
-                                    src="{{ asset('assets/storage/eidOffer') }}/{{ $eidoffers['image'] }}"
-                                    alt="offer image">
-                            @else
-                                {{ $eidoffers->title }}
+                        @foreach ($eidoffers as $eidoffer)
+                            @if ($eidoffer->slug != 'special-buy-2-get-1' && $eidoffer->slug != 'premium-beef-garlic-pickle')
+                                <a class="text-dark d-block d-lg-none"
+                                    href="{{ route('eid.offers', ['slug' => $eidoffer->slug ?? '']) }}">
+                                    @if ($eidoffer->image)
+                                        <img style="height: 60px; width: auto;"
+                                            src="{{ asset('assets/storage/eidOffer') }}/{{ $eidoffer['image'] }}"
+                                            alt="offer image">
+                                    @else
+                                        {{ $eidoffer->title }}
+                                    @endif
+                                </a>
                             @endif
-                        </a>
+                        @endforeach
                     @endif
 
                     <a class="d-none d-lg-inline-block" data-bs-toggle="offcanvas" href="#searchOffcanvas"

@@ -3,24 +3,24 @@
 
     <tbody>
         @php
-        $sub_total = 0;
-        $total_tax = 0;
-        $total_shipping_cost = 0;
-        $total_discount_on_product = 0;
-        $promoProducts = [
-            'HG1999D',
-            'HG1999E',
-            'HG1999G',
-            'HG1999BL',
-            'HG1999BK',
-            'HG1999S',
-            'HG1999BN',
-            'HG1999R',
-            'HG1999BY',
-        ];
-        $promoQty = 0;
-        $promoItems = [];
-                                @endphp
+            $sub_total = 0;
+            $total_tax = 0;
+            $total_shipping_cost = 0;
+            $total_discount_on_product = 0;
+            $promoProducts = [
+                'HG1999D',
+                'HG1999E',
+                'HG1999G',
+                'HG1999BL',
+                'HG1999BK',
+                'HG1999S',
+                'HG1999BN',
+                'HG1999R',
+                'HG1999BY',
+            ];
+            $promoQty = 0;
+            $promoItems = [];
+        @endphp
         @if (session()->has('cart') && count(session()->get('cart')) > 0)
             @foreach (session('cart') as $key => $cartItem)
                 @php
@@ -73,7 +73,10 @@
         </tr>
         <tr class="summary-shipping">
             <td>Shipping:</td>
-            <td>{{ $total_shipping_cost }}</td>
+            <td>
+                {{ $total_shipping_cost }}
+            </td>
+
         </tr>
         <tr class="summary-subtotal">
             @if (session()->has('coupon_discount'))

@@ -101,6 +101,7 @@
 
 
 
+
     {{-- Product Details --}}
     <div class="row mb-2">
         <div class="col-12 font-weight-bold mb-1">Product Details</div>

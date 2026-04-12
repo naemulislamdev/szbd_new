@@ -337,6 +337,7 @@
                                     </span>
                                 </div>
 
+
                                 @if ($product->discount > 0)
                                     <span class="discount-price">
                                         <del>৳ {{ $product->unit_price }} </del> -
