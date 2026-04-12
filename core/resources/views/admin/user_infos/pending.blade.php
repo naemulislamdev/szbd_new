@@ -172,148 +172,7 @@
                 $('#from_date, #to_date').val('');
                 table.ajax.reload();
             });
-            window.order_status = function order_status(status, id) {
-                var orderStatus = status ? status : 'pending';
-                console.log(status);
-                console.log(id);
 
-
-                if (status === 'confirmed') {
-                    Swal.fire({
-                        title: 'Are you sure Change this?!',
-                        text: "'Think before you completed.",
-                        html: `
-                        <br />
-                        <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
-                            <input type="hidden" name="order_status" value=" ${status}">
-                        <input type="hidden" name="id" value="${id}">
-                            <input required
-                                class="form-control wedding-input-text wizard-input-pad"
-                                type="text"
-                                name="note"
-                                id="note"
-                                placeholder="For  ${status} note">
-                        </form>
-                    `,
-                        showCancelButton: true,
-                        confirmButtonColor: '#377dff',
-                        cancelButtonColor: 'secondary',
-                        confirmButtonText: 'Yes, Change it!'
-                    }).then((result) => {
-                        if (result.value) {
-                            $.ajaxSetup({
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                                }
-                            });
-                            $.ajax({
-                                url: "{{ route('admin.userinfo.status.update') }}",
-                                method: 'POST',
-                                data: $("form").serialize(),
-                                success: function(data) {
-
-                                    toastr.success('Status Change successfully');
-                                    table.ajax.reload();
-                                    $(`.note_${id}`).html(data.note);
-
-                                },
-                                error: function(data) {
-                                    toastr.warning('Something went wrong !');
-                                }
-                            });
-                        }
-                    });
-                } else if (status === 'canceled') {
-                    Swal.fire({
-                        title: 'Are you sure Change this?',
-                        text: "You won't be able to revert this!",
-                        html: `
-                        <br />
-                        <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
-
-                              <input type="hidden" name="order_status" value=" ${status}">
-                        <input type="hidden" name="id" value="${id}">
-
-                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For ${status} note">
-                        </form>
-                    `,
-                        showCancelButton: true,
-                        confirmButtonColor: '#377dff',
-                        cancelButtonColor: 'secondary',
-                        confirmButtonText: 'Yes, Change it!',
-                    }).then((result) => {
-                        if (result.value) {
-                            $.ajaxSetup({
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                                }
-                            });
-                            $.ajax({
-                                url: "{{ route('admin.userinfo.status.update') }}",
-                                method: 'POST',
-                                data: $("form").serialize(),
-                                success: function(data) {
-                                    toastr.success('Status Change successfully');
-                                    table.ajax.reload();
-                                    $(`.note_${id}`).html(data.note);
-
-                                },
-                                error: function(data) {
-                                    toastr.warning('Something went wrong !');
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Are you sure Change this?',
-                        text: "You won't be able to revert this!",
-                        html: `
-                            <br />
-                            <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
-                                 <input type="hidden" name="order_status" value=" ${status}">
-                        <input type="hidden" name="id" value="${id}">
-
-                                <input
-                                    required
-                                    class="form-control wedding-input-text wizard-input-pad"
-                                    type="text"
-                                    name="note"
-                                    id="note"
-                                    placeholder="For ${status}  note"
-                                >
-                            </form>
-                        `,
-                        showCancelButton: true,
-                        confirmButtonColor: '#377dff',
-                        cancelButtonColor: 'secondary',
-                        confirmButtonText: 'Yes, Change it!'
-                    }).then((result) => {
-                        if (result.value) {
-                            $.ajaxSetup({
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                                }
-                            });
-                            $.ajax({
-                                url: "{{ route('admin.userinfo.status.update') }}",
-                                method: 'POST',
-                                data: $("form").serialize(),
-                                success: function(data) {
-                                    toastr.success('Status Change successfully');
-                                    table.ajax.reload();
-                                    $(`.note_${id}`).html(data.note);
-
-                                },
-                                error: function(data) {
-                                    toastr.warning('Something went wrong !');
-                                }
-                            });
-                        }
-                    });
-                }
-
-            };
 
         })(jQuery);
     </script>
@@ -387,15 +246,27 @@
                     id: id
                 },
                 success: function(response) {
-                    // Table–এ status update
                     if (response.status == 1 && response.seen_by != "") {
-                        $(`.status_${id}`).replaceWith(
-                            `
-                            <span class="badge badge-success status_${id}">Seen</span>
-                            <div><small>Seen by: <br/> ${response.seen_by}</small></div>
-                            `
-                        );
+                        let seenText = '';
+                        try {
+                            let data = JSON.parse(response.seen_by);
 
+                            if (typeof data === 'object' && data !== null) {
+                                seenText = `${data.name ?? ''}<br><small>${data.seen_at ?? ''}</small>`;
+                            } else {
+                                seenText = response.seen_by;
+                            }
+
+                        } catch (e) {
+                            seenText = response.seen_by;
+                        }
+
+                        $(`.status_wrapper_${id}`).html(`
+                        <span class="badge bg-success status_${id}">Seen</span>
+                        <div class="seen_by_${id}">
+                            <small>Seen by: <br/> ${seenText}</small>
+                        </div>
+                    `);
                     }
 
                     Swal.fire({
@@ -412,5 +283,148 @@
                 }
             });
         });
+    </script>
+    <script>
+        window.order_status = function order_status(status, id) {
+            var orderStatus = status ? status : 'pending';
+
+            if (status === 'confirmed') {
+                Swal.fire({
+                    title: 'Are you sure Change this?!',
+                    text: "'Think before you completed.",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
+                            <input type="hidden" name="order_status" value=" ${status}">
+                        <input type="hidden" name="id" value="${id}">
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="note"
+                                id="note"
+                                placeholder="For  ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.userinfo.status.update') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+
+                                $(`.note_${id}`).html(data.note);
+                                $('#szbd-datatable').DataTable().ajax.reload(null, false);
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else if (status === 'canceled') {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
+
+                              <input type="hidden" name="order_status" value=" ${status}">
+                        <input type="hidden" name="id" value="${id}">
+
+                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.userinfo.status.update') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                toastr.success('Status Change successfully');
+
+                                $(`.note_${id}`).html(data.note);
+                                $('#szbd-datatable').DataTable().ajax.reload(null, false);
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                            <br />
+                            <form class="form-horizontal" action="{{ route('admin.userinfo.status.update') }}" method="post">
+                                 <input type="hidden" name="order_status" value=" ${status}">
+                        <input type="hidden" name="id" value="${id}">
+
+                                <input
+                                    required
+                                    class="form-control wedding-input-text wizard-input-pad"
+                                    type="text"
+                                    name="note"
+                                    id="note"
+                                    placeholder="For ${status}  note"
+                                >
+                            </form>
+                        `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.userinfo.status.update') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                toastr.success('Status Change successfully');
+
+                                $(`.note_${id}`).html(data.note);
+                                $('#szbd-datatable').DataTable().ajax.reload(null, false);
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            }
+
+        };
     </script>
 @endpush

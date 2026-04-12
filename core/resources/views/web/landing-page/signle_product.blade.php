@@ -928,6 +928,50 @@
                                                                         </div>
 
                                                                     </div>
+                                                                    <div class="size-section">
+                                                                        @php
+                                                                            $choiceOptions = is_array(
+                                                                                $productLandingPage->product
+                                                                                    ->choice_options,
+                                                                            )
+                                                                                ? $productLandingPage->product
+                                                                                    ->choice_options
+                                                                                : json_decode(
+                                                                                    $productLandingPage->product
+                                                                                        ->choice_options,
+                                                                                    true,
+                                                                                );
+                                                                        @endphp
+                                                                        @if (!empty($choiceOptions))
+                                                                            @foreach (is_array($productLandingPage->product->choice_options) ? $productLandingPage->product->choice_options : json_decode($productLandingPage->product->choice_options, true) as $key => $choice)
+                                                                                <div class="row">
+                                                                                    <div class="col-12 mb-3 mt-3">
+                                                                                        <h4
+                                                                                            style="font-size: 18px; margin:0;">
+                                                                                            {{ $choice['title'] }}</h4>
+                                                                                    </div>
+                                                                                    <div class="col-12 ">
+                                                                                        <div class="d-flex">
+                                                                                            @foreach ($choice['options'] as $key => $option)
+                                                                                                <div class="v-size-box">
+                                                                                                    <input type="radio"
+                                                                                                        id="{{ $choice['name'] }}-{{ $option }}"
+                                                                                                        name="{{ $choice['name'] }}"
+                                                                                                        value="{{ $option }}"
+                                                                                                        @if ($key == 0) checked @endif>
+                                                                                                    <label
+                                                                                                        style="height: 35px !important; "
+                                                                                                        for="{{ $choice['name'] }}-{{ $option }}"
+                                                                                                        class="size-label">{{ $option }}</label>
+                                                                                                </div>
+                                                                                            @endforeach
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endforeach
+                                                                        @endif
+
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="p-variant">
@@ -945,14 +989,25 @@
                                                                         }
                                                                     }
                                                                 @endphp
+                                                                @php
+                                                                    $colors = is_array(
+                                                                        $productLandingPage->product->colors,
+                                                                    )
+                                                                        ? $productLandingPage->product->colors
+                                                                        : json_decode(
+                                                                            $productLandingPage->product->colors,
+                                                                            true,
+                                                                        );
+                                                                @endphp
 
-                                                                @if (!empty($productLandingPage->product->colors))
+                                                                @if (!empty($colors))
                                                                     <div class="row mb-4 mt-3">
-                                                                        <div class="col-12 mb-3">
-                                                                            <h4 style="font-size: 18px;">Color</h4>
-                                                                        </div>
+
 
                                                                         @if ($productLandingPage->product->color_variant != null)
+                                                                            <div class="col-12 mb-3">
+                                                                                <h4 style="font-size: 18px;">Color</h4>
+                                                                            </div>
                                                                             <div class="col-12 mb-3">
                                                                                 <div class="d-flex">
 

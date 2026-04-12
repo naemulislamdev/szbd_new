@@ -683,6 +683,11 @@
                             <a href="{{ route('admin.faq.list') }}"
                                 class="nav-link {{ request()->routeIs('admin.faq.list') ? 'active' : '' }}">FAQ</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.shipping_method.index') }}"
+                                class="nav-link {{ request()->routeIs('admin.shipping_method.index') ? 'active' : '' }}">Shipping
+                                Cost</a>
+                        </li>
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->

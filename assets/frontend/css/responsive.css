@@ -71,6 +71,9 @@
 
 */
 @media (max-width: 768px) {
+  #shoppingCartOffcanvas {
+    width: 300px !important;
+  }
   .checkout-complete-button {
     flex-direction: column;
   }
@@ -154,10 +157,10 @@
     height: 180px;
   }
 
-  .swiper-pagination-bullet {
+  .header-slider-section .swiper-pagination-bullet {
     height: 4px;
   }
-  .swiper-pagination-bullet-active {
+  .header-slider-section .swiper-pagination-bullet-active {
     height: 4px;
   }
   /* .main-slider > a > img {
@@ -230,6 +233,7 @@
   }
   .smLogo {
     max-width: 100% !important;
+    height: 60px;
   }
   .product-column.five-col {
     height: 470px !important;
@@ -384,8 +388,37 @@
     max-width: 20%;
   }
 }
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .mcat-box {
     height: 235px;
+  }
+  .CouponSlider {
+    height: 120px;
+  }
+  .product-slider .product-column {
+    padding-right: 8px !important;
+    padding-left: 8px !important;
+  }
+  .product-slider .product-image2-col-2 {
+    height: 388px;
+  }
+  .product_slider_box {
+    height: 565px;
+  }
+}
+@media (min-width: 0px) and (max-width: 600px) {
+  .product-slider .product-column {
+    padding-right: 3px !important;
+    padding-left: 3px !important;
+  }
+  .product-slider .product-image2-col-2 {
+    height: 288px;
+  }
+  .product_slider_box {
+    height: 465px;
+  }
+  .product-slider .section-heading-title a {
+    font-size: 14px;
   }
 }

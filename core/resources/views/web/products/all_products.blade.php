@@ -9,7 +9,7 @@
         <div class="container">
 
             {{-- Bredcrumb start  --}}
-            <nav class="breadcrumb custom-breadcrumb mt-3">
+            <nav class="breadcrumb custom-breadcrumb mt-3 bg-white">
                 <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
                 <span class="breadcrumb-item active" aria-current="page">Shop</span>
             </nav>
@@ -25,7 +25,7 @@
                         <h1>Shopping</h1>
                         <div class="heading-border"></div>
                     </div>
-                   
+
                 </div>
             </div>
             @if (count($shop_products) > 0)
@@ -50,7 +50,7 @@
             <div class="row my-3">
                 <div class="col-md-12">
                     <div class="big-banner">
-                        <img src="{{ asset('assets/frontend') }}/images/product-banner/main-banner3.jpg" alt="Banner Image"
+                        <img src="{{ asset('assets/frontend') }}/images/product-banner/main-banner4.jpg" alt="Banner Image"
                             style="width: 100%;">
                     </div>
                 </div>

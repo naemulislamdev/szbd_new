@@ -248,6 +248,15 @@
                 font-size: 20px;
             }
         }
+
+        /* 7 April 26 */
+        .product-slider .product-box-col-2 {
+            height: auto !important;
+        }
+
+        .product-slider .product-image2-col-2 {
+            height: 424px;
+        }
     </style>
 @section('content')
 
@@ -313,95 +322,123 @@
     </section> --}}
 
     {{-- Coupon Slider Start --}}
-    <section class="coupon-slider">
-        <div class="container ">
-            <h4 class="text-center font-weight-bold mb-4">AVAILABLE COUPONS</h4>
-
-            <div class="swiper CouponSlider" style="height: 115px">
-                <div class="swiper-wrapper">
-
-                    @foreach ($couponSlider as $slider)
-                        <!-- Slide item -->
-                        <div class="swiper-slide">
-                            <a href="#">
-                                <img src="{{ asset('assets/storage/banner/' . $slider->photo) }}"
-                                    class="img-fluid coupon-img" alt="">
-                            </a>
+    @if (count($couponSlider) > 0)
+        <section class="coupon-slider">
+            <div class="container ">
+                <div class="row mb-2 my-2 my-lg-3">
+                    <div class="col-12">
+                        <div class="section-heading-title d-flex align-items-center justify-content-center">
+                            <h3>Exclusive Deals at Asmi Super Shop</h3>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
 
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </div>
-    </section>
-    {{-- Coupon Slider End --}}
-    <!------Start Product section----->
-    <section class="pb-3">
-        <div class="container">
-            {{-- @include('web.layouts.partials.product_filter') --}}
-            <div class="row mb-3 mt-3">
-                <div class="col-12">
-                    <div class="section-heading-title d-flex align-items-center justify-content-center">
-                        <h3>Featured Products</h3>
+                <div>
+                    <div class="swiper CouponSlider ">
+                        <div class="swiper-wrapper @if (count($couponSlider) <= 0) justify-content-center @endif">
+
+                            @foreach ($couponSlider as $slider)
+                                <!-- Slide item -->
+                                <div class="swiper-slide">
+                                    <a target="_blank" href="{{ $slider->url }}">
+                                        <img src="{{ asset('assets/storage/banner/' . $slider->photo) }}"
+                                            class="img-fluid coupon-img" alt="ASMI SHOP">
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="swiper-pagination"></div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
                     </div>
                 </div>
             </div>
-            @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings') @endphp
-            @if ($featured_products->count() > 0)
-                <div class="row">
-                    <!-- Your product columns go here -->
-                    @foreach ($featured_products as $product)
-                        @include('web.products.product_box', ['dataCategory' => 'category1'])
-                    @endforeach
+        </section>
+    @endif
+
+    {{-- Coupon Slider End --}}
+    {{-- product Slider Start --}}
+    <section class="product-slider">
+        <div class="container ">
+            <div class="row mb-2 px-3 my-2 my-lg-3">
+                <div class="col-12">
+                    <div class="section-heading-title d-flex align-items-center justify-content-between">
+                        <h3 style="text-transform: uppercase">Featured Products</h3>
+
+                        <a class="text-orange" href="{{ route('shop') }}">View All Products <i
+                                class="bi bi-arrow-right"></i></a>
+
+                    </div>
+
                 </div>
-            @endif
+            </div>
 
+            <div class="swiper ProductSlider product_slider_box">
+                <div class="swiper-wrapper">
+                    @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings') @endphp
+                    @if ($featured_products->count() > 0)
 
+                        <!-- Your product columns go here -->
+                        @foreach ($featured_products as $product)
+                            <div class="swiper-slide">
+                                @include('web.products.productBox', ['dataCategory' => 'category1'])
+                            </div>
+                        @endforeach
 
-            @foreach ($home_categories as $category)
-                <div class="container">
-                    <div class="row mb-3">
-                        <div class="col-md-12 ">
+                    @endif
+                </div>
+
+                <div class="swiper-pagination"></div>
+                {{-- <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div> --}}
+            </div>
+            {{-- ALL MODALS OUTSIDE --}}
+            @foreach ($featured_products as $product)
+                @include('web.products.product_modal')
+            @endforeach
+        </div>
+    </section>
+
+    {{-- Start Category Product Slider --}}
+    @foreach ($home_categories as $category)
+        @if (count($category->Products) > 0)
+            <section class="product-slider">
+                <div class="container ">
+                    <div class="row mb-2 my-2 my-lg-3 px-3">
+                        <div class="col-12">
                             @if (count($category->Products) > 0)
-                                <div class="section-heading-title d-flex align-items-center justify-content-center">
-                                    <h3>{{ Str::limit($category['name'], 18) }}</h3>
-                                    <div>
-
-                                    </div>
+                                <div class="section-heading-title d-flex align-items-center justify-content-between">
+                                    <h3 style="text-transform: uppercase">{{ Str::limit($category['name'], 18) }}
+                                    </h3>
+                                    <a class="text-orange" href="{{ route('category.products', $category->slug) }}">View
+                                        All Item <i class="bi bi-arrow-right"></i></a>
                                 </div>
                             @endif
                         </div>
                     </div>
-                </div>
-                <div class="row ">
-                    <!-- Your product columns go here -->
-                    @foreach ($category->Products as $key => $product)
-                        @if ($key < 12)
-                            @include('web.products.product_box', [
-                                'dataCategory' => "category_$category->id",
-                            ])
-                        @endif
+                    <div class="swiper CategoryProductSlider product_slider_box slider_{{ $category->id }}">
+                        <div class="swiper-wrapper">
+                            @foreach ($category->Products->take(12) as $product)
+                                <div class="swiper-slide">
+                                    @include('web.products.productBox', [
+                                        'dataCategory' => "category_$category->id",
+                                    ])
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="swiper-pagination pagination_{{ $category->id }}"></div>
+                    </div>
+                    @foreach ($category->Products->take(12) as $product)
+                        @include('web.products.product_modal')
                     @endforeach
                 </div>
-            @endforeach
-            {{-- @foreach (\App\Models\Banner::where('banner_type', 'Footer Banner')->where('published', 1)->orderBy('id', 'desc')->take(3)->get() as $banner)
-                <div class="row my-3">
-                    <div class="col-md-12">
-                        <div class="big-banner">
-                            <a href="{{ $banner['url'] }}">
-                                <img onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
-                                    src="{{ asset('assets/storage/banner') }}/{{ $banner['photo'] }}"
-                                    alt="{{ @$banner['photo'] }}" width="100%;">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach --}}
-        </div>
-    </section>
+            </section>
+        @endif
+    @endforeach
+    {{-- End Category Product Slider --}}
+
     <section class="our-brand">
         <div class="container">
             <div class="row mb-3">
@@ -521,6 +558,7 @@
                     </div>
                 </div>
                 <div class="col-lg-5 mx-auto mt-4">
+
                     <h6 style="font-size: 22px; font-weight: 500;  margin: 0 auto; " class="text-center newslater-title">
                         Join our newsletter for latest update
                         on discount and
@@ -547,6 +585,42 @@
             </div>
         </div>
     </section>
+    @foreach ($home_categories as $category)
+        <script>
+            new Swiper(".slider_{{ $category->id }}", {
+                loop: true,
+
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                },
+
+                pagination: {
+                    el: ".pagination_{{ $category->id }}",
+                    clickable: true,
+                },
+
+                breakpoints: {
+                    0: {
+                        slidesPerView: 2,
+                        spaceBetween: 10
+                    },
+                    576: {
+                        slidesPerView: 2,
+                        spaceBetween: 10
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 10
+                    },
+                    992: {
+                        slidesPerView: 5
+                    },
+                },
+            });
+        </script>
+    @endforeach
 @endsection
 @push('scripts')
     <script>

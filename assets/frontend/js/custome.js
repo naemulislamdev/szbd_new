@@ -325,7 +325,7 @@ new Swiper(".rightPromo", {
 
 // Our Brand Slider
 var myBrandSwiper = new Swiper(".myBrandSwiper", {
-  slidesPerView: 1,
+  slidesPerView: 2,
   spaceBetween: 10,
   loop: true,
   autoplayHoverPause: true,
@@ -347,7 +347,7 @@ var myBrandSwiper = new Swiper(".myBrandSwiper", {
 
   breakpoints: {
     576: {
-      slidesPerView: 1,
+      slidesPerView: 2,
     },
     768: {
       slidesPerView: 2,
@@ -367,7 +367,7 @@ new Swiper(".CouponSlider", {
   spaceBetween: 15,
 
   autoplay: {
-    delay: 2500,
+    delay: 25000,
     disableOnInteraction: false,
     pauseOnMouseEnter: true,
   },
@@ -384,7 +384,7 @@ new Swiper(".CouponSlider", {
 
   breakpoints: {
     0: {
-      slidesPerView: 1, // 📱 mobile
+      slidesPerView: 2, // 📱 mobile
     },
     576: {
       slidesPerView: 2, // 📲 small tablet
@@ -393,7 +393,89 @@ new Swiper(".CouponSlider", {
       slidesPerView: 2, // 📲 tablet
     },
     992: {
+      slidesPerView: 3, // 💻 desktop
+    },
+    1500: {
       slidesPerView: 4, // 💻 desktop
     },
   },
+});
+new Swiper(".ProductSlider", {
+  loop: true,
+
+  autoplay: {
+    delay: 3000,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+  },
+
+  pagination: {
+    el: ".ProductSlider .swiper-pagination",
+    clickable: true,
+  },
+
+  navigation: {
+    nextEl: ".ProductSlider .swiper-button-next",
+    prevEl: ".ProductSlider .swiper-button-prev",
+  },
+
+  breakpoints: {
+    0: {
+      slidesPerView: 2, // 📱 mobile
+      spaceBetween: 10,
+    },
+    576: {
+      slidesPerView: 2, // 📲 small tablet
+      spaceBetween: 10,
+    },
+    768: {
+      slidesPerView: 3, // 📲 tablet
+      spaceBetween: 10,
+    },
+    992: {
+      slidesPerView: 5, // 💻 desktop
+      //   spaceBetween: 15,
+    },
+  },
+});
+// Category Product Slider
+document.querySelectorAll(".CategoryProductSlider").forEach((slider) => {
+  const paginationEl = slider.querySelector(".swiper-pagination");
+
+  new Swiper(slider, {
+    loop: true,
+
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+
+    pagination: {
+      el: paginationEl,
+      clickable: true,
+    },
+
+    // ⚠️ IMPORTANT FIX
+    observer: true,
+    observeParents: true,
+
+    breakpoints: {
+      0: {
+        slidesPerView: 2,
+        spaceBetween: 10,
+      },
+      576: {
+        slidesPerView: 2,
+        spaceBetween: 10,
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 10,
+      },
+      992: {
+        slidesPerView: 5,
+      },
+    },
+  });
 });

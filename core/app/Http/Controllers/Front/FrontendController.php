@@ -907,20 +907,16 @@ SET price = ROUND(price * $rate)");
     public function eidOffers($slug)
     {
 
-        $eidoffer = EidOffer::where('slug', $slug)->where('status', 1)->first();
+        $eidoffer = EidOffer::where('slug', $slug)->first();
         if ($eidoffer) {
             return view('web.eidOffers', compact('eidoffer'));
-        } else {
-            return "<h2>Offer coming very soon !</h2>";
         }
     }
     public function discountOffers($slug)
     {
-        $discount_offers = DiscountOffer::where('slug', $slug)->where('status', 1)->first();
+        $discount_offers = DiscountOffer::where('slug', $slug)->first();
         if ($discount_offers) {
             return view('web.discount_offer', compact('discount_offers'));
-        } else {
-            return "<h2>This Offer coming very soon !</h2>";
         }
     }
 

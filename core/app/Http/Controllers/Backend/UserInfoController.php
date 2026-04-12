@@ -69,13 +69,24 @@ class UserInfoController extends Controller
             // Edit Column
             ->editColumn('status', function ($row) {
                 if ($row->status == 1) {
+
+                    $seenBy = json_decode($row->seen_by, true);
+
+                    if (is_array($seenBy)) {
+                        $seenText = ($seenBy['name'] ?? '') . '<br><small>' . ($seenBy['seen_at'] ?? '') . '</small>';
+                    } else {
+                        $seenText = $row->seen_by;
+                    }
                     return '
-            <span class="badge bg-success status_' . $row->id . '">Seen</span>
-            <div><small>Seen by: <br/>' . $row->seen_by . '</small></div>
-        ';
-                } else {
-                    return '<span class="badge bg-primary status_' . $row->id . '">Unseen</span>';
+                        <div class="status_wrapper_' . $row->id . '">
+                            <span class="badge bg-success status_' . $row->id . '">Seen</span>
+                            <div class="seen_by_' . $row->id . '">
+                                <small>Seen by: <br/>' . $seenText . '</small>
+                            </div>
+                        </div>
+                    ';
                 }
+                return '<span class="badge bg-primary status_' . $row->id . '">Unseen</span>';
             })
             ->editColumn('product_details', function ($row) {
 
@@ -85,21 +96,22 @@ class UserInfoController extends Controller
                     return 'N/A';
                 }
 
-                $html = '';
+                $items = []; // 🔥 এখানে সব collect করবো
 
                 // 🔹 SINGLE PRODUCT
                 if (isset($productDetails['product_id'])) {
 
                     $product = Product::find($productDetails['product_id']);
-                    $productPrice = $product->unit_price ?? "";
+                    $productPrice = $product->unit_price ?? 'N/A';
 
-                    $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
-                    $html .= '<strong>Product Price:</strong> ' . ($productPrice ?? 'N/A') . '<br>';
+                    $text = ($product->code ?? 'N/A') . ' - ' . $productPrice;
 
                     if (!empty($productDetails['color'])) {
                         $colorName = Color::where('code', $productDetails['color'])->value('name');
-                        $html .= '<strong>Color:</strong> ' . ($colorName ?? 'N/A') . '<br>';
+                        $text .= ' (' . ($colorName ?? 'N/A') . ')';
                     }
+
+                    $items[] = $text;
                 }
 
                 // 🔹 MULTIPLE PRODUCTS
@@ -108,22 +120,21 @@ class UserInfoController extends Controller
                     foreach ($productDetails as $item) {
 
                         $product = Product::find($item['id'] ?? null);
-                        $productPrice = $product->unit_price ?? "";
+                        $productPrice = $product->unit_price ?? 'N/A';
 
-                        $html .= '<div class="mb-1">';
-                        $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
-                        $html .= '<strong>Product Price:</strong> ' . ($productPrice ?? 'N/A') . '<br>';
+                        $text = ($product->code ?? 'N/A') . ' - ' . $productPrice;
 
                         if (!empty($item['color'])) {
                             $colorName = Color::where('code', $item['color'])->value('name');
-                            $html .= '<strong>Color:</strong> ' . ($colorName ?? 'N/A') . '<br>';
+                            $text .= ' (' . ($colorName ?? 'N/A') . ')';
                         }
 
-                        $html .= '</div>';
+                        $items[] = $text; // 🔥 push
                     }
                 }
 
-                return $html;
+                // 🔥 final output (comma separated)
+                return implode(', ', $items);
             })
 
             ->editColumn('order_process', function ($row) {
@@ -175,31 +186,43 @@ class UserInfoController extends Controller
     public function updateStatus(Request $request)
     {
 
-        $order = UserInfo::findOrFail($request->id);
+        $userinfo = UserInfo::findOrFail($request->id);
 
-        $order->order_status = $request->order_status;
-        $order->order_note   = $request->note;
-        $order->save();
+        $userinfo->order_status = $request->order_status;
+        $userinfo->order_note   = $request->note;
+        if ($request->order_status === 'confirmed') {
+
+            $userinfo->confirmed_by = json_encode([
+                'user' => auth('admin')->user()->name,
+                'time' => now()->format('d M Y h:i A')
+            ]);
+        } elseif ($request->order_status === 'canceled') {
+
+            $userinfo->canceled_by = json_encode([
+                'user' => auth('admin')->user()->name,
+                'time' => now()->format('d M Y h:i A')
+            ]);
+        }
+
+        $userinfo->save();
 
         return response()->json([
             'message' => 'Order status updated successfully',
             'note' => $request->note
         ]);
     }
-
     public function show(Request $request)
     {
         $item = UserInfo::findOrFail($request->id);
 
-        // status update
-        if ($item->status === 0) {
-            $item->update([
-                'status'  => 1,
-                'seen_by' => auth('admin')->user()->name,
-            ]);
-        }
+        $item->update([
+            'status'  => 1,
+            'seen_by' => json_encode([
+                'name' => auth('admin')->user()->name,
+                'seen_at' => now()->format('d-M-Y h:i:s A'),
+            ]),
+        ]);
 
-        // return view content for modal
         $html = view('admin.user_infos.show', compact('item'))->render();
 
         return response()->json([

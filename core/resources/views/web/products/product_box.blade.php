@@ -20,9 +20,9 @@
                 <div class="discount-box float-end">
                     <span>
                         @if ($product->discount_type == 'percent')
-                            {{ $product->discount }}%
+                            {{ $product->discount }}% Off
                         @elseif($product->discount_type == 'flat')
-                            {{ $product->discount }}৳
+                            {{ $product->discount }}৳ Off
                         @endif
                     </span>
                 </div>
@@ -65,6 +65,7 @@
     </div>
 </div>
 
+<!-- AddToCart Modal -->
 <!-- AddToCart Modal -->
 <div class="modal fade addToCartModalCls" id="addToCartModal_{{ $product->id }}" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">

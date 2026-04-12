@@ -282,11 +282,15 @@
                     },
                     {
                         data: 'total_qty',
-                        name: 'total_qty'
+                        name: 'total_qty',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'total_amount',
-                        name: 'total_amount'
+                        name: 'total_amount',
+                        orderable: false,
+                        searchable: false
                     },
                 ]
             });

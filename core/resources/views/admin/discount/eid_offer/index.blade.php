@@ -65,6 +65,7 @@
                                         <th>Date</th>
                                         <th>Image</th>
                                         <th>Title</th>
+                                        <th>URL</th>
                                         <th>Total Products</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
@@ -118,6 +119,11 @@
                     },
                     {
                         data: 'title',
+                    },
+                    {
+                        data: 'url',
+                        searchable: false,
+                        orderable: false
                     },
 
                     {
@@ -189,6 +195,37 @@
                     }
                 })
             });
+            $(document).on('change', '.status', function() {
+                var id = $(this).attr("data-id");
+                if ($(this).prop("checked") == true) {
+                    var status = 1;
+                } else if ($(this).prop("checked") == false) {
+                    var status = 0;
+                }
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('admin.discount.eid-offers.status') }}",
+                    method: 'POST',
+                    data: {
+                        id: id,
+                        status: status
+                    },
+                    success: function(data) {
+                        if (data.success == true) {
+                            toastr.success('Status updated successfully');
+                            table.ajax.reload();
+                        }
+
+                    },
+                    error: function(err) {
+                        toastr.error('Something went wrong!');
+                    }
+                });
+            });
         })(jQuery);
     </script>
 
@@ -201,37 +238,7 @@
             }
         });
     </script>
-    <script>
-        $(document).on('change', '.status', function() {
-            var id = $(this).attr("data-id");
-            if ($(this).prop("checked") == true) {
-                var status = 1;
-            } else if ($(this).prop("checked") == false) {
-                var status = 0;
-            }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: "{{ route('admin.discount.eid-offers.status') }}",
-                method: 'POST',
-                data: {
-                    id: id,
-                    status: status
-                },
-                success: function(data) {
-                    if (data.success == true) {
-                        toastr.success('Status updated successfully');
-                    }
-                },
-                error: function(err) {
-                    toastr.error('Something went wrong!');
-                }
-            });
-        });
-    </script>
+
 
     <script>
         $(document).on('click', '.edit', function() {
