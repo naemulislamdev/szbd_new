@@ -109,14 +109,4 @@ class Product extends Model
         }
         return (isset($this->translations) && count($this->translations) > 1) ? $this->translations[1]->value : $detail;
     }
-
-    public function shop()
-    {
-        return $this->belongsTo(Shop::class, 'seller_id');
-    }
-
-    public function seller()
-    {
-        return $this->belongsTo(Seller::class, 'user_id');
-    }
 }

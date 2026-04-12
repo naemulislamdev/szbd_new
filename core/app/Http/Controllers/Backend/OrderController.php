@@ -140,7 +140,7 @@ class OrderController extends Controller
 
             ->editColumn('order_type', function (Order $order) {
                 if ($order->order_type == 'default_type') {
-                    return 'Web';
+                    return 'Web' . ($order->order_source ? " ({$order->order_source})" : '');
                 } else {
                     return ucfirst($order->order_type ?? 'Regular');
                 }
@@ -188,14 +188,20 @@ class OrderController extends Controller
         <a href="' . route('admin.order.details', $order->id) . '" class="btn btn-sm btn-info mb-2">
             <i class="las la-eye"></i>
         </a>
-
-        <a href="' . route('admin.order.generate-invoice', $order->id) . '" class="btn btn-sm btn-secondary">
+    ';
+                $buttons .= '
+        <a href="' . route('admin.order.edit', $order->id) . '" class="btn btn-sm btn-info mb-2">
+            <i class="las la-edit"></i>
+        </a>
+    ';
+                $buttons .= '
+    <a href="' . route('admin.order.generate-invoice', $order->id) . '" class="btn btn-sm btn-secondary mb-2">
             <i class="las la-receipt"></i>
         </a>
     ';
                 if (auth('admin')->user()->can('order_delete')) {
                     $buttons .= '
-            <a href="' . route('admin.order.delete', $order->id) . '" class="btn btn-sm btn-danger">
+            <a href="' . route('admin.order.delete', $order->id) . '" id="delete" class="btn btn-sm btn-danger mb-2">
                 <i class="las la-trash-alt"></i>
             </a>
         ';
@@ -295,6 +301,33 @@ class OrderController extends Controller
 
         return view('admin.order.order_details', compact('order', 'orderHistories', 'shipping_address'));
     }
+    public function edit($id)
+    {
+        $order = Order::with('details', 'shipping')->where(['id' => $id])->first();
+
+        $shipping_address = ShippingAddress::find($order->shipping_address);
+        $orderHistories = OrderHistory::where('order_id', $id)->get();
+
+        return view('admin.order.order_edit', compact('order', 'orderHistories', 'shipping_address'));
+    }
+    public function delete($id)
+    {
+        $order = Order::with('details', 'shipping')->where(['id' => $id])->first();
+        if ($order) {
+            // Delete related order details
+            OrderDetail::where('order_id', $order->id)->delete();
+
+            // Delete related shipping address
+            ShippingAddress::where('id', $order->shipping_address)->delete();
+
+            // Delete the order itself
+            $order->delete();
+
+            return back()->with('success', 'Order deleted successfully.');
+        } else {
+            return redirect()->route('admin.order.list')->with('error', 'Order not found.');
+        }
+    }
 
     public function updateAddress(Request $request, $id)
     {
@@ -320,22 +353,26 @@ class OrderController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $colors = $product->color_variant
-            ? json_decode($product->color_variant)
-            : [];
+        $colors = is_array($product->color_variant)
+            ? $product->color_variant
+            : json_decode($product->color_variant, true);
 
         $sizes = [];
-        if ($product->choice_options) {
-            foreach (json_decode($product->choice_options) as $choice) {
-                $sizes = array_merge($sizes, $choice->options);
+        $choseOptions = is_array($product->choice_options)
+            ? $product->choice_options
+            : json_decode($product->choice_options, true);
+
+        if ($choseOptions) {
+            foreach ($choseOptions as $choice) {
+                $sizes = array_merge($sizes, $choice['options']);
             }
         }
 
         return response()->json([
             'has_variation' => count($colors) > 0 || count($sizes) > 0,
             'colors' => collect($colors)->map(fn($c) => [
-                'color' => $c->color,
-                'image' => asset($c->image),
+                'color' => $c['color'],
+                'image' => asset($c['image']),
             ]),
             'sizes' => $sizes,
         ]);

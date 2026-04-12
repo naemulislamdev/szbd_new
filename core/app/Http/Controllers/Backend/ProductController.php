@@ -22,15 +22,13 @@ class ProductController extends Controller
 {
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::where('home_status', 1)->get();
         $brands = Brand::all();
         return view('admin.product.create', compact('categories', 'brands'));
     }
     // Store New Product
     public function store(ProductRequest $request)
     {
-
-
         $product = ProductService::store($request);
         return response()->json([
             'success' => true,

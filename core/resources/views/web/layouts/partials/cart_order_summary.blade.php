@@ -67,6 +67,7 @@
                 }
             }
         @endphp
+
         <tr class="summary-subtotal">
             <td>Subtotal:</td>
             <td>{{ $sub_total }}</td>

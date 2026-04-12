@@ -15,6 +15,11 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

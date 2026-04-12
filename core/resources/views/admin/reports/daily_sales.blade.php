@@ -115,18 +115,6 @@
                             </div>
                         </div>
 
-                        <!-- Top products -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card border">
-                                    <div class="card-body">
-                                        <h5 class="mb-3">Top Selling Products</h5>
-                                        <div id="top_selling_products"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div id="loader" style="display:none; text-align:center; margin-bottom:10px;">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -239,29 +227,6 @@
                         $('#yesterday_sales').text(res.yesterday_sales);
                         $('#last_7_days_sales').text(res.last_7_days_sales);
                         $('#monthly_sales').text(res.monthly_sales);
-
-                        let html = '';
-                        if (res.top_selling_products.length > 0) {
-                            html += '<div class="table-responsive"><table class="table table-bordered">';
-                            html +=
-                                '<thead><tr><th>#</th><th>Product</th><th>Code</th><th>Qty</th><th>Amount</th></tr></thead><tbody>';
-
-                            $.each(res.top_selling_products, function(index, item) {
-                                html += `<tr>
-                                <td>${index + 1}</td>
-                                <td>${item.name}</td>
-                                <td>${item.code ?? 'N/A'}</td>
-                                <td>${item.total_qty}</td>
-                                <td>${item.total_amount}</td>
-                            </tr>`;
-                            });
-
-                            html += '</tbody></table></div>';
-                        } else {
-                            html = '<p class="mb-0 text-muted">No top selling products found.</p>';
-                        }
-
-                        $('#top_selling_products').html(html);
                     },
                     complete: function() {
                         $('#loader').hide();
@@ -307,7 +272,9 @@
                     },
                     {
                         data: 'variation',
-                        name: 'order_details.variation'
+                        name: 'variation',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'code',

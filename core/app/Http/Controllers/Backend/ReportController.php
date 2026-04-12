@@ -12,6 +12,8 @@ use App\Services\ProfitReportData;
 use App\Services\TopSellingData;
 use App\Services\TrackVisitorData;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
@@ -80,10 +82,16 @@ class ReportController extends Controller
     // Top Selling Product Reorts
     public function topSellingReport(Request $request)
     {
-        $data = TopSellingData::topSellingProductsData($request);
+        // $data = TopSellingData::topSellingProductsData($request);
 
-        return view('admin.reports.top_selling_products', $data);
+        return view('admin.reports.top_selling_products');
     }
+    public function topSellingProductsDataTable(Request $request)
+    {
+        $data = TopSellingData::topSellingProductsData($request);
+        return $data;
+    }
+    // end top selling product report
 
     public function moderationIdUpdate()
     {

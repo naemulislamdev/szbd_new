@@ -123,7 +123,7 @@ class ProductController extends Controller
         return response()->json($products, 200);
     }
 
-    public function get_home_categories()
+    public function get_home_categories2()
     {
         $categories = Category::where('home_status', true)->get();
 

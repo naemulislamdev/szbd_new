@@ -3,64 +3,154 @@
 namespace App\Services;
 
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class TopSellingData
 {
     public static function topSellingProductsData($request)
     {
-        $productList = Product::where('status', 1)->get();
-        $from = $request->from_date ? $request->from_date . " 00:00:00" : null;
-        $to = $request->to_date ? $request->to_date . " 23:59:59" : null;
+        // ✅ Filter receive
+        $filter     = $request->filter ?? 'this_month';
+        $startDate  = $request->from_date;
+        $endDate    = $request->to_date;
 
-        // Simple query with only essential columns
-        $query = DB::table('order_details as od')
+        // ✅ Date logic (your function reused)
+        if ($filter === 'custom_range' && !empty($startDate) && !empty($endDate)) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate   = Carbon::parse($endDate)->endOfDay();
+        } else {
+            switch ($filter) {
+                case 'today':
+                    $startDate = Carbon::today()->startOfDay();
+                    $endDate   = Carbon::today()->endOfDay();
+                    break;
+
+                case 'yesterday':
+                    $startDate = Carbon::yesterday()->startOfDay();
+                    $endDate   = Carbon::yesterday()->endOfDay();
+                    break;
+
+                case 'last_week':
+                    $startDate = Carbon::now()->subWeek()->startOfWeek();
+                    $endDate   = Carbon::now()->subWeek()->endOfWeek();
+                    break;
+
+                case 'last_month':
+                    $startDate = Carbon::now()->subMonth()->startOfMonth();
+                    $endDate   = Carbon::now()->subMonth()->endOfMonth();
+                    break;
+
+                case 'this_year':
+                    $startDate = Carbon::now()->startOfYear();
+                    $endDate   = Carbon::now()->endOfYear();
+                    break;
+
+                case 'this_month':
+                default:
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate   = Carbon::now()->endOfMonth();
+                    break;
+            }
+        }
+
+        // ✅ Main Query (NO get())
+        $query = DB::table('order_details')
+            ->join('products', 'products.id', '=', 'order_details.product_id')
+            ->join('orders', 'orders.id', '=', 'order_details.order_id')
+            ->where('orders.order_status', 'confirmed')
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
             ->select([
-                'p.id',
-                'p.name',
-                'p.code',
-                'p.thumbnail',
-                DB::raw('SUM(od.qty) as total_quantity'),
-                DB::raw('SUM(od.price * od.qty) as total_sales'),
-                DB::raw('COUNT(DISTINCT od.order_id) as order_count'),
+                'products.id',
+                'products.name',
+                'products.code',
+                'products.unit_price',
+                'products.thumbnail',
+                DB::raw('SUM(order_details.qty) as total_qty'),
+                DB::raw('SUM(order_details.price * order_details.qty) as total_amount')
             ])
-            ->join('orders as o', 'od.order_id', '=', 'o.id')
-            ->join('products as p', 'od.product_id', '=', 'p.id')
-            ->where('p.status', 1);
+            ->groupBy(
+                'products.id',
+                'products.name',
+                'products.code',
+                'products.unit_price',
+                'products.thumbnail'
+            )->orderByDesc(DB::raw('SUM(order_details.qty)'));
 
-        // Apply date range
-        if ($from && $to) {
-            $query->whereBetween('o.created_at', [$from, $to]);
-        }
+        // ✅ Max Qty (for progress)
+        $maxQty = DB::table('order_details')
+            ->join('products', 'products.id', '=', 'order_details.product_id')
+            ->join('orders', 'orders.id', '=', 'order_details.order_id')
+            ->where('orders.order_status', 'confirmed')
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->select(DB::raw('SUM(order_details.qty) as total_qty'))
+            ->groupBy('products.id')
+            ->pluck('total_qty')
+            ->max() ?? 1;
 
-        // Apply basic filters
-        if ($request->filled('category_id')) {
-            $query->where('p.category_id', $request->category_id);
-        }
+        // ✅ DataTable Response
+        return DataTables::of($query)
 
-        if ($request->filled('product_id')) {
-            $query->where('p.id', $request->product_id);
-        }
+            ->addIndexColumn()
 
+            ->addColumn('thumbnail', function ($row) {
+                $img = $row->thumbnail
+                    ? asset('assets/storage/product/thumbnail/' . $row->thumbnail)
+                    : asset('assets/admin/img/160x160/img1.jpg');
 
-        // Group and order
-        $query->groupBy('p.id', 'p.name', 'p.code')
-            ->orderByDesc('total_quantity')
-            ->limit($request->limit ?? 20);
+                return '<img src="' . $img . '" style="width:60px">';
+            })
 
-        $results = $query->get();
-        $total_sales_all = $results->sum('total_sales');
+            ->addColumn('name', function ($row) {
+                return '<a href="' . route('admin.product.show', $row->id) . '">' . $row->name . '</a>';
+            })
 
-        $data = [
-            'topSellingProducts' => $results,
-            'from' => $from,
-            'to' => $to,
-            'total_sales_all' => $total_sales_all,
-            'productList' => $productList,
-            'limit' => $request->limit ?? 20,
-            'selectedProductId' => $request->product_id,
-        ];
+            ->addColumn('price', function ($row) {
+                return number_format($row->unit_price, 2);
+            })
 
-        return $data;
+            ->addColumn('qty', function ($row) {
+                return '<strong>' . $row->total_qty . '</strong><br><small>units</small>';
+            })
+
+            ->addColumn('orders', function ($row) {
+                return '-'; // optional: add order count later
+            })
+
+            ->addColumn('sales', function ($row) {
+                return number_format($row->total_amount, 2);
+            })
+
+            ->addColumn('percentage', function ($row) use ($maxQty) {
+
+                $percentage = ($row->total_qty / $maxQty) * 100;
+
+                return '
+                <div class="progress" style="height:10px;">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width:' . $percentage . '%"></div>
+                </div>
+                <small>' . round($percentage, 2) . '%</small>
+            ';
+            })
+
+            ->addColumn('action', function ($row) {
+                return '
+                <a href="' . route('admin.product.show', $row->id) . '" class="btn btn-sm btn-primary">
+                    <i class="la la-eye"></i>
+                </a>
+                <a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-sm btn-info">
+                    <i class="la la-edit"></i>
+                </a>
+            ';
+            })
+
+            ->rawColumns(['thumbnail', 'name', 'qty', 'percentage', 'action'])
+
+            ->orderColumn('total_qty', function ($query, $order) {
+                $query->orderBy(DB::raw('SUM(order_details.qty)'), $order);
+            })
+
+            ->make(true);
     }
 }
