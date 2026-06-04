@@ -454,6 +454,8 @@ class CheckoutControl extends Controller
 
             DB::commit();
 
+            session(['purchase_fired' => $order_id]);
+
             return redirect()->route('checkout-complete', $order_id);
         } catch (\Exception $e) {
 

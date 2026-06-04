@@ -62,7 +62,10 @@ class OrderController extends Controller
 
             array_push($order_ids, $order_id);
 
-        return response()->json(['order_id'=>$order_id,'order_placed_successfully'], 200);
+        return response()->json([
+            'order_id' => $order_id,
+            'message' => 'order_placed_successfully'
+        ], 200);
     }
 
 

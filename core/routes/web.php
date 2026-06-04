@@ -59,6 +59,8 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
         Route::get('/video-shopping', 'videoShopping')->name('video_shopping');
         Route::get('/campaign', 'campaing_products')->name('campain');
         Route::get('/product/{slug}', 'product')->name('product');
+        // routes/web.php
+        Route::get('/product/{id}/active-viewers', 'activeViewers')->name('product.active-viewers')->middleware('throttle:30,1');
         Route::get('category/{category?}/{subcategory?}/{childcategory?}', 'products')->name('category.products');
         Route::get('search', 'homeSearch')->name('home.search');
         Route::get('orderDetails', 'orderdetails')->name('orderdetails');
@@ -190,5 +192,6 @@ Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->gr
 
 Route::get('/page/{slug}', [FrontendController::class, 'signleProductLandingPage'])->name('signle.landing_page');
 // Route::get('/{slug}', [FrontendController::class, 'landingPage'])->name('landing_page');
+
 
 require __DIR__ . '/auth.php';

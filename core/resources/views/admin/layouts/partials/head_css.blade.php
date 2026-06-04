@@ -4,7 +4,6 @@
 <link href="{{ asset('assets/default/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/default/multiselect/selectr.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/default/file_upload/uppy.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/default/toastr/toastr.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/backend/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/backend/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/backend/css/app.min.css') }}" rel="stylesheet" type="text/css" />

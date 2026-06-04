@@ -524,7 +524,7 @@
                                     <small class="badge badge-soft-danger"> (
                                         optional, please provide embed link not direct link.
                                         )</small>
-                                    <input type="text" name="video_link" value="{{ $product->video_link }}"
+                                    <input type="text" name="video_link" value="{{ $product->video_url }}"
                                         placeholder="EX : https://www.youtube.com/embed/5R06LRdUCSE" class="form-control">
                                     @error('video_link')
                                         <span class="text-danger">{{ $message }}</span>

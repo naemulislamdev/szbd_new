@@ -251,7 +251,6 @@ class ProductController extends Controller
     public function get_home_categories(Request $request)
     {
         $categories = Category::where('home_status', 1)
-            ->orderBy('priority', 'ASC')
             ->get();
 
         $categories->each(function ($category) {

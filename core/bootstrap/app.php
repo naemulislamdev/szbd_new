@@ -25,6 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'content_security_policy' => App\Http\Middleware\ContentSecurityPolicy::class,
             'maintenance_mode' => App\Http\Middleware\MaintenanceModeMiddleware::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'api/v1/order/place',
+            '/api/v1/order/place',
+        ]);
+   
         // Ensure all JSON responses preserve .0 for float values (Flutter type safety)
         $middleware->append(App\Http\Middleware\JsonFloatMiddleware::class);
     })

@@ -37,6 +37,7 @@ use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -240,7 +241,8 @@ class FrontendController extends Controller
         $searchProducts = Product::where('status', 1)
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'LIKE', "%{$keyword}%")
-                    ->orWhere('code', 'LIKE', "%{$keyword}%");
+                    ->orWhere('code', 'LIKE', "%{$keyword}%")
+                    ->orWhere('unit_price', 'LIKE', "%{$keyword}%");
             })
             ->paginate(20);
         return view('web.home_search', compact('searchProducts', 'keyword'));
@@ -331,7 +333,7 @@ class FrontendController extends Controller
     //shop function
     public function shop(Request $request)
     {
-        $allProducts = Product::with(['reviews'])->latest()->active();
+        $allProducts = Product::with(['reviews'])->orderBy('viewers', 'desc')->active();
 
         $query = null;
         if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
@@ -517,6 +519,31 @@ class FrontendController extends Controller
         $product = Product::active()->with(['reviews'])->where('slug', $slug)->first();
 
         if ($product != null) {
+            // Viewers increment
+            $product->increment('viewers');
+            // ✅ Cache key — প্রতিটা product এর জন্য আলাদা
+            $cacheKey = 'product_viewers_' . $product->id;
+
+            // ✅ Current session ID নাও
+            $sessionId = session()->getId();
+
+            // ✅ Cache থেকে existing viewers list নাও (না থাকলে empty array)
+            $viewers = Cache::get($cacheKey, []);
+
+            // ✅ এই session কে add/update করো (last_seen = now)
+            $viewers[$sessionId] = now()->timestamp;
+
+            // ✅ ৫ মিনিটের বেশি inactive session গুলো remove করো
+            $viewers = array_filter($viewers, function ($lastSeen) {
+                return $lastSeen >= now()->subMinutes(5)->timestamp;
+            });
+
+            // ✅ Updated list আবার Cache এ save করো (১০ মিনিট TTL)
+            Cache::put($cacheKey, $viewers, now()->addMinutes(10));
+
+            // ✅ Active viewers count
+            $activeViewers = count($viewers);
+
             $countOrder = OrderDetail::where('product_id', $product->id)->count();
             $countWishlist = Wishlist::where('product_id', $product->id)->count();
             $deal_of_the_day = DealOfTheDay::where('product_id', $product->id)->where('status', 1)->first();
@@ -537,10 +564,31 @@ class FrontendController extends Controller
 
             $relatedProducts = $query->inRandomOrder()->limit(12)->get();
 
-            return view('web.products.details', compact('product', 'relatedProducts', 'countWishlist', 'countOrder', 'deal_of_the_day'));
+            return view('web.products.details', compact('product', 'relatedProducts', 'countWishlist', 'countOrder', 'deal_of_the_day', 'activeViewers'));
         }
 
         return back()->with('error', 'Product Not Found!');
+    }
+    public function activeViewers($id)
+    {
+        $cacheKey = 'product_viewers_' . $id;
+        $sessionId = session()->getId();
+
+        // ✅ Cache থেকে viewers নাও
+        $viewers = Cache::get($cacheKey, []);
+
+        // ✅ নিজের session update করো
+        $viewers[$sessionId] = now()->timestamp;
+
+        // ✅ ৫ মিনিটের বেশি inactive সরাও
+        $viewers = array_filter($viewers, function ($lastSeen) {
+            return $lastSeen >= now()->subMinutes(5)->timestamp;
+        });
+
+        // ✅ Cache এ save করো
+        Cache::put($cacheKey, $viewers, now()->addMinutes(10));
+
+        return response()->json(['active_viewers' => count($viewers)]);
     }
 
     public function products(

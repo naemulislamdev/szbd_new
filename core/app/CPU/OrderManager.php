@@ -114,7 +114,7 @@ class OrderManager
 
     public static function generate_order($data)
     {
-        $order_id = 100000 + Order::all()->count() + 1;
+        $order_id = 100000 + (Order::max('id') ?? 0) + 1;
         if (Order::where('order_number',$order_id)->first()) {
             $order_id = Order::orderBy('id', 'DESC')->first()->id + 1;
         }
@@ -204,82 +204,6 @@ class OrderManager
             ]);
 
             DB::table('order_details')->insert($or_d);
-        }
-
-        if ($or['payment_method'] != 'cash_on_delivery') {
-            $order = Order::find($order_id);
-            $order_summary = OrderManager::order_summary($order);
-            $order_amount = $order_summary['subtotal'] - $order_summary['total_discount_on_product'] - $order['discount'];
-            $commission = Helpers::sales_commission($order);
-
-            DB::table('order_transactions')->insert([
-                'transaction_id' => OrderManager::gen_unique_id(),
-                'customer_id' => $order['customer_id'],
-                'order_id' => $order_id,
-                'order_amount' => $order_amount,
-                'seller_amount' => $order_amount - $commission,
-                'admin_commission' => $commission,
-                'received_by' => 'admin',
-                'status' => 'hold',
-                'delivery_charge' => $order['shipping_cost'],
-                'tax' => $order_summary['total_tax'],
-                'delivered_by' => 'admin',
-                'payment_method' => $or['payment_method'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            if (AdminWallet::where('admin_id', 1)->first() == false) {
-                DB::table('admin_wallets')->insert([
-                    'admin_id' => 1,
-                    'withdrawn' => 0,
-                    'commission_earned' => 0,
-                    'inhouse_earning' => 0,
-                    'delivery_charge_earned' => 0,
-                    'pending_amount' => 0,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-            DB::table('admin_wallets')->where('admin_id', $order['seller_id'])->increment('pending_amount', $order['order_amount']);
-        }
-
-        // if ($order->seller_is == 'admin') {
-        //     $seller = Admin::find($order->seller_id);
-        // } else {
-        //     $seller = Seller::find($order->seller_id);
-        // }
-
-        try {
-            $fcm_token = $user->cm_firebase_token;
-            // $seller_fcm_token = $seller->cm_firebase_token;
-            if ($data['payment_method'] != 'cash_on_delivery') {
-                $value = Helpers::order_status_update_message('confirmed');
-            } else {
-                $value = Helpers::order_status_update_message('pending');
-            }
-
-            if ($value) {
-                $data = [
-                    'title' => translate('order'),
-                    'description' => $value,
-                    'order_id' => $order_id,
-                    'image' => '',
-                ];
-                Helpers::send_push_notif_to_device($fcm_token, $data);
-                // Helpers::send_push_notif_to_device($seller_fcm_token, $data);
-            }
-
-            $emailServices_smtp = Helpers::get_business_settings('mail_config');
-            if ($emailServices_smtp['status'] == 0) {
-                $emailServices_smtp = Helpers::get_business_settings('mail_config_sendgrid');
-            }
-            if ($emailServices_smtp['status'] == 1) {
-                Mail::to($user->email)->send(new \App\Mail\OrderPlaced($order_id));
-                // Mail::to($seller->email)->send(new \App\Mail\OrderReceivedNotifySeller($order_id));
-            }
-        } catch (\Exception $exception) {
-            //echo $exception;
         }
 
         return $order_id;

@@ -351,6 +351,9 @@
                                 <div class="my-2">
                                     <span class="product-code"><strong>Code:</strong> {{ $product->code }}</span>
                                 </div>
+                                <div class="active-viewers-badge">
+                                    🟢 <span id="active-viewers-count">{{ $activeViewers }}</span> জন এখন এই পণ্যটি দেখছেন
+                                </div>
                                 <p class="product-description">{!! $product['short_description'] !!}</p>
                                 @php
                                     $colors = is_array($product->colors)
@@ -847,7 +850,7 @@
                                     <img src="{{ asset('assets/frontend/images/payment/payment.png') }}" alt="payment">
                                 </div>
                             </div>
-                            @if ($product->video_shopping == 0 && $product->video_url == '')
+                            @if ($product->video_shopping == 0 && $product->video_url)
                                 @if ($product['video_url'])
                                     <div class="row">
                                         <div class="col-md-12">
@@ -1124,5 +1127,31 @@
                 }
             });
         });
+    </script>
+    <script>
+        const activeViewersUrl = "{{ route('product.active-viewers', $product->id) }}";
+        let intervalId = null;
+
+        function updateActiveViewers() {
+            if (document.visibilityState === 'visible') {
+                fetch(activeViewersUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('active-viewers-count').textContent = data.active_viewers;
+                    })
+                    .catch(err => console.error('Viewer update failed:', err));
+            }
+        }
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                updateActiveViewers();
+                intervalId = setInterval(updateActiveViewers, 60000);
+            } else {
+                clearInterval(intervalId);
+            }
+        });
+
+        intervalId = setInterval(updateActiveViewers, 60000);
     </script>
 @endpush

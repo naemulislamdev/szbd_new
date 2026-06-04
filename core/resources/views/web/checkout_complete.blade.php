@@ -304,52 +304,56 @@
     </div>
 @endsection
 @push('scripts')
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        dataLayer.push({
-            event: "purchase",
-            ecommerce: {
-                transaction_id: "{{ $order->order_id }}",
-                affiliation: "My eCommerce Store",
+    @php
+        $firedOrderId = session('purchase_fired');
+    @endphp
+
+    @if ($firedOrderId == $order->order_id)
+        @php
+            // একবার দেখানোর পর session মুছে ফেলুন
+            session()->forget('purchase_fired');
+        @endphp
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                    transaction_id: "{{ $order->order_id }}",
+                    affiliation: "Shopping Zone BD",
+                    value: {{ $order->order_amount ?? 0 }},
+                    tax: 0.00,
+                    shipping: {{ $order->shipping_cost ?? 0 }},
+                    currency: "BDT",
+                    coupon: "",
+                    items: [
+                        @foreach ($order->details as $detail)
+                            {
+                                item_id: "{{ $detail->product->id ?? '' }}",
+                                item_name: "{{ addslashes($detail->product->name ?? '') }}",
+                                item_brand: "Shopping Zone BD",
+                                item_category: "General",
+                                price: {{ $detail->price ?? 0 }},
+                                quantity: {{ $detail->qty }}
+                            }
+                            @if (!$loop->last)
+                                ,
+                            @endif
+                        @endforeach
+                    ]
+                }
+            });
+
+            // ✅ Facebook Pixel deduplication
+            fbq('track', 'Purchase', {
                 value: {{ $order->order_amount ?? 0 }},
-                tax: 0.00,
-                shipping: {{ $order->shipping_cost ?? 0 }},
-                currency: "BDT",
-                coupon: "",
-                items: [
-                    @foreach ($order->details as $detail)
-                        {
-                            item_id: "{{ $detail->product->id ?? '' }}",
-                            item_name: "{{ $detail->product->name ?? '' }}",
-                            item_brand: "Shopping Zone BD",
-                            item_category: "General",
-                            price: {{ $detail->price ?? 0 }},
-                            quantity: {{ $detail->qty }}
-                        }
-                        @if (!$loop->last)
-                            ,
-                        @endif
-                    @endforeach
-                ]
-            }
-        });
-    </script>
-    <script>
-        fbq('track', 'Purchase', {
-            contents: [
-                @foreach ($order->details as $detail)
-                    {
-                        id: '{{ $detail->product_id }}',
-                        quantity: {{ $detail->qty }},
-                        item_price: {{ $detail->price ?? 0 }}
-                    },
-                @endforeach
-            ],
-            content_type: 'product',
-            value: {{ $order->order_amount ?? 0 }},
-            currency: 'BDT'
-        });
-    </script>
+                currency: 'BDT',
+                transaction_id: "{{ $order->order_id }}"
+            }, {
+                eventID: "{{ $order->order_id }}"
+            });
+        </script>
+    @endif
 
     <script>
         ttq.identify({
