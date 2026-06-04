@@ -136,15 +136,6 @@ class UserInfoController extends Controller
                 // 🔥 final output (comma separated)
                 return implode(', ', $items);
             })
-
-            ->editColumn('order_process', function ($row) {
-                return match ($row->order_process) {
-                    'pending'   => '<span class="badge bg-danger">Pending</span>',
-                    'completed' => '<span class="badge bg-success">Confirmed</span>',
-                    default     => '<span class="badge bg-secondary">' . ucfirst($row->order_process) . '</span>',
-                };
-            })
-
             ->editColumn('order_status', function ($row) {
 
                 $statuses = [
@@ -176,7 +167,7 @@ class UserInfoController extends Controller
             ->rawColumns([
                 'product_details',
                 'status',
-                'order_process',
+
                 'order_status',
                 'action',
                 'order_note'

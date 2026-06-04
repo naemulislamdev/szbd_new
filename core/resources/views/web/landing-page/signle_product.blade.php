@@ -514,6 +514,67 @@
             outline: none;
             border-color: orange;
         }
+
+        /* swper next and prev style */
+        /* Common button style */
+        .benefit-section .swiper-button-prev,
+        .benefit-section .swiper-button-next {
+            width: 30px;
+            height: 30px;
+            background: #ff6a00;
+            /* orange */
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        /* Arrow color white */
+        .benefit-section .swiper-button-prev::after,
+        .benefit-section .swiper-button-next::after {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* Position left */
+        .benefit-section .swiper-button-prev {
+            left: 10px;
+        }
+
+        /* Position right */
+        .benefit-section .swiper-button-next {
+            right: 10px;
+        }
+
+        /* Hover effect */
+        .benefit-section .swiper-button-prev:hover,
+        .benefit-section .swiper-button-next:hover {
+            background: #e65c00;
+            transform: scale(1.1);
+        }
+
+        .benefit-section svg {
+            height: 18px !important;
+        }
+
+        .benefit-section .landingPageReviewImages .slider-img img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .benefit-section .landingPageFeatureImg .slider-img {
+            max-height: 400px;
+        }
+
+        .benefit-section .landingPageReviewImages .slider-img {
+            max-height: 310px;
+        }
+
+        @media (max-width: 768px) {
+            .benefit-section .landingPageReviewImages .slider-img {
+                max-height: 400px;
+            }
+        }
     </style>
 @endpush
 @section('content')
@@ -565,7 +626,7 @@
                 <div class="p-details col-lg-6">
                     <div class="container">
                         <div class="row">
-                            <div class="col-md-12 text-center">
+                            <div class="col-lg-12 text-center">
                                 <div class="p-name">
                                     <h3 class="mb-2">{{ $productLandingPage->product->name }}</h3>
                                 </div>
@@ -632,21 +693,20 @@
     @endphp
 
 
-
     <!-- Benefit Section -->
     <section class="benefit-section">
         <div class="container">
             <div class="row">
-                <div class="col">
+                <div class="col-lg-10 mx-auto">
                     <div class="section-title">
                         <h4 class="text-center" style="font-family: 'SolaimanLipi', sans-serif;">এই পণ্যের বৈশিষ্ট্য</h4>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-8 mx-auto">
+                <div class="col-lg-10 mx-auto">
                     <div class="row align-items-center justify-content-center">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-lg-6 mb-3">
                             @if (json_decode($productLandingPage->feature_list) != null)
                                 <ul class="benefit-list">
                                     @foreach (json_decode($productLandingPage->feature_list) as $title)
@@ -657,16 +717,91 @@
 
                             <a href="#orderPlace" class="w-100 order-btn">অর্ডার করতে চাই</a>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-lg-6 mb-3">
                             <div class="benefit-img">
+                                @php
+                                    $images = json_decode($productLandingPage->feature_img, true);
 
-                                <img src="{{ asset('assets/storage/landingpage/' . $productLandingPage->feature_img) }}"
-                                    style="width: 100%; " alt="Shopping Zone BD feature image">
+                                    if (!$images) {
+                                        $images = [$productLandingPage->feature_img]; // single ke array baniye nilam
+                                    }
+                                @endphp
+                                <div class="offersSwiper landingPageFeatureImg swiper w-100">
+                                    <div class="swiper-wrapper ">
+
+                                        @foreach ($images as $img)
+                                            <div class="swiper-slide">
+                                                <div class="slider-img">
+                                                    <img src="{{ asset('assets/storage/landingpage/' . $img) }}"
+                                                        alt="Slider Image">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    <div class="swiper-pagination"></div>
+
+                                    <!-- Navigation -->
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-button-next"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {{-- Customer Review image slider --}}
+            @php
+                $images = json_decode($productLandingPage->review_img, true);
+                if (!$images) {
+                    $images = [];
+                }
+            @endphp
+            @if (count($images) > 0)
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-10 mx-auto">
+                        <div class="section-title text-center">
+                            <h4 class="text-center" style="font-family: 'SolaimanLipi', sans-serif;">আমাদের কাস্টমারদের
+                                রিভিউ
+                            </h4>
+                        </div>
+                        <div class="benefit-img">
+                            <div class="row">
+
+                                @if (count($images) > 0)
+                                    <!-- Swiper CSS -->
+
+                                    <div class="landingPageReviewImages swiper w-100">
+                                        <div class="swiper-wrapper justify-content-lg-center">
+                                            @foreach ($images as $img)
+                                                <div class="swiper-slide">
+                                                    <div class="slider-img">
+                                                        <img src="{{ asset('assets/storage/landingpage/' . $img) }}"
+                                                            alt="Review Slider Image">
+                                                    </div>
+
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <!-- Pagination -->
+                                        <div class="swiper-pagination"></div>
+
+                                        <!-- Navigation -->
+                                        <div class="px-5">
+                                            <div class="swiper-button-next"></div>
+                                            <div class="swiper-button-prev"></div>
+                                        </div>
+                                    </div>
+
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            {{-- Customer Review image slider --}}
+
         </div>
     </section>
 
@@ -676,17 +811,17 @@
             <section class="benefit-section my-4">
                 <div class="container">
                     <div class="row">
-                        <div class="col">
+                        <div class="col-lg-10">
                             <div class="section-title">
                                 <h4 class="text-center">{{ $section->section_title }}</h4>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 mx-auto">
+                        <div class="col-lg-8 mx-auto">
                             <div class="row align-items-center justify-content-center">
                                 @if ($section->section_direction == 'left')
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-lg-6 mb-3">
                                         <div class="section-dtls">
                                             <p>{{ $section->section_description }}</p>
                                         </div>
@@ -695,20 +830,20 @@
                                         @endif
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-lg-6 mb-3">
                                         <div class="benefit-img">
                                             <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="feature image">
                                         </div>
                                     </div>
                                 @elseif ($section->section_direction == 'right')
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-lg-6 mb-3">
                                         <div class="benefit-img">
                                             <img src="{{ asset('assets/storage/landingpage/' . $section->section_img) }}"
                                                 style="width: 100%; height:560px;" alt="feature image">
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-lg-6 mb-3">
                                         <div class="section-dtls">
                                             <p>{{ $section->section_description }}</p>
                                         </div>
@@ -729,11 +864,11 @@
     <section id="orderPlace" class="my-4">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-10">
+                <div class="col-lg-10 px-0 px-lg-2">
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-lg-12">
                                     <div class="section-title">
                                         <h4 class="text-center">অর্ডার করতে নিচের ফর্মটি সঠিক ভাবে পুরন করুন।</h4>
                                     </div>
@@ -744,7 +879,7 @@
                                 @csrf
                                 <input type="hidden" name="session_id" value="{{ session()->getId() }}">
                                 <div class="row">
-                                    <div class="col-md-6 px-0 px-lg-2">
+                                    <div class="col-lg-6 px-0 px-lg-2">
                                         <div class="order-box">
                                             <div class="card-body">
                                                 <div class="row mb-3">
@@ -754,7 +889,7 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-md-12">
+                                                    <div class="col-lg-12">
                                                         @if ($customer && $shippingAddresses->count() > 0)
                                                             <label>পূর্বের অর্ডারকৃত নাম ও ঠিকানা সিলেক্ট করুন অথবা নতুন
                                                                 ঠিকানা দিন
@@ -795,7 +930,7 @@
                                                     </div>
                                                     <div id="newAddressForm"
                                                         style="{{ $customer ? 'display:none;' : '' }}"
-                                                        class="col-md-12 mb-4">
+                                                        class="col-lg-12 mb-4">
                                                         @if (!$customer)
                                                             <input type="hidden" name="address_type" value="new">
                                                         @endif
@@ -831,7 +966,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-12 mb-3">
+                                                    <div class="col-lg-12 mb-3">
                                                         <div class="form-group">
                                                             <label>ইমার্জেন্সি নোট (ঐচ্ছিক) </label>
                                                             <textarea class="form-control" placeholder="আপনার নোট লিখুন" name="customer_note">{{ old('order_note') }}</textarea>
@@ -844,7 +979,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-lg-12">
                                                 <div class="size-chart">
                                                     @if ($productLandingPage->product->size_chart)
                                                         <img class="w-100"
@@ -855,7 +990,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-lg-6 px-0 px-lg-2">
                                         <div class="order-box">
                                             <div class="card-body">
                                                 <div class="row mb-3">
@@ -864,7 +999,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-md-12">
+                                                    <div class="col-lg-12">
                                                         <div class="name-price">
                                                             <div class="title-box">
                                                                 <h4>Product</h4>
@@ -1058,7 +1193,7 @@
                                                         value="{{ $productLandingPage->product->discount }}">
                                                     <input type="hidden" name="product_id"
                                                         value="{{ $productLandingPage->product->id }}">
-                                                    <div class="col-md-12">
+                                                    <div class="col-lg-12">
                                                         <div class="name-price mb-3">
                                                             <div class="title-box">
                                                                 <h4>Your order</h4>
@@ -1073,13 +1208,13 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-
+                                                                        {{--
                                                                         <td class="w-100 d-block">
                                                                             <h5 class="shipping-title">Shipping :</h5>
 
                                                                             <div class="row">
                                                                                 @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
-                                                                                    <div class="col-md-6">
+                                                                                    <div class="col-lg-6">
                                                                                         <label class="shipping-box"
                                                                                             for="shipping_{{ $shipping['id'] }}">
                                                                                             <input type="radio" required
@@ -1094,6 +1229,58 @@
                                                                                             </span>
                                                                                             <span class="shipping-cost">
                                                                                                 {{ $shipping['cost'] }}
+                                                                                            </span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                @endforeach
+                                                                            </div>
+                                                                        </td> --}}
+                                                                        {{-- free delivery option --}}
+                                                                        <td class="w-100 d-block">
+                                                                            <h5 class="shipping-title">Shipping :</h5>
+
+                                                                            @php
+                                                                                $productPrice =
+                                                                                    $productLandingPage->product[
+                                                                                        'unit_price'
+                                                                                    ];
+
+                                                                                $shippingMethods = \App\Models\ShippingMethod::where(
+                                                                                    ['status' => 1],
+                                                                                )->get();
+
+                                                                                if ($productPrice > 999) {
+                                                                                    $shippingMethods = $shippingMethods->where(
+                                                                                        'cost',
+                                                                                        0,
+                                                                                    );
+                                                                                } else {
+                                                                                    $shippingMethods = $shippingMethods->where(
+                                                                                        'cost',
+                                                                                        '>',
+                                                                                        0,
+                                                                                    );
+                                                                                }
+                                                                            @endphp
+
+                                                                            <div class="row">
+                                                                                @foreach ($shippingMethods as $shipping)
+                                                                                    <div class="col-lg-6">
+                                                                                        <label class="shipping-box"
+                                                                                            for="shipping_{{ $shipping['id'] }}">
+                                                                                            <input type="radio" required
+                                                                                                name="shipping_method"
+                                                                                                class="shipping-method"
+                                                                                                id="shipping_{{ $shipping['id'] }}"
+                                                                                                value="{{ $shipping['id'] }}"
+                                                                                                data-cost="{{ $shipping['cost'] }}"
+                                                                                                data-shpping="{{ $shipping['cost'] }}"
+                                                                                                {{ $productPrice > 1000 && $shipping['cost'] == 0 ? 'checked' : '' }}>
+                                                                                            <span class="shipping-title">
+                                                                                                {{ $shipping['title'] }}
+                                                                                            </span>
+                                                                                            <span class="shipping-cost">
+                                                                                                {{ $shipping['cost'] == 0 ? ' ' : '৳' . $shipping['cost'] }}
                                                                                             </span>
                                                                                         </label>
                                                                                     </div>
@@ -1118,7 +1305,8 @@
                                                             </div>
                                                         </div>
 
-                                                        <button type="submit" class="w-100 btn btn-primary">অর্ডার
+                                                        <button id="orderBtn" type="submit"
+                                                            class="w-100 btn btn-primary">অর্ডার
                                                             সম্পূর্ণ করুন</button>
                                                     </div>
                                                 </div>
@@ -1132,7 +1320,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3 mx-auto">
+                <div class="col-lg-3 mx-auto">
                     <div class="form-group my-3">
                         <a href="{{ route('home') }}" class="btn btn-primary">Discover More Products</a>
                     </div>
@@ -1172,6 +1360,21 @@
     </div>
 @endsection
 @push('scripts')
+    <script>
+        document
+            .getElementById('userInfoForm')
+            .addEventListener('submit', function() {
+
+                let btn = document.getElementById('orderBtn');
+
+                btn.disabled = true;
+
+                btn.innerHTML = `
+                অর্ডার করা হচ্ছে...
+                <span class="spinner-border spinner-border-sm"></span>
+            `;
+            });
+    </script>
     <script>
         $('#addressUpdate').on('submit', function(e) {
             e.preventDefault();
@@ -1262,7 +1465,7 @@
 
             document.querySelectorAll('.check-phone').forEach(function(input) {
 
-                const container = input.closest('.col-md-6');
+                const container = input.closest('.col-lg-6');
                 const feedback = container.querySelector('#phoneFeedback');
 
                 input.addEventListener('input', function() {

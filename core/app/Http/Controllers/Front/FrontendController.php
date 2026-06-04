@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Banner;
 use App\Models\Blog;
+use App\Models\BlogCategory;
+use App\Models\BlogContentPromotion;
 use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\BusinessSetting;
@@ -43,6 +45,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
+use Illuminate\Support\Facades\Cache;
 
 class FrontendController extends Controller
 {
@@ -54,6 +59,7 @@ class FrontendController extends Controller
         $featured_products = Product::with(['reviews'])->active()
             ->where('featured', 1)
             ->take(12)
+            ->latest()
             ->get();
         //end
         //Arrival products finding based on selling
@@ -152,6 +158,144 @@ class FrontendController extends Controller
 
 
         return view('web.home', compact('couponSlider', 'featured_products', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'ourBrands'));
+    }
+    // public function siteMaps()
+    // {
+    //     return Cache::remember('sitemap', 3600, function () {
+    //         $siteURL = "https://shoppingzonebd.com.bd";
+    //         $sitemap = Sitemap::create();
+
+    //         // Add Home Page
+    //         $sitemap->add(
+    //             Url::create($siteURL . '/')
+    //                 ->setLastModificationDate(now())
+    //                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+    //                 ->setPriority(0.8)
+    //         );
+
+    //         // Add Contact Page
+    //         $sitemap->add(
+    //             Url::create($siteURL . '/contacts')
+    //                 ->setLastModificationDate(now())
+    //                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+    //                 ->setPriority(0.5)
+    //         );
+
+    //         // Add Category Pages
+    //         foreach (Category::all() as $category) {
+    //             $sitemap->add(
+    //                 Url::create($siteURL . '/category/' . $category->slug)
+    //                     ->setLastModificationDate($category->updated_at ?? now())
+    //                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+    //                     ->setPriority(0.7)
+    //             );
+    //         }
+
+    //         // Add Product Pages
+    //         foreach (Product::with(['reviews'])->where('status', 1)->latest()->active() as $product) {
+    //             $sitemap->add(
+    //                 Url::create($siteURL . '/product/' . $product->slug)
+    //                     ->setLastModificationDate($product->updated_at ?? now())
+    //                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+    //                     ->setPriority(0.9)
+    //             );
+    //         }
+
+    //         return $sitemap->toResponse(request());
+    //     });
+    // }
+    public function siteMaps()
+    {
+        $xml = Cache::remember('sitemap_xml', 3600, function () {
+            $siteURL = "https://shoppingzonebd.com.bd";
+            $sitemap = Sitemap::create();
+
+            // Home Page
+            $sitemap->add(
+                Url::create($siteURL . '/')
+                    ->setLastModificationDate(now())
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                    ->setPriority(1.0)
+            );
+
+            // Contact Page
+            $sitemap->add(
+                Url::create($siteURL . '/contacts')
+                    ->setLastModificationDate(now())
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                    ->setPriority(0.5)
+            );
+
+            // Category Pages - শুধু active
+            Category::where('home_status', 1)
+                ->get()
+                ->each(function ($category) use ($sitemap, $siteURL) {
+                    $sitemap->add(
+                        Url::create($siteURL . '/category/' . $category->slug)
+                            ->setLastModificationDate($category->updated_at ?? now())
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                            ->setPriority(0.8)
+                    );
+                });
+
+
+            Product::where('status', 1)
+                ->latest()
+                ->select(['slug', 'updated_at', 'thumbnail'])
+                ->chunk(200, function ($products) use ($sitemap, $siteURL) {
+                    foreach ($products as $product) {
+                        $url = Url::create($siteURL . '/product/' . $product->slug)
+                            ->setLastModificationDate($product->updated_at ?? now())
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                            ->setPriority(0.9);
+                        //
+                        if ($product->thumbnail) {
+                            $url->addImage(asset('assets/storage/product/thumbnail/' . $product->thumbnail));
+                        }
+
+                        $sitemap->add($url);
+                    }
+                });
+
+            return $sitemap->render();
+        });
+
+        return response($xml, 200)->header('Content-Type', 'application/xml');
+    }
+    public function htmlSitemap()
+    {
+        $categories = Category::where('status', 1)
+            ->select(['name', 'slug'])
+            ->get();
+
+        $blogs = Blog::where('status', 1)
+            ->latest()
+            ->select(['title', 'slug'])
+            ->limit(50)
+            ->get();
+
+        $brands = Brand::where('status', 1)
+            ->select(['name', 'slug'])
+            ->get();
+
+        $careers = Career::where('status', 1)
+            ->select(['title', 'slug'])
+            ->get();
+
+        return view('frontend.sitemap', compact(
+            'categories',
+            'blogs',
+            'brands',
+            'careers'
+        ));
+    }
+    public function featuredProducts()
+    {
+        $featured_products = Product::with(['reviews'])->active()
+            ->where('featured', 1)
+            ->latest()
+            ->paginate(20);
+        return view('web.products.featured_products', compact('featured_products'));
     }
 
     public function leads()
@@ -349,6 +493,26 @@ class FrontendController extends Controller
         $shop_products = $allProducts->paginate(30);
         return view('web.products.all_products', compact('shop_products'));
     }
+    public function newArrival(Request $request)
+    {
+        $allProducts = Product::with(['reviews'])->latest()->active();
+
+        $query = null;
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+            $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
+        }
+        $products = $query;
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('web.products._ajax-products', compact('products'))->render()
+            ], 200);
+        }
+        $shop_products = $allProducts->paginate(30);
+        return view('web.products.new_arrival_products', compact('shop_products'));
+    }
     public function specialProducts(Request $request)
     {
         $allProducts = Product::with(['reviews'])->where('discount', '>', 0)->active();
@@ -375,31 +539,13 @@ class FrontendController extends Controller
         $branchs = Branch::where('status', 1)->get();
         return view('web.outlets', compact('branchs'));
     }
-    public function searchOutlets(Request $request)
-    {
-        $name = $request->name;
-
-        $outlets = Branch::where(function ($query) use ($name) {
-            $query->where('name', 'like', "%$name%")
-                ->orWhere('address', 'like', "%$name%");
-        })
-            ->where('status', 1)
-            ->limit(10)
-            ->get();
-
-        $html = view('web.partials.outlet_search_result', compact('outlets', 'name'))->render();
-
-        return response()->json([
-            'result' => $html
-        ]);
-    }
     // blog front-end view
     public function blogs()
     {
-        $blogs = Blog::where('status', 1)->latest()->get();
-
+        $blogs = Blog::where('status', 1)->latest()->paginate();
+        $blogCategories = BlogCategory::where('status', 1)->get();
         if ($blogs) {
-            return view("web.blogs.blogs", compact("blogs"));
+            return view("web.blogs.blogs", compact("blogs", "blogCategories"));
         } else {
             return redirect()->route('/')->with("error", "file not found!");
         }
@@ -408,6 +554,8 @@ class FrontendController extends Controller
     {
         // insert views start
         $blog = Blog::where('slug', $slug)->firstOrFail();
+        $contentPromotion = BlogContentPromotion::first();
+        $contentProducts = Product::whereIn('id', json_decode($contentPromotion->products ?? '[]'))->get();
         $cookieName = 'blog_viewed_' . $blog->id;
         if (!request()->hasCookie($cookieName)) {
             $blog->increment('views');
@@ -422,7 +570,7 @@ class FrontendController extends Controller
             ->take(3)
             ->where("status", 1)
             ->get();
-        return view("web.blogs.blogDetails", compact("blog", "latest_blogs"));
+        return view("web.blogs.blogDetails", compact("blog", "latest_blogs", "contentPromotion", "contentProducts"));
     }
     public function viewWishlist()
     {
@@ -660,10 +808,9 @@ class FrontendController extends Controller
     }
     public function contact_store(Request $request)
     {
-        //recaptcha validation
+        // recaptcha validation
         $recaptcha = Helpers::get_business_settings('recaptcha');
         if (isset($recaptcha) && $recaptcha['status'] == 1) {
-
             try {
                 $request->validate([
                     'g-recaptcha-response' => [
@@ -690,23 +837,35 @@ class FrontendController extends Controller
         }
 
         $request->validate([
-            'mobile_number' => 'required',
-            'subject' => 'required',
-            'message' => 'required',
+            'name'          => 'required|string|max:100',
+            'email'         => 'required|email|max:100',
+            'mobile_number' => 'required|string|max:20',
+            'subject'       => 'required|string|max:255',
+            'message'       => 'required|string|max:1000',
         ], [
-            'mobile_number.required' => 'Mobile Number is Empty!',
-            'subject.required' => ' Subject is Empty!',
-            'message.required' => 'Message is Empty!',
-
+            'name.required'          => 'Name is required!',
+            'name.string'            => 'Name must be a string!',
+            'name.max'               => 'Name cannot exceed 100 characters!',
+            'email.required'         => 'Email is required!',
+            'email.email'            => 'Please enter a valid email address!',
+            'email.max'              => 'Email cannot exceed 100 characters!',
+            'mobile_number.required' => 'Mobile Number is required!',
+            'mobile_number.max'      => 'Mobile Number cannot exceed 20 characters!',
+            'subject.required'       => 'Subject is required!',
+            'subject.max'            => 'Subject cannot exceed 255 characters!',
+            'message.required'       => 'Message is required!',
+            'message.max'            => 'Message cannot exceed 1000 characters!',
         ]);
+
         $contact = new Contact();
-        $contact->name = $request->name;
-        $contact->email = $request->email;
+        $contact->name          = $request->name;
+        $contact->email         = $request->email;
         $contact->mobile_number = $request->mobile_number;
-        $contact->subject = $request->subject;
-        $contact->message = $request->message;
+        $contact->subject       = $request->subject;
+        $contact->message       = $request->message;
         $contact->save();
-        return back()->with('success', 'Your Message Send Successfully');
+
+        return back()->with('success', 'Your Message Sent Successfully');
     }
 
     public function about_us()

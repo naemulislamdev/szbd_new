@@ -2,6 +2,15 @@
 @section('title', 'Blogs')
 
 @push('styles')
+    <style>
+        #description+.ck-editor .ck-editor__editable {
+            min-height: 200px;
+        }
+
+        #meta_description+.ck-editor .ck-editor__editable {
+            min-height: 200px;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="container-fluid">
@@ -128,10 +137,9 @@
         $(document).ready(function() {
             $('#description').summernote();
             $('#meta_description').summernote();
-            // $('#metaDesc').summernote();
-
         });
     </script>
+
     <script>
         function readURL(input) {
             if (input.files && input.files[0]) {

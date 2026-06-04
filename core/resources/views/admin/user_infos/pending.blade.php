@@ -2,6 +2,11 @@
 @section('title', 'Pending User Infos')
 
 @push('styles')
+    <style>
+        table {
+            table-layout: fixed;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="container-fluid">
@@ -67,7 +72,6 @@
                                         <th>Status</th>
                                         <th>Product</th>
                                         <th>Type</th>
-                                        <th>Order Process</th>
                                         <th>Order Status</th>
                                         <th>Note</th>
                                         <th class="text-end">Action</th>
@@ -97,8 +101,29 @@
             const table = $('#szbd-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollX: false,
                 autoWidth: false,
+                columnDefs: [{
+                        targets: 0,
+                        width: "50px"
+                    },
+                    {
+                        targets: 2,
+                        width: "120px"
+                    },
+                    {
+                        targets: 3,
+                        width: "120px"
+                    },
+                    {
+                        targets: 4,
+                        width: "200px"
+                    },
+                    {
+                        targets: 8,
+                        width: "120px"
+                    },
+                ],
                 ajax: {
                     url: "{{ route('admin.userinfo.datatables', 'pending') }}",
                     data: function(d) {
@@ -111,44 +136,50 @@
                         data: 'DT_RowIndex',
                         orderable: false,
                         searchable: false,
-                        className: 'text-center p-1'
+                        className: 'text-center p-1',
+                        width: '20px'
                     },
                     {
-                        data: 'created_at'
+                        data: 'created_at',
+                        width: 'auto'
                     },
                     {
-                        data: 'name'
+                        data: 'name',
+                        width: '100px'
                     },
                     {
-                        data: 'phone'
-                    },
-                    {
-                        data: 'address'
-                    },
-                    {
-                        data: 'status'
-                    },
-                    {
-                        data: 'product_details'
-                    },
-                    {
-                        data: 'type'
-                    },
-                    {
-                        data: 'order_process',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'order_status',
+                        data: 'phone',
                         width: '120px'
                     },
                     {
-                        data: 'order_note'
+                        data: 'address',
+                        width: '120px'
+                    },
+                    {
+                        data: 'status',
+                        width: 'auto'
+                    },
+                    {
+                        data: 'product_details',
+                        width: 'auto'
+                    },
+                    {
+                        data: 'type',
+                        width: 'auto'
+                    },
+                    {
+                        data: 'order_status',
+                        width: '120px' // 👉 fixed
+                    },
+                    {
+                        data: 'order_note',
+                        width: 'auto'
                     },
                     {
                         data: 'action',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        width: 'auto'
                     }
                 ],
 

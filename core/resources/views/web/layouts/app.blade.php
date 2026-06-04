@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+
     {{-- meta info --}}
     <title>
         @yield('title', 'Premium Clothing & Original Skincare BD | ' . $web_config['name']->value)
@@ -16,6 +17,22 @@
     <meta name="theme-color" content="#0d6efd">
     <link rel="apple-touch-icon" href="{{ asset('assets/default/icons/szbd.png') }}">
 
+    <!-- base -->
+    <base href="https://shoppingzonebd.com.bd/" />
+
+    <!-- Meta -->
+    <meta name="language" content="en" />
+    <meta http-equiv="Content-Language" content="en" />
+    <meta name="coverage" content="Worldwide" />
+    <meta name="distribution" content="Global" />
+    <meta name="robots" content="all" />
+    <meta name="googlebot" content="all" />
+    <meta name="googlebot-news" content="all" />
+    <meta name="Developer" content="Md. Naemul islam, Md. Naim Howlader" />
+    <meta name="Developed By" content="Asmi IT Solution" />
+
+    <meta name="author" content="Shopping Zone BD" />
+    <meta name="identifier-URL" content="https://shoppingzonebd.com.bd/" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!--<meta name="google-site-verification" content="xOGzRa1l3C3m53eRDwIa2qAgUrrO-93lo2toQtsYbr4" />-->
@@ -33,6 +50,7 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/animate.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/xzoom.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/swiper-bundle.min.css" />
+
     <!-- Owl-carosul css cdn link -->
     <link rel="stylesheet" href="{{ asset('assets/default') }}/toastr/toastr.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/frontend') }}/css/owl.carousel.min.css" />
@@ -50,9 +68,75 @@
     <!-- bootstrap icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     {{-- dont touch this --}}
+
     @stack('css_or_js')
+    {{-- json id start --}}
+    @verbatim
+        <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+            "@type": "WebSite",
+            "name": "Shopping Zone BD",
+            "url": "https://shoppingzonebd.com.bd/",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://shoppingzonebd.com.bd/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+            },
+            {
+            "@type": "ItemList",
+            "itemListElement": [
+                {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Shop",
+                "url": "https://shoppingzonebd.com.bd/shop",
+                "description": "Browse all our premium collections in one place."
+                },
+                {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "WOMEN'S CLOTHING",
+                "url": "https://shoppingzonebd.com.bd/category/womens-clothing",
+                "description": "Trendy and exclusive outfits for women."
+                },
+                {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "SKIN CARE & BEAUTY",
+                "url": "https://shoppingzonebd.com.bd/category/skin-care-beauty",
+                "description": "Premium essentials for healthy, glowing, and radiant skin."
+                },
+                {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Our Outlets",
+                "url": "https://shoppingzonebd.com.bd/outlets",
+                "description": "Find your nearest Shopping Zone BD store."
+                },
+                {
+                "@type": "ListItem",
+                "position": 5,
+                "name": "Wholesale",
+                "url": "https://shoppingzonebd.com.bd/wholesale",
+                "description": "Get high-quality products at bulk factory rates."
+                }
+            ]
+            }
+        ]
+        }
+    </script>
+    @endverbatim
+    {{-- json id end --}}
     <meta name="_token" content="{{ csrf_token() }}">
     <style>
+        body {
+            padding-right: 0 !important;
+        }
+
         td.order_status {
             display: inline-block;
             width: 120px;
@@ -257,6 +341,7 @@
             position: fixed;
             right: 0;
             bottom: 14%;
+            margin-bottom: 10px;
             z-index: 9999;
             text-align: center;
             border-radius: 40px;
@@ -296,15 +381,24 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+
+            /* Default: hidden, no height */
+            max-height: 0;
+            overflow: hidden;
             opacity: 0;
-            transform: translateY(10px) scale(0.95);
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
             pointer-events: none;
-            transition: all 0.3s ease;
+            transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
         }
 
         .chat-wrapper.active .chat-box {
+            max-height: 300px;
+            /* যথেষ্ট বড় value */
             opacity: 1;
-            transform: translateY(0) scale(1);
+            padding: 12px;
+            margin-bottom: 14px;
             pointer-events: auto;
         }
 
@@ -474,64 +568,85 @@
 
         #topcontrol {
             bottom: 65px !important;
-            z-index: 1;
-
+            z-index: 100;
         }
+
+        /* Cart Offcanvas offcanvas */
+        body:has(#shoppingCartOffcanvas.show) .modal-backdrop {
+            display: none !important;
+        }
+
+        body:has(#shoppingCartOffcanvas.show) {
+            overflow: auto !important;
+        }
+
+        /* sticky cart checkout and subtotal */
+        #shoppingCartOffcanvas {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        #shoppingCartOffcanvas .offcanvas-header {
+            flex-shrink: 0;
+        }
+
+        #shoppingCartOffcanvas .offcanvas-body {
+            flex: 1 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+        }
+
+        #shoppingCartOffcanvas .offcanvas-body>.row {
+            height: 100%;
+            margin: 0;
+        }
+
+        #shoppingCartOffcanvas .offcanvas-body>.row>.col {
+            height: 100%;
+            padding: 0;
+        }
+
+        #shoppingCartOffcanvas .offcanva-search-title {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        #shoppingCartOffcanvas .cart-items-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            min-height: 0;
+        }
+
+        #shoppingCartOffcanvas .cart-header-bottom-box {
+            flex-shrink: 0;
+            background: #fff;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        #shoppingCartOffcanvas .empty-cart-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 30px;
+        }
+
+        /*
+            ja ja change korchi
+
+            1. app nicher css 2. cart.blade.php
+         */
     </style>
 
     @php
         $request = request()->route()->getName();
     @endphp
-
-    @php($google_tag_manager_id = \App\CPU\Helpers::get_business_settings('google_tag_manager_id'))
-    @if ($google_tag_manager_id)
-        <!-- Google Tag Manager -->
-        <script>
-            (function(w, d, s, l, i) {
-                w[l] = w[l] || [];
-                w[l].push({
-                    'gtm.start': new Date().getTime(),
-                    event: 'gtm.js'
-                });
-                var f = d.getElementsByTagName(s)[0],
-                    j = d.createElement(s),
-                    dl = l != 'dataLayer' ? '&l=' + l : '';
-                j.async = true;
-                j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-                f.parentNode.insertBefore(j, f);
-            })(window, document, 'script', 'dataLayer', '{{ $google_tag_manager_id }}');
-        </script>
-        <!-- End Google Tag Manager -->
-    @endif
-
-    @php($pixel_analytices_user_code = \App\CPU\Helpers::get_business_settings('pixel_analytics'))
-    <!-- Meta Pixel Code -->
-    <script>
-        ! function(f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-            n = f.fbq = function() {
-                n.callMethod ?
-                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s)
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1051858697046572');
-        fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=1051858697046572&ev=PageView&noscript=1" /></noscript>
-    <!-- End Meta Pixel Code -->
 
     <!-- TikTok Pixel Code Start  New-->
     <script>
@@ -568,20 +683,6 @@
     </script>
     <!-- TikTok Pixel Code End -->
 
-    <!-- Google tag (gtag.js) new added -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-382728824"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'AW-382728824');
-    </script>
-
-
     <!-- Google Tag Manager -->
     <script>
         (function(w, d, s, l, i) {
@@ -599,32 +700,42 @@
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-WQ6FD77Z');
     </script>
-    <!-- End Google Tag Manager -->
+    <!-- End Google Tag Manager -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'page_view',
+            'event_id': '{{ uniqid('pv_') }}',
+            'event_time': Math.round(new Date().getTime() / 1000),
+            '_fbp': (document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)') || [])[2] || '',
+            '_fbc': (document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)') || [])[2] || ''
+        });
+    </script>
 
 
 </head>
 <!-- Body-->
 
-<body class="toolbar-enabled">
+<body class="toolbar-enabled " id="body-div">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ6FD77Z" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <!-- End Google Tag Manager (noscript) -->
     <section class="topbar-section">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <div class="d-flex align-items-center">
-                        <img style="width: 40px;" src="{{ asset('assets/frontend/images/logo/whatsapp.png') }}"
+                        <img style="width: 40px;" src="{{ asset('assets/frontend/images/logo/icon-wa.png') }}"
                             alt="whatsapp icon">
-                        <div class="ml-2">
-                            <a class=" text-white text-small d-block" target="_blank" title="Go Whatsapp"
-                                style="font-size: 15px; font-weight: 600"
+                        <div class="ml-2 d-flex gx-3">
+                            <a class="h3 mb-0 text-white text-small d-block" target="_blank" title="Go Whatsapp"
+                                style="font-size: 18px; font-weight: 600"
                                 href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
                                 01406-667669
                             </a>
-                            <a class=" text-white text-small" target="_blank" title="Go Whatsapp"
-                                style="font-size: 15px; font-weight: 600 "
+                            <a class="h3 mb-0 ml-4 text-white text-small" target="_blank" title="Go Whatsapp"
+                                style="font-size: 18px; font-weight: 600 "
                                 href="https://wa.me/8801805035050?text=Is%20anyone%20available%20to%20chat%3F">
                                 01805-035050
                             </a>
@@ -661,7 +772,6 @@
     <!------Search canva-->
     @include('web.layouts.partials.offcanvas')
     <!------End shopping cart canva-->
-    <!------shopping cart shopping cart canva-->
     <!------shopping cart canva-->
 
     <div class="offcanvas offcanvas-end" tabindex="-1" id="shoppingCartOffcanvas"
@@ -673,7 +783,7 @@
         <div class="offcanvas-body">
             <div class="row mb-3">
                 <div class="col">
-                    <div class="offcanva-search-title" id="cart_items">
+                    <div class="offcanva-search-title " id="cart_items">
                         @include('web.layouts.partials.cart')
                     </div>
                 </div>
@@ -794,12 +904,12 @@
     <script src="{{ asset('assets/frontend') }}/js/scrolltotop.js"></script>
 
     <script src="{{ asset('assets/frontend') }}/js/sweet_alert.js"></script>
+
     <script src="{{ asset('assets/frontend') }}/js/swiper-bundle.min.js"></script>
-
-
 
     {{-- Toastr --}}
     <script src={{ asset('assets/default/toastr/toastr.min.js') }}></script>
+    <script src="{{ asset('assets/frontend/js/custome.js') }}?v=1.0"></script>
     <script>
         toastr.options = {
             "timeOut": "500", // 2 second por auto hide
@@ -828,7 +938,7 @@
     @endif
 
     <!-- multi social toggle and drag and drop-->
-    <script src="{{ asset('assets/frontend/js/custome.js') }}?v={{ time() }}"></script>
+
 
     <script>
         var mainurl = "{{ url('/') }}";
@@ -1000,7 +1110,7 @@
 
             $.ajaxSetup({
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
 
@@ -1030,34 +1140,54 @@
                         return;
                     }
 
+                    // modal hide
+                    $('#addToCartModal_' + response.data.id).removeClass('show');
+                    $('#addToCartModal_' + response.data.id).css('display', 'none');
+
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+
                     // ✅ Success
                     toastr.success('Item has been added to your cart');
 
                     $('.total_cart_count').text(response.count);
                     updateNavCart();
 
-                    // 🔥 GA4 DATALAYER
+                    // DATALAYER
                     if (response.product) {
-                        window.dataLayer = window.dataLayer || [];
-                        dataLayer.push({
-                            ecommerce: null
-                        }); // clear previous
+                        var fbp = (document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)') || [])[2] || '';
+                        var fbc = (document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)') || [])[2] || '';
 
-                        dataLayer.push({
-                            event: "add_to_cart",
-                            ecommerce: {
-                                currency: "BDT",
-                                value: (response.product.price * response.product.quantity).toFixed(2),
-                                items: [{
-                                    item_id: response.product.id,
-                                    item_name: response.product.name,
-                                    item_brand: response.product.brand || "",
-                                    item_category: response.product.category || "",
-                                    item_variant: response.product.variant || "",
-                                    price: parseFloat(response.product.price),
-                                    quantity: parseInt(response.product.quantity)
+                        // GA4
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({
+                            'event': 'add_to_cart',
+                            '_fbp': fbp,
+                            '_fbc': fbc,
+                            'ecommerce': {
+                                'currency': 'BDT',
+                                'value': response.product.price,
+                                'items': [{
+                                    'item_id': response.product.id,
+                                    'item_name': response.product.name,
+                                    'price': response.product.price,
+                                    'quantity': response.product.quantity,
+                                    'item_category': response.product.category,
+                                    'content_type': 'product'
                                 }]
                             }
+                        });
+
+                        // Meta Pixel
+                        fbq('track', 'AddToCart', {
+                            currency: 'BDT',
+                            value: response.product.price,
+                            content_ids: [response.product.id],
+                            content_name: response.product.name,
+                            content_type: 'product',
+                            content_category: response.product.category,
+                            x_fb_ck_fbp: fbp,
+                            x_fb_ck_fbc: fbc
                         });
                     }
 
@@ -1065,7 +1195,12 @@
                         window.location.href = "{{ route('checkout') }}";
                     }
                 },
-                error: function() {
+                error: function(e) {
+                    // if csrf token mictchmacth then page auto reload
+                    if (e.status === 419) {
+                        location.reload();
+                    }
+
                     $('#loading').hide();
                     Swal.fire('Error', 'Something went wrong!', 'error');
                 }
@@ -1245,39 +1380,7 @@
             @endforeach
         </script>
     @endif
-    {{-- outlet search --}}
-    <script>
-        jQuery(".outlet-search-input").keyup(function() {
-            let name = $(this).val();
 
-            if (name.length > 1) {
-                $(".search-card").show();
-
-                $.get({
-                    url: "{{ route('outlet.search') }}",
-                    dataType: "json",
-                    data: {
-                        name: name
-                    },
-
-                    beforeSend: function() {
-                        $('#loading').show();
-                    },
-
-                    success: function(data) {
-                        $('.search-result-box').html(data.result);
-                    },
-
-                    complete: function() {
-                        $('#loading').hide();
-                    }
-                });
-            } else {
-                $('.search-result-box').empty();
-                $(".search-card").hide(); // important
-            }
-        });
-    </script>
     <script>
         function couponCode() {
             $.ajaxSetup({
@@ -1415,17 +1518,7 @@
         });
     </script>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMPYP8JY4C"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'G-CMPYP8JY4C');
-    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const lazyImages = document.querySelectorAll(".lazy-image");
@@ -1471,17 +1564,7 @@
 
         });
     </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/laravel12/szbd_new/service-worker.js')
-                .then(function(reg) {
-                    console.log("SW registered");
-                })
-                .catch(function(err) {
-                    console.log("SW failed", err);
-                });
-        }
-    </script>
+
 
     @stack('scripts')
 

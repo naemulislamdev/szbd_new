@@ -1,45 +1,47 @@
 @if (session()->has('cart') && count(session()->get('cart')) > 0)
     @php($sub_total = 0)
     @php($total_tax = 0)
-    @foreach (session('cart') as $keyId => $cartItem)
-        <div class="header-cart-product d-flex mb-3">
-            <div class="img">
-                @if ($cartItem['color_image'])
-                    <img src="{{ $cartItem['color_image'] }}" alt="Product image">
-                @else
-                    <img src="{{ asset('assets/storage/product/thumbnail') }}/{{ $cartItem['thumbnail'] }}"
-                        alt="Product image">
-                @endif
-            </div>
-            <div class="header-cart-p-details">
-                <h5>{{ Str::limit($cartItem['name'], 30) }}</h5>
 
+    {{-- Scrollable items --}}
+    <div class="cart-items-wrapper">
+        @foreach (session('cart') as $keyId => $cartItem)
+            <div class="header-cart-product d-flex mb-3">
+                <div class="img">
+                    @if ($cartItem['color_image'])
+                        <img src="{{ $cartItem['color_image'] }}" alt="Product image">
+                    @else
+                        <img src="{{ asset('assets/storage/product/thumbnail') }}/{{ $cartItem['thumbnail'] }}"
+                            alt="Product image">
+                    @endif
+                </div>
+                <div class="header-cart-p-details">
+                    <h5>{{ Str::limit($cartItem['name'], 30) }}</h5>
 
-                @if (!empty($cartItem['variations']))
-                    @foreach ($cartItem['variations'] as $key => $variation)
-                        <span>{{ $key }} : {{ $variation }}</span>
-                    @endforeach
-                @endif
-                <p>{{ ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'] }}
-                </p>
-                <a href="#" onclick="removeFromCart({{ $keyId }})"><i class="fa fa-trash"></i></a>
+                    @if (!empty($cartItem['variations']))
+                        @foreach ($cartItem['variations'] as $key => $variation)
+                            <span>{{ $key }} : {{ $variation }}</span>
+                        @endforeach
+                    @endif
+                    <p>{{ ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'] }}</p>
+                    <a href="javascript:void(0)" onclick="removeFromCart({{ $keyId }})">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-        @php($sub_total += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'])
-        @php($total_tax += $cartItem['tax'] * $cartItem['quantity'])
-    @endforeach
+            @php($sub_total += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'])
+            @php($total_tax += $cartItem['tax'] * $cartItem['quantity'])
+        @endforeach
+    </div>
+
+    {{-- Fixed bottom --}}
     <div class="cart-header-bottom-box">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="cart-header-subtotal d-flex justify-content-between">
-                    <h4>Subtotal</h4>
-                    <h4>{{ $sub_total }}</h4>
-                </div>
-                <div class="button-section d-flex">
-                    <a href="#">View Cart</a>
-                    <a href="{{ route('checkout') }}">Check Out</a>
-                </div>
-            </div>
+        <div class="cart-header-subtotal d-flex justify-content-between">
+            <h4>Subtotal</h4>
+            <h4>{{ $sub_total }}</h4>
+        </div>
+        <div class="button-section d-flex">
+            <a href="#">View Cart</a>
+            <a href="{{ route('checkout') }}">Check Out</a>
         </div>
     </div>
 @else

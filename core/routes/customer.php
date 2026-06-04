@@ -38,7 +38,7 @@ Route::prefix('/customer')->as('customer.')->group(function () {
     });
     Route::get('/complain', [ComplainController::class, 'customerComplain'])->name('complain');
 
-    Route::post('/complain/store', [ComplainController::class, 'customerComplainStore'])->name('complain.store');
+    Route::post('/customer-complain/store', [ComplainController::class, 'customerComplainStore'])->name('complain.store');
 
     Route::prefix('/payment-mobile')->group(function () {
         Route::get('/', [PaymentController::class, 'payment'])->name('payment-mobile');

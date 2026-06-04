@@ -95,6 +95,8 @@
                             </li>
                             <li><a href="{{ route('shop') }}">Shop</a>
                             </li>
+                            <li><a href="{{ route('newArrival') }}">New Arrival</a>
+                            </li>
                             <li><a href="{{ route('video_shopping') }}">video shopping</a>
                             </li>
 
@@ -286,6 +288,12 @@
                 <div class="menu-link">
                     <a href="{{ route('shop') }}"><i class="fa fa-ptab3 mr-2"></i>
                         Shop</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('newArrival') }}"><i class="fa fa-ptab3 mr-2"></i>
+                        New Arrival</a>
                 </div>
             </div>
             <div class="menu-box">

@@ -20,9 +20,11 @@
                 <div class="discount-box float-end">
                     <span>
                         @if ($product->discount_type == 'percent')
-                            {{ $product->discount }}%
+                            {{ $product->discount }}% <br>
+                            Off
                         @elseif($product->discount_type == 'flat')
-                            {{ $product->discount }}৳
+                            {{ $product->discount }}৳ <br>
+                            Off
                         @endif
                     </span>
                 </div>

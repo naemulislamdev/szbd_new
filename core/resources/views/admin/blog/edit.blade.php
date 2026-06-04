@@ -2,6 +2,15 @@
 @section('title', 'Blogs')
 
 @push('styles')
+    <style>
+        #description+.ck-editor .ck-editor__editable {
+            min-height: 300px;
+        }
+
+        #meta_description+.ck-editor .ck-editor__editable {
+            min-height: 120px;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="container-fluid">

@@ -85,7 +85,9 @@ class EmplyeeController extends Controller
         data-name="' . $row->name . '"
         data-mobile="' . $row->phone . '"
         data-email="' . $row->email . '"
-        data-role="' . $row->getRoleNames()->join(', ') . '"
+        data-role="' . $row->admin_role_id . '"
+
+
         data-branch="' . ($row->branch ? $row->branch->id : '') . '"
         data-date="' . $row->created_at->format('d M Y h:i A') . '"
         data-status="' . ($row->status == 1 ? 'Seen' : 'Unseen') . '"

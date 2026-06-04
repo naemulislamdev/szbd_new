@@ -91,21 +91,34 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Branch Email</label>
                                 <input id="branchEmail" type="email" name="email" class="form-control"
-                                    placeholder="Branch Email" required>
+                                    placeholder="Branch Email">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">BranchPhone</label>
                                 <input id="branchPhone" type="phone" name="phone" class="form-control"
-                                    placeholder="Branch Phone" required>
+                                    placeholder="Branch Phone">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Branch Google Map Link </label>
-                                <input id="branchMap" type="url" name="map_url" class="form-control"
-                                    placeholder="EX: https://maps.app.goo.gl/" required>
+                                <input id="branchMap" type="text" name="map_url" class="form-control"
+                                    placeholder="EX: https://maps.app.goo.gl/">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Weekly Closing Day </label>
+                                <select name="closing_day" id="closingDay" class="form-select">
+                                    <option value="">None</option>
+                                    <option value="Sat">Saturday</option>
+                                    <option value="Sun">Sunday</option>
+                                    <option value="Mon">Monday</option>
+                                    <option value="Tue">Tuesday</option>
+                                    <option value="Wed">Wednesday</option>
+                                    <option value="Thu">Thursday</option>
+                                    <option value="Fri">Friday</option>
+                                </select>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Branch Address </label>
-                                <textarea name="address" id="address"></textarea>
+                                <textarea name="address" id="addressEdit"></textarea>
                             </div>
                         </div>
                     </div>
@@ -119,8 +132,8 @@
     </div>
 
     <!--  Add Modal -->
-    <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="categoryModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="categoryModal" data-bs-backdrop="static" tabindex="-1"
+        aria-labelledby="categoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <form id="categoryForm" enctype="multipart/form-data">
@@ -132,7 +145,7 @@
 
                     <div class="modal-body">
                         <div class="row">
-                            <input type="text" name="id" id="branchId">
+                            <input type="hidden" name="id" id="branchId">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Branch Name</label>
                                 <input required type="text" name="name" class="form-control"
@@ -142,21 +155,34 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Branch Email</label>
                                 <input required type="email" name="email" class="form-control"
-                                    placeholder="Branch Email" required value="{{ old('email') }}">
+                                    placeholder="Branch Email" value="{{ old('email') }}">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">BranchPhone</label>
-                                <input required type="phone" name="phone" class="form-control"
-                                    placeholder="Branch Phone" value="{{ old('phone') }}" required>
+                                <input type="phone" name="phone" class="form-control" placeholder="Branch Phone"
+                                    value="{{ old('phone') }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Branch Google Map Link </label>
-                                <input required type="url" name="map_url" class="form-control"
+                                <input type="text" name="map_url" class="form-control"
                                     placeholder="EX: https://maps.app.goo.gl/" value="{{ old('map_url') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Weekly Closing Day </label>
+                                <select name="closing_day" id="" class="form-select">
+                                    <option value="">None</option>
+                                    <option value="Sat">Saturday</option>
+                                    <option value="Sun">Sunday</option>
+                                    <option value="Mon">Monday</option>
+                                    <option value="Tue">Tuesday</option>
+                                    <option value="Wed">Wednesday</option>
+                                    <option value="Thu">Thursday</option>
+                                    <option value="Fri">Friday</option>
+                                </select>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Branch Address </label>
-                                <textarea name="address" id="address">{{ old('map_url') }}</textarea>
+                                <textarea name="address" id="addressAdd">{{ old('address') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -179,7 +205,12 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $('#address').summernote({
+            $('#addressAdd').summernote({
+                height: 150,
+                placeholder: 'Write Branch Address here...',
+
+            });
+            $('#addressEdit').summernote({
                 height: 150,
                 placeholder: 'Write Branch Address here...',
 
@@ -403,9 +434,12 @@
             $('#branchName').val(button.data('name'));
             $('#branchEmail').val(button.data('email'));
             $('#branchPhone').val(button.data('phone'));
+            $('#closingDay')
+                .val(button.data('closing_day'))
+                .trigger('change');
             let address = button.data('address');
 
-            $('#address').summernote('code', address);
+            $('#addressEdit').summernote('code', address);
             $('#branchMap').val(button.data('map_url'));
             // Form action dynamically set if needed
             $('#editForm').attr('action', '/admin/category/' + button.data('id') + '/update');

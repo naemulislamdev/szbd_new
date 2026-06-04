@@ -101,6 +101,29 @@
 
                             </div>
                             <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <h5 class="fw-bold">Customer Review</h5>
+                                    <label for="image-upload3">Upload Customer Review images
+                                    </label><span class="badge bg-danger">* (ratio) 400x650
+                                    </span>
+                                    <div class="upload-container mt-2 mb-3">
+                                        <input type="file" id="image-upload3" name="review_img[]" multiple
+                                            accept="image/*" class="custom-file-input form-control">
+
+                                    </div>
+                                    @error('review_img')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                    <div class="uploaded_image">
+                                        <h6>Uploaded Review Images</h6>
+                                        <div id="image-preview3" class="image-preview-container d-flex gap-3">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row mt-3">
                                 <h5 class="fw-bold">Feature of this product</h5>
                                 <div class="col-md-6">
                                     <label>Feature title <span class="text-danger">*</span></label>
@@ -121,20 +144,15 @@
                                     <label for="feature_image">Feature image
                                         Banner</label><span class="badge bg-danger">* (ratio) 400x650
                                     </span>
-                                    <div class="custom-file mb-3" style="text-align: left">
-                                        <input class="form-control" type="file" name="feature_image"
-                                            id="customFileUpload3" class="custom-file-input"
-                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-
+                                    <div class="upload-container mt-2 mb-3">
+                                        <input type="file" id="image-upload2" name="feature_image[]" multiple
+                                            accept="image/*" class="custom-file-input form-control">
+                                        <div id="image-preview2" class="image-preview-container d-flex gap-3"></div>
                                     </div>
                                     @error('feature_image')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                    <div style="text-align:center;">
-                                        <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
-                                            id="viewer3"
-                                            src="{{ asset('public\assets\back-end\img\1920x400\img1.jpg') }}" />
-                                    </div>
+
                                 </div>
                                 <div class="col-md-12 mt-3">
                                     <div>
@@ -182,23 +200,6 @@
                 allowClear: true,
                 width: '100%'
             });
-        });
-    </script>
-
-    <script>
-        function readURL3(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    $('#viewer3').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        $("#customFileUpload3").change(function() {
-            readURL3(this);
         });
     </script>
     <script>
@@ -430,6 +431,98 @@
             // re-index remaining previews
             $('#imagePreviewContainer div').each(function(i, el) {
                 $(el).find('span').attr('data-index', i);
+            });
+        });
+    </script>
+    <script>
+        // featured image upload script
+        $(document).ready(function() {
+            const previewContainer = $("#image-preview2");
+            $("#image-upload2").on("change", function(event) {
+                previewContainer.empty(); // Clear existing previews
+                const files = event.target.files;
+
+                if (files) {
+                    $.each(files, function(index, file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
+                         <div class="preview-item">
+                             <img src="${e.target.result}" class="preview-image">
+                             <button type="button" class="btn btn-danger btn-sm remove-icon" data-index="${index}">&#10005;</button>
+                         </div>
+                     `);
+                            previewContainer.append(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+
+            // Handle image removal
+            previewContainer.on("click", ".remove-icon", function() {
+                const indexToRemove = $(this).data("index");
+                $(this).parent().remove();
+                // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
+                const input = document.getElementById("image-upload2");
+                const dataTransfer = new DataTransfer();
+                const files = input.files;
+
+                // Add all files except the one to be removed
+                for (let i = 0; i < files.length; i++) {
+                    if (i !== indexToRemove) {
+                        dataTransfer.items.add(files[i]);
+                    }
+                }
+
+                // Update the input files
+                input.files = dataTransfer.files;
+            });
+        });
+    </script>
+    <script>
+        // customer review image upload script
+        $(document).ready(function() {
+            const previewContainer = $("#image-preview3");
+            $("#image-upload3").on("change", function(event) {
+                previewContainer.empty(); // Clear existing previews
+                const files = event.target.files;
+
+                if (files) {
+                    $.each(files, function(index, file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
+                         <div class="preview-item">
+                             <img src="${e.target.result}" class="preview-image">
+                             <button type="button" class="btn btn-danger btn-sm remove-icon" data-index="${index}">&#10005;</button>
+                         </div>
+                     `);
+                            previewContainer.append(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+
+            // Handle image removal
+            previewContainer.on("click", ".remove-icon", function() {
+                const indexToRemove = $(this).data("index");
+                $(this).parent().remove();
+                // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
+                const input = document.getElementById("image-upload3");
+                const dataTransfer = new DataTransfer();
+                const files = input.files;
+
+                // Add all files except the one to be removed
+                for (let i = 0; i < files.length; i++) {
+                    if (i !== indexToRemove) {
+                        dataTransfer.items.add(files[i]);
+                    }
+                }
+
+                // Update the input files
+                input.files = dataTransfer.files;
             });
         });
     </script>

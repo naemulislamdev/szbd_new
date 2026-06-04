@@ -103,11 +103,70 @@
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
-                            <div class="row">
+                            {{-- <div class="row">
+                                @php
+                                    $cartAddedTotalPrice = 0;
+                                    if (session()->has('cart') && count(session()->get('cart')) > 0) {
+                                        foreach (session('cart') as $key => $cartItem) {
+                                            $itemTotal =
+                                                $cartItem['price'] * $cartItem['quantity'] -
+                                                $cartItem['quantity'] * $cartItem['discount'];
+                                            $cartAddedTotalPrice += $itemTotal;
+                                        }
+                                    }
+                                @endphp
                                 <div class="col-md-12">
                                     <label class="d-block mb-2">আপনার এরিয়া সিলেক্ট করুন</label>
+
                                     <div class="row">
                                         @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
+                                            <div class="col-md-4">
+                                                <label class="shipping-box">
+                                                    <input type="radio" name="shipping_area"
+                                                        value="{{ $shipping['id'] }}"
+                                                        {{ $shipping['cost'] == 0 ? 'checked' : '' }}
+                                                        onchange="set_shipping_id(this.value)"
+                                                        {{ session()->has('shipping_method_id') && session('shipping_method_id') == $shipping['id'] ? 'checked' : '' }}>
+                                                    <span class="shipping-title">
+                                                        {{ $shipping['title'] }}
+                                                    </span>
+                                                    <span class="shipping-cost">
+                                                        {{ $shipping['cost'] }}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div> --}}
+
+                            <div class="row">
+                                {{-- free delivery calculation php block --}}
+                                @php
+                                    $cartAddedTotalPrice = 0;
+                                    if (session()->has('cart') && count(session()->get('cart')) > 0) {
+                                        foreach (session('cart') as $key => $cartItem) {
+                                            if ($cartItem['discount'] == 0) {
+                                                $itemTotal = $cartItem['price'] * $cartItem['quantity'];
+                                                $cartAddedTotalPrice += $itemTotal;
+                                            }
+                                        }
+                                    }
+
+                                    $shippingMethods = \App\Models\ShippingMethod::where(['status' => 1])->get();
+
+                                    if ($cartAddedTotalPrice > 999) {
+                                        $shippingMethods = $shippingMethods->where('cost', 0);
+                                    } else {
+                                        $shippingMethods = $shippingMethods->where('cost', '>', 0);
+                                    }
+                                @endphp
+
+                                <div class="col-md-12">
+                                    <label class="d-block mb-2">আপনার এরিয়া সিলেক্ট করুন</label>
+
+                                    <div class="row">
+                                        {{-- @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
                                             <div class="col-md-6">
                                                 <label class="shipping-box">
                                                     <input type="radio" name="shipping_area"
@@ -122,7 +181,23 @@
                                                     </span>
                                                 </label>
                                             </div>
+                                        @endforeach --}}
+                                        @foreach ($shippingMethods as $shipping)
+                                            <div class="col-md-6">
+                                                <label class="shipping-box">
+                                                    <input type="radio" name="shipping_area"
+                                                        value="{{ $shipping['id'] }}"
+                                                        onchange="set_shipping_id(this.value)">
+                                                    <span class="shipping-title">
+                                                        {{ $shipping['title'] }}
+                                                    </span>
+                                                    <span class="shipping-cost">
+                                                        {{ $shipping['cost'] == 0 ? '' : '৳' . $shipping['cost'] }}
+                                                    </span>
+                                                </label>
+                                            </div>
                                         @endforeach
+
                                     </div>
                                 </div>
                             </div>
@@ -186,8 +261,9 @@
                                     <div class="col-md-6 mb-3">
                                         <div class="form-group">
                                             <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control auto-save check-phone" value="{{ old('phone') }}"
-                                                id="phone" name="phone" placeholder="ফোন নম্বর লিখুন">
+                                            <input type="number" class="form-control auto-save check-phone"
+                                                value="{{ old('phone') }}" id="phone" name="phone"
+                                                placeholder="ফোন নম্বর লিখুন">
                                             <span id="phoneFeedback" class="small text-danger"></span>
                                             @error('phone')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -210,7 +286,8 @@
 
                             </div>
                             <div class="sticky-btn ">
-                                <button type="submit" class="btn btn-primary float-right w-100">অর্ডার করুন</button>
+                                <button id="orderBtn" type="submit"
+                                    class="btn btn-primary float-right w-100">অর্ডার করুন</button>
                             </div>
                         </form>
                     </div>
@@ -225,7 +302,22 @@
         </div><!-- End .row -->
     </div>
 </div>
-<script></script>
+
+<script>
+    document
+        .getElementById('userInfoForm')
+        .addEventListener('submit', function() {
+
+            let btn = document.getElementById('orderBtn');
+
+            btn.disabled = true;
+
+            btn.innerHTML = `
+                অর্ডার করা হচ্ছে...
+                <span class="spinner-border spinner-border-sm"></span>
+            `;
+        });
+</script>
 
 <script>
     function set_shipping_id(id) {
@@ -267,25 +359,39 @@
     }
 </script>
 
+@php
+    $checkoutTotal = 0;
+    $cartItems = session('cart', []);
+    foreach ($cartItems as $cartItem) {
+        $checkoutTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
+    }
+    $cartArray = is_array($cartItems) ? $cartItems : $cartItems->toArray();
+    $firstItem = reset($cartArray);
+@endphp
+
 @if (session()->has('cart') && count(session()->get('cart')) > 0)
     <script>
-        window.dataLayer = window.dataLayer || [];
+        var fbp = (document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)') || [])[2] || '';
+        var fbc = (document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)') || [])[2] || '';
 
-        dataLayer.push({
-            event: "begin_checkout",
-            ecommerce: {
-                currency: "BDT",
-                value: {{ $gTotal }},
-                items: [
-                    @foreach (session('cart') as $item)
+        // GA4
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'begin_checkout',
+            '_fbp': fbp,
+            '_fbc': fbc,
+            'ecommerce': {
+                'currency': 'BDT',
+                'value': {{ $checkoutTotal }},
+                'items': [
+                    @foreach ($cartArray as $item)
                         {
-                            item_id: "{{ $item['id'] }}",
-                            item_name: "{{ $item['name'] }}",
-                            item_brand: "{{ $item['brand'] ?? '' }}",
-                            item_category: "{{ $item['category'] ?? '' }}",
-                            item_variant: "{{ $item['variant'] ?? '' }}",
-                            price: {{ $item['price'] - $item['discount'] }},
-                            quantity: {{ $item['quantity'] }}
+                            'item_id': '{{ $item['id'] }}',
+                            'item_name': '{{ addslashes($item['name']) }}',
+                            'item_category': '{{ $item['category'] ?? '' }}'
+                            'price': {{ $item['price'] - $item['discount'] }},
+                            'quantity': {{ $item['quantity'] }},
+                            'content_type': 'product'
                         }
                         @if (!$loop->last)
                             ,
@@ -294,5 +400,63 @@
                 ]
             }
         });
+
+        // Meta Pixel
+        fbq('track', 'InitiateCheckout', {
+            currency: 'BDT',
+            value: {{ $checkoutTotal }},
+            content_type: 'product',
+            content_name: '{{ addslashes($firstItem['name'] ?? '') }}',
+            content_ids: [
+                @foreach ($cartArray as $item)
+                    '{{ $item['id'] }}'
+                    @if (!$loop->last)
+                        ,
+                    @endif
+                @endforeach
+            ],
+            x_fb_cd_content_category: '{{ $firstItem['category'] ?? '' }}'
+            x_fb_ck_fbp: fbp,
+            x_fb_ck_fbc: fbc,
+            contents: [
+                @foreach ($cartArray as $item)
+                    {
+                        id: '{{ $item['id'] }}',
+                        quantity: {{ $item['quantity'] }},
+                        item_price: {{ $item['price'] - $item['discount'] }}
+                    }
+                    @if (!$loop->last)
+                        ,
+                    @endif
+                @endforeach
+            ],
+            num_items: {{ collect($cartArray)->sum('quantity') }}
+        });
+
+        // TikTok Pixel
+        ttq.track('InitiateCheckout', {
+            contents: [
+                @foreach ($cartArray as $item)
+                    {
+                        content_id: '{{ $item['id'] }}',
+                        content_type: 'product',
+                        content_name: '{{ addslashes($item['name']) }}',
+                        quantity: {{ $item['quantity'] }},
+                        price: {{ $item['price'] - $item['discount'] }}
+                    }
+                    @if (!$loop->last)
+                        ,
+                    @endif
+                @endforeach
+            ],
+            value: {{ $checkoutTotal }},
+            currency: 'BDT'
+        });
+    </script>
+    @php
+        $firstCartItem = collect(session('cart'))->first();
+    @endphp
+    <script>
+        console.log(<?php echo json_encode($firstCartItem); ?>);
     </script>
 @endif

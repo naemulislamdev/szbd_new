@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('maintenance-mode', [FrontendController::class, 'maintenance_mode'])->name('maintenance-mode');
 
-Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function () {
+Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
         Route::get('/', 'home')->name('home');
         Route::get('/category', 'category')->name('category');
         Route::get('/product-details', 'productDeails')->name('product.details');
         Route::get('/shop', 'shop')->name('shop');
+        Route::get('/new-arrivals', 'newArrival')->name('newArrival');
         Route::get('/outlets', 'outlets')->name('outlets');
-        Route::get('/searched-outlets',  'searchOutlets')->name('outlet.search');
         Route::get('/checkout', 'checkout')->name('checkout');
         Route::get('/special-offers', 'specialProducts')->name('offers.product');
         Route::post('/client-review', 'clientReview')->name('client_review');
@@ -37,7 +37,9 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
         Route::get('/careers', 'careers')->name('careers');
         Route::get('/offers/{slug}', 'discountOffers')->name('discount.offers');
         Route::get('/offers-promotions/{slug}', 'eidOffers')->name('eid.offers');
+        // sitemap
         Route::get('/sitemap.xml', 'siteMaps')->name('sitemap');
+        Route::get('/sitemap', 'htmlSitemap')->name('sitemap.page');
         // single landing page route
         Route::get('/page/{slug}', 'singleProductLandingPage')
             ->name('single.landing_page');
@@ -99,8 +101,8 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
         Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
         Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
 
-        //maintaince mode
-
+        // all featured products
+        Route::get('/featured-products', 'featuredProducts')->name('featured.products');
     });
 
 
@@ -164,9 +166,7 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
     // chatting end
 
 });
-Route::get('/complain', [ComplainController::class, 'customerComplain'])->name('customer.complain');
 
-Route::post('/complain/store', [ComplainController::class, 'customerComplainStore'])->name('customer.complain.store');
 // facebook feed route
 Route::get('/feed/facebook', [FeedController::class, 'facebookFeed']);
 //check done

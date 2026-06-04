@@ -37,8 +37,42 @@
         <div class="container">
             {{-- Product Filter section --}}
             @include('web.layouts.partials.product_filter')
+            {{-- Breadcrumb start --}}
+            <nav class="breadcrumb custom-breadcrumb mt-2 mb-3 bg-white">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+
+                @if (!empty($data['cat']->name))
+                    @if (!empty($data['subCat']->name) || !empty($data['childCat']->name))
+                        <a class="breadcrumb-item" href="{{ route('category.products', $data['cat']->slug) }}">
+                            {{ $data['cat']->name }}
+                        </a>
+                    @else
+                        <span class="breadcrumb-item active" aria-current="page">{{ $data['cat']->name }}</span>
+                    @endif
+                @endif
+
+                @if (!empty($data['subCat']->name))
+                    @if (!empty($data['childCat']->name))
+                        <a class="breadcrumb-item"
+                            href="{{ route('category.products', [$data['cat']->slug, $data['subCat']->slug]) }}">
+                            {{ $data['subCat']->name }}
+                        </a>
+                    @else
+                        <span class="breadcrumb-item active" aria-current="page">{{ $data['subCat']->name }}</span>
+                    @endif
+                @endif
+
+                @if (!empty($data['childCat']->name))
+                    <span class="breadcrumb-item active" aria-current="page">{{ $data['childCat']->name }}</span>
+                @endif
+
+                @if (empty($data['cat']->name))
+                    <span class="breadcrumb-item active" aria-current="page">All Products</span>
+                @endif
+            </nav>
+            {{-- Breadcrumb End --}}
             {{-- Product grid system section --}}
-            <div class="row mb-3">
+            {{-- <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
                         <h1>
@@ -56,7 +90,7 @@
                     </div>
 
                 </div>
-            </div>
+            </div> --}}
 
             @if (count($products) > 0)
                 <div class="row " id="ajax-products">

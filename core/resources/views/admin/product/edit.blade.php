@@ -497,7 +497,7 @@
                                                     class="meta_img_preview_box d-block justify-content-center rounded  border-dashed border-theme-color overflow-hidden p-3">
                                                     <img class="preview-content"
                                                         src="{{ asset('assets/storage/product/meta/' . $product->meta_image) }}"
-                                                        alt="">
+                                                        alt="Meta image">
                                                 </div>
                                                 <input type="file" id="meta_img" name="meta_image" accept="image/*"
                                                     onchange={handleMetaImgChange()} hidden />
@@ -619,7 +619,7 @@
                                         <label>Size Chart</label><small style="color: red"> ( Optional )</small>
                                     </div>
                                     <div class="card mt-2">
-                                        <div class="card-body pt-0">
+                                        <div class="card-body pt-0 pb-0">
                                             <div class="d-grid">
                                                 <p class="text-muted pt-3">Upload your Product Size-chart image here,
                                                     Please
@@ -636,7 +636,16 @@
                                                 <label class="btn-upload btn btn-primary mt-3" for="size_chart">Upload
                                                     Image</label>
                                             </div>
+
                                         </div><!--end card-body-->
+                                        <div class="px-3 pb-2">
+                                            @if ($product->size_chart)
+                                                <a href="{{ route('admin.product.remove-size-chart', $product->id) }}"
+                                                    class="btn btn-danger mt-3 w-100">
+                                                    Remove Size Chart
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div><!--end card-->
                                 </div>
                             </div>
@@ -659,7 +668,7 @@
         aria-labelledby="exampleModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-dialog-centered">
-            <form action="" method="POST">
+            <form action="{{ route('admin.product.add.color') }}" method="POST">
                 @csrf
 
                 <div class="modal-content">

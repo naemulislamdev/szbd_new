@@ -51,12 +51,12 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-2">
-                                    <div class="form-group">
-                                        <label>Upload product images</label><small style="color: red">* ( ratio) 1:1
-                                        </small>
-                                    </div>
-                                    <div class="upload-container mt-4">
+                                <div class="col-md-6 mb-2 mt-3">
+
+                                    <label>Upload product images</label><small style="color: red">* ( ratio) 1:1
+                                    </small>
+
+                                    <div class="upload-container mt-2 mb-3">
                                         <input type="file" id="image-upload" name="images[]" multiple accept="image/*"
                                             class="custom-file-input form-control">
                                         <div id="image-preview" class="image-preview-container d-flex gap-3"></div>
@@ -78,12 +78,10 @@
 
                                                                 <div class="d-flex">
                                                                     <a href="{{ route('admin.landingpages.single.remove_image', ['id' => $landingPage->id, 'name' => $photo]) }}"
-                                                                        class="btn btn-danger btn-xs m-1">Remove</a>
+                                                                        class="btn btn-danger btn-xs m-1"><i
+                                                                            class="bi bi-trash-fill fs-5"></i> Remove</a>
 
-                                                                    <a class="btn btn-info btn-xs m-1"
-                                                                        href="javascript:void(0);"
-                                                                        onclick="copyImageUrl({{ $key }});">Copy
-                                                                        URL</a>
+
                                                                 </div>
 
                                                             </div>
@@ -118,6 +116,75 @@
                                 </div>
 
                             </div>
+                            {{-- Customer review image row --}}
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <h5 class="fw-bold">Customer Review</h5>
+                                    <label for="image-upload3">Upload Customer Review images
+                                    </label><span class="badge bg-danger">* (ratio) 400x650
+                                    </span>
+                                    <div class="upload-container mt-2 mb-3">
+                                        <input type="file" id="image-upload3" name="review_img[]" multiple
+                                            accept="image/*" class="custom-file-input form-control">
+
+                                    </div>
+                                    @error('review_img')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                    <div class="uploaded_images">
+                                        @php
+                                            $reviewImages = [];
+
+                                            $value = $landingPage['review_img'] ?? null;
+
+                                            if (!empty($value)) {
+                                                $decoded = json_decode($value, true);
+
+                                                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                                    $reviewImages = $decoded;
+                                                } else {
+                                                    $reviewImages = [$value];
+                                                }
+                                            }
+                                        @endphp
+                                        <h6>Uploaded Review Images</h6>
+                                        <div id="image-preview3" class="image-preview-container d-flex gap-3">
+
+                                        </div>
+                                        <div class="exsit-image-containe mt-3r">
+                                            <div class="row">
+                                                @if ($reviewImages)
+                                                    @foreach ($reviewImages as $key => $photo)
+                                                        <div class="col-md-6 mb-2">
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <img style="width: 100%" height="auto"
+                                                                        src="{{ asset('assets/storage/landingpage/' . $photo) }}"
+                                                                        alt="Product image">
+                                                                    <input type="text" disabled
+                                                                        value="{{ asset('assets/storage/landingpage/' . $photo) }}"
+                                                                        id="image-{{ $key }}">
+
+                                                                    <div class="d-flex">
+                                                                        <a href="{{ route('admin.landingpages.single.remove_review_image', ['id' => $landingPage->id, 'name' => $photo]) }}"
+                                                                            class="btn btn-danger btn-xs m-1"><i
+                                                                                class="bi bi-trash-fill fs-5"></i>
+                                                                            Remove</a>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            {{-- Customer Review image row --}}
                             <div class="row mt-3">
                                 <h5 class="fw-bold">Feature of this product</h5>
                                 <div class="col-md-6">
@@ -128,8 +195,9 @@
                                             @foreach (json_decode($landingPage->feature_list) as $list)
                                                 <div class="input-group mb-3">
 
-                                                    <input type="text" class="form-control" value="{{ $list }}"
-                                                        name="feature_title[]" placeholder="Enter value">
+                                                    <input type="text" class="form-control"
+                                                        value="{{ $list }}" name="feature_title[]"
+                                                        placeholder="Enter value">
                                                     <a href="javascript:void(0);" class="btn btn-danger delete-existing"
                                                         data-value="{{ $list }}">Delete</a>
                                                 </div>
@@ -143,24 +211,51 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
+                                    @php
+                                        $featureImages = json_decode($landingPage['feature_img'], true);
+
+                                        if (!$featureImages) {
+                                            $featureImages = [$landingPage['feature_img']];
+                                        }
+                                    @endphp
                                     <label for="feature_image">Feature image
                                         Banner</label><span class="badge bg-danger">* (ratio) 400x650
                                     </span>
-                                    <div class="custom-file mb-3" style="text-align: left">
-                                        <input class="form-control" type="file" name="feature_image"
-                                            id="customFileUpload3" class="custom-file-input"
-                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                    <div class="upload-container mt-2 mb-3">
+                                        <input type="file" id="image-upload2" name="feature_image[]" multiple
+                                            accept="image/*" class="custom-file-input form-control">
+                                        <div id="image-preview2" class="image-preview-container d-flex gap-3"></div>
+                                    </div>
+                                    <div class="exsit-image-containe mt-3r">
+                                        <div class="row">
+                                            @if ($featureImages)
+                                                @foreach ($featureImages as $key => $photo)
+                                                    <div class="col-md-6 mb-2">
+                                                        <div class="card">
+                                                            <div class="card-body">
 
+                                                                <img style="width: 100%" height="auto"
+                                                                    src="{{ asset('assets/storage/landingpage/' . $photo) }}"
+                                                                    alt="Product image">
+                                                                <input type="text" disabled
+                                                                    value="{{ asset('assets/storage/landingpage/' . $photo) }}"
+                                                                    id="image-{{ $key }}">
+
+                                                                <div class="d-flex">
+                                                                    <a href="{{ route('admin.landingpages.single.remove_feature_image', ['id' => $landingPage->id, 'name' => $photo]) }}"
+                                                                        class="btn btn-danger btn-xs m-1"><i
+                                                                            class="bi bi-trash-fill fs-5"></i> Remove</a>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
                                     </div>
-                                    @error('feature_image')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                    {{-- @dd($landingPage) --}}
-                                    <div style="text-align:center;">
-                                        <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
-                                            id="viewer3"
-                                            src="{{ asset('assets/storage/landingpage/' . $landingPage['feature_img']) }}" />
-                                    </div>
+
                                 </div>
                                 <div class="col-md-12 mt-3">
                                     <div>
@@ -324,24 +419,7 @@
             $('#description').summernote();
         });
     </script>
-    <script>
-        // for feature image upload
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
 
-                reader.onload = function(e) {
-                    $('#viewer3').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        $("#customFileUpload3").change(function() {
-            readURL(this);
-        });
-    </script>
     <script>
         // Product image upload script
         $(document).ready(function() {
@@ -486,6 +564,98 @@
                 $(this).closest('.row').remove();
             });
             //section deleteing
+        });
+    </script>
+    <script>
+        // featured image upload script
+        $(document).ready(function() {
+            const previewContainer = $("#image-preview2");
+            $("#image-upload2").on("change", function(event) {
+                previewContainer.empty(); // Clear existing previews
+                const files = event.target.files;
+
+                if (files) {
+                    $.each(files, function(index, file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
+                         <div class="preview-item">
+                             <img src="${e.target.result}" class="preview-image">
+                             <button type="button" class="btn btn-danger btn-sm remove-icon" data-index="${index}">&#10005;</button>
+                         </div>
+                     `);
+                            previewContainer.append(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+
+            // Handle image removal
+            previewContainer.on("click", ".remove-icon", function() {
+                const indexToRemove = $(this).data("index");
+                $(this).parent().remove();
+                // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
+                const input = document.getElementById("image-upload2");
+                const dataTransfer = new DataTransfer();
+                const files = input.files;
+
+                // Add all files except the one to be removed
+                for (let i = 0; i < files.length; i++) {
+                    if (i !== indexToRemove) {
+                        dataTransfer.items.add(files[i]);
+                    }
+                }
+
+                // Update the input files
+                input.files = dataTransfer.files;
+            });
+        });
+    </script>
+    <script>
+        // customer review image upload script
+        $(document).ready(function() {
+            const previewContainer = $("#image-preview3");
+            $("#image-upload3").on("change", function(event) {
+                previewContainer.empty(); // Clear existing previews
+                const files = event.target.files;
+
+                if (files) {
+                    $.each(files, function(index, file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
+                         <div class="preview-item">
+                             <img src="${e.target.result}" class="preview-image">
+                             <button type="button" class="btn btn-danger btn-sm remove-icon" data-index="${index}">&#10005;</button>
+                         </div>
+                     `);
+                            previewContainer.append(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+
+            // Handle image removal
+            previewContainer.on("click", ".remove-icon", function() {
+                const indexToRemove = $(this).data("index");
+                $(this).parent().remove();
+                // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
+                const input = document.getElementById("image-upload3");
+                const dataTransfer = new DataTransfer();
+                const files = input.files;
+
+                // Add all files except the one to be removed
+                for (let i = 0; i < files.length; i++) {
+                    if (i !== indexToRemove) {
+                        dataTransfer.items.add(files[i]);
+                    }
+                }
+
+                // Update the input files
+                input.files = dataTransfer.files;
+            });
         });
     </script>
 @endpush

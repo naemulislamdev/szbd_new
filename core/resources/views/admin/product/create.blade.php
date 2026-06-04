@@ -579,7 +579,7 @@
         aria-labelledby="exampleModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-dialog-centered">
-            <form action="" method="POST">
+            <form action="{{ route('admin.product.add.color') }}" method="POST">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">

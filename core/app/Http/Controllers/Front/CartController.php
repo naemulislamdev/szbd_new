@@ -173,6 +173,7 @@ class CartController extends Controller
         $data['thumbnail']          = $product->thumbnail;
         $data['color_image']        = $color_image_path;
         $data['code']               = $product->code;
+        $data['category']               = $product->category->name;
 
         // ---------------------------
         // PUSH TO SESSION

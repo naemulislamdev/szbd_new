@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Disallow: /admin/auth/login
+Disallow: /admin/dashboard
+Disallow: /customer/auth/login
+Disallow: /customer/auth/sign-up
+Disallow: /checkout
+Disallow: /checkout-complete/
+Disallow: /api/
+
+Sitemap: https://shoppingzonebd.com.bd/sitemap.xml

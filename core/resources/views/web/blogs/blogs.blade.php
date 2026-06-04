@@ -4,6 +4,7 @@
     'Read our latest blogs on fashion, skincare, and helpful tips for everyday life.
     ')
 
+
     <style>
         .card-height-1 {
             height: 480px;
@@ -14,7 +15,8 @@
         }
 
         .blog-card {
-            height: 480px;
+            min-height: 515px;
+
             border-radius: 10px;
             background: #fff;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
@@ -96,6 +98,7 @@
             transform: translateX(5px)
         }
     </style>
+
 @section('content')
     <section class="py-2 career">
         <div class="container " style="min-height: 100vh;">
@@ -119,14 +122,15 @@
                 @foreach ($blogs as $blog)
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="blog-card shadow-sm">
-                            <a href="{{ route('blog.details', $blog->slug) }}">
+                            <a class="d-block" href="{{ route('blog.details', $blog->slug) }}">
                                 <div class="blog-img">
                                     <div style="height: 236px;">
                                         @php
                                             $cardClass = $blog->image ? 'card-height-1' : 'card-height-2';
                                         @endphp
 
-                                        <img class="{{ $cardClass }}" src="{{ asset('storage/blogs/' . $blog->image) }}"
+                                        <img class="{{ $cardClass }}"
+                                            src="{{ asset('assets/storage/blogs/' . $blog->image) }}"
                                             onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'">
                                     </div>
 
@@ -137,12 +141,12 @@
                                     <a href="{{ route('blog.details', $blog->slug) }}">
                                         <h5 class="blog-title mt-2">{{ Str::limit(strip_tags($blog->title), 50) }}</h5>
                                     </a>
-                                    <p class="blog-text">
-                                        @php
-                                            $shortDesc = Str::limit(strip_tags($blog->description), 150);
-                                        @endphp
+
+                                    @php
+                                        $shortDesc = Str::limit(strip_tags($blog->description), 150);
+                                    @endphp
                                     <p>{!! $shortDesc !!}</p>
-                                    </p>
+
                                     <div class="d-flex justify-content-between align-items-center mt-3">
                                         <span class="text-muted fw-bold">📅 {{ $blog->created_at->format('d M Y') }}
                                         </span>

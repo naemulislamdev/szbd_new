@@ -297,7 +297,6 @@ $(document).ready(function () {
   });
 });
 //End
-
 new Swiper(".leftPromo", {
   loop: true,
   speed: 800,
@@ -475,6 +474,97 @@ document.querySelectorAll(".CategoryProductSlider").forEach((slider) => {
       },
       992: {
         slidesPerView: 5,
+      },
+    },
+  });
+});
+document.querySelectorAll(".landingPageFeatureImg").forEach((slider) => {
+  const paginationEl = slider.querySelector(".swiper-pagination");
+  const nextEl = slider.querySelector(".swiper-button-next");
+  const prevEl = slider.querySelector(".swiper-button-prev");
+
+  new Swiper(slider, {
+    loop: true,
+
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: false,
+    },
+
+    speed: 800,
+
+    pagination: {
+      el: paginationEl,
+      clickable: true,
+    },
+
+    // ✅ FIX: navigation add koro
+    navigation: {
+      nextEl: nextEl,
+      prevEl: prevEl,
+    },
+
+    observer: true,
+    observeParents: true,
+
+    breakpoints: {
+      0: {
+        slidesPerView: 1, // ✅ Mobile
+        spaceBetween: 10,
+      },
+      768: {
+        slidesPerView: 1, // ✅ Tab
+        spaceBetween: 10,
+      },
+      992: {
+        slidesPerView: 1, // ✅ Desktop
+        spaceBetween: 15,
+      },
+    },
+  });
+});
+document.querySelectorAll(".landingPageReviewImages").forEach((slider) => {
+  const paginationEl = slider.querySelector(".swiper-pagination");
+  const nextEl = slider.querySelector(".swiper-button-next");
+  const prevEl = slider.querySelector(".swiper-button-prev");
+
+  new Swiper(slider, {
+    loop: true,
+
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: false,
+    },
+
+    speed: 800,
+
+    pagination: {
+      el: paginationEl,
+      clickable: true,
+    },
+
+    navigation: {
+      nextEl: nextEl,
+      prevEl: prevEl,
+    },
+
+    observer: true,
+    observeParents: true,
+
+    breakpoints: {
+      0: {
+        slidesPerView: 1, // ✅ Mobile
+        spaceBetween: 10,
+      },
+      768: {
+        slidesPerView: 2, // ✅ Tab
+        spaceBetween: 10,
+      },
+      992: {
+        slidesPerView: 3, // ✅ Desktop
+        spaceBetween: 15,
       },
     },
   });

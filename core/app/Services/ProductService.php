@@ -28,7 +28,7 @@ class ProductService
     public static function update($r, $id)
     {
         $product = Product::findOrFail($id);
-        self::basicInfo($product, $r);
+        self::basicInfoUpdate($product, $r);
         self::categoryInfo($product, $r);
         self::priceInfo($product, $r);
         self::variationInfoUpdate($product, $r);
@@ -48,6 +48,27 @@ class ProductService
         $p->name = $r->name;
         $p->code = $r->code;
         $p->slug = Str::slug($r->name) . '-' . $r->code;
+        $p->details = $r->description;
+        $p->short_description = $r->short_description;
+        $p->unit = $r->unit;
+        $p->minimum_order_qty = $r->minimum_order_qty;
+        $p->video_url = $r->video_link;
+        $p->video_provider = str_contains($r->video_link, 'facebook') ? 'facebook' : 'youtube';
+        $videoShopping = $r->has('video_shopping');
+        if ($videoShopping == 1) {
+            $p->video_shopping = true;
+        } else {
+            $p->video_shopping = false;
+        }
+        $p->status = 1;
+        $p->multiply_qty = $r->multiplyQTY == 'on' ? 1 : 0;
+    }
+    private static function basicInfoUpdate($p, $r)
+    {
+        $p->added_by = 'admin';
+        $p->user_id = auth('admin')->id();
+        $p->name = $r->name;
+        $p->code = $r->code;
         $p->details = $r->description;
         $p->short_description = $r->short_description;
         $p->unit = $r->unit;
