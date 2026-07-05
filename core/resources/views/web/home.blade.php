@@ -366,7 +366,7 @@
                     <div class="section-heading-title d-flex align-items-center justify-content-between">
                         <h3 style="text-transform: uppercase">Featured Products</h3>
 
-                        <a class="text-orange" href="{{ route('shop') }}">View All Products <i
+                        <a class="text-orange" href="{{ route('featured.products') }}">View All<i
                                 class="bi bi-arrow-right"></i></a>
 
                     </div>
@@ -417,6 +417,7 @@
                             @endif
                         </div>
                     </div>
+
                     <div class="swiper CategoryProductSlider product_slider_box slider_{{ $category->id }}">
                         <div class="swiper-wrapper">
                             @foreach ($category->Products->take(12) as $product)
@@ -585,42 +586,41 @@
             </div>
         </div>
     </section>
-    @foreach ($home_categories as $category)
-        <script>
-            new Swiper(".slider_{{ $category->id }}", {
-                loop: true,
-
-                autoplay: {
-                    delay: 3000,
-                    disableOnInteraction: false,
-                    pauseOnMouseEnter: true,
-                },
-
-                pagination: {
-                    el: ".pagination_{{ $category->id }}",
-                    clickable: true,
-                },
-
-                breakpoints: {
-                    0: {
-                        slidesPerView: 2,
-                        spaceBetween: 10
+    <script>
+        window.addEventListener('load', function() {
+            @foreach ($home_categories as $category)
+                new Swiper(".slider_{{ $category->id }}", {
+                    loop: true,
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: true,
                     },
-                    576: {
-                        slidesPerView: 2,
-                        spaceBetween: 10
+                    pagination: {
+                        el: ".pagination_{{ $category->id }}",
+                        clickable: true,
                     },
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 10
+                    breakpoints: {
+                        0: {
+                            slidesPerView: 2,
+                            spaceBetween: 10
+                        },
+                        576: {
+                            slidesPerView: 2,
+                            spaceBetween: 10
+                        },
+                        768: {
+                            slidesPerView: 3,
+                            spaceBetween: 10
+                        },
+                        992: {
+                            slidesPerView: 5
+                        },
                     },
-                    992: {
-                        slidesPerView: 5
-                    },
-                },
-            });
-        </script>
-    @endforeach
+                });
+            @endforeach
+        });
+    </script>
 @endsection
 @push('scripts')
     <script>

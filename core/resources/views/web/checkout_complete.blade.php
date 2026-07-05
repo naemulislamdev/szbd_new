@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="row my-3 rounded">
                                         <div class="col-md-12 mx-auto px-0 px-md-2">
-                                            <div class="product-details"
+                                            <div class="product-details w-100"
                                                 style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                                 @foreach ($order->details as $key => $detail)
                                                     @php($product = json_decode($detail->product_details, true))
@@ -304,123 +304,142 @@
     </div>
 @endsection
 @push('scripts')
-    @php
-        $firedOrderId = session('purchase_fired');
-    @endphp
-
-    @if ($firedOrderId == $order->order_id)
-        @php
-            // একবার দেখানোর পর session মুছে ফেলুন
-            session()->forget('purchase_fired');
-        @endphp
-
+    @if (session()->has('order') || isset($order))
         <script>
-            window.dataLayer = window.dataLayer || [];
-            dataLayer.push({
-                event: "purchase",
-                ecommerce: {
-                    transaction_id: "{{ $order->order_id }}",
-                    affiliation: "Shopping Zone BD",
-                    value: {{ $order->order_amount ?? 0 }},
-                    tax: 0.00,
-                    shipping: {{ $order->shipping_cost ?? 0 }},
-                    currency: "BDT",
-                    coupon: "",
-                    items: [
-                        @foreach ($order->details as $detail)
-                            {
-                                item_id: "{{ $detail->product->id ?? '' }}",
-                                item_name: "{{ addslashes($detail->product->name ?? '') }}",
-                                item_brand: "Shopping Zone BD",
-                                item_category: "General",
-                                price: {{ $detail->price ?? 0 }},
-                                quantity: {{ $detail->qty }}
-                            }
-                            @if (!$loop->last)
-                                ,
-                            @endif
-                        @endforeach
-                    ]
-                }
-            });
-
-            // ✅ Facebook Pixel deduplication
-            fbq('track', 'Purchase', {
-                value: {{ $order->order_amount ?? 0 }},
-                currency: 'BDT',
-                transaction_id: "{{ $order->order_id }}"
-            }, {
-                eventID: "{{ $order->order_id }}"
-            });
+            window._pixelUserData = {
+                em: '<?php echo auth('customer')->check() ? auth('customer')->user()->email : ''; ?>',
+                ph: '<?php echo preg_replace('/\D/', '', $shippingData['phone'] ?? ''); ?>'
+            };
         </script>
     @endif
-
     <script>
-        ttq.identify({
-            "email": "<hashed_email_address>", // string. The email of the customer if available. It must be hashed with SHA-256 on the client side.
-            "phone_number": "<hashed_phone_number>", // string. The phone number of the customer if available. It must be hashed with SHA-256 on the client side.
-            "external_id": "<hashed_external_id>" // string. Any unique identifier, such as loyalty membership IDs, user IDs, and external cookie IDs.It must be hashed with SHA-256 on the client side.
+        var fbp = (document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)') || [])[2] || '';
+        var fbc = (document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)') || [])[2] || '';
+
+        <?php
+        $firstDetail = $order->details->first();
+        $firstProduct = json_decode($firstDetail->product_details, true);
+        $shippingData = json_decode($order->shipping_address_data, true);
+        $i = 0;
+        $total = count($order->details);
+
+        $fullName = $shippingData['contact_person_name'] ?? '';
+        $nameParts = explode(' ', trim($fullName), 2);
+        $firstName = $nameParts[0] ?? '';
+        $lastName = $nameParts[1] ?? '';
+
+        foreach ($order->details as $detail) {
+            $prod = json_decode($detail->product_details, true);
+            $categoryId = $prod['category_id'] ?? null;
+            $detail->category_name = $categoryId ? \App\Models\Category::find($categoryId)?->name ?? '' : '';
+        }
+        $firstCategoryName = $firstDetail->category_name ?? '';
+        $customerEmail = auth('customer')->check() ? auth('customer')->user()->email : '';
+        $phoneClean = preg_replace('/\D/', '', $shippingData['phone'] ?? '');
+        ?>
+
+        // GA4
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'purchase',
+            '_fbp': fbp,
+            '_fbc': fbc,
+            'ecommerce': {
+                'transaction_id': '{{ $order->order_number }}',
+                'currency': 'BDT',
+                'value': {{ (float) ($order->order_amount + $summary['total_shipping_cost']) }},
+                'tax': {{ (float) $summary['total_tax'] }},
+                'shipping': {{ (float) $summary['total_shipping_cost'] }},
+                'coupon': '{{ $order->coupon_code ?? '' }}',
+                'items': [
+                    <?php $i = 0; foreach ($order->details as $detail):
+                    $product = json_decode($detail->product_details, true);
+                    $i++;
+                ?> {
+                        'item_id': '<?php echo $detail->product_id; ?>',
+                        'item_name': '<?php echo addslashes($product['name'] ?? ''); ?>',
+                        'item_category': '<?php echo addslashes($detail->category_name ?? ''); ?>',
+                        'price': <?php echo (float) ($detail->price - $detail->discount); ?>,
+                        'quantity': <?php echo (int) $detail->qty; ?>,
+                        'content_type': 'product'
+                    }
+                    <?php echo $i < $total ? ',' : ''; ?>
+                    <?php endforeach; ?>
+                ]
+            },
+            'user_data': {
+                'email_address': '<?php echo addslashes($customerEmail); ?>',
+                'phone_number': '<?php echo $phoneClean; ?>',
+                'first_name': '<?php echo addslashes($firstName); ?>',
+                'last_name': '<?php echo addslashes($lastName); ?>',
+                'country': '<?php echo addslashes($shippingData['country'] ?? 'BD'); ?>',
+                'city': '<?php echo addslashes($shippingData['city'] ?? ''); ?>',
+                'postal_code': '<?php echo $shippingData['zip'] ?? ''; ?>',
+                'coupon': '{{ $order->coupon_code ?? '' }}'
+            }
         });
 
-        ttq.track('ViewContent', {
-            "contents": [{
-                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-                "content_type": "<content_type>", // string. Either product or product_group.
-                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-            }],
-            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-        });
+        // Meta Pixel
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Purchase', {
+                currency: 'BDT',
+                value: {{ (float) ($order->order_amount + $summary['total_shipping_cost']) }},
+                content_type: 'product',
+                content_name: '<?php echo addslashes($firstProduct['name'] ?? ''); ?>',
+                content_ids: [
+                    <?php $i = 0; foreach ($order->details as $detail): $i++; ?> '<?php echo $detail->product_id; ?>'
+                    <?php echo $i < $total ? ',' : ''; ?>
+                    <?php endforeach; ?>
+                ],
+                x_fb_cd_content_category: '<?php echo addslashes($firstCategoryName); ?>',
+                x_fb_ck_fbp: fbp,
+                x_fb_ck_fbc: fbc,
+                order_id: '{{ $order->order_number }}',
+                contents: [
+                    <?php $i = 0; foreach ($order->details as $detail):
+                    $product = json_decode($detail->product_details, true);
+                    $i++;
+                ?> {
+                        id: '<?php echo $detail->product_id; ?>',
+                        quantity: <?php echo (int) $detail->qty; ?>,
+                        item_price: <?php echo (float) ($detail->price - $detail->discount); ?>
+                    }
+                    <?php echo $i < $total ? ',' : ''; ?>
+                    <?php endforeach; ?>
+                ],
+                user_data: {
+                    em: '<?php echo addslashes($customerEmail); ?>',
+                    ph: '<?php echo $phoneClean; ?>',
+                    fn: '<?php echo addslashes($firstName); ?>',
+                    ln: '<?php echo addslashes($lastName); ?>',
+                    country: '<?php echo addslashes($shippingData['country'] ?? 'Bangladesh'); ?>',
+                    city: '<?php echo addslashes($shippingData['city'] ?? ''); ?>',
+                    zp: '<?php echo $shippingData['zip'] ?? ''; ?>',
+                    coupon: '{{ $order->coupon_code ?? '' }}'
+                }
+            });
+        }
 
-        ttq.track('Search', {
-            "contents": [{
-                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-                "content_type": "<content_type>", // string. Either product or product_group.
-                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-            }],
-            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-            "currency": "<content_currency>", // string. The 4217 currency code. Example: "USD".
-            "search_string": "<search_keywords>" // string. The word or phrase used to search. Example: "SAVE10COUPON".
-        });
-
-        ttq.track('ClickButton', {
-            "contents": [{
-                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-                "content_type": "<content_type>", // string. Either product or product_group.
-                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-            }],
-            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-        });
-
-        ttq.track('AddToWishlist', {
-            "contents": [{
-                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-                "content_type": "<content_type>", // string. Either product or product_group.
-                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-            }],
-            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-        });
-
-        ttq.track('Subscribe', {
-            "contents": [{
-                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-                "content_type": "<content_type>", // string. Either product or product_group.
-                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-            }],
-            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-        });
-
-        ttq.track('CompleteRegistration', {
-            "contents": [{
-                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-                "content_type": "<content_type>", // string. Either product or product_group.
-                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-            }],
-            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-        });
+        // TikTok Pixel
+        if (typeof ttq !== 'undefined') {
+            ttq.track('PlaceAnOrder', {
+                contents: [
+                    <?php $i = 0; foreach ($order->details as $detail):
+                    $product = json_decode($detail->product_details, true);
+                    $i++;
+                ?> {
+                        content_id: '<?php echo $detail->product_id; ?>',
+                        content_type: 'product',
+                        content_name: '<?php echo addslashes($product['name'] ?? ''); ?>',
+                        quantity: <?php echo (int) $detail->qty; ?>,
+                        price: <?php echo (float) ($detail->price - $detail->discount); ?>
+                    }
+                    <?php echo $i < $total ? ',' : ''; ?>
+                    <?php endforeach; ?>
+                ],
+                value: {{ (float) ($order->order_amount + $summary['total_shipping_cost']) }},
+                currency: 'BDT'
+            });
+        }
     </script>
 @endpush

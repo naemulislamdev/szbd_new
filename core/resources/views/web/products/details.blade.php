@@ -210,6 +210,24 @@
             font-size: 16px !important;
             text-align: center;
         }
+     .offer-ribbon {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            background: #e60023;
+            color: #fff;
+            font-size: 11px;
+            margin: 0;
+            font-weight: 600;
+            padding: 2px 14px;
+            padding-top: 5px;
+            clip-path: polygon(0 0, 100% 0, 90% 50%, 100% 100%, 0 100%);
+            font-family: "Rubik", sans-serif;
+        }
+    .discount-card  {
+        width: 250px;
+        display: inline-block;
+    }
     </style>
     <?php
     $overallRating = \App\CPU\Helpers::get_overall_rating($product->reviews);
@@ -331,22 +349,23 @@
                                 <h1 class="product-name mb-2">
                                     {{ \Illuminate\Support\Str::limit($product->name, 57) }}
                                 </h1>
-                                <div>
+                                  <div>
                                     <span class="product-price">
-                                        ৳ {{ $product->unit_price }}
+                                        ৳ {{
+                                $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
+                            }}
                                     </span>
                                 </div>
 
-
                                 @if ($product->discount > 0)
-                                    <span class="discount-price">
-                                        <del>৳ {{ $product->unit_price }} </del> -
+                                    <div class="discount-price d-flex">
+                                        <del>৳ {{ $product->unit_price }} </del>
                                         @if ($product->discount_type == 'percent')
-                                            {{ $product->discount }}%
+                                            <span class="discount-card position-relative ml-2"><span class="offer-ribbon">{{ $product->discount }}<span class="discountOffText">% OFF</span></span></span>
                                         @elseif($product->discount_type == 'flat')
-                                            {{ $product->discount }}৳
+                                            <span class="discount-card position-relative ml-2"><span class="offer-ribbon">{{ $product->discount }}<span class="discountOffText">৳ OFF</span></span></span>
                                         @endif
-                                    </span>
+                                    </div>
                                 @endif
                                 <div class="my-2">
                                     <span class="product-code"><strong>Code:</strong> {{ $product->code }}</span>
@@ -996,39 +1015,7 @@
             });
         }
     </script>
-    <script>
-        /* 2️⃣ Product Detail View (Single Product Page) */
-        dataLayer.push({
-            event: "view_item",
-            ecommerce: {
-                items: [{
-                    item_id: {{ $product->id }},
-                    item_name: {{ $product->name }},
-                    item_brand: {{ $product->brand->name ?? 'No Brand' }},
-                    item_category: "{{ $brand_name ?? 'General' }}", // incomplte
-                    item_variant: {{ $product->variation }}, // incomplte
-                    price: {{ $product->unit_price }},
-                    currency: "BDT"
-                }]
-            }
-        });
-    </script>
-    <script>
-        fbq('track', 'ViewContent', {
-            content_ids: ['{{ $product->id }}'],
-            content_type: 'product',
-            value: {{ $product->unit_price ?? 0 }},
-            currency: 'BDT'
-        });
-    </script>
-    <script>
-        ttq.track('ViewContent', {
-            content_id: '{{ $product->id }}',
-            content_type: 'product',
-            value: {{ $product->unit_price ?? 0 }},
-            currency: 'BDT'
-        });
-    </script>
+
     <script>
         //Product description collapse
         $(document).ready(function() {
@@ -1154,4 +1141,40 @@
 
         intervalId = setInterval(updateActiveViewers, 60000);
     </script>
+  <script>
+    var fbp = (document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)') || [])[2] || '';
+    var fbc = (document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)') || [])[2] || '';
+    var productPrice = {{ $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price) }};
+
+    // GA4
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'view_item',
+        '_fbp': fbp,
+        '_fbc': fbc,
+        'ecommerce': {
+            'currency': 'BDT',
+            'value': productPrice,
+            'items': [{
+                'item_id': '{{ $product->id }}',
+                'item_name': '{{ addslashes($product->name) }}',
+                'item_category': '{{ $product->category->name ?? "" }}',
+                'price': productPrice,
+                'content_type': 'product'
+            }]
+        }
+    });
+
+    // Meta Pixel
+    fbq('track', 'ViewContent', {
+        currency: 'BDT',
+        value: productPrice,
+        content_ids: ['{{ $product->id }}'],
+        content_name: '{{ addslashes($product->name) }}',
+        content_type: 'product',
+        content_category: '{{ $product->category->name ?? "" }}',
+        x_fb_ck_fbp: fbp,
+        x_fb_ck_fbc: fbc
+    });
+</script>
 @endpush

@@ -1,5 +1,7 @@
 <?php
 
+
+
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\BusinessSettingsController;
 use App\Http\Controllers\Backend\AdminProfileController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BranchController;
+use App\Http\Controllers\Backend\CacheController;
 use App\Http\Controllers\Backend\CareerController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContactController;
@@ -56,7 +59,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/dashboard/monthly-income',  'monthlyIncome')->name('monthly.income');
             // top selling products report
             Route::get('/top-selling-products', 'topSellingProducts')->name('top_selling_products');
-            Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+            // Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
             Route::post('order-stats', 'torder_stats')->name('order-stats');
             Route::get('variant-products', 'variantProducts')->name('variant-products');
         });
@@ -85,6 +88,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('stock-limit-list/{type}', 'stock_limit_list')->name('stock-limit-list');
             Route::get('get-variations', 'get_variations')->name('get-variations');
             Route::post('update-quantity', 'update_quantity')->name('update-quantity');
+            Route::post('add-color', 'addColor')->name('add.color');
 
             Route::get('barcode/generate', 'barcode_generate')->name('barcode.generate');
             Route::get('productsearch', 'productsearch')->name('productsearch');
@@ -96,7 +100,11 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             // Product Sales Report Routes
             Route::get('/sales-report', 'ProductSalesReport')->name('salesReport');
             Route::get('/sales-report-datatables', 'reportDatatables')->name('reportDatatables');
+            Route::get('/remove-size-chart/{product_id}', 'removeSizeChart')->name('remove-size-chart');
         });
+        // generate sitemap
+        Route::get('/sitemap', [SiteMapController::class, 'index'])->name('sitemap');
+        Route::get('sitemap-download', [SiteMapController::class, 'download'])->name('sitemap-download');
 
         //order management
         Route::controller(OrderController::class)->prefix('/order')->as('order.')->group(function () {
@@ -210,6 +218,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/single-product/edit/{id}', 'editSingleProduct')->name('single.edit');
             Route::post('/single-product/update/{id}', 'updateSingleProduct')->name('single.update');
             Route::get('/single-product/remove/slider', 'removeImage')->name('single.remove_image');
+            Route::get('/single-product/remove/feature-image', 'removeFeatureImage')->name('single.remove_feature_image');
+            Route::get('/single-product/remove/review-image', 'removeReviewImage')->name('single.remove_review_image');
             Route::get('/single-product/remove/feature-list', 'removeFeatureList')->name('single.remove_feature_list');
             Route::get('/single-product/remove/landing-page/section', 'removePageSection')->name('single.remove_page_section');
             Route::get('/single-product/remove/landing-page/{id}', 'removeLandingPage')->name('single.remove_landing_page');
@@ -366,6 +376,10 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('store', 'store')->name('store');
             Route::post('update/{id}', 'update')->name('update');
+
+            // blog content & promotion routes
+            Route::get('content-promotion', 'contentPromotion')->name('contentPromotion');
+            Route::post('content-promotion/update', 'updateContentPromotion')->name('updateContentPromotion');
         });
 
         //  Coupon management routes
@@ -510,6 +524,13 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/datatables', 'datatables')->name('datatables');
             Route::post('/delete', 'delete')->name('delete');
             Route::post('status', 'status')->name('status');
+            Route::post('config/save',  'saveConfig')->name('config.save');
+        });
+        Route::controller(CacheController::class)->prefix('/cache')->as('cache.')->group(function () {
+            Route::get('/cache',  'index')->name('caindex');
+            Route::post('/cache/clear',  'clear')->name('clear');
+            Route::post('/cache/clear-all',  'clearAll')->name('clearAll');
+            Route::post('/cache/optimize', 'optimize')->name('optimize');
         });
     });
 });

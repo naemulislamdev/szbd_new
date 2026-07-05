@@ -130,8 +130,13 @@
 
                             <div class="col-md-6 mb-2">
                                 <label>Password</label>
-                                <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="Enter Password" required>
+                                <div class="input-group">
+                                    <input type="password" name="password" id="addPassword" class="form-control"
+                                        placeholder="enter password" required>
+                                    <button type="button" class="btn btn-outline-secondary togglePassword">
+                                        <i class="las la-eye"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -220,8 +225,13 @@
 
                             <div class="col-md-6 mb-2">
                                 <label>Password</label>
-                                <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="Enter Password">
+                                <div class="input-group">
+                                    <input type="password" name="password" id="editPassword" class="form-control"
+                                        placeholder="enter password">
+                                    <button type="button" class="btn btn-outline-secondary togglePassword">
+                                        <i class="las la-eye"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -262,6 +272,20 @@
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        });
+    </script>
+    <script>
+        $(document).on('click', '.togglePassword', function() {
+            const input = $(this).closest('.input-group').find('input');
+            const icon = $(this).find('i');
+
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                icon.removeClass('la-eye').addClass('la-eye-slash');
+            } else {
+                input.attr('type', 'password');
+                icon.removeClass('la-eye-slash').addClass('la-eye');
             }
         });
     </script>
@@ -479,11 +503,11 @@
         });
         $(document).on('click', '.viewBtn', function() {
             let button = $(this);
+
             $('#userId').val(button.data('id'));
             $('#name').val(button.data('name'));
             $('#phone').val(button.data('mobile'));
             $('#email').val(button.data('email'));
-
             $('#branch').val(button.data('branch')).trigger('change');
             $('#role').val(button.data('role')).trigger('change');
 

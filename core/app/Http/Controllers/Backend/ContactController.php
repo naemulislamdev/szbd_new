@@ -27,18 +27,18 @@ class ContactController extends Controller
                 $viewClass = $row->seen == 0 ? 'viewMessage' : '';
 
                 return '
-        <button class="btn btn-primary btn-sm ' . $viewClass . ' edit"
-            data-id="' . $row->id . '"
-            data-seen="' . $row->seen . '"
-            data-name="' . $row->name . '"
-            data-email="' . $row->email . '"
-            data-mobile="' . $row->mobile_number . '"
-            data-subject="' . $row->subject . '"
-            data-message="' . $row->message . '"
-            data-bs-toggle="modal"
-            data-bs-target="#editModal">
-            <i class="la la-eye"></i>
-        </button>
+       <button class="btn btn-primary btn-sm ' . $viewClass . ' edit"
+    data-id="' . $row->id . '"
+    data-seen="' . $row->seen . '"
+    data-name="' . e($row->name) . '"
+    data-email="' . e($row->email) . '"
+    data-mobile="' . e($row->mobile_number) . '"
+    data-subject="' . e($row->subject) . '"
+    data-message="' . e($row->message) . '"
+    data-bs-toggle="modal"
+    data-bs-target="#editModal">
+    <i class="la la-eye"></i>
+</button>
 
         <button class="btn btn-danger btn-sm delete"
             style="cursor: pointer;"

@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
-use App\Model\Subscription;
-use App\Model\BusinessSetting;
+use App\Models\Subscription;
+use App\Models\BusinessSetting;
 use App\Models\Customer;
 
 use App\Models\User;
@@ -23,57 +23,91 @@ class CustomerController extends Controller
     }
     public function datatables()
     {
-        $query = User::query();
-        $query->latest('id');
-        return DataTables::of($query)
+        $query = User::query()
+            ->select([
+                'id',
+                'name',
+                'f_name',
+                'l_name',
+                'email',
+                'phone',
+                'is_active',
+                DB::raw('(SELECT COUNT(*) FROM orders WHERE orders.customer_id = users.id) as total_order'),
+                DB::raw('(SELECT COUNT(*) FROM orders WHERE orders.customer_id = users.id AND orders.order_status = "canceled") as total_cancelled'),
+                DB::raw('(SELECT COUNT(*) FROM orders WHERE orders.customer_id = users.id AND orders.order_status = "confirmed") as total_confirmed'),
+            ])
+            ->latest('id');
+
+        return DataTables::eloquent($query)
             ->addIndexColumn()
 
             ->addColumn('name', function ($row) {
                 $url = route('admin.customer.view', $row->id);
-                return '<a href="' . $url . '">' . $row->f_name . ' ' . $row->l_name . '</a>';
+
+                if (!empty($row->name)) {
+                    $displayName = $row->name;
+                } elseif (!empty($row->f_name) || !empty($row->l_name)) {
+                    $displayName = trim($row->f_name . ' ' . $row->l_name);
+                } else {
+                    $displayName = 'N/A';                           // ✅ Fallback if all null
+                }
+
+                return '<a href="' . $url . '">' . $displayName . '</a>';
             })
+
             ->addColumn('action', function ($row) {
                 $url = route('admin.customer.view', $row->id);
-
                 return '
-        <a href="' . $url . '" class="btn btn-primary btn-sm">
-            <i class="la la-eye"></i>
-        </a>
+                <a href="' . $url . '" class="btn btn-primary btn-sm">
+                    <i class="la la-eye"></i>
+                </a>
+                <button class="btn btn-danger btn-sm delete"
+                        style="cursor: pointer;"
+                        title="Delete"
+                        data-id="' . $row->id . '">
+                    <i class="la la-trash"></i>
+                </button>
+            ';
+            })
 
-        <button class="btn btn-danger btn-sm delete"
-                style="cursor: pointer;"
-                title="Delete"
-                data-id="' . $row->id . '">
-            <i class="la la-trash"></i>
-        </button>
-    ';
+            ->editColumn('total_order', function ($row) {
+                $count = $row->total_order ?? 0;
+                return '<span class="badge bg-primary">' . $count . '</span>';
             })
-            ->addColumn('total_order', function ($row) {
-                return $row->order->count();
+
+            ->editColumn('total_cancelled', function ($row) {
+                $count = $row->total_cancelled ?? 0;
+                return '<span class="badge bg-danger">' . $count . '</span>';
             })
-            // Edit Column
+
+            ->editColumn('total_confirmed', function ($row) {
+                $count = $row->total_confirmed ?? 0;
+                return '<span class="badge bg-success">' . $count . '</span>';
+            })
+
             ->editColumn('is_active', function ($row) {
-
                 $checked = $row->is_active == 1 ? 'checked' : '';
-
                 return '
-                        <div class="form-check form-switch">
-                            <input class="form-check-input status"
-                                type="checkbox"
-                                name="colors_active"
-                                data-id="' . $row->id . '"
-                                value="1"
-                                ' . $checked . '
-                                id="flexSwitch' . $row->id . '">
-                            <label class="form-check-label" for="flexSwitch' . $row->id . '"></label>
-                        </div>
-    ';
+                <div class="form-check form-switch">
+                    <input class="form-check-input status"
+                        type="checkbox"
+                        name="colors_active"
+                        data-id="' . $row->id . '"
+                        value="1"
+                        ' . $checked . '
+                        id="flexSwitch' . $row->id . '">
+                    <label class="form-check-label" for="flexSwitch' . $row->id . '"></label>
+                </div>
+            ';
             })
 
             ->rawColumns([
                 'name',
                 'action',
                 'is_active',
+                'total_order',
+                'total_cancelled',
+                'total_confirmed',
             ])
             ->toJson();
     }

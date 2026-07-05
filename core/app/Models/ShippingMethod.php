@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ShippingMethod extends Model
 {
+    protected $guarded = ['id'];
+
     protected $casts = [
         'creator_id' => 'integer',
         'cost'       => 'float',
@@ -13,9 +15,4 @@ class ShippingMethod extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    public function seller()
-    {
-        return $this->belongsTo(Seller::class, 'creator_id');
-    }
 }

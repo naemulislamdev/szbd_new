@@ -51,6 +51,8 @@ class AppServiceProvider extends ServiceProvider
                 'fav_icon' => Helpers::get_settings($web, 'company_fav_icon'),
                 'email' => Helpers::get_settings($web, 'company_email'),
                 'about' => Helpers::get_settings($web, 'about_us'),
+                'free_shipping_min_amount' => Helpers::get_settings($web, 'free_shipping_min_amount'),
+                'free_shipping_discount' => Helpers::get_settings($web, 'free_shipping_discount'),
                 'footer_logo' => Helpers::get_settings($web, 'company_footer_logo'),
                 'copyright_text' => Helpers::get_settings($web, 'company_copyright_text'),
             ];

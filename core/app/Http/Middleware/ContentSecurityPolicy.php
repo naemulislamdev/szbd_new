@@ -16,10 +16,17 @@ class ContentSecurityPolicy
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
-        $response->headers->set(
-            'Content-Security-Policy',
-            "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'self';"
-        );
+
+        // ============================================
+        // CACHE CONTROL ONLY — CSP বন্ধ রাখুন এখন
+        // ============================================
+        $contentType = $response->headers->get('Content-Type', '');
+
+        if (str_contains($contentType, 'text/html')) {
+            $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
 
         return $response;
     }

@@ -31,7 +31,7 @@ class Category extends Model
     }
     public function Products()
     {
-        return $this->hasMany(Product::class, 'category_id')->where("status", 1);
+        return $this->hasMany(Product::class, 'category_id')->where("status", 1)->orderBy('id', 'desc');
     }
 
     public function getNameAttribute($name)

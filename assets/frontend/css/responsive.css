@@ -59,7 +59,8 @@
     width: 265px;
   }
   .smLogo {
-    max-width: 70% !important;
+    max-width: 100%;
+    height: 100px;
   }
   .section-heading-title > h3 {
     font-size: 18px;

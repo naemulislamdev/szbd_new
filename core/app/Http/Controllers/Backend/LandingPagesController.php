@@ -369,13 +369,21 @@ class LandingPagesController extends Controller
         }
     }
 
-    /* ============================================================================
+    /* ============================================================
                 Start Single-product landing page methods
-===============================================================================
+===============================================================
 */
 
     public function singleIndex()
     {
+        // $lp  = ProductLandingPage::all();
+        // foreach ($lp as $item) {
+        //     $productId = $item->product_id;
+        //     $item->update([
+        //         'product_id' => json_encode([$productId])
+        //     ]);
+        // }
+        // dd('ok');
         return view('admin.landingPages.single_page.single_product');
     }
     public function editSingleProduct($id)
@@ -383,41 +391,67 @@ class LandingPagesController extends Controller
         $landingPage = ProductLandingPage::find($id);
         return view('admin.landingPages.single_page.edit', compact('landingPage'));
     }
+
     public function singleProductdatatables()
     {
         $query = ProductLandingPage::query()
-            ->select(
-                'product_landing_pages.*',
-                'products.name as product_name',
-                'products.code as sku'
-            )
-            ->leftJoin('products', 'products.id', '=', 'product_landing_pages.product_id')
+            ->select('product_landing_pages.*')
             ->latest('product_landing_pages.id');
 
         return DataTables::of($query)
             ->addIndexColumn()
 
-            // 🔹 Product Name
-            ->editColumn('product_name', function ($row) {
-                return $row->product_name ?? '';
+            // 🔹 SKU search fix — filterColumn
+            ->filterColumn('sku', function ($query, $keyword) {
+                $matchedIds = Product::where('code', 'like', "%{$keyword}%")
+                    ->pluck('id')
+                    ->toArray();
+
+                if (!empty($matchedIds)) {
+                    $query->where(function ($q) use ($matchedIds) {
+                        foreach ($matchedIds as $id) {
+                            // JSON string এ id directly search
+                            $q->orWhereRaw(
+                                'product_landing_pages.product_id LIKE ?',
+                                ["%{$id}%"]
+                            );
+                        }
+                    });
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
             })
 
-            // 🔹 SKU
-            ->editColumn('sku', function ($row) {
-                return $row->sku ?? '';
+            // 🔹 SKU column
+            ->addColumn('sku', function ($row) {
+                $productIds = json_decode($row->product_id, true);
+                if (empty($productIds) || !is_array($productIds)) {
+                    return '<span class="text-muted">N/A</span>';
+                }
+
+                $codes = Product::whereIn('id', $productIds)->pluck('code')->toArray();
+                return implode(', ', $codes);
+            })
+
+            // 🔹 Product Name column
+            ->addColumn('product_name', function ($row) {
+                $productIds = json_decode($row->product_id, true);
+                if (empty($productIds) || !is_array($productIds)) {
+                    return '<span class="text-muted">N/A</span>';
+                }
+
+                $names = Product::whereIn('id', $productIds)->pluck('name')->toArray();
+                return implode('<br>', $names);
             })
 
             // 🔹 Action Buttons
             ->addColumn('action', function ($row) {
                 $route = route('admin.landingpages.single.edit', $row->id);
-
                 return '
                 <a href="' . $route . '" class="btn btn-primary btn-sm">
                     <i class="la la-edit"></i>
                 </a>
-
-                <button class="btn btn-danger btn-sm delete"
-                    data-id="' . $row->id . '">
+                <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">
                     <i class="la la-trash"></i>
                 </button>
             ';
@@ -426,7 +460,6 @@ class LandingPagesController extends Controller
             // 🔹 Status Toggle
             ->editColumn('status', function ($row) {
                 $checked = $row->status == 1 ? 'checked' : '';
-
                 return '
                 <div class="form-check form-switch">
                     <input class="form-check-input status"
@@ -444,13 +477,10 @@ class LandingPagesController extends Controller
                     $url = url('/page/' . $row->slug);
                     return "<a href='{$url}' target='_blank'>{$row->slug}</a>";
                 }
-
                 return "<span class='text-muted'>Link is Deactivated</span>";
             })
 
-            // 🔥 IMPORTANT: Enable raw HTML
-            ->rawColumns(['action', 'status', 'slug'])
-
+            ->rawColumns(['action', 'status', 'slug', 'sku', 'product_name'])
             ->toJson();
     }
     public function LandingPageStatus(Request $request)
@@ -479,8 +509,6 @@ class LandingPagesController extends Controller
     }
     public function storeSingleProduct(Request $request)
     {
-        // dd($request->images[0]);
-
         $request->validate([
             'title' => 'required|string',
             'images' => 'required',
@@ -507,14 +535,47 @@ class LandingPagesController extends Controller
             }
             $featureList = json_encode($feature_list);
         }
+        // Features images
+        $features_images = [];
+
+        if ($request->hasFile('feature_image')) {
+            foreach ($request->file('feature_image') as $img) {
+                $uploaded_image = FileManager::uploadFile('landingpage/', 300, $img);
+                $features_images[] = $uploaded_image;
+            }
+        }
+        $finaFeaturelImage = json_encode($features_images);
+        // Features images
+        // Customer Review Images
+        $review_images = [];
+
+        if ($request->hasFile('review_img')) {
+            foreach ($request->file('review_img') as $img) {
+                $upload_image = FileManager::uploadFile('landingpage/', 300, $img);
+                $review_images[] = $upload_image;
+            }
+        }
+        $finaReviewImage = json_encode($review_images);
+        // Customer Review Images
+
+        $productIds = [];
+        if ($request->product_id) {
+            foreach ($request->product_id as $productId) {
+                $productIds[] = $productId;
+            }
+        }
+
+        $finalProductIds = json_encode($productIds);
+
         $productLandingpage = ProductLandingPage::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'slider_img' => $images,
-            'product_id' => $request->product_id,
+            'product_id' => $finalProductIds,
             'description' => $request->description,
             'feature_list' => $featureList,
-            'feature_img' => $request->hasFile('feature_image') ? FileManager::uploadFile('landingpage/', 200, $request->file('feature_image')) : 'null',
+            'feature_img' => $finaFeaturelImage,
+            'review_img' => $finaReviewImage,
             'video_url' => $request->video_url,
             'status' => 0,
             'created_at' => now(),
@@ -542,8 +603,6 @@ class LandingPagesController extends Controller
 
         return redirect()->back()->with('success', 'Landing pages  created is successfully!');
     }
-
-
     public function LandingPageWithSlide(Request $request)
     {
 
@@ -581,6 +640,41 @@ class LandingPagesController extends Controller
         ]);
         return back()->with("success", "Slider image removed successfully!");
     }
+    public function removeFeatureImage(Request $request)
+    {
+        $landingPage = ProductLandingPage::find($request['id']);
+        $array = [];
+        if (count(json_decode($landingPage->feature_img)) == 1) {
+            // Toastr::warning('You cannot delete all images!');
+            return back()->with("warning", "You cannot delete images, atleast 1 image exist");
+        }
+        foreach (json_decode($landingPage['feature_img']) as $image) {
+            if ($image != $request['name']) {
+                array_push($array, $image);
+            }
+        }
+        FileManager::delete('landingpage/' . $request->name);
+        ProductLandingPage::where('id', $request['id'])->update([
+            'feature_img' => json_encode($array),
+        ]);
+        return back()->with("success", "Feature image removed successfully!");
+    }
+    public function removeReviewImage(Request $request)
+    {
+        $landingPage = ProductLandingPage::find($request['id']);
+        $array = [];
+
+        foreach (json_decode($landingPage['review_img']) as $image) {
+            if ($image != $request['name']) {
+                array_push($array, $image);
+            }
+        }
+        FileManager::delete('landingpage/' . $request->name);
+        ProductLandingPage::where('id', $request['id'])->update([
+            'review_img' => json_encode($array),
+        ]);
+        return back()->with("success", "Customer Review image removed successfully!");
+    }
     public function removeFeatureList(Request $request)
     {
         $landingPage = ProductLandingPage::find($request['id']);
@@ -609,6 +703,7 @@ class LandingPagesController extends Controller
     }
     public function updateSingleProduct(Request $request, $id)
     {
+
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -622,7 +717,7 @@ class LandingPagesController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
-                $uploaded_image = FileManager::updateFile('landingpage/slider/', $productLandingpage->slider_img, $img);
+                $uploaded_image = FileManager::uploadFile('landingpage/slider/', 300, $img);
                 $images[] = $uploaded_image;
             }
         }
@@ -648,18 +743,52 @@ class LandingPagesController extends Controller
         }
         $FinalFeatureList = json_encode(array_values($featureList));
 
+        // Features images
 
-        if ($request->feature_image) {
-            $featureImage = FileManager::updateFile('landingpage/', $productLandingpage->feature_img, $request->file('feature_image'));
+        $features_images = json_decode($productLandingpage->feature_img, true) ?? [];
+
+        if ($request->hasFile('feature_image')) {
+            foreach ($request->file('feature_image') as $img) {
+                $uploaded_image = FileManager::uploadFile('landingpage/', 300, $img);
+                $features_images[] = $uploaded_image;
+            }
         }
+        $finaFeaturelImage = json_encode($features_images);
+
+        // Features images
+        // Customer Review images
+
+        $reviews_images = json_decode($productLandingpage->review_img, true) ?? [];
+
+        if ($request->hasFile('review_img')) {
+            foreach ($request->file('review_img') as $img) {
+                $uploaded_image = FileManager::uploadFile('landingpage/', 300, $img);
+                $reviews_images[] = $uploaded_image;
+            }
+        }
+        $finaReviewslImage = json_encode($reviews_images);
+
+        // Customer Review images
+
+        $productIds = [];
+        if ($request->product_id) {
+            foreach ($request->product_id as $productId) {
+                $productIds[] = $productId;
+            }
+        }
+
+        $finalProductIds = json_encode($productIds);
+
+
         $productLandingpage->update([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'slider_img' => $finalImage,
-            'product_id' => $request->product_id,
+            'product_id' => $finalProductIds,
             'description' => $request->description,
             'feature_list' => $FinalFeatureList,
-            'feature_img' => $featureImage ?? $productLandingpage->feature_img,
+            'feature_img' => $finaFeaturelImage,
+            'review_img' => $finaReviewslImage,
             'video_url' => $request->video_url,
         ]);
 
@@ -705,11 +834,13 @@ class LandingPagesController extends Controller
         $productLandingpage = ProductLandingPage::find($id);
         if ($productLandingpage->slider_img) {
             foreach (json_decode($productLandingpage->slider_img) as $img) {
-                @unlink('storage/landingpage/slider/' . $img);
+                @unlink('landingpage/slider/' . $img);
             }
         }
         if ($productLandingpage->feature_img) {
-            @unlink('storage/landingpage/' . $productLandingpage->feature_img);
+            foreach (json_decode($productLandingpage->feature_img) as $img) {
+                @unlink('landingpage/' . $img);
+            }
         }
 
         $sections = $productLandingpage->landingPageSection;
@@ -717,7 +848,7 @@ class LandingPagesController extends Controller
             foreach ($sections as $item) {
                 //dd($item->section_img);
                 if ($item->section_img) {
-                    @unlink('storage/landingpage/' . $item->section_img);
+                    @unlink('landingpage/' . $item->section_img);
                 }
                 $item->delete();
             }

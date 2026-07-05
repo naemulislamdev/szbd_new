@@ -30,6 +30,7 @@ class BranchController extends Controller
                     data-email="' . $row->email . '"
                     data-map_url="' . $row->map_url . '"
                  data-address="' . e($row->address) . '"
+                 data-closing_day="' . e($row->closing_day) . '"
                     data-bs-toggle="modal"
                     data-bs-target="#editModal">
                     <i class="la la-edit"></i>
@@ -110,6 +111,7 @@ class BranchController extends Controller
         $branch->phone = $request->phone;
         $branch->address = $request->address;
         $branch->map_url = $request->map_url;
+        $branch->closing_day = $request->closing_day ?? null;
         $branch->status = 1;
 
         if ($branch->save()) {
@@ -140,6 +142,7 @@ class BranchController extends Controller
         $branch->phone = $request->phone;
         $branch->address = $request->address;
         $branch->map_url = $request->map_url;
+        $branch->closing_day = $request->closing_day ?? null;
         $branch->status = 1;
 
         $branch->save();

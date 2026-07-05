@@ -8,6 +8,7 @@ use App\CPU\Helpers;
 use App\Models\Color;
 use App\Models\EidOffer;
 use App\Models\Product;
+use App\Models\ShippingMethod;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -173,6 +174,7 @@ class CartController extends Controller
         $data['thumbnail']          = $product->thumbnail;
         $data['color_image']        = $color_image_path;
         $data['code']               = $product->code;
+        $data['category']               = $product->category->name;
 
         // ---------------------------
         // PUSH TO SESSION
@@ -270,5 +272,65 @@ class CartController extends Controller
         session()->forget('coupon_discount');
 
         return view('web.layouts.partials.cart_details');
+    }
+    public function summaryHtml()
+    {
+        $methodId = session('shipping_method_id');
+
+        if ($methodId) {
+            $shippingMethod = ShippingMethod::find($methodId);
+
+            if ($shippingMethod) {
+                $config   = \App\Models\ShippingConfig::getConfig();
+                $cart     = session()->get('cart', collect([]));
+                $subTotal = $cart->sum(fn($i) => ($i['price'] - $i['discount']) * $i['quantity']);
+
+                // ── Base cost calculate ──
+                $baseCost = $shippingMethod->cost;
+
+                if ($config->shipping_type === 'free_shipping') {
+                    if ($config->free_shipping_type === 'all_products') {
+                        $baseCost = 0;
+                    } elseif ($config->free_shipping_type === 'without_discount_product') {
+                        $freeMin = (float) ($config->free_shipping_min_amount ?? 0);
+                        $nonDiscountedTotal = $cart->sum(
+                            fn($i) =>
+                            $i['discount'] > 0 ? 0 : ($i['price'] * $i['quantity'])
+                        );
+                        $baseCost = ($freeMin > 0 && $nonDiscountedTotal >= $freeMin) ? 0 : $shippingMethod->cost;
+                    }
+                }
+
+                // ── Method level discount ──
+                $methodDiscount = 0;
+                if ($shippingMethod->discount_amount > 0 && $baseCost > 0) {
+                    $methodDiscount = $shippingMethod->discount_type === 'percent'
+                        ? round($baseCost * $shippingMethod->discount_amount / 100, 2)
+                        : $shippingMethod->discount_amount;
+                    $methodDiscount = min($methodDiscount, $baseCost);
+                }
+
+                // ── Global order-amount discount ──
+                $globalDiscount = 0;
+                $minAmount   = \App\Models\BusinessSetting::where('type', 'free_shipping_min_amount')->value('value');
+                $discountAmt = \App\Models\BusinessSetting::where('type', 'free_shipping_discount')->value('value');
+                if ($minAmount && $discountAmt && $subTotal >= (float) $minAmount) {
+                    $globalDiscount = min((float) $discountAmt, $baseCost - $methodDiscount);
+                }
+
+                $finalCost = max(0, $baseCost - $methodDiscount - $globalDiscount);
+
+                session()->put('shipping_discount', $methodDiscount + $globalDiscount);
+
+                // ── Cart এর সব item এ shipping_cost update ──
+                $cart = $cart->map(function ($item) use ($finalCost) {
+                    $item['shipping_cost'] = $finalCost;
+                    return $item;
+                });
+                session()->put('cart', $cart);
+            }
+        }
+
+        return view('web.layouts.partials.cart_order_summary');
     }
 }

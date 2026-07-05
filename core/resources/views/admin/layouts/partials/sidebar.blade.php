@@ -475,6 +475,14 @@
                                     class="nav-link {{ request()->routeIs('admin.blog.list') ? 'active' : '' }}">Blog</a>
                             </li>
                         @endcan
+                        @can('blog_category_view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.blog.contentPromotion') }}"
+                                    class="nav-link {{ request()->routeIs('admin.blog.contentPromotion') ? 'active' : '' }}">Content
+                                    &
+                                    Promotions</a>
+                            </li>
+                        @endcan
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->
@@ -655,8 +663,8 @@
                         @endcan
                         @can('sitemap')
                             <li class="nav-item">
-                                <a href="{{ route('admin.web_config.view') }}"
-                                    class="nav-link {{ request()->routeIs('admin.web_config.view') ? 'active' : '' }}">Sitemap</a>
+                                <a href="{{ route('admin.sitemap') }}"
+                                    class="nav-link {{ request()->routeIs('admin.sitemap') ? 'active' : '' }}">Sitemap</a>
                             </li>
                         @endcan
                         <li class="nav-item">
@@ -690,6 +698,15 @@
                         </li>
                     </ul><!--end nav-->
                 </div>
+            </li><!--end nav-item-->
+        @endcanAny
+        @canAny(['web_config'])
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.cache.caindex') ? 'active' : '' }}"
+                    href="{{ route('admin.cache.caindex') }}">
+                    <i class="bi bi-arrow-repeat menu-icon"></i>
+                    <span>Clear Cache</span>
+                </a>
             </li><!--end nav-item-->
         @endcanAny
 

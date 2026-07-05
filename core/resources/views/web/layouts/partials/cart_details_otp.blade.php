@@ -47,10 +47,12 @@
                                             </div>
                                         </td>
                                         <td style="text-align: left;">
-                                            <a href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a><br>
+                                            <a
+                                                href="{{ route('product', $cartItem['slug']) }}">{{ Str::limit($cartItem['name'], 30) }}</a><br>
                                             @if (!empty($cartItem['variations']))
                                                 @foreach ($cartItem['variations'] as $vKey => $variation)
-                                                    <span style="font-size: 14px;">{{ $vKey }} : {{ $variation }}</span>
+                                                    <span style="font-size: 14px;">{{ $vKey }} :
+                                                        {{ $variation }}</span>
                                                 @endforeach
                                             @endif
                                         </td>
@@ -143,7 +145,8 @@
                                             <input type="hidden" id="otp" autocomplete="one-time-code">
 
                                             <div class="mt-3 d-flex gap-2 justify-content-center">
-                                                <button type="button" class="btn btn-success" id="verify_otp">ভেরিফাই
+                                                <button type="button" class="btn btn-success"
+                                                    id="verify_otp">ভেরিফাই
                                                     করুন</button>
                                                 <button type="button" class="btn btn-secondary d-none"
                                                     id="resend_otp">আবার ওটিপি পাঠান</button>
@@ -286,7 +289,7 @@
         </div><!-- End .row -->
     </div>
 </div>
-<script></script>
+
 
 <script>
     function set_shipping_id(id) {
@@ -328,25 +331,39 @@
     }
 </script>
 
+@php
+    $checkoutTotal = 0;
+    $cartItems = session('cart', []);
+    foreach ($cartItems as $cartItem) {
+        $checkoutTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
+    }
+    $cartArray = is_array($cartItems) ? $cartItems : $cartItems->toArray();
+    $firstItem = reset($cartArray);
+@endphp
+
 @if (session()->has('cart') && count(session()->get('cart')) > 0)
     <script>
-        window.dataLayer = window.dataLayer || [];
+        var fbp = (document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)') || [])[2] || '';
+        var fbc = (document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)') || [])[2] || '';
 
-        dataLayer.push({
-            event: "begin_checkout",
-            ecommerce: {
-                currency: "BDT",
-                value: {{ $gTotal }},
-                items: [
-                    @foreach (session('cart') as $item)
+        // GA4
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'begin_checkout',
+            '_fbp': fbp,
+            '_fbc': fbc,
+            'ecommerce': {
+                'currency': 'BDT',
+                'value': {{ $checkoutTotal }},
+                'items': [
+                    @foreach ($cartArray as $item)
                         {
-                            item_id: "{{ $item['id'] }}",
-                            item_name: "{{ $item['name'] }}",
-                            item_brand: "{{ $item['brand'] ?? '' }}",
-                            item_category: "{{ $item['category'] ?? '' }}",
-                            item_variant: "{{ $item['variant'] ?? '' }}",
-                            price: {{ $item['price'] - $item['discount'] }},
-                            quantity: {{ $item['quantity'] }}
+                            'item_id': '{{ $item['id'] }}',
+                            'item_name': '{{ addslashes($item['name']) }}',
+                            'item_category': '{{ $item['category'] ?? '' }}',
+                            'price': {{ $item['price'] - $item['discount'] }},
+                            'quantity': {{ $item['quantity'] }},
+                            'content_type': 'product'
                         }
                         @if (!$loop->last)
                             ,
@@ -354,6 +371,58 @@
                     @endforeach
                 ]
             }
+        });
+
+        // Meta Pixel
+        fbq('track', 'InitiateCheckout', {
+            currency: 'BDT',
+            value: {{ $checkoutTotal }},
+            content_type: 'product',
+            content_name: '{{ addslashes($firstItem['name'] ?? '') }}',
+            content_ids: [
+                @foreach ($cartArray as $item)
+                    '{{ $item['id'] }}'
+                    @if (!$loop->last)
+                        ,
+                    @endif
+                @endforeach
+            ],
+            x_fb_cd_content_category: '{{ $firstItem['category'] ?? '' }}',
+            x_fb_ck_fbp: fbp,
+            x_fb_ck_fbc: fbc,
+            contents: [
+                @foreach ($cartArray as $item)
+                    {
+                        id: '{{ $item['id'] }}',
+                        quantity: {{ $item['quantity'] }},
+                        item_price: {{ $item['price'] - $item['discount'] }}
+                    }
+                    @if (!$loop->last)
+                        ,
+                    @endif
+                @endforeach
+            ],
+            num_items: {{ collect($cartArray)->sum('quantity') }}
+        });
+
+        // TikTok Pixel
+        ttq.track('InitiateCheckout', {
+            contents: [
+                @foreach ($cartArray as $item)
+                    {
+                        content_id: '{{ $item['id'] }}',
+                        content_type: 'product',
+                        content_name: '{{ addslashes($item['name']) }}',
+                        quantity: {{ $item['quantity'] }},
+                        price: {{ $item['price'] - $item['discount'] }}
+                    }
+                    @if (!$loop->last)
+                        ,
+                    @endif
+                @endforeach
+            ],
+            value: {{ $checkoutTotal }},
+            currency: 'BDT'
         });
     </script>
 @endif

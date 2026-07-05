@@ -9,6 +9,7 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\ChildCategory;
+use App\Models\Color;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
@@ -17,6 +18,7 @@ use App\Models\SubCategory;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -53,6 +55,20 @@ class ProductController extends Controller
             'success' => true,
             'message' => 'Product updated successfully'
         ]);
+    }
+    // Add a new color on color table
+    public function addColor(Request $request)
+    {
+        $request->validate([
+            'color_name' => 'required|string',
+            'color_code' => 'required|string',
+        ]);
+
+        Color::create([
+            'name' => Str::slug($request->color_name, '_'),
+            'code' => $request->color_code
+        ]);
+        return back()->with('success', 'Color has been added!');
     }
     public function show(Product $product)
     {
@@ -453,5 +469,25 @@ class ProductController extends Controller
             ->rawColumns(['image', 'attribute'])
             ->with('totals', $totals) // <-- totals pass
             ->toJson();
+    }
+
+    public function removeSizeChart($productId)
+    {
+        $product = Product::find($productId);
+
+        if (!$product || !$product->size_chart) {
+            return back()->with('warning', 'Size chart not found for this product!');
+        }
+
+        $imageName = $product->size_chart;
+
+        // Delete image
+        FileManager::delete('product/thumbnail/' . $imageName);
+
+        // Update DB
+        $product->size_chart = null;
+        $product->save();
+
+        return back()->with('success', 'Size chart removed successfully!');
     }
 }

@@ -14,19 +14,25 @@ use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Front\UserWalletController;
 use App\Http\Controllers\Front\WholesaleController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use Stevebauman\Location\Facades\Location;
 
 Route::get('maintenance-mode', [FrontendController::class, 'maintenance_mode'])->name('maintenance-mode');
+// Test route
+Route::get('/test-location', function (Request $request) {
+    $position = Location::get('103.4.145.10'); // kono Bangladesh IP test
+    dd($position);
+});
 
-Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function () {
+Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
         Route::get('/', 'home')->name('home');
         Route::get('/category', 'category')->name('category');
         Route::get('/product-details', 'productDeails')->name('product.details');
         Route::get('/shop', 'shop')->name('shop');
+        Route::get('/new-arrivals', 'newArrival')->name('newArrival');
         Route::get('/outlets', 'outlets')->name('outlets');
-        Route::get('/searched-outlets',  'searchOutlets')->name('outlet.search');
         Route::get('/checkout', 'checkout')->name('checkout');
         Route::get('/special-offers', 'specialProducts')->name('offers.product');
         Route::post('/client-review', 'clientReview')->name('client_review');
@@ -37,7 +43,9 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
         Route::get('/careers', 'careers')->name('careers');
         Route::get('/offers/{slug}', 'discountOffers')->name('discount.offers');
         Route::get('/offers-promotions/{slug}', 'eidOffers')->name('eid.offers');
+        // sitemap
         Route::get('/sitemap.xml', 'siteMaps')->name('sitemap');
+        Route::get('/sitemap', 'htmlSitemap')->name('sitemap.page');
         // single landing page route
         Route::get('/page/{slug}', 'singleProductLandingPage')
             ->name('single.landing_page');
@@ -101,8 +109,8 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
         Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
         Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
 
-        //maintaince mode
-
+        // all featured products
+        Route::get('/featured-products', 'featuredProducts')->name('featured.products');
     });
 
 
@@ -115,7 +123,8 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
         Route::get('set-shipping-method', 'set_shipping_method')->name('set-shipping-method');
         Route::post('checkout-complete',  'productCheckout')->name('product.checkout');
         Route::post('checkout/complete', 'singlepCheckout')->name('sproduct.checkout');
-        Route::get('checkout-complete/{id}', 'checkoutComplete')->name('checkout-complete');
+        Route::get('purchase-complete/{id}', 'purchaseComplete')->name('purchase-complete');
+        Route::get('purchase-confirm/{id}', 'purchaseConfirm')->name('purchase-confirm');
         Route::post('customer-address-update', 'customerAddressUpdate')->name('address.update');
     });
 
@@ -166,9 +175,7 @@ Route::middleware(['web', 'track_visitor', 'maintenance_mode'])->group(function 
     // chatting end
 
 });
-Route::get('/complain', [ComplainController::class, 'customerComplain'])->name('customer.complain');
 
-Route::post('/complain/store', [ComplainController::class, 'customerComplainStore'])->name('customer.complain.store');
 // facebook feed route
 Route::get('/feed/facebook', [FeedController::class, 'facebookFeed']);
 //check done
@@ -179,6 +186,7 @@ Route::controller(CartController::class)->prefix('/cart')->as('cart.')->group(fu
     Route::post('/nav-cart-items', 'updateNavCart')->name('nav_cart');
     Route::post('total-cart-count', 'totalCartCount')->name('totalCart');
     Route::post('/updateQuantity', 'updateQuantity')->name('updateQuantity');
+    Route::get('summary-html',  'summaryHtml')->name('summary_html');
     Route::get('/subdomain-ordernow/{id}', 'subdomainOrdernow');
     // In web.php
     // Route::post('/add-to-cart', 'CartController@addToCart')->name('add.to.cart');

@@ -6,6 +6,8 @@ use App\CPU\FileManager;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\BlogContentPromotion;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -282,5 +284,51 @@ class BlogController extends Controller
         $blog = Blog::find($request->id);
         $blog->delete();
         return response()->json();
+    }
+    // Blog Content Promotion
+    public function contentPromotion()
+    {
+        $products = Product::where('status', 1)->get();
+        $contentPromotion = BlogContentPromotion::first();
+
+        if (!$contentPromotion) {
+            $contentPromotion = (object) [
+                'add_url' => '',
+                'products' => json_encode([]),
+                'add_img' => null,
+            ];
+        }
+        return view('admin.blog.content_promotion.content_promotion', compact('products', 'contentPromotion'));
+    }
+    public function updateContentPromotion(Request $request)
+    {
+        $contentPromotion = BlogContentPromotion::first();
+
+        if (!$contentPromotion) {
+            $contentPromotion = new BlogContentPromotion();
+        }
+
+        $contentPromotion->add_url = $request->add_url;
+        $contentPromotion->products = json_encode($request->products);
+
+        if ($request->hasFile('add_img')) {
+            if ($contentPromotion->add_img) {
+                $contentPromotion->add_img = FileManager::updateOriginalFile(
+                    'blogs/adds/',
+                    $contentPromotion->add_img,
+                    $request->file('add_img')
+                );
+            } else {
+                $contentPromotion->add_img = FileManager::uploadOriginalFile(
+                    'blogs/adds/',
+                    300,
+                    $request->file('add_img')
+                );
+            }
+        }
+
+        $contentPromotion->save();
+
+        return back()->with('success', 'Content promotion updated successfully');
     }
 }

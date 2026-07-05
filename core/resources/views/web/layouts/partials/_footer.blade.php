@@ -22,7 +22,8 @@
                             $company_email = $web_config['email']->value;
                             $company_phone = $web_config['phone']->value;
                         @endphp
-                        <li><i class="fa fa-map-marker mr-0"></i><a href="#"><span class="ms-3">Address:
+                        <li><i class="fa fa-map-marker mr-0"></i><a href="https://maps.app.goo.gl/riEm9RDKiCDM8jnE7"
+                                target="_blank"><span class="ms-3">Address:
                                     {{ \App\CPU\Helpers::get_business_settings('shop_address') }}</span></a></li>
 
                         <li><i class="fa fa-envelope"></i><a href="mailto:{{ $company_email }}">
