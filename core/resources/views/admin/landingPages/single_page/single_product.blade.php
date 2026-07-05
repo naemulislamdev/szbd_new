@@ -56,7 +56,6 @@
                                         <th>Title</th>
                                         <th>Slug</th>
                                         <th>SKU</th>
-                                        <th>Product Name</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -112,12 +111,8 @@
                     },
                     {
                         data: 'sku',
-                        name: 'products.code'
+                        name: 'sku'
 
-                    },
-                    {
-                        data: 'product_id',
-                        name: 'products.name'
                     },
 
                     {

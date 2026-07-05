@@ -131,11 +131,7 @@
                                 <a href="{{ route('admin.product.index') }}" class="nav-link ">All Products</a>
                             </li><!--end nav-item-->
                         @endcan
-                        @can('product_view')
-                            <li class="nav-item">
-                                <a href="{{ route('admin.product.salesReport') }}" class="nav-link ">Product Sales Report</a>
-                            </li><!--end nav-item-->
-                        @endcan
+
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->
@@ -336,6 +332,11 @@
                             <a href="{{ route('admin.customer.list') }}"
                                 class="nav-link {{ request()->routeIs('admin.customer.list') ? 'active' : '' }}">Customers
                                 List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.customer-report.list') }}"
+                                class="nav-link {{ request()->routeIs('admin.customer-report.list') ? 'active' : '' }}">Customers
+                                Report</a>
                         </li>
                     </ul><!--end nav-->
                 </div>
@@ -590,6 +591,11 @@
                                     Visitor Report</a>
                             </li>
                         @endcan
+                        @can('product_report')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.product_stock.index') }}" class="nav-link ">Product Stock Report</a>
+                            </li><!--end nav-item-->
+                        @endcan
                     </ul><!--end nav-->
                 </div>
             </li><!--end nav-item-->
@@ -709,6 +715,11 @@
                 </a>
             </li><!--end nav-item-->
         @endcanAny
-
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('admin.free_hajj_umrah.list') }}">
+                <i class="bi bi-moon-stars menu-icon"></i>
+                <span>Umra Hajj Applications</span>
+            </a>
+        </li><!--end nav-item-->
     </ul><!--end navbar-nav--->
 </div>

@@ -1143,4 +1143,8 @@ SET price = ROUND(price * $rate)");
         }
         return redirect()->route('home');
     }
+    public function hajj_umra()
+    {
+        return view('web.hajj_umra.hajj');
+    }
 }

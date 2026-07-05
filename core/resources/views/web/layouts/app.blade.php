@@ -637,11 +637,10 @@
             padding: 30px;
         }
 
-        /*
-            ja ja change korchi
-
-            1. app nicher css 2. cart.blade.php
-         */
+        .ProductSlider,
+        .CategoryProductSlider {
+            opacity: 0;
+        }
     </style>
 
     @php
@@ -716,7 +715,7 @@
 </head>
 <!-- Body-->
 
-<body class="toolbar-enabled " id="body-div">
+<body class="toolbar-enabled " id="body-div" style="background: #fdf9f5;">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ6FD77Z" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
@@ -842,7 +841,7 @@
                     <span style="font-size: 22px;"
                         class="btn text-white border-none py-0 bg-transparent payment-2btn"><i
                             class="bi bi-chat-text"></i>
-                        <br>
+
                         <small>Message</small>
                     </span>
                     <div class="d-flex justify-content-between align-items-center gap-1 px-3 py-3 payment-hover-item">
@@ -911,10 +910,10 @@
     <script src={{ asset('assets/default/toastr/toastr.min.js') }}></script>
     <script src="{{ asset('assets/frontend/js/custome.js') }}?v=1.0"></script>
     <script>
-        toastr.options = {
-            "timeOut": "500", // 2 second por auto hide
-            "extendedTimeOut": "1000" // hover korle extra 1 sec thakbe
-        };
+        // toastr.options = {
+        //     "timeOut": "5000",
+        //     "extendedTimeOut": "1000"
+        // };
     </script>
     @if (Session::has('success'))
         <script>

@@ -85,7 +85,7 @@ $(document).ready(function () {
   $(".owl-carousel.category-carosel").each(function () {
     $(this).owlCarousel({
       loop: true,
-      margin: 20,
+      margin: 30,
       autoplay: true,
       autoplayTimeout: 3000,
       autoplayHoverPause: true,
@@ -407,6 +407,11 @@ new Swiper(".ProductSlider", {
     disableOnInteraction: false,
     pauseOnMouseEnter: true,
   },
+  on: {
+    init: function () {
+      this.el.style.opacity = "1";
+    },
+  },
 
   pagination: {
     el: ".ProductSlider .swiper-pagination",
@@ -440,14 +445,19 @@ new Swiper(".ProductSlider", {
 // Category Product Slider
 document.querySelectorAll(".CategoryProductSlider").forEach((slider) => {
   const paginationEl = slider.querySelector(".swiper-pagination");
-
+  const slideCount = slider.querySelectorAll(".swiper-slide").length;
   new Swiper(slider, {
-    loop: true,
+    loop: slideCount > 5,
 
     autoplay: {
       delay: 3000,
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
+    },
+    on: {
+      init: function () {
+        this.el.style.opacity = "1";
+      },
     },
 
     pagination: {

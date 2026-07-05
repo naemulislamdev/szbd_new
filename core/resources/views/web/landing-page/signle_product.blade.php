@@ -588,40 +588,43 @@
     <section>
         <div class="container">
             <div class="row">
-                <div class="col-lg-6">
-                    <div class="lt-slider">
-                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"
-                            data-bs-interval="2000">
-                            <ol class="carousel-indicators">
-                                @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
-                                    <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
-                                        class="{{ $key == 0 ? 'active' : '' }}"></li>
-                                @endforeach
-                            </ol>
-                            <div class="carousel-inner">
-                                @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
-                                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                        <div class="slider-img">
-                                            <img class="d-block w-100"
-                                                src="{{ asset('assets/storage/landingpage/slider') }}/{{ $image }}"
-                                                alt="Shopping Zone BD Banner Image">
+                @if ($productLandingPage->slider_img)
+                    <div class="col-lg-6">
+                        <div class="lt-slider">
+                            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"
+                                data-bs-interval="2000">
+                                <ol class="carousel-indicators">
+                                    @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
+                                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
+                                            class="{{ $key == 0 ? 'active' : '' }}"></li>
+                                    @endforeach
+                                </ol>
+                                <div class="carousel-inner">
+                                    @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
+                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                            <div class="slider-img">
+                                                <img class="d-block w-100"
+                                                    src="{{ asset('assets/storage/landingpage/slider') }}/{{ $image }}"
+                                                    alt="Shopping Zone BD Banner Image">
+                                            </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                                    data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                                    data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
-                                data-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
-                                data-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
                         </div>
                     </div>
-                </div>
+                @endif
+
                 <!-- Offer Section -->
                 <div class="p-details col-lg-6">
                     <div class="container">

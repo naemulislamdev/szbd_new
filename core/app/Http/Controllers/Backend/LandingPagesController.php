@@ -369,9 +369,9 @@ class LandingPagesController extends Controller
         }
     }
 
-    /* ============================================================
+    /* ============================================================================
                 Start Single-product landing page methods
-===============================================================
+===============================================================================
 */
 
     public function singleIndex()
@@ -386,25 +386,43 @@ class LandingPagesController extends Controller
     public function singleProductdatatables()
     {
         $query = ProductLandingPage::query()
-            ->select(
-                'product_landing_pages.*',
-                'products.name as product_name',
-                'products.code as sku'
-            )
-            ->leftJoin('products', 'products.id', '=', 'product_landing_pages.product_id')
+            ->select('product_landing_pages.*')
             ->latest('product_landing_pages.id');
 
-        return DataTables::of($query)
+        return DataTables::eloquent($query)
             ->addIndexColumn()
+            ->filterColumn('sku', function ($query, $keyword) {
+                $matchedIds = Product::where('code', 'like', "%{$keyword}%")
+                    ->pluck('id')
+                    ->toArray();
 
-            // 🔹 Product Name
-            ->editColumn('product_name', function ($row) {
-                return $row->product_name ?? '';
+                if (!empty($matchedIds)) {
+                    $query->where(function ($q) use ($matchedIds) {
+                        foreach ($matchedIds as $id) {
+                            // JSON string এ id directly search
+                            $q->orWhereRaw(
+                                'product_landing_pages.product_id LIKE ?',
+                                ["%{$id}%"]
+                            );
+                        }
+                    });
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
             })
 
-            // 🔹 SKU
-            ->editColumn('sku', function ($row) {
-                return $row->sku ?? '';
+            // 🔹 SKU — product_id JSON decode করে products থেকে code গুলো বের করো
+            ->addColumn('sku', function ($row) {
+                $productIds = json_decode($row->product_id, true);
+                if (empty($productIds) || !is_array($productIds)) {
+                    return '<span class="text-muted">N/A</span>';
+                }
+
+                $codes = Product::whereIn('id', $productIds)
+                    ->pluck('code')
+                    ->toArray();
+
+                return implode(', ', $codes);
             })
 
             // 🔹 Action Buttons
@@ -415,7 +433,6 @@ class LandingPagesController extends Controller
                 <a href="' . $route . '" class="btn btn-primary btn-sm">
                     <i class="la la-edit"></i>
                 </a>
-
                 <button class="btn btn-danger btn-sm delete"
                     data-id="' . $row->id . '">
                     <i class="la la-trash"></i>
@@ -444,12 +461,10 @@ class LandingPagesController extends Controller
                     $url = url('/page/' . $row->slug);
                     return "<a href='{$url}' target='_blank'>{$row->slug}</a>";
                 }
-
                 return "<span class='text-muted'>Link is Deactivated</span>";
             })
 
-            // 🔥 IMPORTANT: Enable raw HTML
-            ->rawColumns(['action', 'status', 'slug'])
+            ->rawColumns(['action', 'status', 'slug', 'sku'])
 
             ->toJson();
     }
@@ -527,11 +542,20 @@ class LandingPagesController extends Controller
         }
         $finaReviewImage = json_encode($review_images);
         // Customer Review Images
+        $productIds = [];
+        if ($request->product_id) {
+            foreach ($request->product_id as $productId) {
+                $productIds[] = $productId;
+            }
+        }
+
+        $finalProductIds = json_encode($productIds);
+
         $productLandingpage = ProductLandingPage::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'slider_img' => $images,
-            'product_id' => $request->product_id,
+            'product_id' => $finalProductIds,
             'description' => $request->description,
             'feature_list' => $featureList,
             'feature_img' => $finaFeaturelImage,
@@ -663,8 +687,6 @@ class LandingPagesController extends Controller
     }
     public function updateSingleProduct(Request $request, $id)
     {
-
-
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -730,13 +752,20 @@ class LandingPagesController extends Controller
         $finaReviewslImage = json_encode($reviews_images);
 
         // Customer Review images
+        $productIds = [];
+        if ($request->product_id) {
+            foreach ($request->product_id as $productId) {
+                $productIds[] = $productId;
+            }
+        }
 
+        $finalProductIds = json_encode($productIds);
 
         $productLandingpage->update([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'slider_img' => $finalImage,
-            'product_id' => $request->product_id,
+            'product_id' => $finalProductIds,
             'description' => $request->description,
             'feature_list' => $FinalFeatureList,
             'feature_img' => $finaFeaturelImage,

@@ -136,7 +136,8 @@
         }
 
         .category .category-carosel img {
-            height: 200px;
+            /* height: 200px; */
+            /* height: 170px; */
         }
 
         .owl-nav button {
@@ -227,8 +228,8 @@
         }
 
         .category .category-carosel img {
-            object-fit: cover;
-            object-position: top;
+            object-fit: contain;
+            object-position: center;
         }
 
         section.top-banner .big-banner {
@@ -257,6 +258,104 @@
         .product-slider .product-image2-col-2 {
             height: 424px;
         }
+
+        /* category new style 11 jun 2026 */
+        /* ===== Category Section ===== */
+
+
+        .section-heading-title h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #3a2f25;
+            margin-bottom: 1.25rem;
+        }
+
+        /* ===== Card Item ===== */
+        .category-item {
+            text-align: center;
+        }
+
+        .category-item a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            text-decoration: none;
+        }
+
+        /* Image box — white bg + border + shadow */
+        .category-item .img-box {
+            width: 100%;
+            /* aspect-ratio: 1 / 1; */
+            /* সবসময় square */
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1.5px solid #e0d5c8;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .category-item .img-box img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Title — no background, plain text */
+        .category-item .cat-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #3a2f25;
+            background: none;
+            margin: 0;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* ===== Owl Nav ===== */
+        .owl-carousel.category-carosel .owl-nav button {
+            position: absolute !important;
+            top: 50% !important;
+            /* transform: translateY(-50%) !important; */
+            background: #f0a847 !important;
+            border-radius: 50% !important;
+            width: 30px !important;
+            height: 30px !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            border: none !important;
+            outline: none;
+            z-index: 10;
+        }
+
+        .owl-carousel.category-carosel .owl-nav .owl-prev {
+            left: -14px !important;
+        }
+
+        .owl-carousel.category-carosel .owl-nav .owl-next {
+            right: -14px !important;
+        }
+
+        .owl-carousel.category-carosel .owl-nav button i {
+            color: #fff !important;
+            font-size: 13px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 767px) {
+            .category-item .cat-title {
+                font-size: 11px;
+            }
+        }
     </style>
 @section('content')
 
@@ -269,32 +368,33 @@
     ?>
 
     {{-- Category Section Start --}}
-    {{-- <section class="category d-none d-lg-block">
+    <section class="category">
         <div class="container px-0">
             <div class="row mb-3 mt-3">
                 <div class="col-12">
                     <div class="section-heading-title d-flex align-items-center justify-content-center">
-                        <h3>Categories</h3>
+                        <h3 class="mb-0">Categories</h3>
                     </div>
                 </div>
             </div>
-            <div class="owl-carousel category-carosel ">
+
+            <div class="owl-carousel category-carosel">
                 @foreach ($categories as $category)
-                    <div style="background: #f26d21" class="category-item card">
-                        <a href="{{ route('category.products', $category->slug) }}" class="">
-                            <img src='{{ asset("assets/storage/category/$category->icon") }}' alt="{{ $category->name }}">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
+                    <div class="category-item">
+                        <a href="{{ route('category.products', $category->slug) }}">
+                            <div class="img-box">
+                                <img src='{{ asset("assets/storage/category/$category->icon") }}'
+                                    alt="{{ $category->name }}">
                             </div>
+                            <p class="cat-title">{{ $category->name }}</p>
                         </a>
                     </div>
                 @endforeach
-
             </div>
         </div>
-    </section> --}}
+    </section>
     {{-- mobile category --}}
-    {{-- <section class="mobile-category d-block d-lg-none">
+    <section class="mobile-category d-none">
         <div class="container">
             <div class="row mb-3 mt-3">
                 <div class="col-12">
@@ -319,7 +419,7 @@
                 @endforeach
             </div>
         </div>
-    </section> --}}
+    </section>
 
     {{-- Coupon Slider Start --}}
     @if (count($couponSlider) > 0)

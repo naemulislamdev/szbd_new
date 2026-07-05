@@ -73,6 +73,9 @@
                         <li>
                             <a href="{{ route('leads') }}">Franchise</a>
                         </li>
+                        <li>
+                            <a href="{{ route('hajj.umra') }}">Haj umra</a>
+                        </li>
                     </ul>
                 </div>
             </div>

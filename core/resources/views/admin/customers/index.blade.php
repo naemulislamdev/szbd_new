@@ -47,6 +47,8 @@
                                         <th>Phone</th>
                                         <th>Email</th>
                                         <th>Total Order</th>
+                                        <th>Confirmed</th>
+                                        <th>Cancelled</th>
                                         <th>Block/Unblock</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -102,6 +104,12 @@
                     },
                     {
                         data: 'total_order'
+                    },
+                    {
+                        data: 'total_confirmed'
+                    },
+                    {
+                        data: 'total_cancelled'
                     },
                     {
                         data: 'is_active'
