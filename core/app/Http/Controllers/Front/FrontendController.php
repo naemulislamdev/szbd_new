@@ -1,0 +1,1145 @@
+<?php
+
+namespace App\Http\Controllers\Front;
+
+use App\CPU\FileManager;
+use App\CPU\Helpers;
+use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Blog;
+use App\Models\Branch;
+use App\Models\Brand;
+use App\Models\Banner;
+use App\Models\BlogContentPromotion;
+use App\Models\BusinessSetting;
+use App\Models\Career;
+use App\Models\Category;
+use App\Models\ChildCategory;
+use App\Models\ClientReview;
+use App\Models\Contact;
+use App\Models\ShippingMethod;
+use App\Models\DealOfTheDay;
+use App\Models\DiscountOffer;
+use App\Models\EidOffer;
+use App\Models\FlashDeal;
+use App\Models\FlashDealProduct;
+use App\Models\HelpTopic;
+use App\Models\JobApplication;
+use App\Models\LandingPages;
+use App\Models\Lead;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Product;
+use App\Models\ProductLandingPage;
+use App\Models\Review;
+use App\Models\ShippingAddress;
+use App\Models\SubCategory;
+use App\Models\Subscription;
+use App\Models\User;
+use App\Models\UserInfo;
+use App\Models\Wishlist;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
+use Illuminate\Support\Facades\Cache;
+class FrontendController extends Controller
+{
+    public function home()
+    {
+        $home_categories = Category::where('home_status', true)->orderBy('order_number', 'asc') ->get();
+
+        //feature products finding based on selling
+        $featured_products = Product::with(['reviews'])->active()
+            ->where('featured', 1)
+            ->take(12)
+            ->latest()
+            ->get();
+        //end
+        //Arrival products finding based on selling
+        $arrival_products = Product::with(['reviews'])->active()
+            ->where('arrival', 1)
+            ->take(12)
+            ->get();
+        //end
+
+        $latest_products = Product::with(['reviews'])->active()->orderBy('id', 'desc')->take(8)->get();
+        $categories = Category::where('home_status', true)->take(11)->latest('order_number')->get();
+        $brands = Brand::active()->take(15)->get();
+        //best sell product
+        $bestSellProduct = OrderDetail::with('product.reviews')
+            ->whereHas('product', function ($query) {
+                $query->active();
+            })
+            ->select('product_id', DB::raw('COUNT(product_id) as count'))
+            ->groupBy('product_id')
+            ->orderBy("count", 'desc')
+            ->take(4)
+            ->get();
+        //Top rated
+        $topRated = Review::with('product')
+            ->whereHas('product', function ($query) {
+                $query->active();
+            })
+            ->select('product_id', DB::raw('AVG(rating) as count'))
+            ->groupBy('product_id')
+            ->orderBy("count", 'desc')
+            ->take(4)
+            ->get();
+
+        if ($bestSellProduct->count() == 0) {
+            $bestSellProduct = $latest_products;
+        }
+
+        if ($topRated->count() == 0) {
+            $topRated = $bestSellProduct;
+        }
+
+        $deal_of_the_day = DealOfTheDay::join('products', 'products.id', '=', 'deal_of_the_days.product_id')->select('deal_of_the_days.*', 'products.unit_price')->where('products.status', 1)->where('deal_of_the_days.status', 1)->first();
+
+        // product count on category wise
+        $products = Product::active()->get();
+        $productCounts = [];
+        foreach ($products as $product) {
+            $categoryIds = json_decode($product->category_ids, true);
+
+            if (is_array($categoryIds)) {
+                foreach ($categoryIds as $category) {
+                    $categoryId = $category['id'];
+                    if (!isset($productCounts[$categoryId])) {
+                        $productCounts[$categoryId] = 0;
+                    }
+                    $productCounts[$categoryId]++;
+                }
+            }
+        }
+        $ourBrands = [
+            [
+                'name' => 'Asmi Supershop',
+                'logo' => 'asmi.png',
+                'link' => 'https://asmishop.com/',
+            ],
+            [
+                'name' => 'Shopping Zone BD',
+                'logo' => 'szbd-circle.png',
+                'link' => 'https://www.facebook.com/shoppingzonebd300',
+            ],
+            [
+                'name' => 'Purple',
+                'logo' => 'purple.png',
+                'link' => 'https://www.facebook.com/purple.10000/',
+            ],
+            [
+                'name' => 'Shopping Zone BD LTD',
+                'logo' => 'szbd_long.webp',
+                'link' => 'https://www.facebook.com/shoppingzonebd30/',
+            ],
+            [
+                'name' => 'Style Different',
+                'logo' => 'style-defrent.png',
+                'link' => 'https://www.facebook.com/styledifferent.bd/',
+            ],
+            [
+                'name' => 'Shoppingzone BD Co.',
+                'logo' => 'szbd-circle.png',
+                'link' => 'https://www.facebook.com/shoppingzonebd.co/',
+            ],
+        ];
+        $branchs = Branch::where('status', 1)->get();
+        $couponSlider = Banner::where('published', 1)
+            ->where('banner_type', "coupon_slider")
+            ->get();
+        return view('web.home', compact('featured_products', 'couponSlider', 'arrival_products', 'branchs', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'home_categories', 'productCounts', 'ourBrands'));
+    }
+      public function siteMaps()
+    {
+        $xml = Cache::remember('sitemap_xml', 3600, function () {
+            $siteURL = "https://shoppingzonebd.com.bd";
+            $sitemap = Sitemap::create();
+
+            // Home Page
+            $sitemap->add(
+                Url::create($siteURL . '/')
+                    ->setLastModificationDate(now())
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                    ->setPriority(1.0)
+            );
+
+            // Contact Page
+            $sitemap->add(
+                Url::create($siteURL . '/contacts')
+                    ->setLastModificationDate(now())
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                    ->setPriority(0.5)
+            );
+
+            // Category Pages - শুধু active
+            Category::where('home_status', 1)
+                ->get()
+                ->each(function ($category) use ($sitemap, $siteURL) {
+                    $sitemap->add(
+                        Url::create($siteURL . '/category/' . $category->slug)
+                            ->setLastModificationDate($category->updated_at ?? now())
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                            ->setPriority(0.8)
+                    );
+                });
+
+
+            Product::where('status', 1)
+                ->latest()
+                ->select(['slug', 'updated_at', 'thumbnail'])
+                ->chunk(200, function ($products) use ($sitemap, $siteURL) {
+                    foreach ($products as $product) {
+                        $url = Url::create($siteURL . '/product/' . $product->slug)
+                            ->setLastModificationDate($product->updated_at ?? now())
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                            ->setPriority(0.9);
+
+                        // ✅ Image tag যোগ করুন
+                        if ($product->thumbnail) {
+                            $url->addImage(asset('assets/storage/product/thumbnail/' . $product->thumbnail));
+                        }
+
+                        $sitemap->add($url);
+                    }
+                });
+
+            return $sitemap->render(); // ✅ XML string return করুন
+        });
+
+        return response($xml, 200)->header('Content-Type', 'application/xml');
+    }
+
+     public function featuredProducts()
+    {
+        $featured_products = Product::with(['reviews'])->active()
+            ->where('featured', 1)
+            ->latest()
+            ->paginate(20);
+        return view('web.products.featured_products', compact('featured_products'));
+    }
+
+    public function leads()
+    {
+        return view('web.leads');
+    }
+
+    public function leadsStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|regex:/^(01[3-9]\d{8})$/',
+            'address' => 'required|string',
+            'upazila' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
+            'division' => 'required|string|max:100',
+            'showroom_size' => 'required|string|max:100',
+            'showroom_location' => 'required|string|max:255',
+        ]);
+
+        Lead::create($request->all());
+        return back()->with('success', 'Lead submitted successfully!');
+    }
+
+    //Products Search on ajax
+    public function searchProducts(Request $request)
+    {
+        $query = $request->input('query');
+        $products = Product::active()
+            ->where(function ($queryBuilder) use ($query) {
+                $queryBuilder->where('name', 'LIKE', "%{$query}%")
+                    ->orWhere('code', 'LIKE', "%{$query}%")
+                    ->orWhere('details', 'LIKE', "%{$query}%");
+            })
+            ->get();
+        $categories = Category::where('name', 'LIKE', "%{$query}%")->get();
+
+        $output = '';
+        if (count($products) > 0) {
+            foreach ($products as $product) {
+                $image = asset('assets/storage/product/thumbnail/') . '/' . $product->thumbnail;
+                $price = $product->unit_price;
+                $output .= '
+                <a href="' . route('product', $product->slug) . '">
+                <div class="product-item d-flex">
+                    <div class="mr-2 se-product-res"><img src="' . $image . '" alt="' . $product->name . '" /></div>
+                   <div class="se-product-content-res">
+                    <h5>' . $product->name . '</h5>
+                    <p>' . $price . '</p>
+                   </div>
+                </div>
+                </a>
+                ';
+            }
+        } else {
+            $output .= '<p>No products found</p>';
+        }
+
+        //categories loop
+        $cates = '<div class="mb-2"><p class="text-center text-bold">Our popular categories</p></div>';
+        if (count($categories) > 0) {
+            foreach ($categories as $category) {
+                $cates .= '
+                <div class="category-item">
+                    <div>
+                    <a  href="' . route('category.products', $category->slug) . '">
+                    <p>' . $category->name . '</p>
+                    </a>
+                    </div>
+                </div>
+                ';
+            }
+        } else {
+            $cates .= '<p>No categories found</p>';
+        }
+
+        return response()->json([
+            'products' => $output,
+            'categories' => $cates
+        ]);
+    }
+    public function homeSearch(Request $request)
+    {
+        $keyword = $request->search;
+
+        $searchProducts = Product::where('status', 1)
+            ->where(function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('code', 'LIKE', "%{$keyword}%")
+                    ->orWhere('unit_price', 'LIKE', "%{$keyword}%");
+            })
+            ->paginate(20)
+            ->appends($request->query());
+        return view('web.home_search', compact('searchProducts', 'keyword'));
+    }
+
+    public function videoShopping(Request $request)
+    {
+        $allProducts = Product::active()->with(['reviews'])->where('video_shopping', true);
+
+        $query = null;
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+            $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
+        }
+        $products = $query;
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('web.products.video_ajax_products', compact('products'))->render()
+            ], 200);
+        }
+        $videoProducts = $allProducts->paginate(30);
+
+        return view('web.video_shopping', compact('videoProducts'));
+    }
+    public function careers()
+    {
+        $careers = Career::where('status', 1)->latest()->get();
+        return view("web.career.careers", compact('careers'));
+    }
+    public function CareerDetails($slug)
+    {
+        $career = Career::where("slug", $slug)->where("status", 1)->first();
+        return view("web.career.career_details", compact("career"));
+    }
+    public function showApplyForm($slug)
+    {
+        $career = Career::where("slug", $slug)->first();
+
+        return view("web.career.career_form", compact("career"));
+    }
+    public function storeApplication(Request $request)
+    {
+
+        $request->validate([
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|email|max:255|unique:job_applications,email,NULL,id,career_id,' . $request->career_id,
+            'phone'             => 'required|string|max:20|unique:job_applications,phone,NULL,id,career_id,' . $request->career_id,
+            'experience_level'  => 'required|string|max:100',
+            'portfolio_link'    => [
+                'nullable',
+                'regex:/^(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}(\/\S*)?$/'
+            ],
+            'resume'            => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+
+        $application = new JobApplication();
+        $application->career_id = $request->career_id;
+        $application->name = $request->name;
+        $application->email = $request->email;
+        $application->phone = $request->phone;
+
+        $application->expected_salary = $request->expected_salary;
+        $application->current_position = $request->current_position;
+        $application->experience_level = $request->experience_level;
+        $application->portfolio_link = $request->portfolio_link;
+        $application->message = $request->message;
+
+        if ($request->hasFile('resume')) {
+            $resumeName = FileManager::uploadFileSimple('files/job_resume', $request->file('resume'));
+
+            if ($resumeName) {
+                $application->resume = $resumeName;
+            }
+        }
+        $application->save();
+
+
+        if ($application->save()) {
+            return redirect()->back()->with("success", "Application Submitted Success!");
+        } else {
+            return redirect()->back()->with("error", "Something went wrong!");
+        }
+    }
+
+    //shop function
+    public function shop(Request $request)
+    {
+        $allProducts = Product::with(['reviews'])->orderBy('viewers', 'desc')->active();
+
+        $query = null;
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+            $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
+        }
+        $products = $query;
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('web.products._ajax-products', compact('products'))->render()
+            ], 200);
+        }
+        $shop_products = $allProducts->paginate(30);
+        return view('web.products.all_products', compact('shop_products'));
+    }
+    //new arrivals function
+     public function newArrival(Request $request)
+    {
+        $allProducts = Product::with(['reviews'])->latest()->active();
+
+        $query = null;
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+            $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
+        }
+        $products = $query;
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('web.products._ajax-products', compact('products'))->render()
+            ], 200);
+        }
+        $shop_products = $allProducts->paginate(30);
+        return view('web.products.new_arrival_products', compact('shop_products'));
+    }
+    public function specialProducts(Request $request)
+    {
+        $allProducts = Product::with(['reviews'])->where('discount', '>', 0)->active();
+
+        $query = null;
+        if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+            $query = $allProducts->whereBetween('unit_price', [$min_price, $max_price])->get();
+        }
+        $products = $query;
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('web.products.selling_ajax_products', compact('products'))->render()
+            ], 200);
+        }
+        $selling_products = $allProducts->paginate(30);
+        return view('web.products.selling_products', compact('selling_products'));
+    }
+    //outlets function
+    public function outlets()
+    {
+        $branchs = Branch::where('status', 1)->get();
+        return view('web.outlets', compact('branchs'));
+    }
+
+    // blog front-end view
+    public function blogs()
+    {
+        $blogs = Blog::where('status', 1)->latest()->get();
+
+        if ($blogs) {
+            return view("web.blogs.blogs", compact("blogs"));
+        } else {
+            return redirect()->route('/')->with("error", "file not found!");
+        }
+    }
+    public function blogDetails($slug)
+    {
+        // insert views start
+        $blog = Blog::where('slug', $slug)->firstOrFail();
+        $contentPromotion = BlogContentPromotion::first();
+        $contentProducts = Product::whereIn('id', json_decode($contentPromotion->products ?? '[]'))->get();
+        $cookieName = 'blog_viewed_' . $blog->id;
+        if (!request()->hasCookie($cookieName)) {
+            $blog->increment('views');
+            cookie()->queue($cookieName, true, 60 * 24 * 30);
+        }
+        // insert views end
+
+        $blog = Blog::find($blog->id);
+        $latest_blogs = Blog::where("status", 1)
+    ->orderByDesc("id")
+    ->limit(3)
+    ->get();
+        return view("web.blogs.blogDetails", compact("blog", "latest_blogs","contentPromotion", "contentProducts"));
+    }
+    public function viewWishlist()
+    {
+        $wishlists = Wishlist::whereHas('wishlistProduct', function ($q) {
+            $q->whereHas('brand', function ($query) {
+                $query->where('status', 1);
+            })->where('status', 1);
+        })->where('customer_id', auth('customer')->id())->get();
+        return view('customer.wishlist', compact('wishlists'));
+    }
+    public function clientReview(Request $request)
+    {
+        if (auth('customer')->check()) {
+            $request->validate([
+                'client_name' => 'required|string|max:50',
+                'client_gender' => 'required|string|max:50|in:male,female,other',
+                'client_comment' => 'required|string|max:400',
+                'rating' => 'required|string',
+            ]);
+            $ClientReview = ClientReview::create([
+                'name' => $request->client_name,
+                'gender' => $request->client_gender,
+                'comment' => $request->client_comment,
+                'ratings' => $request->rating,
+                'customer_id' => auth('customer')->id(),
+                'status' => false
+            ]);
+            if ($ClientReview) {
+                return back()->with('success', 'Review is created successfully!');
+            } else {
+                return back()->with('warning', 'Something want wrong!');
+            }
+        } else {
+            return back()->with('warning', 'Login first as a customer!');
+        }
+    }
+
+    public function flash_deals($id)
+    {
+        $deal = FlashDeal::with(['products.product.reviews', 'products.product' => function ($query) {
+            $query->active();
+        }])
+            ->where(['id' => $id, 'status' => 1])
+            ->whereDate('start_date', '<=', date('Y-m-d'))
+            ->whereDate('end_date', '>=', date('Y-m-d'))
+            ->first();
+
+        $discountPrice = FlashDealProduct::with(['product'])->whereHas('product', function ($query) {
+            $query->active();
+        })->get()->map(function ($data) {
+            return [
+                'discount' => $data->discount,
+                'sellPrice' => $data->product->unit_price,
+                'discountedPrice' => $data->product->unit_price - $data->discount,
+
+            ];
+        })->toArray();
+        if (isset($deal)) {
+            return view('web-views.deals', compact('deal', 'discountPrice'));
+        }
+        return back()->with('error', 'Not Found');
+    }
+
+    public function all_categories()
+    {
+        $categories = Category::all();
+        return view('web.categories', compact('categories'));
+    }
+
+    public function all_brands()
+    {
+        $brands = Brand::active()->paginate(24);
+        return view('web-views.brands', compact('brands'));
+    }
+
+    public function checkout()
+    {
+        if (session()->has('cart') && count(session('cart')) > 0) {
+            $customer = auth('customer')->user();
+            $shippingAddresses = [];
+            if ($customer) {
+                $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
+                $otpExists = User::whereNotNull('otp')->exists();
+            }
+            return view('web.checkout', compact('customer', 'shippingAddresses'));
+        }
+        return redirect('/')->with('error', 'No items in your basket!');
+    }
+
+    public function product($slug)
+    {
+        $product = Product::active()->with(['reviews'])->where('slug', $slug)->first();
+
+        if ($product != null) {
+            $product->increment('viewers');
+
+            $countOrder = OrderDetail::where('product_id', $product->id)->count();
+            $countWishlist = Wishlist::where('product_id', $product->id)->count();
+            $deal_of_the_day = DealOfTheDay::where('product_id', $product->id)->where('status', 1)->first();
+
+            $relatedProducts = collect();
+
+            $query = Product::with('reviews')
+                ->active()
+                ->where('id', '!=', $product->id);
+
+            if (!empty($product->child_category_id)) {
+                $query->where('child_category_id', $product->child_category_id);
+            } elseif (!empty($product->sub_category_id)) {
+                $query->where('sub_category_id', $product->sub_category_id);
+            } else {
+                $query->where('category_id', $product->category_id);
+            }
+
+            $relatedProducts = $query->inRandomOrder()->limit(12)->get();
+
+            return view('web.products.details', compact('product', 'relatedProducts', 'countWishlist', 'countOrder', 'deal_of_the_day'));
+        }
+
+        return back()->with('error', 'Product Not Found!');
+    }
+
+    public function products(
+        Request $request,
+        $category_slug = null,
+        $subcategory_slug = null,
+        $childcategory_slug = null
+    ) {
+        // Base product query
+        $query = Product::active()->with('reviews');
+
+        $data = [];
+
+        // =========================
+        // CATEGORY
+        // =========================
+        if ($category_slug) {
+            $category = Category::where('slug', $category_slug)->firstOrFail();
+            $data['cat'] = $category;
+
+            // filter products by category
+            $query->where('category_id', $category->id);
+        }
+
+        // =========================
+        // SUB CATEGORY
+        // =========================
+        if ($subcategory_slug) {
+            $subCategory = SubCategory::where('slug', $subcategory_slug)->firstOrFail();
+            $data['subCat'] = $subCategory;
+
+            $query->where('sub_category_id', $subCategory->id);
+        }
+
+        // =========================
+        // CHILD CATEGORY
+        // =========================
+        if ($childcategory_slug) {
+            $childCategory = ChildCategory::where('slug', $childcategory_slug)->firstOrFail();
+            $data['childCat'] = $childCategory;
+
+            $query->where('child_category_id', $childCategory->id);
+        }
+
+        // =========================
+        // SORTING
+        // =========================
+        $sort_by = $request->get('sort_by', 'latest');
+
+        if ($sort_by === 'low-high') {
+            $query->orderBy('unit_price', 'ASC');
+        } elseif ($sort_by === 'high-low') {
+            $query->orderBy('unit_price', 'DESC');
+        } elseif ($sort_by === 'a-z') {
+            $query->orderBy('name', 'ASC');
+        } elseif ($sort_by === 'z-a') {
+            $query->orderBy('name', 'DESC');
+        } else {
+            $query->latest();
+        }
+
+        // =========================
+        // PRICE FILTER
+        // =========================
+        if ($request->filled(['min_price', 'max_price'])) {
+            $min = $request->min_price;
+            $max = $request->max_price;
+            $query->whereBetween('unit_price', [$min, $max]);
+        }
+
+        // =========================
+        // PAGINATION
+        // =========================
+        $products = $query->paginate(20)->appends($request->query());
+
+        // =========================
+        // AJAX RESPONSE
+        // =========================
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('web.products._ajax-products', compact('products'))->render()
+            ]);
+        }
+
+        return view('web.category_wise_product', compact('products', 'data'));
+    }
+    public function multiCollection($slug)
+    {
+        $lpage =  LandingPages::where('status', 1)->where("slug", $slug)->first();
+        if ($lpage) {
+            $first_product = Product::find($lpage->product_id);
+            $main_banners = json_decode($lpage->main_banner);
+            $subProducts = [];
+            foreach ($lpage->multiProducts as $i => $item) {
+                $subProducts[$i] =  Product::find($item->product_id);
+            }
+            $withSlide = $lpage->with_slide;
+
+
+            return view("web.products.collections", compact("first_product", "subProducts", "main_banners", "withSlide"));
+        } else {
+            return redirect()->route('home')->with('error', 'Page not available!');
+        }
+    }
+
+    //for HelpTopic
+    public function helpTopic()
+    {
+        $helps = HelpTopic::Status()->latest()->get();
+        return view('web.help-topics', compact('helps'));
+    }
+
+    //for Contact US Page
+    public function contacts()
+    {
+        return view('web.contacts');
+    }
+     public function contact_store(Request $request)
+    {
+        // recaptcha validation
+        $recaptcha = Helpers::get_business_settings('recaptcha');
+        if (isset($recaptcha) && $recaptcha['status'] == 1) {
+            try {
+                $request->validate([
+                    'g-recaptcha-response' => [
+                        function ($attribute, $value, $fail) {
+                            $secret_key = Helpers::get_business_settings('recaptcha')['secret_key'];
+                            $response = $value;
+                            $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $response;
+                            $response = \file_get_contents($url);
+                            $response = json_decode($response);
+                            if (!$response->success) {
+                                $fail('ReCAPTCHA Failed');
+                            }
+                        },
+                    ],
+                ]);
+            } catch (\Exception $exception) {
+                return back()->withErrors('Captcha Failed')->withInput($request->input());
+            }
+        } else {
+            if (strtolower($request->default_captcha_value) != strtolower(Session('default_captcha_code'))) {
+                Session::forget('default_captcha_code');
+                return back()->withErrors('Captcha Failed')->withInput($request->input());
+            }
+        }
+
+        $request->validate([
+            'name'          => 'required|string|max:100',
+            'email'         => 'required|email|max:100',
+            'mobile_number' => 'required|string|max:20',
+            'subject'       => 'required|string|max:255',
+            'message'       => 'required|string|max:1000',
+        ], [
+            'name.required'          => 'Name is required!',
+            'name.string'            => 'Name must be a string!',
+            'name.max'               => 'Name cannot exceed 100 characters!',
+            'email.required'         => 'Email is required!',
+            'email.email'            => 'Please enter a valid email address!',
+            'email.max'              => 'Email cannot exceed 100 characters!',
+            'mobile_number.required' => 'Mobile Number is required!',
+            'mobile_number.max'      => 'Mobile Number cannot exceed 20 characters!',
+            'subject.required'       => 'Subject is required!',
+            'subject.max'            => 'Subject cannot exceed 255 characters!',
+            'message.required'       => 'Message is required!',
+            'message.max'            => 'Message cannot exceed 1000 characters!',
+        ]);
+
+        $contact = new Contact();
+        $contact->name          = $request->name;
+        $contact->email         = $request->email;
+        $contact->mobile_number = $request->mobile_number;
+        $contact->subject       = $request->subject;
+        $contact->message       = $request->message;
+        $contact->save();
+
+        return back()->with('success', 'Your Message Sent Successfully');
+    }
+
+    public function about_us()
+    {
+        $about_us = BusinessSetting::where('type', 'about_us')->first();
+        return view('web.about-us', [
+            'about_us' => $about_us,
+        ]);
+    }
+
+    public function termsandCondition()
+    {
+        $terms_condition = BusinessSetting::where('type', 'terms_condition')->first();
+        return view('web.terms', compact('terms_condition'));
+    }
+
+    public function privacy_policy()
+    {
+        $privacy_policy = BusinessSetting::where('type', 'privacy_policy')->first();
+        return view('web.privacy-policy', compact('privacy_policy'));
+    }
+
+    public function landingPage($landing_slug)
+    {
+        $landing_page = DB::table('landing_pages')->where(['slug' => $landing_slug])->where('status', 1)->first();
+        if ($landing_page == null) {
+            return view('errors.page_error');
+        }
+        $landing_page_pro = DB::table('landing_pages_products')->where('landing_id', $landing_page->id)->pluck('product_id')->toArray();
+        $landing_products = Product::with(['rating'])->whereIn('id', $landing_page_pro)->orderBy('id', 'DESC')->active()->get();
+        return view('web.landing-page.pages', compact('landing_products', 'landing_page'));
+    }
+   public function signleProductLandingPage($slug)
+    {
+        $productLandingPage = ProductLandingPage::where('slug', $slug)
+            ->where('status', true)
+            ->first();
+
+        if (!$productLandingPage) {
+            return redirect()->route('home')->with('warning', 'Landing page is not available!');
+        }
+
+        $productIds = json_decode($productLandingPage->product_id, true);
+        if (!is_array($productIds)) {
+            $productIds = array_filter([$productIds]);
+        }
+
+        $lpProducts      = Product::active()->whereIn('id', $productIds)->get();
+        $shippingConfig  = \App\Models\ShippingConfig::getConfig();
+        $customer        = auth('customer')->user();
+        $shippingAddresses = collect();
+
+        if ($customer) {
+            $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
+        }
+
+        // ── Shipping config অনুযায়ী methods load ──
+        if (
+            $shippingConfig->shipping_type === 'free_shipping'
+            && $shippingConfig->free_shipping_type === 'all_products'
+        ) {
+            // সব free — cost 0 এর method নেব
+            $shippingMethods = ShippingMethod::where('status', 1)->get();
+        } else {
+            $shippingMethods = ShippingMethod::where('status', 1)->get();
+        }
+
+        // Shipping discount config
+        $freeShippingMinAmount = (float) (\App\Models\BusinessSetting::where('type', 'free_shipping_min_amount')->value('value') ?? 0);
+        $freeShippingDiscount  = (float) (\App\Models\BusinessSetting::where('type', 'free_shipping_discount')->value('value') ?? 0);
+
+        return view('web.landing-page.signle_product', compact(
+            'productLandingPage',
+            'lpProducts',
+            'shippingMethods',
+            'shippingConfig',
+            'freeShippingMinAmount',
+            'freeShippingDiscount',
+            'customer',
+            'shippingAddresses'
+        ));
+    }
+ public function saveUserInfo(Request $request)
+{
+    $sessionId = $request->input('session_id');
+    if (!$sessionId) {
+        return response()->json(['success' => false, 'message' => 'session_id missing'], 422);
+    }
+
+    $identifier = ['session_id' => $sessionId];
+
+    $cart = session('cart', []);
+    $type = 'Main page';
+
+    if ($request->has('sp_qty')) {
+        $type = 'Landing page';
+
+        $spQty  = $request->input('sp_qty', []);
+        $spSize = $request->input('sp_size', []);
+
+        $selectedProducts = [];
+        $hasSelected = false;
+
+        foreach ($spQty as $productId => $qty) {
+            if ((int) $qty > 0) {
+                $hasSelected = true;
+            }
+            $selectedProducts[] = [
+                'product_id' => $productId,
+                'qty'        => (int) $qty,
+                'size'       => $spSize[$productId] ?? [],
+            ];
+        }
+
+        // কেউ select করলে শুধু selected গুলো, না করলে সব
+        if ($hasSelected) {
+            $cart = array_filter($selectedProducts, fn($p) => $p['qty'] > 0);
+            $cart = array_values($cart);
+        } else {
+            $cart = $selectedProducts;
+        }
+    } elseif ($request->has('product_id')) {
+        $cart = $request->all();
+        $type = 'Landing page';
+    }
+
+    $data = [];
+    if ($request->filled('name'))    $data['name']    = $request->name;
+    if ($request->filled('email'))   $data['email']   = $request->email;
+    if ($request->filled('phone'))   $data['phone']   = $request->phone;
+    if ($request->filled('address')) $data['address'] = $request->address;
+
+    $data['type']            = $type;
+    $data['order_process']   = 'pending';
+    $data['product_details'] = json_encode($cart);
+
+    UserInfo::updateOrCreate($identifier, $data);
+
+    return response()->json(['success' => true]);
+}
+
+
+    // DB Modify Funciton for some time
+    public function currency_convert()
+    {
+        $products = Product::all();
+
+        $usd = 0.011904761904762;
+        $my_currency = 1.0;
+        //1.0
+        $rate = $my_currency / $usd;
+
+        foreach ($products as $product) {
+            /* ===============================
+         | 1️⃣ Convert Variation Price
+         =============================== */
+            $variations = [];
+
+            if (!empty($product->variation)) {
+                $decodedVariation = json_decode($product->variation, true);
+
+                if (is_array($decodedVariation)) {
+                    foreach ($decodedVariation as $variation) {
+
+                        if (isset($variation['price'])) {
+                            $variation['price'] = $variation['price'] * $rate;
+                        }
+
+                        $variations[] = $variation;
+                    }
+                }
+            }
+
+
+
+            if ($product->discount_type === 'flat' && $product->discount > 0) {
+                $discount = $product->discount * $rate;
+            } else {
+                $discount = $product->discount;
+            }
+            $bdtUnitPrice = $product->unit_price * $rate;
+            $bdtPurchasePrice = $product->purchase_price * $rate;
+
+            $product->update([
+                'unit_price'     => round($bdtUnitPrice, 2),
+                'purchase_price' => round($bdtPurchasePrice, 2),
+                'discount'       => $discount,
+                'variation'      => json_encode($variations),
+            ]);
+        }
+        return "Product Price Updated Successfully!";
+    }
+    public function currency_convert_order()
+    {
+        $currency_model = Helpers::get_business_settings('currency_model');
+
+        if ($currency_model == 'multi_currency') {
+
+            $default = 1;
+
+            $usd = 0.011904761904762;
+
+            $rate = $default / $usd;
+        } else {
+            $rate = 1;
+        }
+        DB::statement("UPDATE orders
+SET
+    order_number = id,
+    order_amount = ROUND(order_amount * $rate),
+    discount_amount = ROUND(discount_amount * $rate),
+    shipping_cost = ROUND(shipping_cost * $rate)
+");
+
+        DB::statement("UPDATE order_details
+SET price = ROUND(price * $rate)");
+
+        // Order::chunk(200, function ($orders) use ($rate) {
+
+        //     foreach ($orders as $order) {
+
+        //         $order->update([
+        //             'order_number'     => $order->id,
+        //             'order_amount'    => round($order->order_amount * $rate),
+        //             'discount_amount' => round($order->discount_amount * $rate),
+        //             'shipping_cost'   => round($order->shipping_cost * $rate),
+        //         ]);
+        //         if (count($order->details) > 0) {
+
+        //             foreach ($order->details as $detail) {
+        //                 $detail->update([
+        //                     'price' => round($detail->price * $rate),
+        //                 ]);
+        //             }
+        //         }
+        //     }
+        // });
+
+        return "USD Converted Back To BDT Successfully!";
+    }
+
+    //end
+    public function create_role()
+    {
+        $admin = Admin::find(1); // je admin ke super-admin banate chao
+        app(PermissionRegistrar::class)
+            ->setPermissionsTeamId($admin->branch_id);
+        $admin->assignRole('super-admin');
+
+        // $roles = ['super-admin', 'admin', 'hr', 'moderator'];
+
+        // foreach ($roles as $role) {
+        //     Role::firstOrCreate([
+        //         'name' => $role,
+        //         'guard_name' => 'admin'
+        //     ]);
+        // }
+
+
+        return back()->with('success', 'successfully!');
+    }
+   public function eidOffers($slug)
+    {
+
+        $eidoffer = EidOffer::where('slug', $slug)->first();
+        if ($eidoffer) {
+            return view('web.eidOffers', compact('eidoffer'));
+        }
+    }
+    function discountOffers($slug)
+    {
+        $discount_offers = DiscountOffer::where('slug', $slug)->first();
+        if ($discount_offers) {
+            return view('web.discount_offer', compact('discount_offers'));
+        }
+    }
+
+    public function subscription(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:subscriptions,email',
+        ]);
+
+        Subscription::create([
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Subscribed successfully!');
+    }
+
+    public function sendOtp()
+    {
+        // session()->forget([
+        //     'otp',
+        //     'otp_phone',
+        //     'otp_expires_at',
+        //     'otp_last_sent_at',
+        // ]);
+        // return "ok";
+        $userPhone = '0173280521854551';
+        $otpCode = random_int(1000, 9999);
+        // Ensure BD number format: 8801XXXXXXXXX
+        if (substr($userPhone, 0, 2) !== '88') {
+            $userPhone = '88' . $userPhone;
+        }
+
+        $message = "Your OTP code is: {$otpCode}";
+
+        $response = Http::asForm()->post('http://bulksmsbd.net/api/smsapi', [
+            'api_key'  => 'nE7hJ4XJtJAOATmE6bow',
+            'type'     => 'text',
+            'number'   => $userPhone,
+            'senderid' => '8809648906719', // NON-masking
+            'message'  => $message,
+        ]);
+
+        $result = $response->json();
+
+
+        // Log if SMS fails
+        $responseCode = (int) ($result['response_code'] ?? 0);
+
+        if ($responseCode !== 202) {
+            dd($result['response_code']);
+            Log::error('SMS Failed', [
+                'mobile' => $userPhone,
+                'response' => $result
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+    public function maintenance_mode()
+    {
+        $maintenance_mode = Helpers::get_business_settings('maintenance_mode') ?? 0;
+        if ($maintenance_mode) {
+            return view('web.maintenance-mode');
+        }
+        return redirect()->route('home');
+    }
+     public function hajj_umra()
+    {
+        return view('web.hajj_umra.hajj');
+    }
+}

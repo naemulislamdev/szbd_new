@@ -1,0 +1,20 @@
+[14-Dec-2025 16:22:24 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/EmailVerificationController.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/EmailVerificationController.php on line 17
+[14-Dec-2025 16:22:25 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/PhoneVerificationController.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/PhoneVerificationController.php on line 16
+[14-Dec-2025 16:22:29 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/ForgotPassword.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/ForgotPassword.php on line 16
+[14-Dec-2025 16:23:01 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/SocialAuthController.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/SocialAuthController.php on line 15
+[14-Dec-2025 16:23:07 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/PassportAuthController.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v1/auth/PassportAuthController.php on line 17

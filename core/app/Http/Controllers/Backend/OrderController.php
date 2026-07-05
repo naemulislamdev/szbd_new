@@ -1,0 +1,572 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Exports\DataExport;
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderHistory;
+use App\Models\Product;
+use App\Models\ShippingAddress;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+
+class OrderController extends Controller
+{
+    public function list(Request $request)
+    {
+        // $admin = auth('admin')->user()->fresh(['roles', 'permissions']);
+        // dd([
+        //     'direct_permissions' => $admin->permissions->pluck('name')->values(),
+        //     'role_permissions' => $admin->getPermissionsViaRoles()->pluck('name')->values(),
+        //     'all_permissions' => $admin->getAllPermissions()->pluck('name')->values(),
+        //     'has_direct_order_delete' => $admin->hasDirectPermission('order_delete'),
+        //     'can_order_delete' => $admin->can('order_delete'),
+        // ]);
+
+        $views = [
+            'pending'         => 'admin.order.pending',
+            'confirmed'       => 'admin.order.confirmed',
+            'processing'      => 'admin.order.processing',
+            'out_for_delivery' => 'admin.order.out_for_delivery',
+            'delivered'       => 'admin.order.delivery',
+            'returned'        => 'admin.order.returned',
+            'failed'          => 'admin.order.failed',
+            'canceled'        => 'admin.order.canceled',
+        ];
+
+        // Use request status if exists in map, otherwise default view
+        $view = $views[$request->status] ?? 'admin.order.index';
+
+        return view($view);
+    }
+    public function datatables(Request $request, $status)
+    {
+        // $query = Order::with('shippingAddress');
+        $query = Order::leftJoin('shipping_addresses', 'orders.shipping_address', '=', 'shipping_addresses.id')
+            ->select('orders.*', 'shipping_addresses.contact_person_name as shipping_name', 'shipping_addresses.phone as shipping_phone');
+
+
+       // 🔹 Filter by date range
+if ($request->filled('from_date') && $request->filled('to_date')) {
+    $query->whereDate('orders.created_at', '>=', $request->from_date)
+          ->whereDate('orders.created_at', '<=', $request->to_date);
+} elseif ($request->filled('from_date')) {
+    $query->whereDate('orders.created_at', '>=', $request->from_date);
+} elseif ($request->filled('to_date')) {
+    $query->whereDate('orders.created_at', '<=', $request->to_date);
+}
+
+        // 🔹 Filter by status (optional)
+        if ($status != 'all') {
+            $query->where('order_status', $status);
+        }
+
+        $query->orderBy('created_at', 'desc')
+      ->orderBy('id', 'desc');
+
+        return DataTables::eloquent($query)
+
+            ->addIndexColumn() // SL
+
+            ->editColumn('order_number', function (Order $order) {
+                return '<a href="' . route('admin.order.details', $order->id) . '">'
+                    . $order->order_number ?? '' . '</a>';
+            })
+
+            ->addColumn('date', function (Order $order) {
+                return $order->created_at->format('d M Y');
+            })
+
+            ->addColumn('time', function (Order $order) {
+                return $order->created_at->format('h:i A');
+            })
+
+            ->addColumn('customer_name', function ($order) {
+                // return optional($order->shippingAddress)->contact_person_name ?? 'N/A';
+                return $order->shipping_name ?? 'N/A';
+            })
+
+            ->addColumn('phone', function ($order) {
+                // return optional($order->shippingAddress)->phone ?? 'N/A';
+                return $order->shipping_phone ?? 'N/A';
+            })
+
+
+            ->addColumn('amount', function (Order $order) {
+                return number_format($order->order_amount, 2);
+            })
+
+            ->addColumn('delivery_charge', function (Order $order) {
+                return number_format($order->shipping_cost, 2);
+            })
+
+            ->addColumn('total', function (Order $order) {
+                return number_format(
+                    $order->order_amount + $order->shipping_cost - $order->discount_amount,
+                    2
+                );
+            })
+
+            ->editColumn('order_status', function (Order $order) {
+                // dd($order->order_status);
+
+                if (!$order->order_status) {
+                    return '<span class="badge badge-dark">N/A</span>';
+                }
+
+                $badges = [
+                    'pending'           => 'warning',
+                    'confirmed'         => 'primary',
+                    'processing'        => 'info',
+                    'out_for_delivery'  => 'primary',
+                    'delivered'         => 'success',
+                    'returned'          => 'secondary',
+                    'failed'            => 'dark',
+                    'canceled'          => 'danger',
+                ];
+
+                $color = $badges[$order->order_status] ?? 'secondary';
+
+                return '<span class="badge bg-' . $color . '">'
+                    . ucfirst(str_replace('_', ' ', $order->order_status))
+                    . '</span>';
+            })
+
+
+            ->editColumn('order_type', function (Order $order) {
+                if ($order->order_type == 'default_type') {
+                    return 'Web'. ($order->order_source ? " ({$order->order_source})" : '') ;
+                } else {
+                    return ucfirst($order->order_type ?? 'Regular');
+                }
+            })
+            ->editColumn('coupon_code', function (Order $order) {
+                return $order->coupon_code ? $order->coupon_code : "N/A";
+            })
+            ->editColumn('order_note', function ($row) {
+                // order_note JSON decode
+                $order_note = $row->order_note ? json_decode($row->order_note, true) : null;
+
+                // multiple_note JSON decode
+                $multipleNote = null;
+                if ($row->multiple_note) {
+                    $multipleNotesArray = json_decode($row->multiple_note, true); // array of notes
+                    if (is_array($multipleNotesArray) && count($multipleNotesArray) > 0) {
+                        $multipleNote = end($multipleNotesArray); // last note
+                    }
+                }
+
+                // Output HTML
+                if ($multipleNote) {
+                    return '<small class="pl-1 order_note">'
+                        . ($multipleNote['note'] ?? '')
+                        . ' <span class="text-muted">('
+                        . ($multipleNote['time'] ?? '')
+                        . ' -> Note by: '
+                        . ($multipleNote['user'] ?? '')
+                        . ')</span></small>';
+                } elseif ($order_note) {
+                    return '<small class="pl-1 order_note">'
+                        . ($order_note['note'] ?? '')
+                        . ' — '
+                        . ($order_note['user'] ?? '')
+                        . ' ('
+                        . ($order_note['date'] ?? '')
+                        . ')</small>';
+                } else {
+                    return '<small class="pl-1 order_note text-muted"></small>';
+                }
+            })
+            ->addColumn('action', function (Order $order) {
+
+                $buttons = '
+        <a href="' . route('admin.order.details', $order->id) . '" class="btn btn-sm btn-info mb-2">
+            <i class="las la-eye"></i>
+        </a>
+    ';
+                $buttons .= '
+        <a href="' . route('admin.order.edit', $order->id) . '" class="btn btn-sm btn-info mb-2">
+            <i class="las la-edit"></i>
+        </a>
+    ';
+                $buttons .= '
+    <a href="' . route('admin.order.generate-invoice', $order->id) . '" class="btn btn-sm btn-secondary mb-2">
+            <i class="las la-receipt"></i>
+        </a>
+    ';
+                if (auth('admin')->user()->can('order_delete')) {
+                    $buttons .= '
+            <a href="' . route('admin.order.delete', $order->id) . '" id="delete" class="btn btn-sm btn-danger mb-2">
+                <i class="las la-trash-alt"></i>
+            </a>
+        ';
+                }
+                return $buttons;
+            })
+            // ->filterColumn('customer_name', function ($query, $keyword) {
+            //     $query->whereHas('shippingAddress', function ($q) use ($keyword) {
+            //         $q->where('contact_person_name', 'like', "%{$keyword}%");
+            //     });
+            // })
+
+            // ->filterColumn('phone', function ($query, $keyword) {
+            //     $query->whereHas('shippingAddress', function ($q) use ($keyword) {
+            //         $q->where('phone', 'like', "%{$keyword}%");
+            //     });
+            // })
+
+            ->rawColumns([
+                'order_number',
+                'order_status',
+                'action',
+                'order_note',
+                'coupon_code'
+            ])
+
+            ->toJson();
+    }
+    public function status(Request $request)
+    {
+        $order = Order::with('customer')->where(['id' => $request->id])->first();
+
+        $order->order_status = $request->order_status;
+        $newNote = json_encode([
+            'note' => $request->note,
+            'date' => now()->format('d M Y h:i A'),
+            'user_id' => auth('admin')->user()->id,
+            'user' => auth('admin')->user()->name,
+        ]);
+
+        if ($request->order_status === 'delivered') {
+            $order->payment_status = 'paid';
+        }
+        $order->order_note = $newNote;
+        $order->save();
+
+        return response()->json([
+            'status'       => true,
+            'order_status' => $order->order_status,
+            'note'    => json_decode($newNote)
+        ]);
+    }
+    public function multipleNote(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'multiple_note' => 'required|array'
+        ]);
+
+        $order = Order::findOrFail($request->id);
+
+        $existingNotes = json_decode($order->multiple_note, true) ?? [];
+
+        $newNotes = [];
+
+        foreach ($request->multiple_note as $note) {
+            $newNotes[] = [
+                'note' => $note,
+                'time' => now()->format('d M Y h:i A'),
+                'user' => auth('admin')->user()->name
+            ];
+        }
+
+        $mergedNotes = array_merge($existingNotes, $newNotes);
+
+        $order->multiple_note = json_encode($mergedNotes);
+        $order->save();
+
+        return response()->json([
+            'status' => true,
+            'note' => end($newNotes)
+        ]);
+    }
+    public function detailsProduct($id)
+    {
+        $detailsProduct = OrderDetail::findOrFail($id);
+
+        return view('admin.order.order_details', compact('detailsProduct'));
+    }
+    public function details($id)
+    {
+        $order = Order::with('details', 'shipping')->where(['id' => $id])->first();
+
+        $shipping_address = ShippingAddress::find($order->shipping_address);
+        $orderHistories = OrderHistory::where('order_id', $id)->get();
+
+        return view('admin.order.order_details', compact('order', 'orderHistories', 'shipping_address'));
+    }
+    public function edit($id)
+    {
+        $order = Order::with('details', 'shipping')->where(['id' => $id])->first();
+
+        $shipping_address = ShippingAddress::find($order->shipping_address);
+        $orderHistories = OrderHistory::where('order_id', $id)->get();
+
+        return view('admin.order.order_edit', compact('order', 'orderHistories', 'shipping_address'));
+    }
+    public function delete($id)
+    {
+        $order = Order::with('details', 'shipping')->where(['id' => $id])->first();
+        if ($order) {
+            // Delete related order details
+            OrderDetail::where('order_id', $order->id)->delete();
+
+            // Delete related shipping address
+            ShippingAddress::where('id', $order->shipping_address)->delete();
+
+            // Delete the order itself
+            $order->delete();
+
+            return back()->with('success', 'Order deleted successfully.');
+        } else {
+            return redirect()->route('admin.order.list')->with('error', 'Order not found.');
+        }
+    }
+
+    public function updateAddress(Request $request, $id)
+    {
+        $sa = ShippingAddress::findOrFail($id);
+        $sa->contact_person_name = $request->contact_person_name;
+        $sa->address = $request->address;
+        $sa->phone = $request->phone;
+        $sa->save();
+        return back()->with('success', 'Shipping Address Successfully Updated!');
+    }
+
+    // Add Multiple Product In order Details page Start
+    public function productSearch(Request $request)
+    {
+        $products = Product::where('name', 'LIKE', "%{$request->keyword}%")
+            ->orWhere('code', 'LIKE', "%{$request->keyword}%")
+            ->limit(10)
+            ->get();
+
+        return response()->json($products);
+    }
+    public function productVariation($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $colors = is_array($product->color_variant)
+            ? $product->color_variant
+            : json_decode($product->color_variant, true);
+
+        $sizes = [];
+        $choseOptions = is_array($product->choice_options)
+            ? $product->choice_options
+            : json_decode($product->choice_options, true);
+
+        if ($choseOptions) {
+            foreach ($choseOptions as $choice) {
+                $sizes = array_merge($sizes, $choice['options']);
+            }
+        }
+
+        return response()->json([
+            'has_variation' => count($colors) > 0 || count($sizes) > 0,
+            'colors' => collect($colors)->map(fn($c) => [
+                'color' => $c->color,
+                'image' => asset($c->image),
+            ]),
+            'sizes' => $sizes,
+        ]);
+    }
+
+    public function addProduct(Request $request)
+    {
+        $order = Order::findOrFail($request->order_id);
+        $product = Product::findOrFail($request->product_id);
+        $discount = 0;
+        $price = $product->unit_price;
+        // product discount calculation
+        if ($product->discount > 0) {
+            if ($product->discount_type === 'percent') {
+                $discount = ($price * $product->discount) / 100;
+            } elseif ($product->discount_type === 'flat') {
+                $discount = $product->discount;
+            }
+        }
+
+        // safety check (discount can't exceed price)
+        $discount = min($discount, $price);
+
+        $subtotal = ($price * 1) - $discount;
+
+        $detail = OrderDetail::create([
+            'order_id'       => $request->order_id,
+            'product_id'     => $product->id,
+            'product_details' => json_encode($product),
+            'color_image'    => $request->color_image,
+            'qty'            => 1,
+            'price'          => $product->unit_price,
+            'tax'            => 0,
+            'discount'       => $discount,
+            'discount_type'  => 'discount_on_product',
+            'created_by'  => auth('admin')->user()->name,
+            'variant'        => 'color-size',
+            'variation'      => json_encode([
+                'color' => $request->color,
+                'size'  => $request->size,
+            ]),
+            'delivery_status' => 'pending',
+            'payment_status' => 'unpaid',
+        ]);
+
+        $orderItems = OrderDetail::where('order_id', $request->order_id)->get();
+        $grand_total = 0;
+        foreach ($orderItems as $item) {
+            $product_subtotal = ($item->price * $item->qty)
+                + ($item->tax * $item->qty)
+                - ($item->discount * $item->qty);
+
+            $grand_total += $product_subtotal;
+        }
+        // dd($grand_total);
+
+        $order->order_amount = $grand_total;
+        $order->save();
+
+
+        return response()->json([
+            'success' => true,
+            'detail'  => $detail->load('product')
+        ]);
+    }
+    public function removeProduct(Request $request)
+    {
+        $orderDetail = OrderDetail::findOrFail($request->detail_id);
+        $orderId = $orderDetail->order_id;
+
+        $orderDetail->delete();
+
+        $orderItems = OrderDetail::where('order_id', $orderId)->get();
+
+        $grand_total = 0;
+        foreach ($orderItems as $item) {
+            $product_subtotal = ($item->price * $item->qty)
+                + ($item->tax * $item->qty)
+                - ($item->discount * $item->qty);
+
+            $grand_total += $product_subtotal;
+        }
+
+        $order = Order::findOrFail($orderId);
+        $order->order_amount = $grand_total;
+        $order->save();
+
+        return response()->json(['success' => true]);
+    }
+    public function updateQty(Request $request)
+    {
+        $detail = OrderDetail::findOrFail($request->detail_id);
+
+        $detail->qty = $request->qty;
+
+        $detail->save();
+
+        // Recalculate order total
+        $orderItems = OrderDetail::where('order_id', $detail->order_id)->get();
+
+        $total = 0;
+
+        foreach ($orderItems as $item) {
+
+            $subtotal = ($item->price * $item->qty)
+                - ($item->discount * $item->qty)
+                + ($item->tax * $item->qty);
+
+            $total += $subtotal;
+        }
+
+        $order = Order::findOrFail($detail->order_id);
+        $order->order_amount = $total;
+        $order->save();
+
+        return response()->json(['success' => true]);
+    }
+    public function recalculate(Order $order)
+    {
+        $subtotal = $order->details->sum('subtotal');
+
+        return response()->json([
+            'subtotal' => $subtotal,
+            'shipping' => $order->shipping_cost,
+            'coupon'   => $order->discount_amount,
+            'advance'  => $order->advance_amount,
+            'total'    => $subtotal + $order->shipping_cost - $order->discount_amount - $order->advance_amount,
+        ]);
+    }
+    // Add multiple product in order details page End
+    public function generate_invoice($id)
+    {
+        $order = Order::with('seller')->with('shipping')->with('details')->where('id', $id)->first();
+        $data["email"] = $order->customer != null ? $order->customer["email"] : 'Email not found';
+        $data["client_name"] = $order->customer != null ? $order->customer["f_name"] . ' ' . $order->customer["l_name"] : 'Customer not found';
+        $data["order"] = $order;
+        return view('admin.order.invoice', compact('order'));
+        $pdf = PDF::loadView('admin.order.invoice', $data);
+        return $pdf->download($order->id . '.pdf');
+    }
+    public function dateWiseExport(Request $request)
+    {
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date'   => 'required|date|after_or_equal:from_date',
+        ]);
+
+        $query = Order::with('customer')
+            ->whereBetween('created_at', [
+                Carbon::parse($request->from_date)->startOfDay(),
+                Carbon::parse($request->to_date)->endOfDay(),
+            ]);
+
+        if ($request->status && $request->status != 'all') {
+            $query->where('order_status', $request->status);
+        }
+
+        $orders = $query->latest()->cursor();
+
+        $data = [];
+        foreach ($orders as $item) {
+            // $customer = User::find($item->customer_id);
+            $noteData = json_decode($item->order_note);
+
+            $noteText = 'N/A';
+
+            if ($noteData) {
+                $note = $noteData->note ?? '';
+                $user = $noteData->user ?? 'Unknown';
+                $date = $noteData->date ?? '';
+
+                $noteText = "{$note} — {$user} ({$date})";
+            }
+
+            $data[] = [
+                $item->created_at->format('d M Y, h:i A'),
+                $item->order_number ? $item->order_number : $item->id,
+                $item->customer->name != null ? $item->customer->name :  $item->customer->f_name . ' ' . $item->customer->l_name ?? 'Guest',
+                $item->customer->phone ?? 'N/A',
+                $item->customer->email ?? 'N/A',
+                $item->customer->address ?? 'N/A',
+                $item->order_amount,
+                $item->shipping_cost,
+                $item->coupon_code,
+                $item->order_amount + $item->shipping_cost,
+                $noteText,
+                $item->order_type == "default_type" ? "Web" : ucfirst(
+                    $order->order_type ?? 'Regular'
+                ),
+                $item->order_status,
+            ];
+        }
+
+        $headings = ['Date', 'Order Number', 'Customer Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Amount', 'Delivery Charge', 'Coupon', 'Total Amount', 'Order Note', 'order Type', 'Status'];
+
+        return Excel::download(new DataExport($headings, $data), 'orders_' . $request->from_date . '_to_' . $request->to_date . '.xlsx');
+    }
+}

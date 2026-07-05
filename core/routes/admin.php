@@ -1,0 +1,570 @@
+<?php
+
+use App\Http\Controllers\Backend\BrandController;
+use App\Http\Controllers\Backend\BusinessSettingsController;
+use App\Http\Controllers\Backend\AdminProfileController;
+use App\Http\Controllers\Backend\AttributeController;
+use App\Http\Controllers\Backend\CustomerController;
+use App\Http\Controllers\Backend\BannerController;
+use App\Http\Controllers\Backend\TrendingKeywordController;
+use App\Http\Controllers\Backend\PushNotificationController;
+use App\Http\Controllers\Backend\Auth\LoginController;
+use App\Http\Controllers\Backend\BlogController;
+use App\Http\Controllers\Backend\BranchController;
+use App\Http\Controllers\Backend\CacheController;
+use App\Http\Controllers\Backend\CustomerReportController;
+use App\Http\Controllers\Backend\CareerController;
+use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\ContactController;
+use App\Http\Controllers\Backend\CouponController;
+use App\Http\Controllers\Backend\LandingPagesController;
+use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\EmplyeeController;
+use App\Http\Controllers\Backend\FranchiseController;
+use App\Http\Controllers\Backend\OrderController;
+use App\Http\Controllers\Backend\ProductController;
+use App\Http\Controllers\Backend\SubCategoryController;
+use App\Http\Controllers\Backend\SubSubCategoryController;
+use App\Http\Controllers\Backend\UserInfoController;
+use App\Http\Controllers\Backend\InvestorController;
+use App\Http\Controllers\Backend\PermissionModuleController;
+use App\Http\Controllers\Backend\ProductStockController;
+use App\Http\Controllers\Backend\RolePermissionController;
+use App\Http\Controllers\Backend\WholeSaleController;
+use App\Http\Controllers\Backend\DiscountManageController;
+use App\Http\Controllers\Backend\FAQController;
+use App\Http\Controllers\Backend\GlobalSearchController;
+use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\JobApplicationController;
+use App\Http\Controllers\Backend\RoleDepartmentController;
+use App\Http\Controllers\Backend\SiteMapController;
+use App\Http\Controllers\Backend\SocialMediaController;
+use App\Http\Controllers\Backend\ShippingMethodController;
+use App\Http\Controllers\Backend\SystemController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\FreeHajjUmraController;
+
+Route::prefix('/admin')->as('admin.')->group(function () {
+
+    Route::get('maintenance-mode', [SystemController::class, 'maintenance_mode'])->name('maintenance-mode');
+    Route::controller(LoginController::class)->prefix('/auth')->as('auth.')->group(function () {
+        Route::get('login', 'login')->name('login');
+        Route::post('login/store', 'submit')->name('login.store');
+        Route::get('logout', 'logout')->name('logout');
+    });
+    Route::middleware(['admin', 'check_permission'])->group(function () {
+        Route::controller(DashboardController::class)->prefix('/dashboard')->as('dashboard.')->group(function () {
+            Route::get('/', 'dashboard')->name('index');
+            Route::post('order-stats', 'order_stats')->name('order-stats');
+            Route::post('business-overview', 'business_overview')->name('business-overview');
+            Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+            Route::get('/dashboard/monthly-income',  'monthlyIncome')->name('monthly.income');
+            // top selling products report
+            Route::get('/top-selling-products', [DashboardController::class, 'topSellingProducts'])->name('top_selling_products');
+            Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+            Route::post('order-stats', 'order_stats')->name('order-stats');
+            Route::get('variant-products', 'variantProducts')->name('variant-products');
+        });
+        Route::controller(AdminProfileController::class)->prefix('/profile')->group(function () {
+            Route::get('/', 'profile')->name('profile');
+            Route::post('update/profile', 'updateProfile')->name('profile.update');
+            Route::post('update/password', 'updatePassword')->name('profile.password');
+        });
+
+        Route::controller(ProductController::class)->prefix('/product')->as('product.')->group(function () {
+            Route::get('Create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::get('list', 'index')->name('index');
+            Route::get('show/{product}', 'show')->name('show');
+            Route::get('edit/{product}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::get('delete/{product}', 'delete')->name('delete');
+            Route::post('product/status-update',  'statusUpdate')->name('status');
+            Route::post('product/featured-update',  'updateFeatured')->name('featured.status');
+            Route::post('product/arrival-update',  'updateArrival')->name('arrival.status');
+            Route::post('sku-combination', 'sku_combination')->name('sku-combination');
+            Route::post('color-combination', 'color_combination')->name('color-combination');
+            Route::get('remove-image', 'remove_image')->name('remove-image');
+            Route::post('status-update', 'status_update')->name('status-update');
+            Route::get('stock-limit-list/{type}', 'stock_limit_list')->name('stock-limit-list');
+            Route::get('get-variations', 'get_variations')->name('get-variations');
+            Route::post('update-quantity', 'update_quantity')->name('update-quantity');
+            Route::post('add-color', 'addColor')->name('add.color');
+            Route::get('barcode/generate', 'barcode_generate')->name('barcode.generate');
+            Route::get('productsearch', 'productsearch')->name('productsearch');
+            Route::get('updateProductFlatDiscount', 'updateProductFlatDiscount')->name('updateProductFlatDiscount');
+
+            Route::get('/get-subcategories/{category_id}', 'getSubCategories')->name('get-subcategories');
+            Route::get('/get-child-categories/{subcategory_id}', 'getChildCategories')->name('get-child-categories');
+
+            // Product Sales Report Routes
+            Route::get('/sales-report', 'ProductSalesReport')->name('salesReport');
+            Route::get('/sales-report-datatables', 'reportDatatables')->name('reportDatatables');
+              Route::get('/remove-size-chart/{product_id}', 'removeSizeChart')->name('remove-size-chart');
+        });
+
+        //order management
+        Route::controller(OrderController::class)->prefix('/order')->as('order.')->group(function () {
+            Route::get('list/', 'list')->name('list');
+            Route::get('datatables/{slug}', 'datatables')->name('datatables');
+            Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
+            Route::post("multiple-note", 'multipleNote')->name("multiple_note");
+            Route::get('details/{id}', 'details')->name('details');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('shipping-address/{id}', 'updateAddress')->name('shipping.update');
+            Route::get('delete/{id}', 'delete')->name('delete');
+
+            Route::get('product-search', 'productSearch')->name('product_search');
+            Route::post('add-product', 'addProduct')->name('add_product');
+            Route::post('remove-product', 'removeProduct')->name('remove_product');
+            Route::post('update-qty', 'updateQty')->name('update_qty');
+            Route::get('recalculate/{order}', 'recalculate')->name('recalculate');
+            Route::get('product-variation/{id}', 'productVariation')->name('product_variation');
+
+            Route::post('status', 'status')->name('status');
+            Route::post('payment-status', 'payment_status')->name('payment-status');
+            Route::post('advance-payment/{id}', 'advance_payment')->name('advance-payment');
+            Route::get('generate-invoice/{id}', 'generate_invoice')->name('generate-invoice');
+            Route::get('bulk-export', 'dateWiseExport')->name('data_export');
+        });
+
+       Route::controller(UserInfoController::class)->prefix('/userinfo')->as('userinfo.')->group(function () {
+            Route::get('all', 'all')->name('all');
+            Route::get('datatables/{slug}', 'datatables')->name('datatables');
+            Route::post('show', 'show')->name('show');
+            Route::get('delete/{userinfo}', 'delete')->name('delete');
+            Route::post('/status-update', 'updateStatus')->name('status.update');
+            Route::get('bulk-export', 'dateWiseExport')->name('data_export');
+            Route::post("multiple-note", 'multipleNote')->name("multiple_note");
+        });
+
+        Route::controller(CategoryController::class)->as('category.')->group(function () {
+            Route::get('/category/view', 'index')->name('view');
+            Route::get('/category/fetch', 'fetch')->name('fetch');
+            Route::post('/category/store', 'store')->name('store');
+            Route::post('/category/update', 'update')->name('update');
+            Route::post('/category/delete', 'delete')->name('delete');
+            Route::post('/category/status', 'status')->name('status');
+            Route::get('/category/datatables', 'datatables')->name('datatables');
+        });
+
+        Route::controller(SubCategoryController::class)->as('sub-category.')->group(function () {
+            Route::get('/sub-category/view', 'index')->name('view');
+            Route::post('/sub-category/store', 'store')->name('store');
+            Route::post('/sub-category/update', 'update')->name('update');
+            Route::post('/sub-category/delete', 'delete')->name('delete');
+            Route::get('/sub-category/datatables', 'datatables')->name('datatables');
+            Route::post('/sub-category/status', 'status')->name('status');
+        });
+
+        Route::controller(SubSubCategoryController::class)->prefix('/child-category')->as('child-category.')->group(function () {
+            Route::get('view', 'index')->name('view');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('get-sub-category', 'getSubCategory')->name('getSubCategory');
+            Route::post('get-category-id', 'getCategoryId')->name('getCategoryId');
+            Route::post('/child-category/status', 'status')->name('status');
+            Route::get('/child-category/datatables', 'datatables')->name('datatables');
+        });
+        // Brands Routes
+        Route::controller(BrandController::class)->prefix('/brand')->as('brand.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'delete')->name('delete');
+            Route::get('export', 'export')->name('export');
+            Route::post('status', 'status')->name('status');
+        });
+        //Attribute Routes
+
+        Route::controller(AttributeController::class)->prefix('/attribute')->as('attribute.')
+            ->group(function () {
+                Route::get('list', 'index')->name('list');
+                Route::get('/datatables', 'datatables')->name('datatables');
+                Route::post('store', 'store')->name('store');
+                Route::post('update', 'update')->name('update');
+                Route::post('delete', 'delete')->name('delete');
+            });
+        Route::controller(LandingPagesController::class)->prefix('/landingpages')->as('landingpages.')->group(function () {
+            Route::get('multiple-product/landing', 'multiIndex')->name('multiple.index');
+            Route::post('multiple-product/store', 'multipleStore')->name('multiple.store');
+            Route::post('multiple-product/status-update', 'status_update')->name('multiple.status-update');
+            Route::post('multiple-product/landing_pages_update', 'update')->name('multiple.landing_pages_update');
+            Route::get('multiple-product/add-product/{landing_id}', 'add_product')->name('multiple.add-product');
+            Route::post('multiple-product/store-product/{landing_id}', 'add_product_submit');
+            Route::post('multiple-product/delete-product', 'delete_product')->name('multiple.delete-product');
+            Route::get('/multiple-product/datatables', 'multipleProductdatatables')->name('multiple.datatables');
+            Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
+            Route::post('multiple-product/remove', 'removeMultiplePage')->name('remove_multiple_page');
+
+            // multiple product added routes
+            Route::get("multiple-prouct-create/{id}", 'multipleProductCreate')->name("createMultipleProduct");
+            Route::get("multiple-prouct-added-datatable/{id}", 'addedProductsDatatable')->name("addedProductDatatable");
+            Route::post('multiple-product/delete-added-product', 'delete_added_product')->name('multiple.delete-added-product');
+            Route::post('multiple-product/store-multiple-product', 'multipleProductsAddedStore')->name('multiple.products.store');
+
+
+
+            // Single Product Landing page routes
+            Route::get('/single-product/view', 'singleIndex')->name('single.index');
+            Route::get('/single-product/datatables', 'singleProductdatatables')->name('single.datatables');
+            Route::post('/single-product/status', 'LandingPageStatus')->name('single.status');
+            Route::post('/single-product/remove', 'removeSinglePage')->name('remove_single_page');
+            Route::get('/single-product/create', 'create')->name('single.create');
+            Route::post('/single-product/store', 'storeSingleProduct')->name('single.store');
+            Route::get('/single-product/edit/{id}', 'editSingleProduct')->name('single.edit');
+            Route::post('/single-product/update/{id}', 'updateSingleProduct')->name('single.update');
+            Route::get('/single-product/remove/slider', 'removeImage')->name('single.remove_image');
+            Route::get('/single-product/remove/feature-image', 'removeFeatureImage')->name('single.remove_feature_image');
+            Route::get('/single-product/remove/review-image', 'removeReviewImage')->name('single.remove_review_image');
+            Route::get('/single-product/remove/feature-list', 'removeFeatureList')->name('single.remove_feature_list');
+            Route::get('/single-product/remove/landing-page/section', 'removePageSection')->name('single.remove_page_section');
+            Route::get('/single-product/remove/landing-page/{id}', 'removeLandingPage')->name('single.remove_landing_page');
+        });
+        Route::controller(BannerController::class)->prefix('/banner')->as('banner.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('update', 'update')->name('update');
+        });
+
+        Route::controller(TrendingKeywordController::class)->prefix('/trending-keyword')->as('trending-keyword.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('status', 'status')->name('status');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'delete')->name('delete');
+        });
+
+        Route::controller(PushNotificationController::class)->prefix('/push-notification')->as('push-notification.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('send', 'send')->name('send');
+        });
+
+        // Customers Routes
+        Route::controller(CustomerController::class)->prefix('/customer')->as('customer.')->group(function () {
+            Route::get('list', 'customer_list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+
+            // Customer Details route
+            Route::get('view/{id}', 'view')->name('view');
+            Route::get('customer-datatables/{customer_id}', 'customerDatatables')->name('customerDatatables');
+        });
+        // Customers Report Routes
+        Route::controller(CustomerReportController::class)->prefix('/customer-report')->as('customer-report.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('/report', 'report')->name('report');
+            Route::get('/export', 'export')->name('export');
+        });
+        // Investors Routes
+        Route::controller(InvestorController::class)->prefix('/investors')->as('investors.')->group(function () {
+            Route::get('list', 'investorsList')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::post('remark', 'remarkStore')->name('remark.store');
+            Route::get('bulk-export', 'dateWiseExport')->name('data_export');
+        });
+        // Franchise Routes
+        Route::controller(FranchiseController::class)->prefix('/franchise')->as('franchise.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::post('remark', 'updateLeadRemark')->name('remark.store');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Wholesale Routes
+        Route::controller(WholeSaleController::class)->prefix('/wholesale')->as('wholesale.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            // Route::post('remark', 'updateLeadRemark')->name('remark.store');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Employee Routes
+        Route::controller(EmplyeeController::class)->prefix('/employee')->as('employee.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Admin Roles Routes
+        Route::controller(RolePermissionController::class)->prefix('/role-permission')->as('role_permission.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Admin Roles Modules Routes
+        Route::controller(PermissionModuleController::class)->prefix('/permission-module')->as('permission_module.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            // Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
+        });
+        // Discount Management Routes
+        Route::controller(DiscountManageController::class)->prefix('/discount')->as('discount.')->group(function () {
+
+            // Flat Discount Routes
+            Route::get('flat', 'discountFlat')->name('flat');
+            Route::get('flat-datatables', 'flatDatatables')->name('flat.datatables');
+            Route::post('flat-delete', 'flatDelete')->name('flat.delete');
+            Route::post('flat-store', 'flatStore')->name('flat.store');
+            Route::post('flat-update', 'flatUpdate')->name('flat.update');
+            Route::post('flat-status', 'flatStatus')->name('flat.status');
+            // Batch Discount Routes
+            Route::get('batch', 'discountBatch')->name('batch');
+            Route::get('batch-datatables', 'batchDatatables')->name('batch.datatables');
+            Route::get('batch-create', 'createBatch')->name('batch.create');
+            Route::post('batch-delete', 'batchDelete')->name('batch.delete');
+            Route::post('batch-store', 'batchStore')->name('batch.store');
+            Route::get('batch-edit/{id}', 'editBatch')->name('batch.edit');
+            Route::post('batch-update/{id}', 'batchUpdate')->name('batch.update');
+            Route::post('batch-status', 'batchStatus')->name('batch.status');
+            Route::get('batch/product/{id}', 'discountBatchProduct')->name('batch.product');
+            Route::get('batch-products-datatables/{productIds}', 'batchProductsDatatables')->name('batch.products.datatables');
+            Route::post('batch/remove-product', 'discountBatchRemoveProduct')->name('batch.remove.product');
+
+
+            // Offers discount Routes
+            Route::get('discount-offers', 'discountOffers')->name('offers');
+            Route::get('discount-offers-datatables', 'discountOffersDatatables')->name('offers.datatables');
+            Route::get('discount-offers/create', 'discountOffersCreate')->name('discount-offers.create');
+            Route::post('discount-offers/store', 'discountOffersStore')->name('discount-offers.store');
+            Route::get('discount-offers/edit/{id}', 'discountOffersEdit')->name('discount-offers.edit');
+            Route::post('discount-offers/update/{id}', 'discountOffersUpdate')->name('discount-offers.update');
+            Route::post('discount-offers/delete', 'offersDelete')->name('offers.delete');
+            Route::post('discount-offers/status/', 'discountOffersStatus')->name('discount-offers.status');
+            Route::get('discount-offers/product/{id}', 'discountOffersProduct')->name('discount-offers.product');
+            Route::get('discount-offers-products-datatables/{productIds}', 'offersProductsDatatables')->name('offers.products.datatables');
+            Route::post('discount-offers/remove-product', 'discountOffersRemoveProduct')->name('discount-offers.remove.product');
+
+            // Promotional Offers Routes
+            Route::get('offers', 'eidOffers')->name('eid.offers');
+            Route::get('offers-datatables', 'eidOffersDatatables')->name('eid.offers.datatables');
+            Route::get('offers/create', 'eidOffersCreate')->name('eid-offers.create');
+            Route::post('offers/store', 'eidOffersStore')->name('eid-offers.store');
+            Route::get('offers/edit/{id}', 'eidOffersEdit')->name('eid-offers.edit');
+            Route::post('offers/update/{id}', 'eidOffersUpdate')->name('eid-offers.update');
+            Route::post('offers/delete', 'eidOffersDelete')->name('eid-offers.delete');
+            Route::post('offers/status/', 'eidOffersStatus')->name('eid-offers.status');
+            Route::get('offers/product/{id}', 'eidOffersProduct')->name('eid-offers.product');
+            Route::get('offers-products-datatables/{productIds}', 'eidOffersProductsDatatables')->name('eid-offers.products.datatables');
+            Route::post('offers/remove-product', 'eidOffersRemoveProduct')->name('eid-offers.remove.product');
+        });
+        // Website Configuration Routes
+        Route::controller(BusinessSettingsController::class)->prefix('/web-config')->as('web_config.')->group(function () {
+            Route::get('view', 'index')->name('view');
+            Route::post('app-store/{name}', 'update')->name('app-store-update');
+            Route::post('store', 'updateInfo')->name('updateInfo');
+        });
+        // Blog Management Routes
+        Route::controller(BlogController::class)->prefix('/blog')->as('blog.')->group(function () {
+            //blog category
+            Route::get('/category/list', 'categoryList')->name('categoryList');
+            Route::get('/category/datatables', 'categoryDatatables')->name('categoryDatatables');
+            Route::post('/category/delete', 'categoryDelete')->name('categoryDelete');
+            Route::post('/category/status', 'categoryStatus')->name('categoryStatus');
+            Route::post('/category/store', 'categoryStore')->name('categoryStore');
+            Route::post('/category/update', 'categoryUpdate')->name('categoryUpdate');
+            // Blog Routes
+            Route::get('list', 'list')->name('list');
+            Route::get('datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('store', 'store')->name('store');
+            Route::post('update/{id}', 'update')->name('update');
+               // blog content & promotion routes
+            Route::get('content-promotion', 'contentPromotion')->name('contentPromotion');
+            Route::post('content-promotion/update', 'updateContentPromotion')->name('updateContentPromotion');
+        });
+
+        //  Coupon management routes
+        Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->group(function () {
+            Route::get('view', 'list')->name('view');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('add-new', 'add_new')->name('add-new');
+            Route::post('store-coupon', 'store')->name('store-coupon');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
+
+        // career management routes
+        Route::controller(CareerController::class)->prefix("/career")->as('career.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/create', 'create')->name('create');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::post('/update/{id}', 'update')->name('update');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+            Route::get('/datatables', 'datatables')->name('datatables');
+
+            // Job Departments
+            Route::get('/department/view', 'department')->name('department');
+            Route::post('/department/store', 'departmentStore')->name('departmentStore');
+            Route::post('/department/update', 'departmentUpdate')->name('departmentUpdate');
+            Route::post('/department/delete', 'departmentDelete')->name('departmentDelete');
+            Route::post('/department/status', 'departmentStatus')->name('departmentStatus');
+            Route::get('/department/datatables', 'departmentDatatables')->name('departmentDatatables');
+        });
+        // Reports routes
+        Route::controller(ReportController::class)->prefix("/report")->as('report.')->group(function () {
+            Route::get('/daily-sales', 'dailySales')->name('dailySales');
+            Route::get('/daily-sales-datatable', 'dailySalesData')->name('dailySalesData');
+            Route::get('/daily-sales-summary', 'dailySalesSummary')->name('dailySalesSummary');
+            Route::get('/daily-sales-export', 'dailySalesExport')->name('dailySalesExport');
+            // Product Report
+            Route::get('/product-report', 'productReport')->name('productReport');
+            Route::get('/product-report-datatable', 'productReportData')->name('productReportData');
+            Route::get('/product-report-summary', 'productReportSummary')->name('productReportSummary');
+            Route::get('/product-report-export', 'productReportExport')->name('productReportExport');
+            // Product Report
+            Route::get('/moderatar-report', 'moderatarReport')->name('moderatarReport');
+            Route::get('/moderatar-report-datatable', 'moderatarReportData')->name('moderatarReportData');
+            Route::get('/moderatar-report-export', 'moderatarReportExport')->name('moderatarReportExport');
+            Route::get('/moderatar-id-update', 'moderationIdUpdate');
+            //Top Selling Product Report
+            Route::get('/top-selling-products', 'topSellingReport')->name('topSellingProducts');
+            Route::get('/top-selling-products-data', 'topSellingProductsDataTable')
+                ->name('topSellingProductsData');
+            // profit report
+            Route::get('/profit', 'profitReport')->name('profitReport');
+            Route::get('/profit-report-data', 'profitReportData')->name('profitReportData');
+            Route::get('/profit-report-export', 'profitReportExport')->name('profitReportExport');
+            // Daily Track Visitor
+            Route::get('/track-visitor', 'trackVisitor')->name('trackVisitorReport');
+            Route::get('/track-visitor-data', 'trackVisitorData')->name('trackVisitorData');
+            Route::get('/track-visitor-export', 'trackVisitorExport')->name('trackVisitorExport');
+            // Route::get('daily-sales', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales');
+            // Route::post('daily-sales-filter', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales-filter');
+        });
+             // Product Stock Management Routes
+        Route::controller(ProductStockController::class)->prefix('/product-stock')->as('product_stock.')->group(function () {
+            Route::get('list', 'index')->name('index');
+            Route::get('/datatables', 'datatables')->name('datatables');
+        });
+        // applications routes
+        Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+        });
+
+
+        // Branch Routes
+        Route::controller(BranchController::class)->prefix('/branches')->as('branch.')->group(function () {
+            Route::get('branch-list', 'index')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
+        // Role Department Routes
+        Route::controller(RoleDepartmentController::class)->prefix('/role_department')->as('role_department.')->group(function () {
+            Route::get('list', 'index')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
+
+        // Global Search Route
+        Route::get('/admin/global-search', [GlobalSearchController::class, 'search'])->name('global.search');
+        //sitemap generate
+        // generate sitemap
+        Route::get('/sitemap', [SiteMapController::class, 'index'])->name('sitemap');
+        Route::get('sitemap-download', [SiteMapController::class, 'download'])->name('sitemap-download');
+
+        // Socail Media Routes
+        Route::controller(SocialMediaController::class)->prefix('/social-media')->as('social_media.')->group(function () {
+            Route::get('list', 'index')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('update', 'update')->name('update');
+            Route::post('status', 'status')->name('status');
+            Route::post('delete', 'delete')->name('delete');
+        });
+        // Terms & condition Routes
+        Route::get('terms-condition/view', [BusinessSettingsController::class, 'terms_condition'])->name('terms-condition');
+        Route::post('terms-condition/update', [BusinessSettingsController::class, 'updateTermsCondition'])->name('update-terms-condition');
+
+        // privacy policy routes
+        Route::get('privacy-policy/view', [BusinessSettingsController::class, 'privacy_policy'])->name('privacy_policy');
+        Route::post('privacy-policy/update', [BusinessSettingsController::class, 'privacy_policy_update'])->name('privacy_policy_update');
+
+        // about-us routes
+        Route::get('about-us', [BusinessSettingsController::class, 'about_us'])->name('about-us');
+        Route::post('about-us', [BusinessSettingsController::class, 'about_usUpdate'])->name('about-update');
+
+        // FAQ Routes
+        Route::controller(FAQController::class)->prefix('/faq')->as('faq.')->group(function () {
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('store', 'store')->name('store');
+            Route::post('status', 'status')->name('status');
+            Route::post('update', 'update')->name('update');
+            Route::post('delete', 'destroy')->name('delete');
+        });
+        // Customer Contact Message routes
+        Route::controller(ContactController::class)->prefix('/contact')->as('contact.')->group(function () {
+            Route::post('contact-store', 'store')->name('store');
+            Route::get('list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('delete', 'destroy')->name('delete');
+            Route::post('view', 'view')->name('view');
+        });
+         // Shipping Methods and Cost
+        Route::controller(ShippingMethodController::class)->prefix('/shipping_method')->as('shipping_method.')->group(function () {
+            Route::get('/list', 'list')->name('index');
+            Route::post('/store', 'store')->name('store');
+            Route::post('/update', 'update')->name('update');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::post('config/save',  'saveConfig')->name('config.save');
+        });
+          Route::controller(CacheController::class)->prefix('/cache')->as('cache.')->group(function () {
+            Route::get('/cache',  'index')->name('caindex');
+            Route::post('/cache/clear',  'clear')->name('clear');
+            Route::post('/cache/clear-all',  'clearAll')->name('clearAll');
+            Route::post('/cache/optimize', 'optimize')->name('optimize');
+        });
+         // Free Hajj Umrah Application Routes
+        Route::controller(FreeHajjUmraController::class)->prefix('/free-hajj-umrah')->as('free_hajj_umrah.')->group(function () {
+            Route::get('/application-list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+        });
+    });
+});

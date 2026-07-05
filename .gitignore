@@ -1,22 +1,32 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/vendor
-.env
-.env.backup
-.env.production
-*.zip
-.htaccess
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-auth.json
-npm-debug.log
-yarn-error.log
-/.fleet
-/.idea
-/.vscode
+# ---- Dependencies (regenerate via composer/npm) ----
+/core/vendor
+/core/node_modules
 
+# ---- Secrets / environment ----
+# NOTE: secrets are intentionally COMMITTED in this repo per owner request
+# (core/.env, firebase/service-account.json, storage oauth keys).
+
+# ---- Laravel runtime storage ----
+/core/storage/logs/*
+/core/storage/framework/cache/*
+/core/storage/framework/sessions/*
+/core/storage/framework/views/*
+/core/storage/framework/testing/*
+/core/storage/app/public/*
+/core/bootstrap/cache/*
+
+# ---- Uploaded media (user data, served from server) ----
+/public/assets/storage
+
+# ---- Build output ----
+/core/public/hot
+/core/public/build
+/public/build
+
+# ---- Backups / OS junk ----
+*.bak
+*.bak.*
+*.bak-*
+public/index.php.bak.*
+.DS_Store
+Thumbs.db

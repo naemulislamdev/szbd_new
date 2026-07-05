@@ -1,0 +1,347 @@
+<header class="p-0" id="header"
+    style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; padding: 0">
+    <div class="container">
+        <div class="row main_row align-items-lg-center">
+            <div class="col-lg-2 d-none d-lg-flex align-items-center flex-row gap-5">
+                <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
+
+                <a href="{{ route('home') }}">
+                    <img class="MainLogo" class="header-logo"
+                        src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
+                        onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                        alt="{{ $web_config['name']->value }}">
+                </a>
+
+            </div>
+            <div class="col-lg-8 pr-0 pl-0">
+                @php $categories = \App\Models\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
+                @php
+                    $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
+                @endphp
+                @php
+                    $eidoffers = \App\Models\EidOffer::where('status', 1)->latest('id')->get();
+                @endphp
+                <nav class="navbar">
+                    <div class="menu-area">
+                        <ul>
+                            {{-- <li><a target="_blank" href="https://www.szonebd.com/">Exclusive Zone</a></li> --}}
+                            @php
+                                $isPageRoute = request()->is('page/*');
+                            @endphp
+                            @if (!$isPageRoute)
+                                @if ($discountOffer != null)
+                                    <li><a
+                                            href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
+                                                style="height: 60px; width: auto;"
+                                                src="{{ asset('assets/storage/offer') }}/{{ $discountOffer['image'] }}"
+                                                alt="offer image"></a>
+                                    </li>
+                                @endif
+                                {{-- Eid offers --}}
+                                @if ($eidoffers != null)
+                                    @foreach ($eidoffers as $eidOffer)
+                                        @if ($eidOffer->slug != 'special-buy-2-get-1' && $eidOffer->slug != 'premium-beef-garlic-pickle')
+                                            <li><a href="{{ route('eid.offers', ['slug' => $eidOffer->slug ?? '']) }}">
+                                                    @if ($eidOffer->image)
+                                                        <img style="height: 65px; width: auto;"
+                                                            src="{{ asset('assets/storage/eidOffer') }}/{{ $eidOffer['image'] }}"
+                                                            alt="offer image">
+                                                    @else
+                                                        {{ $eidOffer->title }}
+                                                    @endif
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            @endif
+                            <li><a href="{{ route('home') }}">Home</a></li>
+
+                            <li class="dd-btn1"><a href="#">Categories <i class="fa fa-angle-down"></i></a>
+                                <div class="dropdown-menu1">
+                                    <div class="row">
+                                        @foreach ($categories as $category)
+                                            <div class="col-md-3 mb-2">
+                                                <div class="m-category-box">
+                                                    <a href="{{ route('category.products', $category->slug) }}">
+                                                        <img src="{{ asset("assets/storage/category/$category->icon") }}"
+                                                            onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'">
+                                                        {{ $category['name'] }} <i class="fa fa-angle-right  mt-1"></i>
+                                                    </a>
+                                                </div>
+
+                                                @if ($category->subCategory->count() > 0)
+                                                    <div class="s-category-box">
+                                                        <ul class="w-nav-list level_3 ml-4">
+                                                            @foreach ($category->subCategory as $subCat)
+                                                                <li class="s-category"><a
+                                                                        href="{{ route('category.products', [$category->slug, $subCat->slug]) }}">{{ $subCat['name'] }}
+                                                                    </a>
+
+                                                                    @if ($subCat->childes->count() > 0)
+                                                                        <div class="dropdown-menuc">
+                                                                            <ul class="w-nav-list level_3 ml-3">
+                                                                                @foreach ($subCat->childes as $childCat)
+                                                                                    <li><a
+                                                                                            href="{{ route('category.products', [$category->slug, $subCat->slug, $childCat->slug]) }}">{{ $childCat['name'] }}</a>
+                                                                                    </li>
+                                                                                @endforeach
+                                                                            </ul>
+                                                                        </div>
+                                                                    @endif
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </li>
+                            <li><a href="{{ route('shop') }}">Shop</a>
+                            </li>
+                            <li><a href="{{ route('newArrival') }}">New Arrivals</a>
+                            </li>
+                            <li><a href="{{ route('video_shopping') }}">video shopping</a>
+                            </li>
+
+
+                            {{-- <li><a href="{{ route('offers.product') }}"><img style="height: 50px; width: auto;"
+                                        src="{{ asset('assets/frontend/img/sp_offer.png') }}" alt="special image"></a>
+                            </li> --}}
+                            {{-- <li><a href="{{ route('outlets') }}">Our outlets</a></li> --}}
+
+                            {{-- <li><a href="{{ route('careers') }}">Career</a></li> --}}
+                            {{-- <li><a target="_blank" href="https://asmishop.com/"><img style="height: 55px; width: auto;"
+                                        src="{{ asset('assets/frontend/images/asmi.gif') }}" alt="Asmi Supershop"></a>
+                            </li> --}}
+                        </ul>
+                    </div>
+
+                    <div class="d-flex d-lg-none">
+                        {{-- <i class="fa fa-bars menu-icon"></i> --}}
+                        <?php
+                        $company_mobile_logo = \App\Models\BusinessSetting::where('type', 'company_mobile_logo')->first()->value;
+                        ?>
+                        <div class="d-flex align-items-center flex-row">
+                            <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
+                            <a href="{{ route('home') }}">
+
+                                <img style="max-height: 65px" class="smLogo"
+                                    src="{{ asset('assets/storage/company') . '/' . $company_mobile_logo }}"
+                                    onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'"
+                                    alt="{{ $web_config['name']->value }}">
+                            </a>
+
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="col-lg-2 ms-lg-auto">
+                <div class="header-icon align-items-center">
+                    <a href=""></a>
+                    @if (!$isPageRoute)
+                        @if ($discountOffer != null)
+                            <a class="d-block d-lg-none"
+                                href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
+                                    style="height: 60px; width: auto;"
+                                    src="{{ asset('assets/storage/offer') }}/{{ $discountOffer['image'] }}"
+                                    alt="offer image"></a>
+                        @endif
+
+                        @if ($eidoffers != null)
+                            @foreach ($eidoffers as $eidoffer)
+                                @if ($eidoffer->slug != 'special-buy-2-get-1' && $eidoffer->slug != 'premium-beef-garlic-pickle')
+                                    <a class="text-dark d-block d-lg-none"
+                                        href="{{ route('eid.offers', ['slug' => $eidoffer->slug ?? '']) }}">
+                                        @if ($eidoffer->image)
+                                            <img style="height: 60px; width: auto;"
+                                                src="{{ asset('assets/storage/eidOffer') }}/{{ $eidoffer['image'] }}"
+                                                alt="offer image">
+                                        @else
+                                            {{ $eidoffer->title }}
+                                        @endif
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
+                    @endif
+                    <a class="d-none d-lg-inline-block" data-bs-toggle="offcanvas" href="#searchOffcanvas"
+                        role="button" aria-controls="searchOffcanvas"><i class="bi bi-search text-orange"></i></a>
+
+                    <a class="d-inline-block d-lg-none text-orange" data-bs-toggle="offcanvas"
+                        href="#shoppingCartOffcanvas" role="button" aria-controls="shoppingCartOffcanvas"><i
+                            class="bi bi-cart-check text-orange" style="color: orange; stroke: orange;"></i><span
+                            class="badge bg-orange total_cart_count" id="total_cart_count">
+                            {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
+                        </span></a>
+
+
+                    <a class="d-none d-lg-inline-block" href="{{ route('wishlists') }}"><i
+                            class="fa fa-heart-o text-orange" aria-hidden="true"></i>
+                        <span
+                            class="badge bg-orange countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span></a>
+                    <a class="d-none d-lg-inline-block" data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas"
+                        role="button" aria-controls="shoppingCartOffcanvas"><i
+                            class="bi bi-cart-check text-orange"></i><span class="badge bg-orange total_cart_count"
+                            id="total_cart_count">
+                            {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
+                        </span></a>
+
+                    @if (auth('customer')->check())
+                        <a href="{{ route('user-account') }}" class="d-none d-lg-inline-block text-orange"><i
+                                class="bi bi-person-circle text-orange"></i></a>
+                    @else
+                        <a href="{{ route('customer.auth.login') }}" class="d-none d-lg-inline-block"><i
+                                class="bi bi-person-circle text-orange"></i></a>
+                    @endif
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!--end header-->
+<!--start mobile menu-->
+<div class="mobile-menu">
+    <div class="mm-logo row align-items-center" style="background: #fff; padding: 11px 18px;">
+        <a href="{{ route('home') }}" class="col-9">
+            <img style="max-width: 100%; height: auto;"
+                src="{{ asset('assets/storage/company') . '/' . $web_config['web_logo']->value }}"
+                onerror="this.src='{{ asset('assets/frontend/img/placeholder.jpg') }}'" alt="Shopping zone BD">
+        </a>
+        <div class="mm-cross-icon col-3 text-right">
+            <i class="fa fa-times mm-ci"></i>
+        </div>
+    </div>
+    <div class="mm-menu">
+        <div class="accordion" id="accordionExample">
+            <div class="menu-box">
+                <div class="menu-link">
+                    {{-- <a target="_blank" href="https://www.szonebd.com/"><i class="fa fa-ptab3 mr-2"></i>Exclusive
+                        Zone</a> --}}
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('home') }}"><i class="fa fa-ptab3 mr-2"></i>Home</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link" id="headingOne">
+                    <a class="mmenu-btn menu-link-active" type="button" data-toggle="collapse"
+                        data-target="#categories" aria-expanded="true"><i class="fa fa-ptab3 mr-2"></i>Categories<i
+                            class="fa fa-plus"></i></a>
+                </div>
+                <div id="categories" class="menu-body collapse" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                        <ul>
+                            @foreach ($categories as $category)
+                                <li class="mega-dd-btn-2">
+                                    <div class="menu-link d-flex justify-content-between">
+                                        <a
+                                            href="{{ route('category.products', $category->slug) }}">{{ $category['name'] }}</a>
+                                        <a data-toggle="collapse" type="button"
+                                            data-target="#category__{{ $category['id'] }}" aria-expanded="true"><i
+                                                class="fa fa-plus"></i></a>
+                                    </div>
+                                    @if ($category->subCategory->count() > 0)
+                                        <div class="collapse" id="category__{{ $category['id'] }}">
+                                            <div class="card card-body">
+                                                <ul class="mega-item">
+                                                    @foreach ($category->subCategory as $subCat)
+                                                        <li class="mega-dd-btn-2">
+                                                            <div class="menu-link d-flex justify-content-between">
+                                                                <a
+                                                                    href="{{ route('category.products', [$category->slug, $subCat->slug]) }}">{{ $subCat['name'] }}</a>
+                                                                <a type="button" data-toggle="collapse"
+                                                                    data-target="#subCategory__{{ $subCat['id'] }}"
+                                                                    aria-expanded="true"><i
+                                                                        class="fa fa-plus"></i></a>
+                                                            </div>
+                                                            @if ($subCat->childes->count() > 0)
+                                                                <div class="collapse"
+                                                                    id="subCategory__{{ $subCat['id'] }}">
+                                                                    <div class="card card-body">
+                                                                        <ul class="mega-item">
+                                                                            @foreach ($subCat->childes as $childCat)
+                                                                                <li><a
+                                                                                        href="{{ route('category.products', [$category->slug, $subCat->slug, $childCat->slug]) }}">{{ $childCat['name'] }}</a>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('shop') }}"><i class="fa fa-ptab3 mr-2"></i>
+                        Shop</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('newArrival') }}"><i class="fa fa-ptab3 mr-2"></i>
+                        New Arrivals</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('video_shopping') }}"><i class="fa fa-ptab3 mr-2"></i>
+                        Video Shopping</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('offers.product') }}"><i class="fa fa-ptab3 mr-2"></i>Special Offer</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('outlets') }}"><i class="fa fa-ptab3 mr-2"></i>Our outlets</a>
+                </div>
+            </div>
+
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('careers') }}"><i class="fa fa-ptab3 mr-2"></i>Careers</a>
+                </div>
+            </div>
+            {{-- <div class="menu-box">
+                <div class="menu-link">
+                    <a target="_blank" href="https://asmishop.com/"><img style="height: 55px; width: auto;"
+                            src="{{ asset('assets/frontend/images/asmi.gif') }}" alt="Asmi Super Shop"></a>
+                </div>
+            </div> --}}
+
+
+        </div>
+    </div>
+    <div class="menu-link text-white">
+        @if (auth('customer')->check())
+            <a href="{{ route('user-account') }}" class="btn btn-primary text-white"><i
+                    class="fa fa-ptab3 mr-2"></i>
+                User Dashboard</a>
+        @else
+            <a href="{{ route('customer.auth.login') }}" class="btn btn-primary text-white"><i
+                    class="fa fa-ptab3 mr-2"></i>Login</a>
+        @endif
+    </div>
+</div>

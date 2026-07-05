@@ -1,0 +1,32 @@
+[14-Dec-2025 16:23:03 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/ChatController.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/ChatController.php on line 13
+[14-Dec-2025 16:23:06 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/SellerController.php:25
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/SellerController.php on line 25
+[14-Dec-2025 16:23:07 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/ShippingMethodController.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/ShippingMethodController.php on line 14
+[14-Dec-2025 16:23:08 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/BrandController.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/BrandController.php on line 8
+[14-Dec-2025 16:23:08 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/RefundController.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/RefundController.php on line 21
+[14-Dec-2025 16:23:09 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/ProductController.php:23
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/ProductController.php on line 23
+[14-Dec-2025 16:23:09 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/shippingController.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/shippingController.php on line 16
+[14-Dec-2025 16:23:10 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/OrderController.php:23
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/seller/OrderController.php on line 23

@@ -1,0 +1,4 @@
+[14-Dec-2025 16:22:57 UTC] PHP Fatal error:  Uncaught Error: Class "App\Http\Controllers\Controller" not found in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/delivery_man/DeliveryManController.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/shoppingbd/public_html/app/Http/Controllers/api/v2/delivery_man/DeliveryManController.php on line 17

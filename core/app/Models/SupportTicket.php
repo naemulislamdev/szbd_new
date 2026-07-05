@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class SupportTicket extends Model
+{
+    protected $guarded = ['id'];
+    protected $casts = [
+        'customer_id' => 'integer',
+        'status' => 'string',
+
+        'created_at'  => 'datetime',
+        'updated_at'  => 'datetime',
+    ];
+    public function conversations()
+    {
+        return $this->hasMany(SupportTicketConv::class);
+    }
+}

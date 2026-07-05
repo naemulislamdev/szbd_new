@@ -1,0 +1,98 @@
+@extends('web.layouts.app')
+@section('title', 'Video Shopping | ' . $web_config['name']->value)
+
+@section('meta_description',
+    'Shop premium clothing & original skincare products online at the best prices in
+    Bangladesh.')
+    @push('css_or_js')
+        <meta property="og:image" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
+        <meta property="og:title" content="Products of {{ $web_config['name'] }} " />
+        <meta property="og:url" content="{{ env('APP_URL') }}">
+        <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+
+        <meta property="twitter:card" content="{{ asset('assets/storage/company') }}/{{ $web_config['web_logo'] }}" />
+        <meta property="twitter:title" content="Products of {{ $web_config['name'] }}" />
+        <meta property="twitter:url" content="{{ env('APP_URL') }}">
+        <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
+    @endpush
+@section('content')
+    <section>
+        <div class="container">
+            {{-- Bredcrumb start  --}}
+            <nav class="breadcrumb custom-breadcrumb mt-3">
+                <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
+                <span class="breadcrumb-item active" aria-current="page">Video Shopping</span>
+            </nav>
+            {{--  Bredcrumb End --}}
+            {{-- Product Filter section --}}
+            @include('web.layouts.partials.product_filter')
+            {{-- Product grid system section --}}
+            <div class="row mb-3">
+                <div class="col text-center">
+                    <div class="section-heading-title">
+                        <h1>Video Shopping</h1>
+                        <div class="heading-border"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            @if (count($videoProducts) > 0)
+                <div class="row " id="video-ajax-products">
+                    @include('web.products.video_ajax_products', ['products' => $videoProducts])
+                </div>
+                <div class="row">
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <nav class="d-flex justify-content-between pt-2" aria-label="Page navigation">
+                            {!! $videoProducts->links() !!}
+                        </nav>
+                    </div>
+                </div>
+            @else
+                <div class="text-center pt-5">
+                    <h2>Product Coming Soon!</h2>
+                </div>
+            @endif
+        </div>
+    </section>
+@endsection
+@push('scripts')
+    <script>
+        //When scroll display block in filter section other wise display none
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('filter-box');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+
+    <script>
+        function searchByPrice() {
+            let min = $('#min_price').val();
+            let max = $('#max_price').val();
+            $.get({
+                url: '{{ url('/') }}/video-shopping',
+                data: {
+                    min_price: min,
+                    max_price: max,
+                },
+                dataType: 'json',
+                beforeSend: function() {
+                    $('#loading').show();
+                },
+                success: function(response) {
+                    $('#video-ajax-products').html(response.view);
+                },
+                complete: function() {
+                    $('#loading').hide();
+                },
+            });
+        }
+    </script>
+    <script>
+        cartQuantityInitialize();
+    </script>
+@endpush

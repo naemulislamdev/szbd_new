@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: [
+            __DIR__ . '/../routes/web.php',
+            __DIR__ . '/../routes/admin.php',
+            __DIR__ . '/../routes/customer.php',
+            __DIR__ . '/../routes/api/v1/api.php',
+            __DIR__ . '/../routes/api/v2/api.php',
+        ],
+        commands: __DIR__ . '/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias([
+            'admin' => App\Http\Middleware\AdminMiddleware::class,
+            'customer' => App\Http\Middleware\CustomerMiddleware::class,
+            'check_permission' => App\Http\Middleware\CheckPermissionMiddleware::class,
+            'track_visitor' => App\Http\Middleware\TrackVisitor::class,
+            'content_security_policy' => App\Http\Middleware\ContentSecurityPolicy::class,
+            'maintenance_mode' => App\Http\Middleware\MaintenanceModeMiddleware::class,
+        ]);
+        // API routes are token-based (loaded here under the web group) — exempt
+        // them all from CSRF so mobile/app POSTs (login, OTP, checkout) work.
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        //
+    })->create();
