@@ -89,7 +89,9 @@
                                             </td>
                                             <td>{{ $detail->product['code'] }}</td>
                                             <td>{{ $detail['price'] }}</td>
-                                            <td>{{ $detail->qty }}</td>
+                                            <td><input style="width:100px;" type="number" class="form-control qty"
+                                                    value="{{ $detail->qty }}" data-id="{{ $detail->id }}"
+                                                    min="1"></td>
                                             <td>{{ $detail['variant'] }}-{{ $detail['variation'] }}</td>
                                             <td>{{ $detail['discount'] }}</td>
                                             @php($subtotal = $detail['price'] * $detail->qty - $detail['discount'])
@@ -478,38 +480,6 @@
     </script>
 
     <script>
-        // $(document).on('click', '.remove-item', function() {
-        //     let detail_id = $(this).data('id');
-
-        //     Swal.fire({
-        //         title: 'Are you sure?',
-        //         text: "You want to remove this item!",
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#d33',
-        //         cancelButtonColor: '#6c757d',
-        //         confirmButtonText: 'Yes, remove it!',
-        //         cancelButtonText: 'Cancel'
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-
-        //             $.post('{{ route('admin.order.remove_product') }}', {
-        //                 _token: '{{ csrf_token() }}',
-        //                 detail_id: detail_id
-        //             }, function() {
-
-        //                 Swal.fire(
-        //                     'Deleted!',
-        //                     'Item has been removed.',
-        //                     'success'
-        //                 );
-
-        //                 reloadTable();
-        //             });
-
-        //         }
-        //     });
-        // });
         $(document).on('click', '.remove-item', function() {
             let detail_id = $(this).data('id');
             Swal.fire({
@@ -545,6 +515,26 @@
                     });
                 }
             })
+        });
+    </script>
+    <script>
+        $(document).on('change', '.qty', function() {
+
+            let qty = $(this).val();
+            let detail_id = $(this).data('id');
+
+            if (qty < 1) return;
+
+            $.post("{{ route('admin.order.update_qty') }}", {
+                _token: "{{ csrf_token() }}",
+                detail_id: detail_id,
+                qty: qty
+            }, function(res) {
+
+                toastr.success('Qty Updated');
+
+                reloadTable();
+            });
         });
     </script>
     <script>

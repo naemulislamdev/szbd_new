@@ -190,7 +190,7 @@ class OrderController extends Controller
         </a>
     ';
                 $buttons .= '
-        <a href="' . route('admin.order.edit', $order->id) . '" class="btn btn-sm btn-info mb-2">
+    <a href="' . route('admin.order.edit', $order->id) . '" class="btn btn-sm btn-info mb-2">
             <i class="las la-edit"></i>
         </a>
     ';
@@ -458,6 +458,34 @@ class OrderController extends Controller
 
         $order = Order::findOrFail($orderId);
         $order->order_amount = $grand_total;
+        $order->save();
+
+        return response()->json(['success' => true]);
+    }
+    public function updateQty(Request $request)
+    {
+        $detail = OrderDetail::findOrFail($request->detail_id);
+
+        $detail->qty = $request->qty;
+
+        $detail->save();
+
+        // Recalculate order total
+        $orderItems = OrderDetail::where('order_id', $detail->order_id)->get();
+
+        $total = 0;
+
+        foreach ($orderItems as $item) {
+
+            $subtotal = ($item->price * $item->qty)
+                - ($item->discount * $item->qty)
+                + ($item->tax * $item->qty);
+
+            $total += $subtotal;
+        }
+
+        $order = Order::findOrFail($detail->order_id);
+        $order->order_amount = $total;
         $order->save();
 
         return response()->json(['success' => true]);

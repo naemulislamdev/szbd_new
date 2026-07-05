@@ -69,6 +69,7 @@
                                         </th>
                                         <th>Image</th>
                                         <th>Name</th>
+                                        <th>Viewers</th>
                                         <th>Code</th>
                                         <th>Purchase Price</th>
                                         <th>Selling Price</th>
@@ -124,6 +125,10 @@
                     {
                         data: 'name',
                         name: 'name'
+                    },
+                    {
+                        data: 'viewers',
+                        name: 'viewers'
                     },
                     {
                         data: 'code',

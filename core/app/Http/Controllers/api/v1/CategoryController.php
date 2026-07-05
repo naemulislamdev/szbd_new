@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function get_categories()
     {
         try {
-            $categories = Category::with(['childes.childes'])->get();
+            $categories = Category::with(['childes'])->get();
             return response()->json($categories, 200);
         } catch (\Exception $e) {
             return response()->json([], 200);

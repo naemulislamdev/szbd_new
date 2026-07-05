@@ -15,10 +15,16 @@ use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Front\UserWalletController;
 use App\Http\Controllers\Front\WholesaleController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use Stevebauman\Location\Facades\Location;
 
 Route::get('maintenance-mode', [FrontendController::class, 'maintenance_mode'])->name('maintenance-mode');
+// Test route
+Route::get('/test-location', function (Request $request) {
+    $position = Location::get('103.4.145.10'); // kono Bangladesh IP test
+    dd($position);
+});
 
 Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group(function () {
     Route::controller(FrontendController::class)->group(function () {
@@ -62,6 +68,8 @@ Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group
         Route::get('/video-shopping', 'videoShopping')->name('video_shopping');
         Route::get('/campaign', 'campaing_products')->name('campain');
         Route::get('/product/{slug}', 'product')->name('product');
+        // routes/web.php
+        Route::get('/product/{id}/active-viewers', 'activeViewers')->name('product.active-viewers')->middleware('throttle:30,1');
         Route::get('category/{category?}/{subcategory?}/{childcategory?}', 'products')->name('category.products');
         Route::get('search', 'homeSearch')->name('home.search');
         Route::get('orderDetails', 'orderdetails')->name('orderdetails');
@@ -135,7 +143,8 @@ Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group
         Route::get('set-shipping-method', 'set_shipping_method')->name('set-shipping-method');
         Route::post('checkout-complete',  'productCheckout')->name('product.checkout');
         Route::post('checkout/complete', 'singlepCheckout')->name('sproduct.checkout');
-        Route::get('checkout-complete/{id}', 'checkoutComplete')->name('checkout-complete');
+        Route::get('purchase-complete/{id}', 'purchaseComplete')->name('purchase-complete');
+        Route::get('purchase-confirm/{id}', 'purchaseConfirm')->name('purchase-confirm');
         Route::post('customer-address-update', 'customerAddressUpdate')->name('address.update');
     });
 
@@ -202,6 +211,7 @@ Route::controller(CartController::class)->prefix('/cart')->as('cart.')->group(fu
     Route::post('/nav-cart-items', 'updateNavCart')->name('nav_cart');
     Route::post('total-cart-count', 'totalCartCount')->name('totalCart');
     Route::post('/updateQuantity', 'updateQuantity')->name('updateQuantity');
+    Route::get('summary-html',  'summaryHtml')->name('summary_html');
     Route::get('/subdomain-ordernow/{id}', 'subdomainOrdernow');
     // In web.php
     // Route::post('/add-to-cart', 'CartController@addToCart')->name('add.to.cart');
@@ -215,5 +225,6 @@ Route::controller(CouponController::class)->prefix('/coupon')->as('coupon.')->gr
 
 Route::get('/page/{slug}', [FrontendController::class, 'signleProductLandingPage'])->name('signle.landing_page');
 // Route::get('/{slug}', [FrontendController::class, 'landingPage'])->name('landing_page');
+
 
 require __DIR__ . '/auth.php';

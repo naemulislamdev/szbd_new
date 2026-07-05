@@ -33,21 +33,21 @@ use App\Models\Product;
 use App\Models\ProductLandingPage;
 use App\Models\Review;
 use App\Models\ShippingAddress;
+use App\Models\ShippingMethod;
 use App\Models\SubCategory;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
-use Illuminate\Support\Facades\Cache;
 
 class FrontendController extends Controller
 {
@@ -384,7 +384,8 @@ class FrontendController extends Controller
         $searchProducts = Product::where('status', 1)
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'LIKE', "%{$keyword}%")
-                    ->orWhere('code', 'LIKE', "%{$keyword}%");
+                    ->orWhere('code', 'LIKE', "%{$keyword}%")
+                    ->orWhere('unit_price', 'LIKE', "%{$keyword}%");
             })
             ->paginate(20);
         return view('web.home_search', compact('searchProducts', 'keyword'));
@@ -475,7 +476,7 @@ class FrontendController extends Controller
     //shop function
     public function shop(Request $request)
     {
-        $allProducts = Product::with(['reviews'])->latest()->active();
+        $allProducts = Product::with(['reviews'])->orderBy('viewers', 'desc')->active();
 
         $query = null;
         if ($request->input('min_price') !== null && $request->input('max_price') !== null) {
@@ -649,13 +650,15 @@ class FrontendController extends Controller
     public function checkout()
     {
         if (session()->has('cart') && count(session('cart')) > 0) {
-            $customer = auth('customer')->user();
+            $customer          = auth('customer')->user();
             $shippingAddresses = [];
+            $shippingConfig    = \App\Models\ShippingConfig::getConfig();
+
             if ($customer) {
                 $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
-                $otpExists = User::whereNotNull('otp')->exists();
             }
-            return view('web.checkout', compact('customer', 'shippingAddresses'));
+
+            return view('web.checkout', compact('customer', 'shippingAddresses', 'shippingConfig'));
         }
         return redirect('/')->with('error', 'No items in your basket!');
     }
@@ -665,6 +668,31 @@ class FrontendController extends Controller
         $product = Product::active()->with(['reviews'])->where('slug', $slug)->first();
 
         if ($product != null) {
+            // Viewers increment
+            $product->increment('viewers');
+            // ✅ Cache key — প্রতিটা product এর জন্য আলাদা
+            $cacheKey = 'product_viewers_' . $product->id;
+
+            // ✅ Current session ID নাও
+            $sessionId = session()->getId();
+
+            // ✅ Cache থেকে existing viewers list নাও (না থাকলে empty array)
+            $viewers = Cache::get($cacheKey, []);
+
+            // ✅ এই session কে add/update করো (last_seen = now)
+            $viewers[$sessionId] = now()->timestamp;
+
+            // ✅ ৫ মিনিটের বেশি inactive session গুলো remove করো
+            $viewers = array_filter($viewers, function ($lastSeen) {
+                return $lastSeen >= now()->subMinutes(5)->timestamp;
+            });
+
+            // ✅ Updated list আবার Cache এ save করো (১০ মিনিট TTL)
+            Cache::put($cacheKey, $viewers, now()->addMinutes(10));
+
+            // ✅ Active viewers count
+            $activeViewers = count($viewers);
+
             $countOrder = OrderDetail::where('product_id', $product->id)->count();
             $countWishlist = Wishlist::where('product_id', $product->id)->count();
             $deal_of_the_day = DealOfTheDay::where('product_id', $product->id)->where('status', 1)->first();
@@ -685,10 +713,31 @@ class FrontendController extends Controller
 
             $relatedProducts = $query->inRandomOrder()->limit(12)->get();
 
-            return view('web.products.details', compact('product', 'relatedProducts', 'countWishlist', 'countOrder', 'deal_of_the_day'));
+            return view('web.products.details', compact('product', 'relatedProducts', 'countWishlist', 'countOrder', 'deal_of_the_day', 'activeViewers'));
         }
 
         return back()->with('error', 'Product Not Found!');
+    }
+    public function activeViewers($id)
+    {
+        $cacheKey = 'product_viewers_' . $id;
+        $sessionId = session()->getId();
+
+        // ✅ Cache থেকে viewers নাও
+        $viewers = Cache::get($cacheKey, []);
+
+        // ✅ নিজের session update করো
+        $viewers[$sessionId] = now()->timestamp;
+
+        // ✅ ৫ মিনিটের বেশি inactive সরাও
+        $viewers = array_filter($viewers, function ($lastSeen) {
+            return $lastSeen >= now()->subMinutes(5)->timestamp;
+        });
+
+        // ✅ Cache এ save করো
+        Cache::put($cacheKey, $viewers, now()->addMinutes(10));
+
+        return response()->json(['active_viewers' => count($viewers)]);
     }
 
     public function products(
@@ -900,12 +949,53 @@ class FrontendController extends Controller
     }
     public function signleProductLandingPage($slug)
     {
-        $productLandingPage = ProductLandingPage::where('slug', $slug)->where('status', true)->first();
-        if ($productLandingPage) {
-            return view('web.landing-page.signle_product', compact('productLandingPage'));
-        } else {
+        $productLandingPage = ProductLandingPage::where('slug', $slug)
+            ->where('status', true)
+            ->first();
+
+        if (!$productLandingPage) {
             return redirect()->route('home')->with('warning', 'Landing page is not available!');
         }
+
+        $productIds = json_decode($productLandingPage->product_id, true);
+        if (!is_array($productIds)) {
+            $productIds = array_filter([$productIds]);
+        }
+
+        $lpProducts      = Product::active()->whereIn('id', $productIds)->get();
+        $shippingConfig  = \App\Models\ShippingConfig::getConfig();
+        $customer        = auth('customer')->user();
+        $shippingAddresses = collect();
+
+        if ($customer) {
+            $shippingAddresses = ShippingAddress::where('customer_id', $customer->id)->get();
+        }
+
+        // ── Shipping config অনুযায়ী methods load ──
+        if (
+            $shippingConfig->shipping_type === 'free_shipping'
+            && $shippingConfig->free_shipping_type === 'all_products'
+        ) {
+            // সব free — cost 0 এর method নেব
+            $shippingMethods = ShippingMethod::where('status', 1)->get();
+        } else {
+            $shippingMethods = ShippingMethod::where('status', 1)->get();
+        }
+
+        // Shipping discount config
+        $freeShippingMinAmount = (float) (\App\Models\BusinessSetting::where('type', 'free_shipping_min_amount')->value('value') ?? 0);
+        $freeShippingDiscount  = (float) (\App\Models\BusinessSetting::where('type', 'free_shipping_discount')->value('value') ?? 0);
+
+        return view('web.landing-page.signle_product', compact(
+            'productLandingPage',
+            'lpProducts',
+            'shippingMethods',
+            'shippingConfig',
+            'freeShippingMinAmount',
+            'freeShippingDiscount',
+            'customer',
+            'shippingAddresses'
+        ));
     }
     public function saveUserInfo(Request $request)
     {

@@ -100,12 +100,10 @@
                                     @enderror
                                 </div>
                                 @php
-                                    $selectedProducts = $landingPage->product_id
-                                        ? json_decode($landingPage->product_id)
-                                        : [];
+                                    $selectedProducts = $landingPage->product_id ? json_decode($landingPage->product_id) : [];
                                 @endphp
                                 <div class="col-md-12">
-                                    <label for="name">Add product<span class="text-danger">*</span></label>
+                                    <label for="name">Add new product<span class="text-danger">*</span></label>
                                     <select class="addNewProduct form-select-lg" name="product_id[]" multiple>
                                         @foreach (\App\Models\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
                                             <option {{ in_array($product->id, $selectedProducts) ? 'selected' : '' }}

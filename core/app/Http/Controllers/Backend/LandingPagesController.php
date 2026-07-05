@@ -376,6 +376,14 @@ class LandingPagesController extends Controller
 
     public function singleIndex()
     {
+        // $lp  = ProductLandingPage::all();
+        // foreach ($lp as $item) {
+        //     $productId = $item->product_id;
+        //     $item->update([
+        //         'product_id' => json_encode([$productId])
+        //     ]);
+        // }
+        // dd('ok');
         return view('admin.landingPages.single_page.single_product');
     }
     public function editSingleProduct($id)
@@ -383,6 +391,7 @@ class LandingPagesController extends Controller
         $landingPage = ProductLandingPage::find($id);
         return view('admin.landingPages.single_page.edit', compact('landingPage'));
     }
+
     public function singleProductdatatables()
     {
         $query = ProductLandingPage::query()
@@ -391,6 +400,8 @@ class LandingPagesController extends Controller
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
+
+            // 🔹 SKU search fix — filterColumn
             ->filterColumn('sku', function ($query, $keyword) {
                 $matchedIds = Product::where('code', 'like', "%{$keyword}%")
                     ->pluck('id')
@@ -411,48 +422,53 @@ class LandingPagesController extends Controller
                 }
             })
 
-            // 🔹 SKU — product_id JSON decode করে products থেকে code গুলো বের করো
+            // 🔹 SKU column
             ->addColumn('sku', function ($row) {
                 $productIds = json_decode($row->product_id, true);
                 if (empty($productIds) || !is_array($productIds)) {
                     return '<span class="text-muted">N/A</span>';
                 }
 
-                $codes = Product::whereIn('id', $productIds)
-                    ->pluck('code')
-                    ->toArray();
-
+                $codes = Product::whereIn('id', $productIds)->pluck('code')->toArray();
                 return implode(', ', $codes);
+            })
+
+            // 🔹 Product Name column
+            ->addColumn('product_name', function ($row) {
+                $productIds = json_decode($row->product_id, true);
+                if (empty($productIds) || !is_array($productIds)) {
+                    return '<span class="text-muted">N/A</span>';
+                }
+
+                $names = Product::whereIn('id', $productIds)->pluck('name')->toArray();
+                return implode('<br>', $names);
             })
 
             // 🔹 Action Buttons
             ->addColumn('action', function ($row) {
                 $route = route('admin.landingpages.single.edit', $row->id);
-
                 return '
-                <a href="' . $route . '" class="btn btn-primary btn-sm">
-                    <i class="la la-edit"></i>
-                </a>
-                <button class="btn btn-danger btn-sm delete"
-                    data-id="' . $row->id . '">
-                    <i class="la la-trash"></i>
-                </button>
-            ';
+            <a href="' . $route . '" class="btn btn-primary btn-sm">
+                <i class="la la-edit"></i>
+            </a>
+            <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">
+                <i class="la la-trash"></i>
+            </button>
+        ';
             })
 
             // 🔹 Status Toggle
             ->editColumn('status', function ($row) {
                 $checked = $row->status == 1 ? 'checked' : '';
-
                 return '
-                <div class="form-check form-switch">
-                    <input class="form-check-input status"
-                        type="checkbox"
-                        data-id="' . $row->id . '"
-                        value="1"
-                        ' . $checked . '>
-                </div>
-            ';
+            <div class="form-check form-switch">
+                <input class="form-check-input status"
+                    type="checkbox"
+                    data-id="' . $row->id . '"
+                    value="1"
+                    ' . $checked . '>
+            </div>
+        ';
             })
 
             // 🔹 Slug Link
@@ -464,8 +480,7 @@ class LandingPagesController extends Controller
                 return "<span class='text-muted'>Link is Deactivated</span>";
             })
 
-            ->rawColumns(['action', 'status', 'slug', 'sku'])
-
+            ->rawColumns(['action', 'status', 'slug', 'sku', 'product_name'])
             ->toJson();
     }
     public function LandingPageStatus(Request $request)
@@ -759,7 +774,15 @@ class LandingPagesController extends Controller
             }
         }
 
+        $productIds = [];
+        if ($request->product_id) {
+            foreach ($request->product_id as $productId) {
+                $productIds[] = $productId;
+            }
+        }
+
         $finalProductIds = json_encode($productIds);
+
 
         $productLandingpage->update([
             'title' => $request->title,

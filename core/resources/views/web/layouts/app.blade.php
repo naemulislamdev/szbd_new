@@ -642,6 +642,54 @@
             opacity: 0;
         }
     </style>
+    <style>
+        /* Shipping Progress Bar */
+        .shipping-progress-box {
+            background: #fff8f0;
+            border: 1px dashed #f0a500;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .shipping-msg {
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        .shipping-msg.unlocked {
+            color: #1a7f37;
+            font-weight: 600;
+        }
+
+        .progress-track {
+            position: relative;
+            background: #e9ecef;
+            border-radius: 50px;
+            height: 10px;
+            overflow: visible;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f0a500, #e63946);
+            border-radius: 50px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-icon {
+            position: absolute;
+            top: -4px;
+            font-size: 16px;
+            transition: left 0.5s ease;
+        }
+
+        .unlocked-icon {
+            right: 0;
+            left: auto !important;
+            top: -4px;
+        }
+    </style>
 
     @php
         $request = request()->route()->getName();
@@ -1224,6 +1272,7 @@
             }, function(data) {
                 updateTotalCart();
                 updateNavCart();
+                refreshOrderSummary();
                 $('#cart-summary').empty().html(data);
                 toastr.info('Item has been removed from cart', {
                     CloseButton: true,
@@ -1245,6 +1294,12 @@
                 _token: '<?php echo e(csrf_token()); ?>'
             }, function(data) {
                 $('#cart_items').html(data);
+            });
+        }
+
+        function refreshOrderSummary() {
+            $.get('{{ route('cart.summary_html') }}', function(data) {
+                $('.summary-cart').empty().html(data);
             });
         }
 
@@ -1284,6 +1339,7 @@
                 quantity: element.value
             }, function(data) {
                 updateNavCart();
+                refreshOrderSummary();
                 $('#cart-summary').empty().html(data);
             });
         }
@@ -1327,6 +1383,7 @@
                     });
 
                     updateNavCart();
+                    refreshOrderSummary();
 
                     $('#cart-summary').html(data);
                 }

@@ -110,9 +110,7 @@
                         searchable: false,
                     },
                     {
-                        data: 'sku',
-                        name: 'sku'
-
+                        data: 'sku'
                     },
 
                     {

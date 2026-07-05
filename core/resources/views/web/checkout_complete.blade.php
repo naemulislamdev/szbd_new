@@ -322,12 +322,12 @@
         $shippingData = json_decode($order->shipping_address_data, true);
         $i = 0;
         $total = count($order->details);
-        
+
         $fullName = $shippingData['contact_person_name'] ?? '';
         $nameParts = explode(' ', trim($fullName), 2);
         $firstName = $nameParts[0] ?? '';
         $lastName = $nameParts[1] ?? '';
-        
+
         foreach ($order->details as $detail) {
             $prod = json_decode($detail->product_details, true);
             $categoryId = $prod['category_id'] ?? null;
@@ -441,8 +441,5 @@
                 currency: 'BDT'
             });
         }
-    </script>
-    <script>
-        console.log(<?php echo json_encode($order); ?>);
     </script>
 @endpush

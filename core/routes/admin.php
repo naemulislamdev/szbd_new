@@ -119,6 +119,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('product-search', 'productSearch')->name('product_search');
             Route::post('add-product', 'addProduct')->name('add_product');
             Route::post('remove-product', 'removeProduct')->name('remove_product');
+            Route::post('update-qty', 'updateQty')->name('update_qty');
             Route::get('recalculate/{order}', 'recalculate')->name('recalculate');
             Route::get('product-variation/{id}', 'productVariation')->name('product_variation');
 
@@ -535,6 +536,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/datatables', 'datatables')->name('datatables');
             Route::post('/delete', 'delete')->name('delete');
             Route::post('status', 'status')->name('status');
+            Route::post('config/save',  'saveConfig')->name('config.save');
         });
         Route::controller(CacheController::class)->prefix('/cache')->as('cache.')->group(function () {
             Route::get('/cache',  'index')->name('caindex');

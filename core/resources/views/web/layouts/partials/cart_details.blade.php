@@ -103,102 +103,186 @@
                             @csrf
 
                             <input type="hidden" name="session_id" value="{{ session()->getId() }}">
-                            {{-- <div class="row">
-                                @php
-                                    $cartAddedTotalPrice = 0;
-                                    if (session()->has('cart') && count(session()->get('cart')) > 0) {
-                                        foreach (session('cart') as $key => $cartItem) {
-                                            $itemTotal =
-                                                $cartItem['price'] * $cartItem['quantity'] -
-                                                $cartItem['quantity'] * $cartItem['discount'];
-                                            $cartAddedTotalPrice += $itemTotal;
-                                        }
-                                    }
-                                @endphp
-                                <div class="col-md-12">
-                                    <label class="d-block mb-2">আপনার এরিয়া সিলেক্ট করুন</label>
-
-                                    <div class="row">
-                                        @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
-                                            <div class="col-md-4">
-                                                <label class="shipping-box">
-                                                    <input type="radio" name="shipping_area"
-                                                        value="{{ $shipping['id'] }}"
-                                                        {{ $shipping['cost'] == 0 ? 'checked' : '' }}
-                                                        onchange="set_shipping_id(this.value)"
-                                                        {{ session()->has('shipping_method_id') && session('shipping_method_id') == $shipping['id'] ? 'checked' : '' }}>
-                                                    <span class="shipping-title">
-                                                        {{ $shipping['title'] }}
-                                                    </span>
-                                                    <span class="shipping-cost">
-                                                        {{ $shipping['cost'] }}
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div> --}}
 
                             <div class="row">
-                                {{-- free delivery calculation php block --}}
+
                                 @php
-                                    $cartAddedTotalPrice = 0;
-                                    if (session()->has('cart') && count(session()->get('cart')) > 0) {
-                                        foreach (session('cart') as $key => $cartItem) {
-                                            if ($cartItem['discount'] == 0) {
-                                                $itemTotal = $cartItem['price'] * $cartItem['quantity'];
-                                                $cartAddedTotalPrice += $itemTotal;
-                                            }
-                                        }
-                                    }
-
-                                    $shippingMethods = \App\Models\ShippingMethod::where(['status' => 1])->get();
-
-                                    if ($cartAddedTotalPrice > 999) {
-                                        $shippingMethods = $shippingMethods->where('cost', 0);
-                                    } else {
-                                        $shippingMethods = $shippingMethods->where('cost', '>', 0);
-                                    }
+                                    $shippingConfig = $shippingConfig ?? \App\Models\ShippingConfig::getConfig();
                                 @endphp
 
                                 <div class="col-md-12">
                                     <label class="d-block mb-2">আপনার এরিয়া সিলেক্ট করুন</label>
 
-                                    <div class="row">
-                                        {{-- @foreach (\App\Models\ShippingMethod::where(['status' => 1])->get() as $shipping)
-                                            <div class="col-md-6">
-                                                <label class="shipping-box">
-                                                    <input type="radio" name="shipping_area"
-                                                        value="{{ $shipping['id'] }}"
-                                                        onchange="set_shipping_id(this.value)"
-                                                        {{ session()->has('shipping_method_id') && session('shipping_method_id') == $shipping['id'] ? 'checked' : '' }}>
-                                                    <span class="shipping-title">
-                                                        {{ $shipping['title'] }}
-                                                    </span>
-                                                    <span class="shipping-cost">
-                                                        {{ $shipping['cost'] }}
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        @endforeach --}}
-                                        @foreach ($shippingMethods as $shipping)
-                                            <div class="col-md-6">
-                                                <label class="shipping-box">
-                                                    <input type="radio" name="shipping_area"
-                                                        value="{{ $shipping['id'] }}"
-                                                        onchange="set_shipping_id(this.value)">
-                                                    <span class="shipping-title">
-                                                        {{ $shipping['title'] }}
-                                                    </span>
-                                                    <span class="shipping-cost">
-                                                        {{ $shipping['cost'] == 0 ? '' : '৳' . $shipping['cost'] }}
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        @endforeach
+                                    @if ($shippingConfig->shipping_type === 'free_shipping')
 
-                                    </div>
+                                        {{-- FREE SHIPPING --}}
+                                        @php
+                                            $cartForCheck = session()->get('cart', collect([]));
+                                            $hasDiscounted = $cartForCheck->contains(
+                                                fn($item) => $item['discount'] > 0,
+                                            );
+
+                                            // auto-select first active shipping method
+                                            $defaultMethod = \App\Models\ShippingMethod::where('status', 1)->first();
+                                        @endphp
+
+                                        @if ($defaultMethod)
+                                            {{-- Hidden input — auto select হয়ে যাবে --}}
+                                            <input type="hidden" name="shipping_area"
+                                                value="{{ $defaultMethod->id }}">
+
+                                            <div class="p-3 rounded"
+                                                style="background:#f0fff4; border:1px dashed #28a745;">
+                                                @if ($shippingConfig->free_shipping_type === 'all_products')
+                                                    <span class="text-success fw-bold">
+                                                        🎉 সব পণ্যে ডেলিভারি চার্জ ফ্রি!
+                                                    </span>
+                                                @elseif ($shippingConfig->free_shipping_type === 'without_discount_product')
+                                                    @php
+                                                        $freeMin =
+                                                            (float) ($shippingConfig->free_shipping_min_amount ?? 0);
+
+                                                        // discount ছাড়া product গুলোর sum
+                                                        $nonDiscountedTotal = $cartForCheck->sum(function ($item) {
+                                                            return $item['discount'] > 0
+                                                                ? 0
+                                                                : $item['price'] * $item['quantity'];
+                                                        });
+
+                                                        $isFreeEligible =
+                                                            $freeMin > 0 && $nonDiscountedTotal >= $freeMin;
+                                                    @endphp
+
+                                                    @if ($isFreeEligible)
+                                                        {{-- Free shipping পাবে — hidden input দিয়ে auto select --}}
+                                                        <div class="p-2 rounded"
+                                                            style="background:#f0fff4; border:1px dashed #28a745; font-size:14px;">
+                                                            🎉 <strong>আপনি ডেলিভারি চার্জ ফ্রি
+                                                                        পেয়েছেন!</strong>
+                                                        </div>
+                                                    @else
+                                                        {{-- Shipping methods manually select করতে হবে --}}
+                                                        <div class="p-2 rounded mb-2"
+                                                            style="background:#fff3cd; border:1px dashed #ffc107; font-size:14px;">
+                                                            🛒 আর মাত্র
+                                                            <strong>৳{{ number_format(max(0, $freeMin - $nonDiscountedTotal)) }}</strong>
+                                                            কিনলে <strong>ডেলিভারি চার্জ
+                                                                ফ্রি</strong>
+                                                            পাবেন! <span class="text-danger">(ডিসকাউন্ট ছাড়া
+                                                                পণ্যে)</span>
+                                                        </div>
+
+                                                        {{-- Manual shipping selection --}}
+                                                        <div class="row">
+                                                            @foreach (\App\Models\ShippingMethod::where('status', 1)->get() as $shipping)
+                                                                <div class="col-md-6 mb-2">
+                                                                    <label class="shipping-box">
+                                                                        <input type="radio" name="shipping_area"
+                                                                            value="{{ $shipping->id }}"
+                                                                            onchange="set_shipping_id(this.value)"
+                                                                            {{ session('shipping_method_id') == $shipping->id ? 'checked' : '' }}>
+                                                                        <span
+                                                                            class="shipping-title">{{ $shipping->title }}</span>
+                                                                        <span class="shipping-cost">
+                                                                            @if ($shipping->discount_amount > 0)
+                                                                                @php
+                                                                                    $displayCost =
+                                                                                        $shipping->discount_type ===
+                                                                                        'percent'
+                                                                                            ? $shipping->cost -
+                                                                                                round(
+                                                                                                    ($shipping->cost *
+                                                                                                        $shipping->discount_amount) /
+                                                                                                        100,
+                                                                                                )
+                                                                                            : $shipping->cost -
+                                                                                                $shipping->discount_amount;
+                                                                                    $displayCost = max(0, $displayCost);
+                                                                                @endphp
+                                                                                <del class="text-muted"
+                                                                                    style="font-size:12px">৳{{ $shipping->cost }}</del>
+                                                                                ৳{{ $displayCost }}
+                                                                            @else
+                                                                                ৳{{ $shipping->cost }}
+                                                                            @endif
+                                                                        </span>
+                                                                    </label>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                @endif
+                                            </div>
+
+                                            {{-- JS দিয়ে auto set করব --}}
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    // page load এ auto set shipping
+                                                    @foreach (session()->get('cart') as $key => $item)
+                                                        let autoKey = '{{ $key }}';
+                                                        @break
+                                                    @endforeach
+
+                                                    $.get({
+                                                        url: '{{ url('/') }}/set-shipping-method',
+                                                        dataType: 'json',
+                                                        data: {
+                                                            id: {{ $defaultMethod->id }},
+                                                            key: autoKey
+                                                        },
+                                                        success: function(data) {
+                                                            if (data.status == 1) {
+                                                                $('.summary-cart').empty().html(data.html);
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+                                        @endif
+                                    @else
+                                        {{-- ORDER WISE / CATEGORY WISE / PRODUCT WISE --}}
+                                        {{-- Customer manually select করবে --}}
+                                        <div class="row">
+                                            @foreach (\App\Models\ShippingMethod::where('status', 1)->get() as $shipping)
+                                                <div class="col-md-6 mb-2">
+                                                    <label class="shipping-box">
+                                                        <input type="radio" name="shipping_area"
+                                                            value="{{ $shipping->id }}"
+                                                            onchange="set_shipping_id(this.value)"
+                                                            {{ session('shipping_method_id') == $shipping->id ? 'checked' : '' }}>
+                                                        <span class="shipping-title">{{ $shipping->title }}</span>
+                                                        <span class="shipping-cost">
+                                                            @if ($shippingConfig->shipping_type === 'free_shipping')
+                                                                Free
+                                                            @else
+                                                                @if ($shipping->discount_amount > 0)
+                                                                    @php
+                                                                        $displayCost =
+                                                                            $shipping->discount_type === 'percent'
+                                                                                ? $shipping->cost -
+                                                                                    round(
+                                                                                        ($shipping->cost *
+                                                                                            $shipping->discount_amount) /
+                                                                                            100,
+                                                                                    )
+                                                                                : $shipping->cost -
+                                                                                    $shipping->discount_amount;
+                                                                        $displayCost = max(0, $displayCost);
+                                                                    @endphp
+                                                                    <del class="text-muted"
+                                                                        style="font-size:12px">৳{{ $shipping->cost }}</del>
+                                                                    ৳{{ $displayCost }}
+                                                                @else
+                                                                    ৳{{ $shipping->cost }}
+                                                                @endif
+                                                            @endif
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                    @endif
                                 </div>
                             </div>
                             <div class="row">
