@@ -244,8 +244,9 @@ class CustomerController extends Controller
             'value' => $request['minimun_transfer_point'] ?? 0
         ]);
 
-        Toastr::success(\App\CPU\translate('customer_settings_updated_successfully'));
-        return back();
+        // Toastr::success(\App\CPU\translate('customer_settings_updated_successfully'));
+
+        return back()->with('success', 'customer_settings_updated_successfully');
     }
 
     public function get_customers(Request $request)

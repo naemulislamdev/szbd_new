@@ -369,9 +369,9 @@ class LandingPagesController extends Controller
         }
     }
 
-    /* ============================================================
+    /* ============================================================================
                 Start Single-product landing page methods
-===============================================================
+===============================================================================
 */
 
     public function singleIndex()
@@ -398,7 +398,7 @@ class LandingPagesController extends Controller
             ->select('product_landing_pages.*')
             ->latest('product_landing_pages.id');
 
-        return DataTables::of($query)
+        return DataTables::eloquent($query)
             ->addIndexColumn()
 
             // 🔹 SKU search fix — filterColumn
@@ -448,27 +448,27 @@ class LandingPagesController extends Controller
             ->addColumn('action', function ($row) {
                 $route = route('admin.landingpages.single.edit', $row->id);
                 return '
-                <a href="' . $route . '" class="btn btn-primary btn-sm">
-                    <i class="la la-edit"></i>
-                </a>
-                <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">
-                    <i class="la la-trash"></i>
-                </button>
-            ';
+            <a href="' . $route . '" class="btn btn-primary btn-sm">
+                <i class="la la-edit"></i>
+            </a>
+            <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">
+                <i class="la la-trash"></i>
+            </button>
+        ';
             })
 
             // 🔹 Status Toggle
             ->editColumn('status', function ($row) {
                 $checked = $row->status == 1 ? 'checked' : '';
                 return '
-                <div class="form-check form-switch">
-                    <input class="form-check-input status"
-                        type="checkbox"
-                        data-id="' . $row->id . '"
-                        value="1"
-                        ' . $checked . '>
-                </div>
-            ';
+            <div class="form-check form-switch">
+                <input class="form-check-input status"
+                    type="checkbox"
+                    data-id="' . $row->id . '"
+                    value="1"
+                    ' . $checked . '>
+            </div>
+        ';
             })
 
             // 🔹 Slug Link
@@ -557,7 +557,6 @@ class LandingPagesController extends Controller
         }
         $finaReviewImage = json_encode($review_images);
         // Customer Review Images
-
         $productIds = [];
         if ($request->product_id) {
             foreach ($request->product_id as $productId) {
@@ -703,7 +702,6 @@ class LandingPagesController extends Controller
     }
     public function updateSingleProduct(Request $request, $id)
     {
-
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -769,6 +767,12 @@ class LandingPagesController extends Controller
         $finaReviewslImage = json_encode($reviews_images);
 
         // Customer Review images
+        $productIds = [];
+        if ($request->product_id) {
+            foreach ($request->product_id as $productId) {
+                $productIds[] = $productId;
+            }
+        }
 
         $productIds = [];
         if ($request->product_id) {

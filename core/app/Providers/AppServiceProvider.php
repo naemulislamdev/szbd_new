@@ -5,11 +5,14 @@ namespace App\Providers;
 use App\CPU\Helpers;
 use App\Models\BusinessSetting;
 use App\Models\Order;
+use App\Observers\OrderObserver;
 use App\Models\UserInfo;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Order::observe(OrderObserver::class);
         Paginator::useBootstrap();
         Schema::defaultStringLength(191);
         $web_config = [];

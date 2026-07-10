@@ -203,6 +203,8 @@
             });
         });
     </script>
+
+
     <script>
         $(document).ready(function() {
             const previewContainer = $("#image-preview");
@@ -274,8 +276,6 @@
     <script>
         $(document).ready(function() {
             $('#description').summernote();
-
-
         });
     </script>
     <script>

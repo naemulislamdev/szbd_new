@@ -454,11 +454,13 @@
                                             }
                                         }
                                     @endphp
+                                    {{-- @dd(json_decode($product->variation) ) --}}
                                     @foreach ($choiceOptions as $key => $choice)
                                         <div class="row">
                                             <div class="col-12 mb-3 mt-3">
                                                 <h4 style="font-size: 18px; margin:0;">{{ $choice['title'] }}</h4>
                                             </div>
+
                                             <div class="col-12 ">
                                                 <div class="d-flex">
                                                     @foreach ($choice['options'] as $key => $option)
@@ -506,8 +508,7 @@
                                         </div>
                                         <div class="col-6 ">
                                             <div class="d-flex justify-content-between mt-2" id="chosen_price_div">
-
-                                                <span class="instock">Instock: {{ $product->current_stock }}</span>
+                                               <span class="instock">Instock: {{ $product->current_stock }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1177,4 +1178,5 @@
         x_fb_ck_fbc: fbc
     });
 </script>
+
 @endpush

@@ -32,7 +32,7 @@ class WholesaleController extends Controller
             'product_quantity'  => $request->product_quantity,
         ]);
 
-        return redirect()->back()->with('success', 'Wholesale Info Submit successfully!');
+        return redirect()->route('wholesale.success')->with('success', 'Wholesale Info Submit successfully!');
     }
     public function status(Request $request)
     {

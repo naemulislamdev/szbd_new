@@ -825,8 +825,7 @@
             function formatColor(state) {
                 if (!state.id) return state.text;
 
-                var colorCode = $(state.element).val(); // 🔥 FIX এখানে
-
+                var colorCode = $(state.element).val();
                 return `
         <span style="display:inline-flex; align-items:center;">
             <span style="
@@ -854,7 +853,38 @@
                 }
             });
 
+            // 🔽 Selection order maintain korar jonno notun code
+            var $colorSelect = $('#colors-selector');
+            var selectionOrder = $colorSelect.val() || [];
+
+            $colorSelect.on('select2:select', function(e) {
+                var val = e.params.data.id;
+                selectionOrder = selectionOrder.filter(function(v) {
+                    return v !== val;
+                });
+                selectionOrder.push(val);
+                reorderOptions();
+            });
+
+            $colorSelect.on('select2:unselect', function(e) {
+                var val = e.params.data.id;
+                selectionOrder = selectionOrder.filter(function(v) {
+                    return v !== val;
+                });
+                reorderOptions();
+            });
+
+            function reorderOptions() {
+                selectionOrder.forEach(function(val) {
+                    var $opt = $colorSelect.find('option[value="' + val + '"]');
+                    $colorSelect.append($opt);
+                });
+                $colorSelect.trigger('change.select2');
+            }
+            // 🔼 Notun code shesh
+
         });
+
         $('input[name="colors_active"]').on('change', function() {
             if (!$('input[name="colors_active"]').is(':checked')) {
                 $('#colors-selector').prop('disabled', true);
@@ -862,6 +892,7 @@
                 $('#colors-selector').prop('disabled', false);
             }
         });
+
         $(document).ready(function() {
             $('#choice_attributes').select2({
                 placeholder: "Select Atributes",
@@ -869,6 +900,7 @@
                 width: '100%'
             });
         });
+
         $('#colors-selector').on('change', function() {
             update_sku();
             update_sku_color();

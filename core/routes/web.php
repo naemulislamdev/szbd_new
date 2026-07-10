@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\FreeHajjUmraController;
 use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\ChattingController;
 use App\Http\Controllers\Front\CheckoutControl;
@@ -111,8 +112,27 @@ Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group
 
         // all featured products
         Route::get('/featured-products', 'featuredProducts')->name('featured.products');
-    });
 
+        // Hajj umra routes
+        Route::get('/free-hajj-umra', 'hajj_umra')->name('hajj.umra');
+    });
+    // -------------------------------------------------------
+    // Public Routes — যেকেউ আবেদন করতে পারবে
+    // -------------------------------------------------------
+    Route::prefix('umrah-haj')->name('umrah-haj.')->group(function () {
+
+        // আবেদন জমা দিন
+        Route::post('/apply', [FreeHajjUmraController::class, 'store'])
+            ->name('store');
+
+        // রেফারেন্স দিয়ে আবেদনের স্ট্যাটাস চেক করুন
+        Route::get('/check/{reference}', [FreeHajjUmraController::class, 'show'])
+            ->name('show');
+
+        // সফল সাবমিশনের পরের পেজ (web only)
+        Route::view('/success', 'web.hajj_umra.success')
+            ->name('success');
+    });
 
     // Checkout routes
     Route::controller(CheckoutControl::class)->group(function () {
@@ -132,11 +152,16 @@ Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group
     Route::controller(InvestorController::class)->group(function () {
         Route::get('/investor', 'create')->name('investor.crate');
         Route::post('/investor/store', 'store')->name('investor.store');
+        Route::view('/investor/success', 'web.investor.success')
+            ->name('investor.success');
     });
     // Wholesale routes
     Route::controller(WholesaleController::class)->group(function () {
         Route::get('/wholesale', 'create')->name('wholesale.crate');
         Route::post('/wholesale/store', 'store')->name('wholesale.store');
+        Route::get('/wholesale/success', '')->name('wholesale.success');
+        Route::view('/wholesale/success', 'web.wholesale.success')
+            ->name('wholesale.success');
     });
 
 

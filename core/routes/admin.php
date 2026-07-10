@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\CareerController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\CouponController;
+use App\Http\Controllers\Backend\CustomerReportController;
 use App\Http\Controllers\Backend\LandingPagesController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmplyeeController;
@@ -31,9 +32,11 @@ use App\Http\Controllers\Backend\RolePermissionController;
 use App\Http\Controllers\Backend\WholesaleController;
 use App\Http\Controllers\Backend\DiscountManageController;
 use App\Http\Controllers\Backend\FAQController;
+use App\Http\Controllers\Backend\FreeHajjUmraController;
 use App\Http\Controllers\Backend\GlobalSearchController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\JobApplicationController;
+use App\Http\Controllers\Backend\ProductStockController;
 use App\Http\Controllers\Backend\RoleDepartmentController;
 use App\Http\Controllers\Backend\ShippingMethodController;
 use App\Http\Controllers\Backend\SiteMapController;
@@ -96,12 +99,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
 
             Route::get('/get-subcategories/{category_id}', 'getSubCategories')->name('get-subcategories');
             Route::get('/get-child-categories/{subcategory_id}', 'getChildCategories')->name('get-child-categories');
-
-            // Product Sales Report Routes
-            Route::get('/sales-report', 'ProductSalesReport')->name('salesReport');
-            Route::get('/sales-report-datatables', 'reportDatatables')->name('reportDatatables');
-            Route::get('/remove-size-chart/{product_id}', 'removeSizeChart')->name('remove-size-chart');
         });
+
         // generate sitemap
         Route::get('/sitemap', [SiteMapController::class, 'index'])->name('sitemap');
         Route::get('sitemap-download', [SiteMapController::class, 'download'])->name('sitemap-download');
@@ -244,6 +243,13 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('view/{id}', 'view')->name('view');
             Route::get('customer-datatables/{customer_id}', 'customerDatatables')->name('customerDatatables');
         });
+        // Customers Report Routes
+        Route::controller(CustomerReportController::class)->prefix('/customer-report')->as('customer-report.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::get('/report', 'report')->name('report');
+            Route::get('/export', 'export')->name('export');
+        });
         // Investors Routes
         Route::controller(InvestorController::class)->prefix('/investors')->as('investors.')->group(function () {
             Route::get('list', 'investorsList')->name('list');
@@ -376,7 +382,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('store', 'store')->name('store');
             Route::post('update/{id}', 'update')->name('update');
-
             // blog content & promotion routes
             Route::get('content-promotion', 'contentPromotion')->name('contentPromotion');
             Route::post('content-promotion/update', 'updateContentPromotion')->name('updateContentPromotion');
@@ -442,6 +447,13 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/track-visitor-export', 'trackVisitorExport')->name('trackVisitorExport');
             // Route::get('daily-sales', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales');
             // Route::post('daily-sales-filter', [DashboardController::class, 'OrderDailyFilter'])->name('daily-sales-filter');
+
+
+        });
+        // Product Stock Management Routes
+        Route::controller(ProductStockController::class)->prefix('/product-stock')->as('product_stock.')->group(function () {
+            Route::get('list', 'index')->name('index');
+            Route::get('/datatables', 'datatables')->name('datatables');
         });
         // applications routes
         Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
@@ -531,6 +543,14 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/cache/clear',  'clear')->name('clear');
             Route::post('/cache/clear-all',  'clearAll')->name('clearAll');
             Route::post('/cache/optimize', 'optimize')->name('optimize');
+        });
+
+        // Free Hajj Umrah Application Routes
+        Route::controller(FreeHajjUmraController::class)->prefix('/free-hajj-umrah')->as('free_hajj_umrah.')->group(function () {
+            Route::get('/application-list', 'list')->name('list');
+            Route::get('/datatables', 'datatables')->name('datatables');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
         });
     });
 });
