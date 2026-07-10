@@ -103,8 +103,8 @@
                                         @csrf
                                         <div class="form-group mb-2">
                                             <label for="si-email">Email address</label>
-                                            <input class="form-control" type="text" name="user_id" id="si-email"
-                                                style="text-align: left;" value="{{ old('user_id') }}"
+                                            <input class="form-control" type="text" name="email" id="si-email"
+                                                style="text-align: left;" value="{{ old('email') }}"
                                                 placeholder="Enter email address or phone number" required>
                                             <div class="invalid-feedback">
                                                 please provide valid email or phone number
