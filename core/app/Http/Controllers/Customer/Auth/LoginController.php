@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers\Customer\Auth;
 
-use App\CPU\CartManager;
-use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Models\Wishlist;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -16,68 +12,47 @@ class LoginController extends Controller
 
     public function login()
     {
-        session()->put('keep_return_url', url()->previous());
         return view('customer-view.auth.login');
     }
 
     public function submit(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
-            'password' => 'required|min:8'
+            'email'    => 'required',
+            'password' => 'required|min:8',
         ]);
 
-        //recaptcha validation
-        $recaptcha = Helpers::get_business_settings('recaptcha');
-        if (isset($recaptcha) && $recaptcha['status'] == 1) {
-            try {
-                $request->validate([
-                    'g-recaptcha-response' => [
-                        function ($attribute, $value, $fail) {
-                            $secret_key = Helpers::get_business_settings('recaptcha')['secret_key'];
-                            $response = $value;
-                            $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $response;
-                            $response = \file_get_contents($url);
-                            $response = json_decode($response);
-                            if (!$response->success) {
-                                $fail('ReCAPTCHA Failed');
-                            }
-                        },
-                    ],
-                ]);
-            } catch (\Exception $exception) {
-            }
-        } else {
-            if (strtolower($request->default_captcha_value) != strtolower(Session('default_captcha_code'))) {
-                Session::forget('default_captcha_code');
-                return back()->withErrors("Captcha Failed");
-            }
+        $remember = $request->boolean('remember');
+
+        // Find user by email or phone
+        $user = User::where('email', $request->email)
+            ->first();
+
+        if (!$user) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid email/phone or password.');
         }
 
-        $remember = ($request['remember']) ? true : false;
-
-        $user = User::where(['phone' => $request->user_id])->orWhere(['email' => $request->user_id])->first();
-
-        if (isset($user) == false) {
-            // Toastr::error('Credentials do not match or account has been suspended.');
-            return back()->withInput();
+        if ($user->is_active == 0) {
+            return back()
+                ->withInput()
+                ->with('error', 'Your account has been suspended.');
         }
 
-        $phone_verification = Helpers::get_business_settings('phone_verification');
-        $email_verification = Helpers::get_business_settings('email_verification');
-        if ($phone_verification && !$user->is_phone_verified) {
-            return redirect(route('customer.auth.check', [$user->id]));
-        }
-        if ($email_verification && !$user->is_email_verified) {
-            return redirect(route('customer.auth.check', [$user->id]));
+        // Attempt login
+        if (auth('customer')->attempt([
+            'email'     => $user->email,
+            'password'  => $request->password,
+            'is_active' => 1,
+        ], $remember)) {
+
+            return redirect()->intended( route('user-account'));
         }
 
-        if (isset($user) && $user->is_active && auth('customer')->attempt(['email' => $user->email, 'password' => $request->password], $remember)) {
-            session()->put('wish_list', Wishlist::where('customer_id', auth('customer')->user()->id)->pluck('product_id')->toArray());
-            CartManager::cart_to_db();
-            return redirect(session('keep_return_url'));
-        }
-        return back()->withInput()->with("Credentials do not match or account has been suspended.");
+        return back()
+            ->withInput()
+            ->with('error', 'Invalid email/phone or password.');
     }
 
     public function logout(Request $request)
