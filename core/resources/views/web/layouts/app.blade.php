@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     {{-- meta info --}}
     <title>
@@ -133,6 +134,11 @@
     {{-- json id end --}}
     <meta name="_token" content="{{ csrf_token() }}">
     <style>
+        .cf-turnstile,
+        .cf-turnstile iframe {
+            width: 100% !important;
+        }
+
         body {
             padding-right: 0 !important;
         }

@@ -10,11 +10,8 @@
             margin: auto;
             text-align: center;
         }
-    </style>
 
-    <style>
         .input-icons i {
-            /* position: absolute; */
             cursor: pointer;
         }
 
@@ -43,16 +40,38 @@
         .btn-primary {
             position: relative !important;
         }
+
+        /* Loader spinner styles */
+        .btn-loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: btn-spin 0.7s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes btn-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #submit-btn[disabled] {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
     </style>
 @endpush
 @section('content')
     <div class="container " style="text-align:left;">
-        {{-- Bredcrumb start  --}}
         <nav class="breadcrumb custom-breadcrumb mt-3">
             <a class="breadcrumb-item" href="{{ route('home') }}">Home</a>
             <span class="breadcrumb-item active" aria-current="page">Customer Login</span>
         </nav>
-        {{--  Bredcrumb End --}}
         <div class="row justify-content-center mt-4">
             <div class="col-md-10">
                 <div class="card border-0 box-shadow p-3">
@@ -69,6 +88,15 @@
                                     <h1 class="h4 mb-1">Login</h1>
                                     <p>Don't have an account yet? <a href="{{ route('customer.auth.sign-up') }}">Create
                                             account</a></p>
+
+                                    {{-- Login error messages --}}
+                                    @error('user_id')
+                                        <div class="alert alert-danger py-2">{{ $message }}</div>
+                                    @enderror
+
+                                    @error('g-recaptcha-response')
+                                        <div class="alert alert-danger py-2">{{ $message }}</div>
+                                    @enderror
 
                                     <form class="needs-validation mt-2" autocomplete="off"
                                         action="{{ route('customer.auth.login') }}" method="post" id="form-id">
@@ -100,23 +128,33 @@
                                                 <input type="checkbox" name="remember" id="remember"
                                                     {{ old('remember') ? 'checked' : '' }}>
 
-                                                <label class="" for="remember">Remember_me</label>
+                                                <label class="" for="remember">Remember me</label>
                                             </div>
                                             <a class="font-size-sm" href="{{ route('customer.auth.recover-password') }}">
                                                 forgot password?
                                             </a>
                                         </div>
-                                        <button class="btn btn-secondary btn-block btn-shadow" type="submit">sign
-                                            in</button>
+                                        <div class="mt-2">
+                                            <x-turnstile />
+
+                                            @error('cf-turnstile-response')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <button class="btn btn-secondary btn-block btn-shadow mt-3" type="submit"
+                                            id="submit-btn">
+                                            <span id="submit-btn-text">Sign in</span>
+                                            <span id="submit-btn-loader" class="btn-loader" style="display:none;"></span>
+                                        </button>
                                     </form>
                                 </div>
                                 <div class="mb-2">
-
                                     <div class="row">
                                         @foreach (\App\CPU\Helpers::get_business_settings('social_login') as $socialLoginService)
                                             @if (isset($socialLoginService) && $socialLoginService['status'] == true)
                                                 <div class="col-sm-6 text-center mb-1 mx-auto">
-                                                    <a class=" border px-3 py-2 rounded"
+                                                    <a class=" border px-3 py-2 rounded d-block"
                                                         href="{{ route('customer.auth.service-login', $socialLoginService['login_medium']) }}"
                                                         style="width: 100%; color: #ff5d00">
                                                         <img style="max-width: 100%; width: 20px;"
@@ -140,34 +178,19 @@
 
 @push('scripts')
     <script>
-        document.getElementById('phone').addEventListener('input', function() {
-            const phoneInput = this.value;
-            const phoneFeedback = document.getElementById('phoneFeedback');
-            const regex = /^(01[3-9]\d{8})$/;
-
-            if (phoneInput === '') {
-                phoneFeedback.textContent = '';
-            } else if (!regex.test(phoneInput)) {
-                phoneFeedback.classList.add('text-danger');
-                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            } else {
-                phoneFeedback.textContent = 'Valid phone number!';
-                phoneFeedback.classList.remove('text-danger');
-                phoneFeedback.classList.add('text-success');
+        document.getElementById('form-id').addEventListener('submit', function(e) {
+            // HTML5 validation check — form invalid hole loader show korbe na
+            if (!this.checkValidity()) {
+                return;
             }
-        });
 
-        // Also validate when the field loses focus
-        document.getElementById('phone').addEventListener('blur', function() {
-            const phoneInput = this.value;
-            const phoneFeedback = document.getElementById('phoneFeedback');
-            const regex = /^(01[3-9]\d{8})$/;
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('submit-btn-text');
+            const btnLoader = document.getElementById('submit-btn-loader');
 
-            if (phoneInput === '') {
-                phoneFeedback.textContent = 'Phone number is required';
-            } else if (!regex.test(phoneInput)) {
-                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            }
+            submitBtn.disabled = true;
+            btnText.textContent = 'Signing in...';
+            btnLoader.style.display = 'inline-block';
         });
     </script>
 @endpush

@@ -69,6 +69,7 @@ class ShippingMethodController extends Controller
     // ── Shipping Config Save ──────────────────────────────────────
     public function saveConfig(Request $request)
     {
+        // dd($request->all());
         $config = ShippingConfig::getConfig();
         $config->shipping_type      = $request->shipping_type;
         $config->free_shipping_type = $request->free_shipping_type ?? null;

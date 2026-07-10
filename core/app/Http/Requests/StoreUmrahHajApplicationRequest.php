@@ -40,6 +40,8 @@ class StoreUmrahHajApplicationRequest extends FormRequest
             // ৫. সম্মতি
             'terms_accepted'                => ['required', 'accepted'],
             'selection_decision_accepted'   => ['required', 'accepted'],
+            'cf-turnstile-response' => ['required'],
+
         ];
     }
 
@@ -73,6 +75,7 @@ class StoreUmrahHajApplicationRequest extends FormRequest
             'selection_decision_accepted.accepted'  => 'নির্বাচন প্রক্রিয়ার সিদ্ধান্ত মেনে নিতে হবে।',
             'occupation.required'                    => 'পেশা অবশ্যই দিতে হবে।',
             'occupation.max'                         => 'পেশা সর্বোচ্চ ১০০ অক্ষরের হতে হবে।',
+            'cf-turnstile-response.required' => 'Please verify that you are not a robot.',
         ];
     }
 

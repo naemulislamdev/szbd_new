@@ -743,6 +743,7 @@
                             <div class="invalid-msg">পেশা বেছে নিন।</div>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- 2. আবেদনকারীর তথ্য -->
@@ -996,7 +997,14 @@
                         <div class="invalid-msg mt-2 text-danger" id="consent-err" style="display:none;">
                             উভয় সম্মতি দিন।
                         </div>
+                        <div class="mt-3">
+                            {{-- cloudflare security --}}
+                            <x-turnstile />
 
+                            @error('cf-turnstile-response')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 

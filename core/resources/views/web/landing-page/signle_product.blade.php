@@ -230,8 +230,8 @@
         }
 
         /* ═══════════════════════════════════════════════
-                                                                                                               NEW ORDER SECTION STYLES
-                                                                                                            ═══════════════════════════════════════════════ */
+                                                                                                                                                                                                                                           NEW ORDER SECTION STYLES
+                                                                                                                                                                                                                                        ═══════════════════════════════════════════════ */
         .sp-order-wrap {
             background: #f4f6f8;
             padding: 32px 0 44px;
@@ -274,7 +274,7 @@
         .sp-card-product::after {
             content: '✔';
             position: absolute;
-            top: 30%;
+            top: 5%;
             right: 7%;
             width: 26px;
             height: 26px;
@@ -343,7 +343,7 @@
 
         /* Size buttons */
         .sp-size-row {
-            display: inline-flex;
+            display: flex;
             gap: 5px;
             flex-wrap: wrap;
             margin-bottom: 8px;
@@ -380,7 +380,8 @@
 
         .sp-qty-lbl {
             font-size: 12px;
-            color: #6b7280;
+            font-weight: 700;
+            color: #374151;
         }
 
         .sp-qty-ctrl {
@@ -745,6 +746,11 @@
                 flex-direction: column;
 
             }
+
+            .sp-card-product::after {
+                top: 10%;
+                right: 5%;
+            }
         }
 
         .sp-total-row.grand span:first-child {
@@ -780,43 +786,33 @@
                                                 src="{{ asset('assets/storage/landingpage/slider') }}/{{ $image }}"
                                                 alt="Banner">
                                         </div>
+                                    </div>
                                 @endforeach
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                            <a class="carousel-control-prev d-flex" href="#carouselExampleIndicators" role="button"
                                 data-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
                             </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                            <a class="carousel-control-next d-flex" href="#carouselExampleIndicators" role="button"
                                 data-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>
                         </div>
-                        <a class="carousel-control-prev d-flex" href="#carouselExampleIndicators" role="button"
-                            data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next d-flex" href="#carouselExampleIndicators" role="button"
-                            data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="p-details col-lg-6">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <h3 class="mb-2">{{ $productLandingPage->title }}</h3>
-                            <div class="p-short-details">{!! $productLandingPage->description !!}</div>
+                <div class="p-details col-lg-6">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <h3 class="mb-2">{{ $productLandingPage->title }}</h3>
+                                <div class="p-short-details">{!! $productLandingPage->description !!}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </section>
 
@@ -1019,7 +1015,7 @@
 
                             {{-- Image --}}
                             @if ($product->thumbnail)
-                                <img class="sp-thumb"
+                                <img class="sp-thumb" id="spThumb_{{ $product->id }}"
                                     src="{{ asset('assets/storage/product/thumbnail') }}/{{ $product->thumbnail }}"
                                     alt="{{ $product->name }}">
                             @else
@@ -1040,6 +1036,10 @@
                                 </div>
                                 {{-- Color options --}}
                                 @if ($hasColors)
+                                    <label class="sp-lbl"
+                                        style="font-size:12px; margin-bottom:4px; display:block; font-weight:600;"> পণ্যের
+                                        কালার
+                                        নির্বাচন করুন:</label>
                                     <div class="sp-size-row" onclick="event.stopPropagation()" style="gap:8px;">
                                         @foreach ($colorVariants as $ci => $color)
                                             @php
@@ -1052,15 +1052,16 @@
                                                 data-name="{{ $cName }}" title="{{ $cName }}"
                                                 onclick="spColor(this, '{{ $product->id }}', '{{ $code }}', '{{ $cName }}', '{{ asset($cImage) }}')"
                                                 style="
-                    width:32px;
-                    height:32px;
-                    border-radius:6px;
-                    border:2px solid {{ $ci === 0 ? '#1e293b' : '#d1d5db' }};
-                    padding:0;
-                    cursor:pointer;
-                    overflow:hidden;
-                    background:#fff;
-                ">
+                                                    width:50px;
+                                                    height:auto;
+                                                    border-radius:6px;
+                                                    border:2px solid {{ $ci === 0 ? '#22c55e' : '#d1d5db' }};
+                                                    padding:0;
+                                                    cursor:pointer;
+                                                    overflow:hidden;
+                                                    outline: 0;
+                                                    background:#fff;
+                                                ">
                                                 <img src="{{ asset($cImage) }}" alt="{{ $cName }}"
                                                     style="width:100%; height:100%; object-fit:cover; display:block;">
                                             </button>
@@ -1074,6 +1075,9 @@
                                 {{-- Size / Choice options --}}
                                 @if ($hasSizes)
                                     @foreach ($choiceOptions as $choice)
+                                        <label class="sp-lbl"
+                                            style="font-size:12px; margin-bottom:4px; display:block; font-weight:600;">
+                                            পণ্যের সাইজ নির্বাচন করুন:</label>
                                         <div class="sp-size-row" onclick="event.stopPropagation()">
                                             @foreach ($choice['options'] as $ki => $opt)
                                                 <button type="button"
@@ -1092,7 +1096,7 @@
                                 <br>
                                 {{-- Qty --}}
                                 <div class="sp-qty-row" onclick="event.stopPropagation()">
-                                    <span class="sp-qty-lbl">Qty:</span>
+                                    <span class="sp-qty-lbl">পরিমাণ:</span>
                                     <div class="sp-qty-ctrl">
                                         <button type="button" class="sp-qty-btn"
                                             onclick="spQty({{ $product->id }}, -1)">−</button>
@@ -1353,9 +1357,9 @@
                 </div>{{-- /.sp-two-col --}}
             </form>
 
-            <div class="row mt-4">
+            <div class="row mt-5">
                 <div class="col-lg-3 mx-auto text-center">
-                    <a href="{{ route('home') }}" class="btn btn-primary">Discover More Products</a>
+                    <a href="{{ route('home') }}" class="btn btn-primary">Explore More Products</a>
                 </div>
             </div>
 
@@ -1446,6 +1450,10 @@
 
         /* ── Toggle product card ── */
         function spToggle(id, el) {
+            //  single product হলে toggle বন্ধ — সবসময় selected থাকবে
+            if (Object.keys(SP).length === 1) {
+                return;
+            }
             const p = SP[id];
             p.selected = !p.selected;
             if (p.selected && p.qty === 0) p.qty = 1;
@@ -1487,7 +1495,12 @@
                     b.style.borderColor = '#d1d5db';
                 });
             btn.classList.add('active');
-            btn.style.borderColor = '#1e293b';
+            btn.style.borderColor = '#22c55e';
+            // ⭐ নতুন — thumbnail image update
+            const thumbImg = document.getElementById('spThumb_' + pid);
+            if (thumbImg && imageUrl) {
+                thumbImg.src = imageUrl;
+            }
 
             const h = document.getElementById(`colorHidden_${pid}`);
             if (h) h.value = code;
@@ -1515,18 +1528,18 @@
             list.innerHTML = sel.map(p => `
         <div class="sp-sum-item">
             ${p.thumb
-                ? `<img class="sp-sum-img" src="${p.thumb}" alt="${p.name}">`
+                ? `<img class="sp-sum-img" src="${p.colorImage ?? p.thumb}" alt="${p.name}">`
                 : `<div class="sp-sum-img-ph">🛍️</div>`}
             <div class="sp-sum-info">
                 <div class="sp-sum-name">${p.name}</div>
                 <div class="sp-sum-meta">
                     পরিমাণ: ${p.qty}
                     ${p.colorImage ? `
-                                | রং:
-                                <img src="${p.colorImage}" alt="${p.colorName || ''}"
-                                    style="width:18px; height:18px; border-radius:4px; object-fit:cover; vertical-align:middle; border:1px solid #ddd;">
-                            ` : ''}
-                </div>
+                                                                | কালার:
+                                                                <img src="${p.colorImage}" alt="${p.colorName || ''}"
+                                                                    style="width:25px; height:auto; border-radius:4px; object-fit:cover; vertical-align:middle; border:1px solid #ddd;">
+                                                            ` : ''}
+</div>
             </div>
             <div class="sp-sum-price">${(p.price * p.qty).toLocaleString('en-BD')} ৳</div>
         </div>

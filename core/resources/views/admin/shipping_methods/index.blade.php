@@ -183,13 +183,13 @@
                                     <label class="form-label">Minimum Order Amount (৳)</label>
                                     <input type="number" name="min_amount_for_discount" class="form-control"
                                         value="{{ $web_config['free_shipping_min_amount']->value ?? '' }}"
-                                        placeholder="e.g. 1000 — খালি রাখলে discount হবে না">
+                                        placeholder="e.g. 1000 — খালি রাখলে discount হবে না" min="0">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Discount Amount (৳)</label>
                                     <input type="number" name="shipping_discount_amount" class="form-control"
                                         value="{{ $web_config['free_shipping_discount']->value ?? '' }}"
-                                        placeholder="e.g. 60">
+                                        placeholder="e.g. 60" min="0">
                                 </div>
                                 <div class="col-md-4 d-flex align-items-end">
                                     <button type="submit" class="btn btn-primary w-100">
@@ -325,21 +325,20 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Discount Amount</label>
-                                <input type="number" name="discount_amount" class="form-control" placeholder="0">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Discount Type</label>
-                                <select name="discount_type" class="form-select">
-                                    <option value="flat">Flat (৳)</option>
-                                    <option value="percent">Percent (%)</option>
-                                </select>
+                                <input type="number" name="discount_amount" class="form-control" placeholder="0" </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Discount Type</label>
+                                    <select name="discount_type" class="form-select">
+                                        <option value="flat">Flat (৳)</option>
+                                        <option value="percent">Percent (%)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
                 </form>
             </div>
         </div>

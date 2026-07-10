@@ -117,19 +117,15 @@ Route::middleware(['web', 'content_security_policy', 'maintenance_mode'])->group
         Route::get('/free-hajj-umra', 'hajj_umra')->name('hajj.umra');
     });
     // -------------------------------------------------------
-    // Public Routes — যেকেউ আবেদন করতে পারবে
+    // Hajj Umra application route
     // -------------------------------------------------------
     Route::prefix('umrah-haj')->name('umrah-haj.')->group(function () {
 
-        // আবেদন জমা দিন
         Route::post('/apply', [FreeHajjUmraController::class, 'store'])
             ->name('store');
 
-        // রেফারেন্স দিয়ে আবেদনের স্ট্যাটাস চেক করুন
         Route::get('/check/{reference}', [FreeHajjUmraController::class, 'show'])
             ->name('show');
-
-        // সফল সাবমিশনের পরের পেজ (web only)
         Route::view('/success', 'web.hajj_umra.success')
             ->name('success');
     });

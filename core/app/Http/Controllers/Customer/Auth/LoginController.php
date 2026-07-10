@@ -13,13 +13,11 @@ use Illuminate\Support\Facades\Session;
 class LoginController extends Controller
 {
     public $company_name;
-
     public function login()
     {
         session()->put('keep_return_url', url()->previous());
         return view('customer-view.auth.login');
     }
-
     public function submit(Request $request)
     {
         $request->validate([
@@ -79,7 +77,6 @@ class LoginController extends Controller
         }
         return back()->withInput()->with("Credentials do not match or account has been suspended.");
     }
-
     public function logout(Request $request)
     {
         auth()->guard('customer')->logout();

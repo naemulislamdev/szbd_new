@@ -101,6 +101,13 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="mt-2">
+                                <x-turnstile />
+
+                                @error('cf-turnstile-response')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
                             <div class="form-group d-flex flex-wrap justify-content-between mt-3">
 
